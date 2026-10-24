@@ -111,6 +111,7 @@
     "test:portability": "node tests/package-portability.test.mjs",
     "test:pathportability": "node tests/path-portability.test.mjs",
     "test:smoke": "playwright test",
+    "test:offline-browser": "playwright test --config playwright.offline.config.js",
     "test:references": "node tests/reference-minter.test.mjs",
     "test:categories": "node tests/categories.test.mjs",
     "test:register": "node tests/executive-register.test.mjs",

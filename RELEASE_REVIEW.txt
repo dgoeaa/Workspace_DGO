@@ -2,6 +2,13 @@ WORKSPACE_DGO — SELECTION AND RELEASE REVIEW
 Review date: 2026-10-24
 Recommendation: select Repo_root for development; NO-GO for production.
 
+MERGE UPDATE: workspace-source subsequently recovered the Portal and selected
+sanitised test inputs, with recovery-manifest.json and provenance tests. The
+missing-Portal/scan-fixture findings below are initial-review history, not current
+failures. The root README preserves the newer recovery verification and remaining
+gaps. Both offline guard implementations and the owner-only NO-GO policy remain;
+recovery does not revoke the encoded credentials or establish tenant security.
+
 1. CONTENT-BASED SELECTION
 
 Comparison is of tracked input trees before this change, not folder version labels.

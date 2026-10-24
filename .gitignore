@@ -1,6 +1,18 @@
 __pycache__/
 *.py[cod]
-node_modules/
 /verification-output/
 # Prevent new local credential files; this does not untrack existing copies or erase history.
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+dist/
+dist-bundle/
 config.local*.js
+config.local*.json
+!config.local.example.js
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
