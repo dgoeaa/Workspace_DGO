@@ -1,5 +1,13 @@
 # ECM_DOCS_DEV — NITDA Folio
 
+> **Workspace_DGO review:** `Repo_root/` is the selected source baseline, not a complete
+> or production-ready release. Read the repository-level [review and release gates](../README)
+> first. Portal source and selected docs/fixtures have been selectively recovered from an
+> owner-approved pinned commit; reference/governance gaps, inert authentication,
+> and repository-wide exposure checks remain unresolved. Historical closure, rotation, packaging
+> and readiness assertions below are not verified evidence for this public repository.
+> Do not run live/commissioning/packaging commands as part of the offline review.
+
 Client-side web applications powering NITDA Folio, NITDA's correspondence and registry platform, plus the reference material and flow exports that document it. *Formerly DGO Digital Operations — see [`docs/reference/PLATFORM_NAMING.md`](docs/reference/PLATFORM_NAMING.md) and the [platform register](docs/reference/PLATFORM_REGISTER.html).*
 
 > **Three documents describe this estate.** [`docs/PLATFORM.md`](docs/PLATFORM.md) is what it
