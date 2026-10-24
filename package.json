@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "npm run test:gate && npm run verify:offline",
-    "test:gate": "node --test tests/workspace-check.test.mjs Repo_root/tests/check-imports.test.mjs",
+    "test:gate": "node --test tests/workspace-check.test.mjs tests/recovery.test.mjs Repo_root/tests/check-imports.test.mjs",
     "verify:offline": "node scripts/workspace-check.mjs verify",
     "audit:tracked": "node scripts/workspace-check.mjs audit",
     "release:check": "node scripts/workspace-check.mjs release"

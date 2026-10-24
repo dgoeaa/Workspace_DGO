@@ -39,3 +39,22 @@ test('offline context blocks remote requests and substitutes local configuration
     (await (await fetch('/config/config.local.js')).text()) === 'window.DGO_CONFIG = {};');
   expect(substituted).toBe(true);
 });
+
+test('recovered portal pages load local assets and run without configured endpoints', async ({ page }) => {
+  const failures = [];
+  const pageErrors = [];
+  page.on('pageerror', () => pageErrors.push('uncaught page error'));
+  page.on('response', response => {
+    const url = new URL(response.url());
+    if (url.origin === 'http://127.0.0.1:18080' && response.status() >= 400
+        && !/\/BUILD-ID\.json$/.test(url.pathname)) failures.push(url.pathname);
+  });
+  for (const name of ['index', 'submit', 'track', 'support', 'privacy', '404']) {
+    const response = await page.goto(`/document-portal/${name}.html`, { waitUntil: 'networkidle' });
+    expect(response.status()).toBe(200);
+    await expect(page.locator('main')).toBeVisible();
+    await expect.poll(() => page.evaluate(() => typeof window.PF?.esc === 'function')).toBe(true);
+  }
+  expect(failures).toEqual([]);
+  expect(pageErrors).toEqual([]);
+});

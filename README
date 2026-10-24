@@ -47,6 +47,8 @@ Rationalisation_pack                          8        0      1          353
 * No snapshot was deleted or wholesale merged. There is no enhancement to port
   from an identical duplicate. Missing documents/portal files must be recovered
   from an owner-verified source, not guessed from a similarly named deployment.
+  The authorised pinned recovery below now supplies the portal and selected inputs;
+  the table above remains the initial-review comparison, not current file counts.
 
 Repo_root/CLAUDE.md:3-18 mandates a claude branch and forbids PRs. That is a copied
 workflow from another repository, not the workflow for Workspace_DGO. Work stays
@@ -72,6 +74,66 @@ Bounded improvements
 * The inherited application README now points here before its stale claims.
   Build/dependency/browser output and new private config are ignored at repository
   root. Ignore rules do not remove or protect already tracked sensitive files.
+
+Authorised selective recovery (2026-10-24)
+------------------------------------------
+The owner supplied dgoeaa/ECM_DOCS_DEV and explicitly authorised selective recovery
+from commit 525fc666760726a1ca6fc23fd830782981f79419, excluding credentials and signed
+endpoints. recovery-manifest.json records the source, scope, byte sizes and SHA-256
+hashes. No source repository was cloned and no upstream scripts were executed.
+Specific pinned files were staged outside the repository, screened, then copied
+only to previously absent paths under Repo_root/. Existing source and assertions
+were not overwritten, and the local improved import checker was retained.
+
+Recovered: 37 portal runtime/page/design-system files; the essentials architecture
+JSON and its existing generated document; the large-file governance record; one
+scan-intake fixture needed by test:auth; and the portal-vault contract needed by
+test:portalvault. Forty files match the pinned source exactly. The two flow test
+inputs are deliberately sanitised and MUST NOT be deployed or used to commission:
+
+* The scan fixture has its entire allConnectionData removed (deployment bindings),
+  22 tenant-site URL occurrences replaced with an example.invalid address, and
+  105 distinct GUID literals replaced one-to-one with synthetic identifiers.
+* The portal-vault contract has 38 distinct GUID literals replaced with synthetic
+  identifiers. Its endpoint aliases and other contract logic are preserved.
+* The manifest records original and sanitised hashes, plus source-graph hashes
+  normalised only for the declared configuration transformations. Regression
+  tests confirm preservation of that graph, sanitisation, asset resolution,
+  the pinned recovery boundary and every restored file's final bytes.
+
+Not imported: private/local configuration, signed endpoints, tenant evidence,
+reference archives, unrelated docs, deployment settings, upstream branch mandates,
+or remaining flow packages. No package builder, flow generator or live check ran.
+Source licence was compared and matches the existing licence.
+Copied historical approval/closure records describe upstream, not new acceptance
+or production-readiness evidence for Workspace_DGO. Their unresolved references
+remain visible rather than being removed or accepted into a new baseline.
+
+Recovery verification (Node v22.23.3, npm 10.9.9, /usr/bin/chromium):
+  npm run test:gate                 PASS: 16 tests (10 existing + 6 recovery)
+  npm run verify:offline           FAIL: 11 scripts pass, 3 fail
+  npm test                         FAIL: regression tests pass; existing gates fail
+  Repo_root/test:offline-browser    PASS: 3 tests, including all six portal pages
+  Repo_root/npm ci (safe flags)     PASS: unchanged lockfile; lifecycle scripts off
+  npm run audit:tracked            FAIL: unchanged 55 affected files (33 credential
+                                  patterns, 21 containers, 1 config filename)
+
+Now passing after recovery: assetstamp, uxplan, portaloutbox, portalvault, encoding
+and auth. Auth's inert and enforced unit postures pass; that does NOT enable auth
+in the application or prove any deployed tenant validates identities.
+
+Remaining failures:
+* test:hygiene: upstream baselines/approval records refer to absent reference
+  artifacts; duplicate groups differ in this partial tree, and governance records
+  remain missing. The historical approval list is not a local release approval.
+* test:refs: the partial reference/docs tree still has unresolved relative links.
+* test:node: stops at hygiene; later it also references undefined test:effectivity
+  and test:constraints. These definitions are absent upstream too; no passing
+  stubs, removed checks or acceptance-baseline regeneration were introduced.
+
+Release remains NO-GO. Source recovery is not credential revocation, full-history
+remediation, tenant authorisation, commissioning, rollback approval or owner signoff.
+Initial-review evidence below is preserved as history, not the current failure list.
 
 Reproduce safely
 ----------------
@@ -107,8 +169,8 @@ Browser tests are a separate explicit step, not part of verify:offline, which
 remains dependency-free. Release acceptance requires both; a Node pass alone
 cannot replace the isolated browser or externally authorised commissioning gates.
 
-Verification evidence and limitations
-------------------------------------
+Initial-review verification evidence and limitations (before recovery)
+---------------------------------------------------------------------
 Executed with Node v22.23.3, npm 10.9.9 and installed /usr/bin/chromium:
 
   npm run test:gate                 PASS: 10 tests

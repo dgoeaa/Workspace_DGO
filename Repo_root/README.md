@@ -2,8 +2,9 @@
 
 > **Workspace_DGO review:** `Repo_root/` is the selected source baseline, not a complete
 > or production-ready release. Read the repository-level [review and release gates](../README)
-> first. This snapshot lacks referenced portal/docs/fixtures, defaults to inert authentication,
-> and has unresolved repository-wide exposure checks. Historical closure, rotation, packaging
+> first. Portal source and selected docs/fixtures have been selectively recovered from an
+> owner-approved pinned commit; reference/governance gaps, inert authentication,
+> and repository-wide exposure checks remain unresolved. Historical closure, rotation, packaging
 > and readiness assertions below are not verified evidence for this public repository.
 > Do not run live/commissioning/packaging commands as part of the offline review.
 
