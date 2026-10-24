@@ -147,7 +147,11 @@ Actions investigation found successful agent runs, not application CI; completed
 run 40126156084 has no failed jobs/logs. Agent workflow success is not test success.
 Security analysis: specialist review identified the encoded credentials above;
 rotation and historical remediation remain unresolved owner blockers. Automated
-CodeQL availability/result will be recorded after the committed-code review.
+CodeQL analysis of committed Python changes completed with 0 alerts. The
+specialist found no security vulnerabilities in the new guard. Changed-file
+secret scanning passed; this does not clear credentials in untouched artifacts.
+The six-file commit scope was checked: no generated artifacts or dependencies.
+Review PR: https://github.com/dgoeaa/Workspace_DGO/pull/2
 
 5. RELEASE CHECKLIST — ALL UNCHECKED ITEMS ARE NO-GO
 
