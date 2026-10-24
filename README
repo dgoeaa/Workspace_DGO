@@ -1,0 +1,223 @@
+Workspace_DGO: canonical source review and release decision
+=========================================================
+
+Recommendation: NO-GO for public distribution or production release.
+Review date: 2026-10-24. Default branch: workspace-source.
+Canonical source for subsequent reviewed changes: Repo_root/.
+
+This is a source-review baseline, NOT a complete or commissioned deployment.
+Repository metadata describes a public repository, while the inherited README
+says it must remain private. Treat that conflict as an exposure incident requiring
+owner action, not permission to publish. No tenant was contacted, credentials
+rotated, mail sent, deployment performed, or application package generated here.
+
+Selection evidence
+------------------
+The comparison used actual git-tracked files, package scripts, source modules and
+SHA-256 content equality, not version labels or inherited readiness assertions.
+Counts below describe the snapshots at review start. "Tests" counts all tracked
+files under tests/, including fixtures; it is NOT measured test coverage.
+
+Candidate                                 Files  Core JS  Tests  npm scripts
+Repo_root                                   791       96    179          352
+ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e
+                                            791       96    179          352
+NITDA-Folio-Source-31e80475                   774       83    164          349
+Commissioning-claude-isolated-code-session-scope-bghduo
+                                            510       73    111          260
+Folio-Workspace-Premium (1)                  214       83      0            0
+runtime_folio-platform-suite-1.0.2           217       83      0            0
+runtime_folio-platform-suite-1.0.3           237       96      0            0
+Rationalisation_pack                          8        0      1          353
+
+* Repo_root and ECM_DOCS_DEV had identical relative path sets and identical bytes
+  for every one of their 791 files. Repo_root is selected for its clear path and
+  stronger available source/test surface, not because it is called 1.0.3.
+* Compared with Repo_root, NITDA-Folio-Source lacks 13 core modules, including
+  record-view, record-search, inbox-view, overview, task-views and record-actions.
+  Commissioning lacks 23, and has fewer scripts/tests and a session-scoped brief.
+  Neither provides evidence of a more complete or more secure replacement.
+* Premium and the runtime directories are useful visual/deployment references,
+  not independently reproducible source baselines: no tracked test/tooling tree.
+  Other redesign/upload snapshots are retained as references, not selected sources.
+* Rationalisation_pack is an eight-file overlay, not a complete application.
+  Its declared scripts depend on a larger tree. Module-boundary rationalisation
+  is a possible future port, only after its dependencies, imports and dedicated
+  tests are validated against this baseline. It is not integrated or certified.
+* No snapshot was deleted or wholesale merged. There is no enhancement to port
+  from an identical duplicate. Missing documents/portal files must be recovered
+  from an owner-verified source, not guessed from a similarly named deployment.
+
+Repo_root/CLAUDE.md:3-18 mandates a claude branch and forbids PRs. That is a copied
+workflow from another repository, not the workflow for Workspace_DGO. Work stays
+on this task's review branch, targeting workspace-source. Its generated-file
+guidance remains useful, but its closure records and "full gate" claims cannot
+override missing files or fresh evidence in this repository.
+
+Bounded improvements
+--------------------
+* A dependency-free root npm entry point selects Repo_root explicitly, runs an
+  allowlist of existing offline checks, continues after failures, and reports
+  statuses without printing raw child logs or secret values.
+* The import checker now keeps recursive regex iteration independent, rejects
+  missing HTML/module entry points, and resolves browser query/fragment suffixes.
+  Four fixture regressions test these cases.
+* Five gate tests cover redaction-by-design, tracked-only scanning, config and
+  container blockers, subprocess failures/timeouts and mandatory human gates.
+* A separate two-test Playwright configuration verifies local boot and blocked
+  remote requests. It ignores inherited remote-base settings, uses loopback only,
+  substitutes empty local config, blocks non-GET/HEAD requests and WebSockets,
+  disables service workers and does not record traces/screenshots/video.
+* The inherited application README now points here before its stale claims.
+  Build/dependency/browser output and new private config are ignored at repository
+  root. Ignore rules do not remove or protect already tracked sensitive files.
+
+Reproduce safely
+----------------
+Use a disposable, restricted checkout. Do not supply tenant credentials or private
+configuration. Do not serve the repository root or use inherited live, wiring,
+commissioning or packaging commands. These commands use absolute paths for this
+checkout; change the checkout prefix if reviewing elsewhere.
+
+  cd /home/runner/work/Workspace_DGO/Workspace_DGO
+  node --version
+  npm --version
+  npm run test:gate
+  npm run verify:offline
+  npm run audit:tracked
+  npm run release:check
+
+Node 22+ and npm are required. The root has no dependencies and needs no install.
+Root npm test runs test:gate followed by verify:offline. Nonzero verification,
+audit and release exits are intentional when findings/failures remain; do not
+replace them with success or skip failing checks to obtain approval.
+
+Optional isolated browser verification, using the existing locked dependencies:
+
+  npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root ci --ignore-scripts --no-audit --no-fund
+  PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:offline-browser
+
+The Chromium executable must exist (or omit that variable when Playwright's
+matching browser is already installed). Port 18080 must be free. The server binds
+only 127.0.0.1 and refuses to reuse an existing server. Do not use the inherited
+remote-capable test:smoke command for this offline review. Browser dependencies
+are installed without lifecycle scripts; nothing is packaged.
+
+Verification evidence and limitations
+------------------------------------
+Executed with Node v22.23.3, npm 10.9.9 and installed /usr/bin/chromium:
+
+  npm run test:gate                 PASS: 9 tests
+  Repo_root/test:imports            PASS: 221 modules, 930 edges after fix
+  Repo_root/test:recordview         PASS
+  Repo_root/test:intakes            PASS
+  Repo_root/test:entrypoints        PASS: 20 assertions
+  Repo_root/test:secrets            PASS: existing narrowed ratchet only
+  npm run verify:offline           FAIL: 5 passing scripts, 9 failing scripts
+  npm test                         FAIL: 9 new tests pass, then existing failures
+  npm run audit:tracked            FAIL: see scoped findings below
+  npm run release:check            NO-GO: source failures and mandatory external gates
+  Repo_root/npm ci (flags above)    PASS: existing lockfile; no version changes
+  Repo_root/test:offline-browser    PASS: 2 isolated browser tests
+  Python zipfile in-memory audit   21 ZIPs, 105 members, 885,848 uncompressed bytes;
+                                  zero credential-pattern matches, no read errors
+
+The full existing test:node chain was attempted and stops at test:assetstamp.
+The explicit allowlist also exercises later relevant checks independently:
+
+  test:assetstamp   missing document-portal/
+  test:uxplan      missing docs/architecture/ESSENTIALS_PLAN.json
+  test:hygiene     missing docs/governance/approved-large-files.json
+  test:refs        two reference assertions fail (incomplete reference tree)
+  test:portaloutbox, test:portalvault, test:encoding
+                   missing document-portal/js/core.js
+  test:auth        inert posture passes; enforced posture cannot read its
+                   missing identification-phase3 flow-package fixture
+  test:node        stops at assetstamp; also declares undefined downstream
+                   test:effectivity and test:constraints scripts
+
+Do not remove assertions, invent flow packages, regenerate signed artifacts, or
+copy stale documents to mask these failures. The full remote-capable browser
+suite, tenant integration, delivery, performance and commissioning were not run.
+Local boot is not proof that all declared applications or routes work.
+Actions inspection found only the current agent workflow and no failed jobs;
+there was no prior failing CI run to diagnose.
+
+Tracked-content security assessment
+-----------------------------------
+The root audit scans every git-tracked path across snapshots. At initial review
+it examined 3,976 tracked files: 33 files matched credential-shaped patterns,
+one private-config filename required review, and 21 containers were uninspected.
+Counts are file counts, NOT unique, valid, or currently live credentials.
+Added review files change the total tracked-file count on subsequent runs.
+The old test:secrets excludes reference material and is not a public-release gate.
+
+The new audit checks UTF-8/UTF-16 text for signed query fragments, common GitHub/
+AWS key shapes and private-key markers. It does not print values or filenames.
+Private-config filenames (including renamed copies), archives/office containers/
+PDFs, unreadable/oversized/nonregular files and restricted agent paths are blockers.
+It does not expand archives, inspect private configs semantically, cover every
+secret format, or scan untracked/build output/history. A zero pattern count would
+NOT establish absence of secrets. Expanded-container and comprehensive secret
+review must be performed securely by an authorised owner.
+
+Read-only specialist evidence (paths only; no bearer values reproduced):
+* config.local (1).js is tracked. Its filename alone does not prove a valid secret.
+* Repo_root/README.md:22-42 contains exposure/rotation/private-repository claims.
+  Referenced reference-corpus and rotation/readiness documents are absent here;
+  old numerical or "closed" assertions are not independent revocation evidence.
+* Repo_root/config/auth.config.js:41-43 defaults authentication to inert.
+  Repo_root/core/auth.js:121-148 uses local-state identity in that posture.
+  Browser role controls or setting auth.enabled alone are not server security.
+* Repo_root/scripts/package.mjs:224-237,443-449 accepts optional auth settings and
+  records disclosed-signature reuse instead of establishing secure distribution.
+  Repo_root/scripts/package-bundle.mjs:21-26 describes embedded configuration.
+  Packaging routes differ; none was invoked or approved by this review.
+* A separate bounded Python stdlib zipfile inspection read all 105 file members
+  of the 21 tracked ZIPs in memory (885,848 uncompressed bytes). It found zero
+  credential-pattern matches and no encrypted/nested/unreadable/oversized members.
+  No files were extracted, names or values logged, or payloads executed. The
+  inspection used a 32 MiB member/total limit and signed-query/private-key/common
+  token/JWT heuristics. It does not validate payload provenance or semantics,
+  credential revocation, or general secret absence. The automated root gate
+  deliberately still flags containers: it does not implement that inspection.
+* This is a shallow clone. Full history, other refs, forks, caches and prior
+  downloads were not audited. Deletion or history rewriting revokes nothing.
+
+Release checklist: all conditions are mandatory
+-----------------------------------------------
+[ ] Owner immediately reviews public visibility and restricts repository/artifact
+    access as appropriate. Review permissions, public downloads, forks and caches;
+    do not assume a visibility change retracts previously exposed material.
+[ ] Authorised tenant administrator inventories exposed credentials across all
+    snapshots, renamed configs, expanded containers, full history and other refs;
+    revokes/rotates affected credentials and verifies old credentials are rejected.
+    Keep values and evidence in approved private storage, never in PR logs.
+[ ] Owner verifies removal/sanitisation of sensitive current-tree content and any
+    necessary coordinated history remediation. Rotation and history cleanup are
+    separate obligations; neither is established by this change.
+[ ] Restore missing source, docs and fixtures from an authorised, provenance-checked
+    source. Resolve undefined scripts and every offline failure without weakening
+    tests. Re-run the root gates and securely review dependencies and containers.
+[ ] Register/approve tenant identity integration and enforce authentication plus
+    server-side role/record authorisation, expiry, audience/issuer and replay checks.
+    Prove missing/forged/expired/wrong-role identities fail. Do not trust browser
+    localStorage, userEmail, hidden controls, or the pilot's passing inert tests.
+[ ] Owner authorises an isolated non-production commissioning plan with access
+    restrictions, test identities/data, audit/retention/backup, rollback and signoff.
+    Validate portal, workspace, vault, administration, mailer and flow contracts
+    only within that separately authorised plan. No live action is authorised here.
+[ ] Before any later distribution, separately review packaging paths and expanded
+    outputs. Exclude private config and all signed endpoints. Do not create or
+    upload a credential-bearing package, even if inherited tooling permits it.
+[ ] Record dated owner/security/tenant acceptance in approved private evidence,
+    explicitly reconciling historical closure assertions with this repository.
+
+Explicit NO-GO conditions: public exposure not contained; revocation/history or
+container coverage unknown; private config/signed endpoints in distributable
+content; failing/missing checks or applications; inert/unenforced tenant auth;
+unverified authorisation; absent commissioning/rollback/owner acceptance.
+
+npm run release:check is intentionally a NO-GO reporter, not a deployment command
+or an automatic approval mechanism. It remains nonzero even if all local checks
+eventually pass, because this checkout cannot discharge the external gates.

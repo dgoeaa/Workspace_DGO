@@ -1,0 +1,16 @@
+{
+  "name": "workspace-dgo-review",
+  "private": true,
+  "type": "module",
+  "description": "Offline review entry point; canonical application source is Repo_root. See README.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "npm run test:gate && npm run verify:offline",
+    "test:gate": "node --test tests/workspace-check.test.mjs Repo_root/tests/check-imports.test.mjs",
+    "verify:offline": "node scripts/workspace-check.mjs verify",
+    "audit:tracked": "node scripts/workspace-check.mjs audit",
+    "release:check": "node scripts/workspace-check.mjs release"
+  }
+}

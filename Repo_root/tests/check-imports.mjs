@@ -34,7 +34,10 @@ const rel = p => path.relative(ROOT, p).split(path.sep).join('/');
 
 function moduleScriptsFrom(htmlPath) {
   const abs = path.join(ROOT, htmlPath);
-  if (!fs.existsSync(abs)) return [];
+  if (!fs.existsSync(abs)) {
+    missing.push({ from: '(HTML entry point)', target: htmlPath });
+    return [];
+  }
   const html = fs.readFileSync(abs, 'utf8');
   const out = [];
   // <script type="module" src="…">  (attribute order independent)
@@ -45,7 +48,7 @@ function moduleScriptsFrom(htmlPath) {
     if (!/type\s*=\s*["']module["']/i.test(attrs)) continue;
     const src = /\bsrc\s*=\s*["']([^"']+)["']/i.exec(attrs)?.[1];
     if (!src || /^(https?:)?\/\//i.test(src)) continue;
-    out.push(path.posix.normalize(path.posix.join(path.posix.dirname(htmlPath), src)));
+    out.push(path.posix.normalize(path.posix.join(path.posix.dirname(htmlPath), src.split(/[?#]/)[0])));
   }
   return out;
 }
@@ -62,25 +65,27 @@ function scan(file, seen, missing, edges) {
   seen.add(file);
 
   const abs = path.join(ROOT, file);
-  if (!fs.existsSync(abs)) return; // reported by whoever referenced it
+  if (!fs.existsSync(abs)) {
+    missing.push({ from: '(module entry point)', target: file });
+    return;
+  }
   const src = fs.readFileSync(abs, 'utf8');
 
-  let m;
-  SPEC_RE.lastIndex = 0;
-  while ((m = SPEC_RE.exec(src))) {
+  // Each recursive scan needs its own iterator, not the parent's RegExp cursor.
+  for (const m of src.matchAll(SPEC_RE)) {
     const spec = m[1] ?? m[2];
     if (!spec || !spec.startsWith('.')) continue; // bare specifiers are not our concern
-    const target = path.posix.normalize(path.posix.join(path.posix.dirname(file), spec));
+    const target = path.posix.normalize(path.posix.join(path.posix.dirname(file), spec.split(/[?#]/)[0]));
     edges.push([file, target]);
     if (fs.existsSync(path.join(ROOT, target))) scan(target, seen, missing, edges);
     else missing.push({ from: file, spec, target });
   }
 }
 
-const entries = [...HTML_ENTRIES.flatMap(moduleScriptsFrom), ...EXTRA_ENTRIES];
 const seen = new Set();
 const missing = [];
 const edges = [];
+const entries = [...HTML_ENTRIES.flatMap(moduleScriptsFrom), ...EXTRA_ENTRIES];
 entries.forEach(e => scan(e, seen, missing, edges));
 
 // Group by missing target so one absent file is reported once, with all its importers.
