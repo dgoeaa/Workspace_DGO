@@ -80,7 +80,8 @@ Authorised selective recovery (2026-10-24)
 The owner supplied dgoeaa/ECM_DOCS_DEV and explicitly authorised selective recovery
 from commit 525fc666760726a1ca6fc23fd830782981f79419, excluding credentials and signed
 endpoints. recovery-manifest.json records the source, scope, byte sizes and SHA-256
-hashes. No source repository was cloned and no upstream scripts were executed.
+hashes. No source repository was cloned; no upstream setup, generator, packaging
+or deployment scripts were executed.
 Specific pinned files were staged outside the repository, screened, then copied
 only to previously absent paths under Repo_root/. Existing source and assertions
 were not overwritten, and the local improved import checker was retained.
@@ -117,6 +118,10 @@ Recovery verification (Node v22.23.3, npm 10.9.9, /usr/bin/chromium):
   Repo_root/npm ci (safe flags)     PASS: unchanged lockfile; lifecycle scripts off
   npm run audit:tracked            FAIL: unchanged 55 affected files (33 credential
                                   patterns, 21 containers, 1 config filename)
+  npm run release:check            NO-GO: source failures and mandatory external gates
+  Changed-file secret scanning     PASS: no secrets detected in restored/changed files
+  Read-only security review        No blocking findings after private-config sanitisation
+  CodeQL                          SKIPPED: database too large; no analysis clearance
 
 Now passing after recovery: assetstamp, uxplan, portaloutbox, portalvault, encoding
 and auth. Auth's inert and enforced unit postures pass; that does NOT enable auth
