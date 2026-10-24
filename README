@@ -11,6 +11,39 @@ says it must remain private. Treat that conflict as an exposure incident requiri
 owner action, not permission to publish. No tenant was contacted, credentials
 rotated, mail sent, deployment performed, or application package generated here.
 
+Supplementary exposure guard and release evidence
+-------------------------------------------------
+[RELEASE_REVIEW.txt](RELEASE_REVIEW.txt) preserves this PR's content comparison,
+initial verification results and owner-only NO-GO checklist. Its missing-Portal
+and missing-scan-fixture results predate the selective recovery documented below;
+use the recovery section for the newer source status.
+
+Seven distinct bearer trigger credentials were found offline in base64 modules,
+repeated in three browser artifacts. Their validity was NOT tested. Do not
+distribute mailer.html under Gen/, NITDA-Folio-Redesign-Final (1)/, or
+01 Workspace and Mailer v2026.10.21-2 - upload to folio-platform.page.gd/.
+Owner-verified containment and revocation/rotation remain blocking. The tracked
+config.local (1).js contains 19 empty endpoint placeholders, not demonstrated live
+credentials; it remains forbidden as release input.
+
+The complementary [Python exposure guard](scripts/release_gate.py) scans tracked
+and non-ignored working files, nested ZIP/OOXML and decoded base64 data URLs.
+It prints counts only, bounds size/depth and blocks incomplete scans. It does not
+certify ignored files, history, all secret types or arbitrary obfuscation. Unlike
+the Node tracked-content gate below, it expands supported containers. Both remain
+review controls, not global interception of inherited packaging commands.
+
+  REPO=/home/runner/work/Workspace_DGO/Workspace_DGO
+  PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$REPO/tests" -v
+  python3 "$REPO/scripts/release_gate.py" audit
+  python3 "$REPO/scripts/release_gate.py" release
+
+Python 3.11+ is required. Audit exits 1 for findings/incomplete scans; release
+always exits 2 (NO-GO), even for a clean simulated scan. Eight guard regressions
+cover encoded/nested content, incomplete scans, Git failure and CLI policy.
+Historical source-check failures and prior security analysis are not current
+production clearance. No live/tenant/wired-artifact actions are authorised here.
+
 Selection evidence
 ------------------
 The comparison used actual git-tracked files, package scripts, source modules and

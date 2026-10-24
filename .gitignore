@@ -1,3 +1,7 @@
+__pycache__/
+*.py[cod]
+/verification-output/
+# Prevent new local credential files; this does not untrack existing copies or erase history.
 node_modules/
 test-results/
 playwright-report/

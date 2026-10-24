@@ -2,7 +2,8 @@
 
 > **Workspace_DGO review:** `Repo_root/` is the selected source baseline, not a complete
 > or production-ready release. Read the repository-level [review and release gates](../README)
-> first. Portal source and selected docs/fixtures have been selectively recovered from an
+> and [supplementary exposure review](../RELEASE_REVIEW.txt) first. **NO-GO.**
+> Portal source and selected docs/fixtures have been selectively recovered from an
 > owner-approved pinned commit; reference/governance gaps, inert authentication,
 > and repository-wide exposure checks remain unresolved. Historical closure, rotation, packaging
 > and readiness assertions below are not verified evidence for this public repository.
