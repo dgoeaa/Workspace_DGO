@@ -1,0 +1,76 @@
+# Workspace_DGO — source selection, not a production release
+
+**NO-GO for production or publication of delivery artifacts.**
+
+The canonical development baseline is [Repo_root/](Repo_root/).
+The other top-level solution snapshots are retained as references, not alternate
+build roots. This is a content-based selection, not an endorsement of “1.0.3”.
+See [selection evidence, verification results and release checklist](RELEASE_REVIEW.txt).
+
+## Security first
+
+GitHub metadata identifies this repository as **PUBLIC** (checked 2026-10-24).
+The copied source README says it must not be public. Seven distinct bearer
+trigger credentials were found offline in base64 modules in three browser
+artifacts; encoding does not protect them. Their validity was NOT tested.
+Do not distribute the mailer artifacts under `Gen/`,
+`01 Workspace and Mailer v2026.10.21-2 - upload to folio-platform.page.gd/`,
+or `NITDA-Folio-Redesign-Final (1)/`.
+
+Owner verification of access/exposure, revocation/rotation, and server-side
+authorization is mandatory. Earlier rotation/closure assertions from the copied
+project do not discharge this public repository's exposure. The tracked
+`config.local (1).js` currently contains empty placeholders, not verified live
+credentials; it is still forbidden as release input. Ignoring local config files
+does not remove existing tracked files or history.
+
+No visibility change, live tenant action, mail, URL rotation, production
+deployment, or wired artifact generation is authorized by this review.
+
+## Navigation and authority
+
+- [Selected source overview](Repo_root/README.md): useful historical context,
+  but not authoritative for readiness, rotation, completeness, or test counts.
+- [Platform declaration](Repo_root/scripts/platforms.config.mjs): five declared
+  platforms; the declared Document Portal is absent from the supplied snapshot.
+- [Offline release guard](scripts/release_gate.py) and
+  [regression tests](tests/test_release_gate.py).
+- [Release review and NO-GO checklist](RELEASE_REVIEW.txt): current repository
+  evidence takes precedence over copied commissioning/closure claims.
+
+The branch/direct-push/no-PR mandate in `Repo_root/CLAUDE.md` belongs to the
+original project and is not applicable here. Use this repository's review PR;
+do not switch to that unrelated branch.
+
+## Reproduce without wiring or modifying source
+
+Node 22+ and Python 3.11+; no dependency installation is needed for these checks.
+Run each command independently so a failure does not hide later results:
+
+```sh
+REPO=/home/runner/work/Workspace_DGO/Workspace_DGO
+cd "$REPO"
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$REPO/tests" -v
+python3 "$REPO/scripts/release_gate.py" audit
+python3 "$REPO/scripts/release_gate.py" release
+cd "$REPO/Repo_root"
+node "$REPO/Repo_root/tests/check-imports.mjs"
+node "$REPO/Repo_root/tests/auth-posture.test.mjs"
+node "$REPO/Repo_root/tests/platforms.test.mjs"
+node "$REPO/Repo_root/tests/zip-reader.test.mjs"
+node "$REPO/Repo_root/tests/check-secrets.mjs"
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$REPO/Repo_root/tools/flow-capsule/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$REPO/Repo_root/tools/admin-centre/tests"
+```
+
+`audit` exits 1 for signature-bearing content, local config, or incomplete scans.
+`release` always exits 2 (NO-GO): offline source checks cannot establish owner
+approval or production readiness. This is a review guard, not an interception of
+all legacy packaging commands. Do not invoke copied wiring, packaging, recovery,
+live-check or commissioning commands as part of verification.
+
+The audit reports counts only and reads tracked plus non-ignored working files,
+ZIP/OOXML members and embedded base64 data URLs, with bounded size/depth.
+It does not certify all secret types, ignored files, remote history, or arbitrary
+obfuscation. Any unreadable content remains a blocker. Python service tests use
+temporary state and loopback fixtures, not a real tenant.
