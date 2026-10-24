@@ -1,0 +1,219 @@
+export const Routes = [
+  {
+    "path": "home",
+    "label": "Command Center",
+    "group": "START HERE",
+    "kind": "dashboard",
+    "kpi": true
+  },
+  {
+    "path": "ecm-erp-charter",
+    "label": "ERP–ECM Charter",
+    "group": "START HERE",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "activities",
+    "label": "Activities",
+    "group": "OPERATIONS",
+    "kind": "dashboard",
+    "kpi": true
+  },
+  {
+    "path": "correspondence",
+    "label": "Intake & Assignment",
+    "group": "OPERATIONS",
+    "kind": "workspace",
+    "kpi": true
+  },
+  {
+    "path": "response-tracking",
+    "label": "Tracking & Monitoring",
+    "group": "CONTROL",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "orchestrator",
+    "label": "My Work",
+    "group": "OPERATIONS",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "single-assignment",
+    "label": "Assignment Desk",
+    "group": "OPERATIONS",
+    "kind": "form",
+    "kpi": false
+  },
+  {
+    "path": "bulk-assignment",
+    "label": "Bulk Assignment",
+    "group": "OPERATIONS",
+    "kind": "form",
+    "kpi": false
+  },
+  {
+    "path": "fasttrack",
+    "label": "FastTrack SLA",
+    "group": "CONTROL",
+    "kind": "dashboard",
+    "kpi": true
+  },
+  {
+    "path": "approvals",
+    "label": "Review & Approval",
+    "group": "CONTROL",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "acknowledgment",
+    "label": "Acknowledgment Queue",
+    "group": "OPERATIONS",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "dispatch",
+    "label": "Dispatch",
+    "group": "CLOSURE",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "scan-intake",
+    "label": "Registry Scan Intake",
+    "group": "OPERATIONS",
+    "kind": "form",
+    "kpi": false
+  },
+  {
+    "path": "registry",
+    "label": "Registry",
+    "group": "OPERATIONS",
+    "kind": "workspace",
+    "kpi": true
+  },
+  {
+    "path": "briefs",
+    "label": "Briefs & Submissions",
+    "group": "CONTROL",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "meetings",
+    "label": "Meetings",
+    "group": "CONTROL",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "projects",
+    "label": "Projects",
+    "group": "CONTROL",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "comments",
+    "label": "Comments",
+    "group": "OPERATIONS",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "reports",
+    "label": "Reports",
+    "group": "CONTROL",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "statistics",
+    "label": "Statistics",
+    "group": "CONTROL",
+    "kind": "dashboard",
+    "kpi": true
+  },
+  {
+    "path": "executive",
+    "label": "DGCEO Correspondence & Decision Hub",
+    "group": "CONTROL",
+    "kind": "dashboard",
+    "kpi": true
+  },
+  {
+    "path": "assistant",
+    "label": "Assistant",
+    "group": "SYSTEM",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "lookup",
+    "label": "Lookup & Direct Action",
+    "group": "OPERATIONS",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "admin-suite",
+    "label": "Admin Suite",
+    "group": "SYSTEM",
+    "kind": "admin",
+    "kpi": true
+  },
+  {
+    "path": "operator-hud",
+    "label": "Operator HUD",
+    "group": "SYSTEM",
+    "kind": "dashboard",
+    "kpi": true
+  },
+  {
+    "path": "settings",
+    "label": "Administration",
+    "group": "SYSTEM",
+    "kind": "admin",
+    "kpi": false
+  },
+  {
+    "path": "endpoint-console",
+    "label": "Endpoint Console",
+    "group": "SYSTEM",
+    "kind": "workspace",
+    "kpi": false
+  },
+  {
+    "path": "diagnostics",
+    "label": "System Health",
+    "group": "SYSTEM",
+    "kind": "dashboard",
+    "kpi": true
+  },
+  {
+    "path": "user-admin",
+    "label": "User Administration",
+    "group": "SYSTEM",
+    "kind": "admin",
+    "kpi": false
+  },
+  {
+    "path": "archive",
+    "label": "Archive Evidence",
+    "group": "CLOSURE",
+    "kind": "workspace",
+    "kpi": true
+  },
+  {
+    "path": "correspondence-email",
+    "label": "Correspondence Email Desk",
+    "group": "CLOSURE",
+    "kind": "workspace",
+    "kpi": true
+  }
+];

@@ -1,0 +1,228 @@
+{
+  "generatedBy": "scripts/build-mailer-flows.mjs",
+  "contractVersion": "dgo-mail/2.0",
+  "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+  "lists": [
+    {
+      "title": "DGOMailLog",
+      "fields": [
+        "CampaignId",
+        "RecipientKey",
+        "Institution",
+        "Addressee",
+        "ToAddresses",
+        "CcAddresses",
+        "BccAddresses",
+        "Subject",
+        "Reference",
+        "AttachmentNames",
+        "AttachmentCount",
+        "Status",
+        "ErrorMessage",
+        "OperatorEmail",
+        "OperatorName",
+        "SentAt",
+        "RequestId",
+        "FlowRunId"
+      ]
+    },
+    {
+      "title": "DGOMailDirectory",
+      "fields": [
+        "Institution",
+        "Addressee",
+        "Email",
+        "CcEmails",
+        "Website",
+        "Verification",
+        "Salutation",
+        "Category",
+        "Active",
+        "Notes",
+        "SortOrder"
+      ]
+    },
+    {
+      "title": "DGOMailTemplates",
+      "fields": [
+        "TemplateName",
+        "Subject",
+        "BodyHtml",
+        "Description",
+        "UpdatedBy"
+      ]
+    },
+    {
+      "title": "DGOMailOperators",
+      "fields": [
+        "DisplayName",
+        "Active",
+        "Role"
+      ]
+    },
+    {
+      "title": "DGOMailSessions",
+      "fields": [
+        "Email",
+        "DisplayName",
+        "Code",
+        "CodeExpiresAt",
+        "Attempts",
+        "Token",
+        "TokenExpiresAt",
+        "Status"
+      ]
+    },
+    {
+      "title": "DGOMailCampaigns",
+      "fields": [
+        "CampaignName",
+        "Status",
+        "Data",
+        "UpdatedByEmail"
+      ]
+    },
+    {
+      "title": "DGOMailReports",
+      "fields": [
+        "Kind",
+        "ReportTitle",
+        "Status",
+        "Data",
+        "OperatorEmail"
+      ]
+    },
+    {
+      "title": "DGOMailFiles",
+      "fields": []
+    }
+  ],
+  "flows": [
+    {
+      "name": "DGO_MAIL_SEND",
+      "endpointKey": "MAIL_SEND",
+      "trigger": "HTTP request (POST), triggerAuthenticationType: All",
+      "connectors": [
+        "SharePoint",
+        "Office 365 Outlook"
+      ],
+      "operations": [
+        "send",
+        "healthCheck",
+        "verify"
+      ],
+      "definition": "definitions/DGO_MAIL_SEND.definition.json",
+      "package": "packages/DGO_MAIL_SEND.zip"
+    },
+    {
+      "name": "DGO_MAIL_LOG",
+      "endpointKey": "MAIL_LOG",
+      "trigger": "HTTP request (POST), triggerAuthenticationType: All",
+      "connectors": [
+        "SharePoint"
+      ],
+      "operations": [
+        "list",
+        "get",
+        "healthCheck",
+        "verify"
+      ],
+      "definition": "definitions/DGO_MAIL_LOG.definition.json",
+      "package": "packages/DGO_MAIL_LOG.zip"
+    },
+    {
+      "name": "DGO_MAIL_DIRECTORY",
+      "endpointKey": "MAIL_DIRECTORY",
+      "trigger": "HTTP request (POST), triggerAuthenticationType: All",
+      "connectors": [
+        "SharePoint"
+      ],
+      "operations": [
+        "list",
+        "upsert",
+        "delete",
+        "healthCheck",
+        "verify"
+      ],
+      "definition": "definitions/DGO_MAIL_DIRECTORY.definition.json",
+      "package": "packages/DGO_MAIL_DIRECTORY.zip"
+    },
+    {
+      "name": "DGO_MAIL_TEMPLATES",
+      "endpointKey": "MAIL_TEMPLATES",
+      "trigger": "HTTP request (POST), triggerAuthenticationType: All",
+      "connectors": [
+        "SharePoint"
+      ],
+      "operations": [
+        "list",
+        "upsert",
+        "delete",
+        "healthCheck",
+        "verify"
+      ],
+      "definition": "definitions/DGO_MAIL_TEMPLATES.definition.json",
+      "package": "packages/DGO_MAIL_TEMPLATES.zip"
+    },
+    {
+      "name": "DGO_MAIL_PROVISION",
+      "endpointKey": "MAIL_PROVISION",
+      "trigger": "HTTP request (POST), triggerAuthenticationType: All",
+      "connectors": [
+        "SharePoint"
+      ],
+      "operations": [
+        "provision",
+        "healthCheck",
+        "verify"
+      ],
+      "definition": "definitions/DGO_MAIL_PROVISION.definition.json",
+      "package": "packages/DGO_MAIL_PROVISION.zip"
+    },
+    {
+      "name": "DGO_MAIL_AUTH",
+      "endpointKey": "MAIL_AUTH",
+      "trigger": "HTTP request (POST), triggerAuthenticationType: All",
+      "connectors": [
+        "SharePoint",
+        "Office 365 Outlook"
+      ],
+      "operations": [
+        "requestCode",
+        "verifyCode",
+        "signOut",
+        "whoAmI",
+        "listOperators",
+        "upsertOperator",
+        "healthCheck",
+        "verify"
+      ],
+      "definition": "definitions/DGO_MAIL_AUTH.definition.json",
+      "package": "packages/DGO_MAIL_AUTH.zip"
+    },
+    {
+      "name": "DGO_MAIL_DATA",
+      "endpointKey": "MAIL_DATA",
+      "trigger": "HTTP request (POST), triggerAuthenticationType: All",
+      "connectors": [
+        "SharePoint"
+      ],
+      "operations": [
+        "listMailings",
+        "saveMailing",
+        "deleteMailing",
+        "listReports",
+        "saveReport",
+        "deleteReport",
+        "uploadFile",
+        "downloadFile",
+        "listFiles",
+        "deleteFile",
+        "healthCheck",
+        "verify"
+      ],
+      "definition": "definitions/DGO_MAIL_DATA.definition.json",
+      "package": "packages/DGO_MAIL_DATA.zip"
+    }
+  ]
+}

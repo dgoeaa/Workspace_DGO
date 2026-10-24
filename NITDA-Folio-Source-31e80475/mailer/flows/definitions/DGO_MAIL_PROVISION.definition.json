@@ -1,0 +1,1556 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "description": "DGO Correspondence Mailer: create the DGOMailLog, DGOMailDirectory, DGOMailTemplates, DGOMailOperators, DGOMailSessions, DGOMailCampaigns, DGOMailReports, DGOMailFiles lists and library and their columns. Idempotent; validationOnly:true reports the plan and writes nothing.",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "manual": {
+      "type": "Request",
+      "kind": "Http",
+      "inputs": {
+        "triggerAuthenticationType": "All",
+        "method": "POST",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "operation": {
+              "type": "string"
+            },
+            "requestId": {
+              "type": "string"
+            },
+            "validationOnly": {
+              "type": "boolean"
+            },
+            "operatorKey": {
+              "type": "string"
+            },
+            "sessionToken": {
+              "type": "string"
+            },
+            "operator": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "payload": {
+              "type": "object"
+            },
+            "_platform": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "correlationId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "Compose_Config": {
+      "type": "Compose",
+      "inputs": {
+        "endpointKey": "MAIL_PROVISION",
+        "flowIdentity": "DGO_MAIL_PROVISION",
+        "contractVersion": "dgo-mail/2.0",
+        "environment": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1",
+        "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+        "allowedOrigin": "https://folio-platform.page.gd",
+        "operatorKey": "__SET_OPERATOR_KEY_AFTER_IMPORT__",
+        "logList": "DGOMailLog",
+        "directoryList": "DGOMailDirectory",
+        "templatesList": "DGOMailTemplates",
+        "operatorsList": "DGOMailOperators",
+        "sessionsList": "DGOMailSessions",
+        "lists": [
+          {
+            "title": "DGOMailLog",
+            "description": "DGO Correspondence Mailer - one row per message. Title is the messageId. Private to the flow owner.",
+            "template": 100,
+            "private": true,
+            "fields": [
+              {
+                "name": "CampaignId",
+                "xml": "<Field Type=\"Text\" Name=\"CampaignId\" StaticName=\"CampaignId\" DisplayName=\"CampaignId\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "RecipientKey",
+                "xml": "<Field Type=\"Text\" Name=\"RecipientKey\" StaticName=\"RecipientKey\" DisplayName=\"RecipientKey\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Institution",
+                "xml": "<Field Type=\"Text\" Name=\"Institution\" StaticName=\"Institution\" DisplayName=\"Institution\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Addressee",
+                "xml": "<Field Type=\"Text\" Name=\"Addressee\" StaticName=\"Addressee\" DisplayName=\"Addressee\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "ToAddresses",
+                "xml": "<Field Type=\"Note\" Name=\"ToAddresses\" StaticName=\"ToAddresses\" DisplayName=\"ToAddresses\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "CcAddresses",
+                "xml": "<Field Type=\"Note\" Name=\"CcAddresses\" StaticName=\"CcAddresses\" DisplayName=\"CcAddresses\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "BccAddresses",
+                "xml": "<Field Type=\"Note\" Name=\"BccAddresses\" StaticName=\"BccAddresses\" DisplayName=\"BccAddresses\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "Subject",
+                "xml": "<Field Type=\"Text\" Name=\"Subject\" StaticName=\"Subject\" DisplayName=\"Subject\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Reference",
+                "xml": "<Field Type=\"Text\" Name=\"Reference\" StaticName=\"Reference\" DisplayName=\"Reference\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "AttachmentNames",
+                "xml": "<Field Type=\"Note\" Name=\"AttachmentNames\" StaticName=\"AttachmentNames\" DisplayName=\"AttachmentNames\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "AttachmentCount",
+                "xml": "<Field Type=\"Number\" Name=\"AttachmentCount\" StaticName=\"AttachmentCount\" DisplayName=\"AttachmentCount\" Decimals=\"0\" />"
+              },
+              {
+                "name": "Status",
+                "xml": "<Field Type=\"Text\" Name=\"Status\" StaticName=\"Status\" DisplayName=\"Status\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "ErrorMessage",
+                "xml": "<Field Type=\"Note\" Name=\"ErrorMessage\" StaticName=\"ErrorMessage\" DisplayName=\"ErrorMessage\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "OperatorEmail",
+                "xml": "<Field Type=\"Text\" Name=\"OperatorEmail\" StaticName=\"OperatorEmail\" DisplayName=\"OperatorEmail\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "OperatorName",
+                "xml": "<Field Type=\"Text\" Name=\"OperatorName\" StaticName=\"OperatorName\" DisplayName=\"OperatorName\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "SentAt",
+                "xml": "<Field Type=\"DateTime\" Name=\"SentAt\" StaticName=\"SentAt\" DisplayName=\"SentAt\" Format=\"DateTime\" />"
+              },
+              {
+                "name": "RequestId",
+                "xml": "<Field Type=\"Text\" Name=\"RequestId\" StaticName=\"RequestId\" DisplayName=\"RequestId\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "FlowRunId",
+                "xml": "<Field Type=\"Text\" Name=\"FlowRunId\" StaticName=\"FlowRunId\" DisplayName=\"FlowRunId\" MaxLength=\"255\" />"
+              }
+            ]
+          },
+          {
+            "title": "DGOMailDirectory",
+            "description": "DGO Correspondence Mailer - addressee directory. Title is the institution key.",
+            "template": 100,
+            "private": false,
+            "fields": [
+              {
+                "name": "Institution",
+                "xml": "<Field Type=\"Text\" Name=\"Institution\" StaticName=\"Institution\" DisplayName=\"Institution\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Addressee",
+                "xml": "<Field Type=\"Text\" Name=\"Addressee\" StaticName=\"Addressee\" DisplayName=\"Addressee\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Email",
+                "xml": "<Field Type=\"Text\" Name=\"Email\" StaticName=\"Email\" DisplayName=\"Email\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "CcEmails",
+                "xml": "<Field Type=\"Note\" Name=\"CcEmails\" StaticName=\"CcEmails\" DisplayName=\"CcEmails\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "Website",
+                "xml": "<Field Type=\"Text\" Name=\"Website\" StaticName=\"Website\" DisplayName=\"Website\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Verification",
+                "xml": "<Field Type=\"Text\" Name=\"Verification\" StaticName=\"Verification\" DisplayName=\"Verification\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Salutation",
+                "xml": "<Field Type=\"Text\" Name=\"Salutation\" StaticName=\"Salutation\" DisplayName=\"Salutation\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Category",
+                "xml": "<Field Type=\"Text\" Name=\"Category\" StaticName=\"Category\" DisplayName=\"Category\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Active",
+                "xml": "<Field Type=\"Boolean\" Name=\"Active\" StaticName=\"Active\" DisplayName=\"Active\"><Default>1</Default></Field>"
+              },
+              {
+                "name": "Notes",
+                "xml": "<Field Type=\"Note\" Name=\"Notes\" StaticName=\"Notes\" DisplayName=\"Notes\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "SortOrder",
+                "xml": "<Field Type=\"Number\" Name=\"SortOrder\" StaticName=\"SortOrder\" DisplayName=\"SortOrder\" Decimals=\"0\" />"
+              }
+            ]
+          },
+          {
+            "title": "DGOMailTemplates",
+            "description": "DGO Correspondence Mailer - letter templates. Title is the template key. Private to the flow owner.",
+            "template": 100,
+            "private": true,
+            "fields": [
+              {
+                "name": "TemplateName",
+                "xml": "<Field Type=\"Text\" Name=\"TemplateName\" StaticName=\"TemplateName\" DisplayName=\"TemplateName\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Subject",
+                "xml": "<Field Type=\"Text\" Name=\"Subject\" StaticName=\"Subject\" DisplayName=\"Subject\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "BodyHtml",
+                "xml": "<Field Type=\"Note\" Name=\"BodyHtml\" StaticName=\"BodyHtml\" DisplayName=\"BodyHtml\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "Description",
+                "xml": "<Field Type=\"Note\" Name=\"Description\" StaticName=\"Description\" DisplayName=\"Description\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "UpdatedBy",
+                "xml": "<Field Type=\"Text\" Name=\"UpdatedBy\" StaticName=\"UpdatedBy\" DisplayName=\"UpdatedBy\" MaxLength=\"255\" />"
+              }
+            ]
+          },
+          {
+            "title": "DGOMailOperators",
+            "description": "DGO Correspondence Mailer - who may sign in. Title is the operator's email address, lower case. Role: operator or admin. Private to the flow owner.",
+            "template": 100,
+            "private": true,
+            "fields": [
+              {
+                "name": "DisplayName",
+                "xml": "<Field Type=\"Text\" Name=\"DisplayName\" StaticName=\"DisplayName\" DisplayName=\"DisplayName\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Active",
+                "xml": "<Field Type=\"Boolean\" Name=\"Active\" StaticName=\"Active\" DisplayName=\"Active\"><Default>1</Default></Field>"
+              },
+              {
+                "name": "Role",
+                "xml": "<Field Type=\"Text\" Name=\"Role\" StaticName=\"Role\" DisplayName=\"Role\" MaxLength=\"255\" />"
+              }
+            ]
+          },
+          {
+            "title": "DGOMailSessions",
+            "description": "DGO Correspondence Mailer - sign-in codes and sessions. Private to the flow owner. Title is the challenge id.",
+            "template": 100,
+            "private": true,
+            "fields": [
+              {
+                "name": "Email",
+                "xml": "<Field Type=\"Text\" Name=\"Email\" StaticName=\"Email\" DisplayName=\"Email\" MaxLength=\"255\" Indexed=\"TRUE\" />"
+              },
+              {
+                "name": "DisplayName",
+                "xml": "<Field Type=\"Text\" Name=\"DisplayName\" StaticName=\"DisplayName\" DisplayName=\"DisplayName\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Code",
+                "xml": "<Field Type=\"Text\" Name=\"Code\" StaticName=\"Code\" DisplayName=\"Code\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "CodeExpiresAt",
+                "xml": "<Field Type=\"DateTime\" Name=\"CodeExpiresAt\" StaticName=\"CodeExpiresAt\" DisplayName=\"CodeExpiresAt\" Format=\"DateTime\" />"
+              },
+              {
+                "name": "Attempts",
+                "xml": "<Field Type=\"Number\" Name=\"Attempts\" StaticName=\"Attempts\" DisplayName=\"Attempts\" Decimals=\"0\" />"
+              },
+              {
+                "name": "Token",
+                "xml": "<Field Type=\"Text\" Name=\"Token\" StaticName=\"Token\" DisplayName=\"Token\" MaxLength=\"255\" Indexed=\"TRUE\" />"
+              },
+              {
+                "name": "TokenExpiresAt",
+                "xml": "<Field Type=\"DateTime\" Name=\"TokenExpiresAt\" StaticName=\"TokenExpiresAt\" DisplayName=\"TokenExpiresAt\" Format=\"DateTime\" />"
+              },
+              {
+                "name": "Status",
+                "xml": "<Field Type=\"Text\" Name=\"Status\" StaticName=\"Status\" DisplayName=\"Status\" MaxLength=\"255\" Indexed=\"TRUE\" />"
+              }
+            ]
+          },
+          {
+            "title": "DGOMailCampaigns",
+            "description": "DGO Correspondence Mailer - every mailing and its per-recipient results, shared across devices. Title is the mailing id. Private to the flow owner.",
+            "template": 100,
+            "private": true,
+            "fields": [
+              {
+                "name": "CampaignName",
+                "xml": "<Field Type=\"Text\" Name=\"CampaignName\" StaticName=\"CampaignName\" DisplayName=\"CampaignName\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Status",
+                "xml": "<Field Type=\"Text\" Name=\"Status\" StaticName=\"Status\" DisplayName=\"Status\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Data",
+                "xml": "<Field Type=\"Note\" Name=\"Data\" StaticName=\"Data\" DisplayName=\"Data\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "UpdatedByEmail",
+                "xml": "<Field Type=\"Text\" Name=\"UpdatedByEmail\" StaticName=\"UpdatedByEmail\" DisplayName=\"UpdatedByEmail\" MaxLength=\"255\" />"
+              }
+            ]
+          },
+          {
+            "title": "DGOMailReports",
+            "description": "DGO Correspondence Mailer - the report of every operation (the Activity page), shared across devices. Title is the report id.",
+            "template": 100,
+            "private": false,
+            "fields": [
+              {
+                "name": "Kind",
+                "xml": "<Field Type=\"Text\" Name=\"Kind\" StaticName=\"Kind\" DisplayName=\"Kind\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "ReportTitle",
+                "xml": "<Field Type=\"Text\" Name=\"ReportTitle\" StaticName=\"ReportTitle\" DisplayName=\"ReportTitle\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Status",
+                "xml": "<Field Type=\"Text\" Name=\"Status\" StaticName=\"Status\" DisplayName=\"Status\" MaxLength=\"255\" />"
+              },
+              {
+                "name": "Data",
+                "xml": "<Field Type=\"Note\" Name=\"Data\" StaticName=\"Data\" DisplayName=\"Data\" NumLines=\"6\" RichText=\"FALSE\" UnlimitedLengthInDocumentLibrary=\"TRUE\" />"
+              },
+              {
+                "name": "OperatorEmail",
+                "xml": "<Field Type=\"Text\" Name=\"OperatorEmail\" StaticName=\"OperatorEmail\" DisplayName=\"OperatorEmail\" MaxLength=\"255\" />"
+              }
+            ]
+          },
+          {
+            "title": "DGOMailFiles",
+            "description": "DGO Correspondence Mailer - attached letters and enclosures, shared across devices. File name: <id>__<original name>.",
+            "template": 101,
+            "private": false,
+            "fields": []
+          }
+        ]
+      },
+      "runAfter": {}
+    },
+    "Compose_Request": {
+      "type": "Compose",
+      "inputs": {
+        "operation": "@toLower(string(coalesce(triggerBody()?['_platform']?['operation'], triggerBody()?['operation'], '')))",
+        "requestId": "@string(coalesce(triggerBody()?['requestId'], triggerBody()?['_platform']?['correlationId'], guid()))",
+        "validationOnly": "@equals(triggerBody()?['validationOnly'], true)",
+        "operatorEmail": "@string(coalesce(triggerBody()?['operator']?['email'], ''))",
+        "operatorName": "@string(coalesce(triggerBody()?['operator']?['name'], ''))",
+        "keyConfigured": "@and(not(startsWith(string(outputs('Compose_Config')?['operatorKey']), '__')), greaterOrEquals(length(string(outputs('Compose_Config')?['operatorKey'])), 16))",
+        "sessionToken": "@trim(string(coalesce(triggerBody()?['sessionToken'], '')))",
+        "isAdmin": "@and(and(not(startsWith(string(outputs('Compose_Config')?['operatorKey']), '__')), greaterOrEquals(length(string(outputs('Compose_Config')?['operatorKey'])), 16)), equals(string(coalesce(triggerBody()?['operatorKey'], '')), string(outputs('Compose_Config')?['operatorKey'])))"
+      },
+      "runAfter": {
+        "Compose_Config": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varReport": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varReport",
+            "type": "array",
+            "value": []
+          }
+        ]
+      },
+      "runAfter": {
+        "Compose_Request": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varExistingFields": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varExistingFields",
+            "type": "array",
+            "value": []
+          }
+        ]
+      },
+      "runAfter": {
+        "Initialize_varReport": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varListPrivate": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varListPrivate",
+            "type": "boolean",
+            "value": false
+          }
+        ]
+      },
+      "runAfter": {
+        "Initialize_varExistingFields": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varListIndexed": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varListIndexed",
+            "type": "boolean",
+            "value": false
+          }
+        ]
+      },
+      "runAfter": {
+        "Initialize_varListPrivate": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varCallerSessions": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varCallerSessions",
+            "type": "array",
+            "value": []
+          }
+        ]
+      },
+      "runAfter": {
+        "Initialize_varListIndexed": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varCallerOperators": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varCallerOperators",
+            "type": "array",
+            "value": []
+          }
+        ]
+      },
+      "runAfter": {
+        "Initialize_varCallerSessions": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Condition_Refuse_Unconfigured": {
+      "type": "If",
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "@and(not(contains(createArray('verify', 'healthcheck'), outputs('Compose_Request')?['operation'])), not(outputs('Compose_Request')?['keyConfigured']))",
+              true
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "Condition_Refuse_Unconfigured_Respond": {
+          "type": "Response",
+          "kind": "Http",
+          "inputs": {
+            "statusCode": 503,
+            "headers": {
+              "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+              "Access-Control-Allow-Methods": "POST, OPTIONS",
+              "Access-Control-Allow-Headers": "Content-Type",
+              "Vary": "Origin",
+              "Content-Type": "application/json"
+            },
+            "body": {
+              "success": false,
+              "validationOnly": false,
+              "endpoint": {
+                "key": "@outputs('Compose_Config')?['endpointKey']"
+              },
+              "requestId": "@outputs('Compose_Request')?['requestId']",
+              "runId": "@workflow()?['run']?['name']",
+              "data": null,
+              "error": {
+                "code": "NOT_CONFIGURED",
+                "message": "This flow has not been configured: set operatorKey in Compose_Config (16+ characters, not starting with \"__\").",
+                "details": null
+              }
+            }
+          },
+          "runAfter": {}
+        },
+        "Condition_Refuse_Unconfigured_Stop": {
+          "type": "Terminate",
+          "inputs": {
+            "runStatus": "Succeeded"
+          },
+          "runAfter": {
+            "Condition_Refuse_Unconfigured_Respond": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      },
+      "runAfter": {
+        "Initialize_varCallerOperators": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Condition_Check_Session": {
+      "type": "If",
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "@contains(createArray('verify', 'healthcheck'), outputs('Compose_Request')?['operation'])",
+              false
+            ]
+          },
+          {
+            "equals": [
+              "@outputs('Compose_Request')?['isAdmin']",
+              false
+            ]
+          },
+          {
+            "equals": [
+              "@empty(outputs('Compose_Request')?['sessionToken'])",
+              false
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "SP_Find_Session": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "HttpRequest"
+            },
+            "parameters": {
+              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+              "parameters/method": "GET",
+              "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '?$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(outputs('Compose_Request')?['sessionToken']), '''', ''''''), '''')))",
+              "parameters/headers": {
+                "Accept": "application/json;odata=nometadata",
+                "Content-Type": "application/json;odata=nometadata"
+              }
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {}
+        },
+        "Filter_Active_Session": {
+          "type": "Query",
+          "inputs": {
+            "from": "@coalesce(body('SP_Find_Session')?['value'], createArray())",
+            "where": "@and(equals(string(item()?['Status']), 'Active'), equals(string(item()?['Token']), string(outputs('Compose_Request')?['sessionToken'])), greater(ticks(string(coalesce(item()?['TokenExpiresAt'], '1900-01-01T00:00:00Z'))), ticks(utcNow())))"
+          },
+          "runAfter": {
+            "SP_Find_Session": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Set_varCallerSessions": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varCallerSessions",
+            "value": "@body('Filter_Active_Session')"
+          },
+          "runAfter": {
+            "Filter_Active_Session": [
+              "Succeeded"
+            ]
+          }
+        },
+        "SP_Find_Caller_Operator": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "HttpRequest"
+            },
+            "parameters": {
+              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+              "parameters/method": "GET",
+              "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['operatorsList'], ''')/items'), '?$select=Title,DisplayName,Role&$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(toLower(string(coalesce(first(variables('varCallerSessions'))?['Email'], '-')))), '''', ''''''), ''' and Active eq 1')))",
+              "parameters/headers": {
+                "Accept": "application/json;odata=nometadata",
+                "Content-Type": "application/json;odata=nometadata"
+              }
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Set_varCallerSessions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Set_varCallerOperators": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varCallerOperators",
+            "value": "@coalesce(body('SP_Find_Caller_Operator')?['value'], createArray())"
+          },
+          "runAfter": {
+            "SP_Find_Caller_Operator": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      },
+      "runAfter": {
+        "Condition_Refuse_Unconfigured": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Compose_Caller": {
+      "type": "Compose",
+      "inputs": {
+        "authenticated": "@or(outputs('Compose_Request')?['isAdmin'], and(greater(length(variables('varCallerSessions')), 0), greater(length(variables('varCallerOperators')), 0)))",
+        "via": "@if(outputs('Compose_Request')?['isAdmin'], 'admin-key', if(and(greater(length(variables('varCallerSessions')), 0), greater(length(variables('varCallerOperators')), 0)), 'session', 'none'))",
+        "email": "@if(outputs('Compose_Request')?['isAdmin'], outputs('Compose_Request')?['operatorEmail'], toLower(string(coalesce(first(variables('varCallerSessions'))?['Email'], ''))))",
+        "name": "@if(outputs('Compose_Request')?['isAdmin'], outputs('Compose_Request')?['operatorName'], string(coalesce(first(variables('varCallerOperators'))?['DisplayName'], first(variables('varCallerSessions'))?['DisplayName'], '')))",
+        "role": "@if(outputs('Compose_Request')?['isAdmin'], 'admin', if(and(greater(length(variables('varCallerSessions')), 0), greater(length(variables('varCallerOperators')), 0)), toLower(string(coalesce(first(variables('varCallerOperators'))?['Role'], 'operator'))), ''))",
+        "sessionId": "@first(variables('varCallerSessions'))?['Id']",
+        "expiresAt": "@first(variables('varCallerSessions'))?['TokenExpiresAt']",
+        "lookupFailed": "@contains(createArray('Failed', 'TimedOut'), string(actions('Condition_Check_Session')?['status']))"
+      },
+      "runAfter": {
+        "Condition_Check_Session": [
+          "Succeeded",
+          "Failed",
+          "TimedOut"
+        ]
+      }
+    },
+    "Condition_Refuse_Unauthorised": {
+      "type": "If",
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "@and(not(contains(createArray('verify', 'healthcheck'), outputs('Compose_Request')?['operation'])), not(outputs('Compose_Caller')?['authenticated']))",
+              true
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "Condition_Refuse_Unauthorised_Respond": {
+          "type": "Response",
+          "kind": "Http",
+          "inputs": {
+            "statusCode": "@if(outputs('Compose_Caller')?['lookupFailed'], 503, 401)",
+            "headers": {
+              "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+              "Access-Control-Allow-Methods": "POST, OPTIONS",
+              "Access-Control-Allow-Headers": "Content-Type",
+              "Vary": "Origin",
+              "Content-Type": "application/json"
+            },
+            "body": {
+              "success": false,
+              "validationOnly": false,
+              "endpoint": {
+                "key": "@outputs('Compose_Config')?['endpointKey']"
+              },
+              "requestId": "@outputs('Compose_Request')?['requestId']",
+              "runId": "@workflow()?['run']?['name']",
+              "data": null,
+              "error": {
+                "code": "@if(outputs('Compose_Caller')?['lookupFailed'], 'SIGN_IN_CHECK_FAILED', 'SIGN_IN_REQUIRED')",
+                "message": "@if(outputs('Compose_Caller')?['lookupFailed'], 'The sign-in could not be checked just now (SharePoint did not answer). Nothing was done; try again in a moment.', 'Sign in first: the session is missing, has expired, was signed out, or its operator is no longer active.')",
+                "details": null
+              }
+            }
+          },
+          "runAfter": {}
+        },
+        "Condition_Refuse_Unauthorised_Stop": {
+          "type": "Terminate",
+          "inputs": {
+            "runStatus": "Succeeded"
+          },
+          "runAfter": {
+            "Condition_Refuse_Unauthorised_Respond": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      },
+      "runAfter": {
+        "Compose_Caller": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Scope_Try": {
+      "type": "Scope",
+      "runAfter": {
+        "Condition_Refuse_Unauthorised": [
+          "Succeeded"
+        ]
+      },
+      "actions": {
+        "Switch_Operation": {
+          "type": "Switch",
+          "expression": "@outputs('Compose_Request')?['operation']",
+          "cases": {
+            "Verify": {
+              "case": "verify",
+              "actions": {
+                "Respond_Verify": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "verified": true,
+                      "flowIdentity": "@outputs('Compose_Config')?['flowIdentity']",
+                      "environment": "@outputs('Compose_Config')?['environment']",
+                      "contractVersion": "@outputs('Compose_Config')?['contractVersion']",
+                      "correlationId": "@triggerBody()?['_platform']?['correlationId']",
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      }
+                    }
+                  },
+                  "runAfter": {}
+                }
+              }
+            },
+            "HealthCheck": {
+              "case": "healthcheck",
+              "actions": {
+                "Condition_Health_Requires_ValidationOnly": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@not(outputs('Compose_Request')?['validationOnly'])",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Health_Requires_ValidationOnly_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 400,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "VALIDATION_ONLY_REQUIRED",
+                            "message": "healthCheck must be called with validationOnly:true.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Health_Requires_ValidationOnly_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Health_Requires_ValidationOnly_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  }
+                },
+                "SP_Health_Probe": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "GET",
+                      "parameters/uri": "@concat('_api/web/lists?$select=Title&$filter=', encodeUriComponent(concat('Title eq ''', outputs('Compose_Config')?['logList'], '''', ' or ', 'Title eq ''', outputs('Compose_Config')?['directoryList'], '''', ' or ', 'Title eq ''', outputs('Compose_Config')?['templatesList'], '''', ' or ', 'Title eq ''', outputs('Compose_Config')?['operatorsList'], '''', ' or ', 'Title eq ''', outputs('Compose_Config')?['sessionsList'], '''')))",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      }
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Condition_Health_Requires_ValidationOnly": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Health": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": true,
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "flowIdentity": "@outputs('Compose_Config')?['flowIdentity']",
+                        "contractVersion": "@outputs('Compose_Config')?['contractVersion']",
+                        "operatorKeyConfigured": "@outputs('Compose_Request')?['keyConfigured']",
+                        "sharePointReachable": "@equals(actions('SP_Health_Probe')?['status'], 'Succeeded')",
+                        "listsFound": "@coalesce(body('SP_Health_Probe')?['value'], createArray())",
+                        "listsExpected": "@createArray(outputs('Compose_Config')?['logList'], outputs('Compose_Config')?['directoryList'], outputs('Compose_Config')?['templatesList'], outputs('Compose_Config')?['operatorsList'], outputs('Compose_Config')?['sessionsList'])"
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "SP_Health_Probe": [
+                      "Succeeded",
+                      "Failed",
+                      "TimedOut"
+                    ]
+                  }
+                }
+              }
+            },
+            "Provision": {
+              "case": "provision",
+              "actions": {
+                "Apply_to_each_List": {
+                  "type": "Foreach",
+                  "foreach": "@outputs('Compose_Config')?['lists']",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  },
+                  "actions": {
+                    "SP_Find_List": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                          "parameters/method": "GET",
+                          "parameters/uri": "@concat('_api/web/lists?$select=Title,Id&$filter=', encodeUriComponent(concat('Title eq ''', items('Apply_to_each_List')?['title'], '''')))",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          }
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_List_Body": {
+                      "type": "Compose",
+                      "inputs": {
+                        "__metadata": {
+                          "type": "SP.List"
+                        },
+                        "AllowContentTypes": true,
+                        "BaseTemplate": "@coalesce(items('Apply_to_each_List')?['template'], 100)",
+                        "ContentTypesEnabled": false,
+                        "Title": "@items('Apply_to_each_List')?['title']",
+                        "Description": "@items('Apply_to_each_List')?['description']"
+                      },
+                      "runAfter": {
+                        "SP_Find_List": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Condition_Create_List": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@empty(coalesce(body('SP_Find_List')?['value'], createArray()))",
+                              true
+                            ]
+                          },
+                          {
+                            "equals": [
+                              "@outputs('Compose_Request')?['validationOnly']",
+                              false
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "SP_Create_List": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connectionName": "shared_sharepointonline",
+                              "operationId": "HttpRequest"
+                            },
+                            "parameters": {
+                              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                              "parameters/method": "POST",
+                              "parameters/uri": "_api/web/lists",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=verbose",
+                                "Content-Type": "application/json;odata=verbose"
+                              },
+                              "parameters/body": "@string(outputs('Compose_List_Body'))"
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          },
+                          "runAfter": {}
+                        }
+                      },
+                      "else": {
+                        "actions": {}
+                      },
+                      "runAfter": {
+                        "Compose_List_Body": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Set_varExistingFields_Empty": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varExistingFields",
+                        "value": []
+                      },
+                      "runAfter": {
+                        "Condition_Create_List": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Set_varListPrivate_False": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varListPrivate",
+                        "value": false
+                      },
+                      "runAfter": {
+                        "Set_varExistingFields_Empty": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Set_varListIndexed_False": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varListIndexed",
+                        "value": false
+                      },
+                      "runAfter": {
+                        "Set_varListPrivate_False": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Condition_List_Present": {
+                      "type": "If",
+                      "expression": {
+                        "or": [
+                          {
+                            "equals": [
+                              "@empty(coalesce(body('SP_Find_List')?['value'], createArray()))",
+                              false
+                            ]
+                          },
+                          {
+                            "equals": [
+                              "@equals(actions('SP_Create_List')?['status'], 'Succeeded')",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "SP_Get_Fields": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connectionName": "shared_sharepointonline",
+                              "operationId": "HttpRequest"
+                            },
+                            "parameters": {
+                              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                              "parameters/method": "GET",
+                              "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', items('Apply_to_each_List')?['title'], ''')/fields?$select=InternalName&$filter=Hidden eq false')",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=nometadata",
+                                "Content-Type": "application/json;odata=nometadata"
+                              }
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          },
+                          "runAfter": {}
+                        },
+                        "Select_Existing_Fields": {
+                          "type": "Select",
+                          "inputs": {
+                            "from": "@coalesce(body('SP_Get_Fields')?['value'], createArray())",
+                            "select": "@item()?['InternalName']"
+                          },
+                          "runAfter": {
+                            "SP_Get_Fields": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_varExistingFields": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varExistingFields",
+                            "value": "@body('Select_Existing_Fields')"
+                          },
+                          "runAfter": {
+                            "Select_Existing_Fields": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "SP_Get_List_Permissions": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connectionName": "shared_sharepointonline",
+                              "operationId": "HttpRequest"
+                            },
+                            "parameters": {
+                              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                              "parameters/method": "GET",
+                              "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', items('Apply_to_each_List')?['title'], ''')?$select=HasUniqueRoleAssignments')",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=nometadata",
+                                "Content-Type": "application/json;odata=nometadata"
+                              }
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          },
+                          "runAfter": {
+                            "Set_varExistingFields": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Condition_Make_Private": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@equals(items('Apply_to_each_List')?['private'], true)",
+                                  true
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@outputs('Compose_Request')?['validationOnly']",
+                                  false
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@equals(body('SP_Get_List_Permissions')?['HasUniqueRoleAssignments'], true)",
+                                  false
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "SP_Make_List_Private": {
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connectionName": "shared_sharepointonline",
+                                  "operationId": "HttpRequest"
+                                },
+                                "parameters": {
+                                  "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                                  "parameters/method": "POST",
+                                  "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', items('Apply_to_each_List')?['title'], ''')/breakroleinheritance(copyRoleAssignments=false,clearSubscopes=true)')",
+                                  "parameters/headers": {
+                                    "Accept": "application/json;odata=verbose",
+                                    "Content-Type": "application/json;odata=verbose"
+                                  }
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              },
+                              "runAfter": {}
+                            }
+                          },
+                          "else": {
+                            "actions": {}
+                          },
+                          "runAfter": {
+                            "SP_Get_List_Permissions": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_varListPrivate": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varListPrivate",
+                            "value": "@or(equals(body('SP_Get_List_Permissions')?['HasUniqueRoleAssignments'], true), equals(actions('SP_Make_List_Private')?['status'], 'Succeeded'))"
+                          },
+                          "runAfter": {
+                            "Condition_Make_Private": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "SP_Get_Index_Fields": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connectionName": "shared_sharepointonline",
+                              "operationId": "HttpRequest"
+                            },
+                            "parameters": {
+                              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                              "parameters/method": "GET",
+                              "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', items('Apply_to_each_List')?['title'], ''')/fields?$select=InternalName,Indexed&$filter=', encodeUriComponent('InternalName eq ''Title'' or InternalName eq ''Created'''))",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=nometadata",
+                                "Content-Type": "application/json;odata=nometadata"
+                              }
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          },
+                          "runAfter": {
+                            "Set_varListPrivate": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Filter_Unindexed_Fields": {
+                          "type": "Query",
+                          "inputs": {
+                            "from": "@coalesce(body('SP_Get_Index_Fields')?['value'], createArray())",
+                            "where": "@not(equals(item()?['Indexed'], true))"
+                          },
+                          "runAfter": {
+                            "SP_Get_Index_Fields": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Condition_Index_Fields": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@outputs('Compose_Request')?['validationOnly']",
+                                  false
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Apply_to_each_Index_Field": {
+                              "type": "Foreach",
+                              "foreach": "@body('Filter_Unindexed_Fields')",
+                              "runtimeConfiguration": {
+                                "concurrency": {
+                                  "repetitions": 1
+                                }
+                              },
+                              "actions": {
+                                "SP_Index_Field": {
+                                  "type": "OpenApiConnection",
+                                  "inputs": {
+                                    "host": {
+                                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                      "connectionName": "shared_sharepointonline",
+                                      "operationId": "HttpRequest"
+                                    },
+                                    "parameters": {
+                                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                                      "parameters/method": "POST",
+                                      "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', items('Apply_to_each_List')?['title'], ''')/fields/getbyinternalnameortitle(''', items('Apply_to_each_Index_Field')?['InternalName'], ''')')",
+                                      "parameters/headers": {
+                                        "Accept": "application/json;odata=verbose",
+                                        "Content-Type": "application/json;odata=verbose",
+                                        "IF-MATCH": "*",
+                                        "X-HTTP-Method": "MERGE"
+                                      },
+                                      "parameters/body": "{\"__metadata\":{\"type\":\"SP.Field\"},\"Indexed\":true}"
+                                    },
+                                    "authentication": "@parameters('$authentication')"
+                                  },
+                                  "runAfter": {}
+                                }
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {}
+                          },
+                          "runAfter": {
+                            "Filter_Unindexed_Fields": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Set_varListIndexed": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varListIndexed",
+                            "value": "@or(empty(body('Filter_Unindexed_Fields')), not(outputs('Compose_Request')?['validationOnly']))"
+                          },
+                          "runAfter": {
+                            "Condition_Index_Fields": [
+                              "Succeeded"
+                            ]
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {}
+                      },
+                      "runAfter": {
+                        "Set_varListIndexed_False": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Filter_Missing_Fields": {
+                      "type": "Query",
+                      "inputs": {
+                        "from": "@items('Apply_to_each_List')?['fields']",
+                        "where": "@not(contains(variables('varExistingFields'), item()?['name']))"
+                      },
+                      "runAfter": {
+                        "Condition_List_Present": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Condition_Create_Fields": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@outputs('Compose_Request')?['validationOnly']",
+                              false
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Apply_to_each_Field": {
+                          "type": "Foreach",
+                          "foreach": "@body('Filter_Missing_Fields')",
+                          "runtimeConfiguration": {
+                            "concurrency": {
+                              "repetitions": 1
+                            }
+                          },
+                          "actions": {
+                            "Compose_Field_Body": {
+                              "type": "Compose",
+                              "inputs": {
+                                "parameters": {
+                                  "__metadata": {
+                                    "type": "SP.XmlSchemaFieldCreationInformation"
+                                  },
+                                  "SchemaXml": "@items('Apply_to_each_Field')?['xml']",
+                                  "Options": 24
+                                }
+                              },
+                              "runAfter": {}
+                            },
+                            "SP_Create_Field": {
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connectionName": "shared_sharepointonline",
+                                  "operationId": "HttpRequest"
+                                },
+                                "parameters": {
+                                  "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                                  "parameters/method": "POST",
+                                  "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', items('Apply_to_each_List')?['title'], ''')/fields/CreateFieldAsXml')",
+                                  "parameters/headers": {
+                                    "Accept": "application/json;odata=verbose",
+                                    "Content-Type": "application/json;odata=verbose"
+                                  },
+                                  "parameters/body": "@string(outputs('Compose_Field_Body'))"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              },
+                              "runAfter": {
+                                "Compose_Field_Body": [
+                                  "Succeeded"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {}
+                      },
+                      "runAfter": {
+                        "Filter_Missing_Fields": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Append_Report": {
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varReport",
+                        "value": {
+                          "list": "@items('Apply_to_each_List')?['title']",
+                          "existed": "@not(empty(coalesce(body('SP_Find_List')?['value'], createArray())))",
+                          "created": "@equals(actions('SP_Create_List')?['status'], 'Succeeded')",
+                          "missingFields": "@body('Filter_Missing_Fields')",
+                          "private": "@equals(items('Apply_to_each_List')?['private'], true)",
+                          "isPrivate": "@variables('varListPrivate')",
+                          "indexed": "@variables('varListIndexed')",
+                          "fieldsCreated": "@if(outputs('Compose_Request')?['validationOnly'], 0, length(body('Filter_Missing_Fields')))"
+                        }
+                      },
+                      "runAfter": {
+                        "Condition_Create_Fields": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Respond_Provision": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": "@outputs('Compose_Request')?['validationOnly']",
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "mode": "@if(outputs('Compose_Request')?['validationOnly'], 'plan', 'provision')",
+                        "siteUrl": "@outputs('Compose_Config')?['siteUrl']",
+                        "lists": "@variables('varReport')"
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "Apply_to_each_List": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "actions": {
+              "Respond_Unknown_Operation": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 400,
+                  "headers": {
+                    "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Vary": "Origin",
+                    "Content-Type": "application/json"
+                  },
+                  "body": {
+                    "success": false,
+                    "validationOnly": false,
+                    "endpoint": {
+                      "key": "@outputs('Compose_Config')?['endpointKey']"
+                    },
+                    "requestId": "@outputs('Compose_Request')?['requestId']",
+                    "runId": "@workflow()?['run']?['name']",
+                    "data": null,
+                    "error": {
+                      "code": "UNKNOWN_OPERATION",
+                      "message": "@concat('Unsupported operation ''', outputs('Compose_Request')?['operation'], '''. Supported: ', 'verify, healthcheck, provision')",
+                      "details": null
+                    }
+                  }
+                },
+                "runAfter": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "Respond_Unhandled_Failure": {
+      "type": "Response",
+      "kind": "Http",
+      "inputs": {
+        "statusCode": 500,
+        "headers": {
+          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Vary": "Origin",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "success": false,
+          "validationOnly": false,
+          "endpoint": {
+            "key": "@outputs('Compose_Config')?['endpointKey']"
+          },
+          "requestId": "@outputs('Compose_Request')?['requestId']",
+          "runId": "@workflow()?['run']?['name']",
+          "data": null,
+          "error": {
+            "code": "FLOW_FAILED",
+            "message": "@concat('The flow failed before it could answer. Run id: ', workflow()?['run']?['name'])",
+            "details": "@string(result('Scope_Try'))"
+          }
+        }
+      },
+      "runAfter": {
+        "Scope_Try": [
+          "Failed",
+          "TimedOut"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}

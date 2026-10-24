@@ -1,0 +1,440 @@
+/**
+ * Design-audit remediation — one assertion per finding that was fixed by measurement.
+ *
+ * Every test here fails on the pre-fix source. They are written against the numbers in
+ * docs/audits/DESIGN_AUDIT_BRIEF_ASSESSMENT.md so a regression reads as the finding
+ * returning, not as an anonymous layout failure.
+ *
+ * The portal is served from the repository root by the shared webServer, so its pages are
+ * under /document-portal/. The internal platform is entered through its own single sign-on
+ * control, which is what the audit did and is finding I-12.
+ */
+
+import { test, expect } from '@playwright/test';
+
+/* The portal registers a service worker. Left active it survives between navigations in a
+   worker's context and serves cached copies of exactly the files these tests measure, so a
+   fix would pass or fail depending on what a previous test happened to cache. Blocked here:
+   this suite measures the source on disk. */
+test.use({ serviceWorkers: 'block' });
+
+/* Against a deployment the Portal has its own host: DGO_PORTAL_URL (for example https://folio-portal.page.gd/)
+   points the Portal checks there. Locally it is served under /document-portal/ of the repository root. */
+const PORTAL = process.env.DGO_PORTAL_URL ? process.env.DGO_PORTAL_URL.replace(/\/?$/, '/') : '/document-portal/';
+/* Two groups measure the UNCONFIGURED portal (demonstration mode); a deployed Portal is configured on purpose. */
+const DEMO_ONLY = !!process.env.DGO_PORTAL_URL;
+
+/* An optional, git-ignored config file is fetched with onerror="void 0", so 'load' can sit
+   waiting on a request that will never settle. Every navigation here waits for the document
+   instead, then for the page script that renders into it. */
+async function open(page, url) {
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(400);
+}
+/**
+ * Assert the precondition these demo-mode tests silently depend on.
+ *
+ * `document-portal/config.local.js` is git-ignored and loaded with `onerror="void 0"`, so a
+ * copy left behind by a commissioning rehearsal changes what the portal IS without changing
+ * anything a diff would show. The findings below measure the unconfigured portal: with a stale
+ * config present the portal is configured, dispatch fails against an unreachable flow instead
+ * of being refused for want of one, and V-02 reports `queued` where the finding is about
+ * `held`. The test then fails truthfully but names the symptom — "expected 'Saved on this
+ * device only', got 'Saved — not yet delivered'" — which reads as a copy regression and sent
+ * one investigation down the wrong path.
+ *
+ * Checked explicitly so the failure names the cause and the file to delete.
+ */
+async function expectUnconfigured(page) {
+  const configured = await page.evaluate(() => PF.backendConfigured());
+  expect(configured, 'this test measures the UNCONFIGURED portal, but a SUBMISSION endpoint is '
+    + 'set — delete document-portal/config.local.js (git-ignored, usually left by a '
+    + 'commissioning rehearsal) and re-run').toBe(false);
+}
+
+const PAGES = ['index.html', 'submit.html', 'track.html', 'support.html', '404.html'];
+const PHONE = [414, 360, 320];
+const ALL_WIDTHS = [1440, 1280, 1200, 900, 640, ...PHONE];
+
+/* ============================================================
+   Document portal
+   ============================================================ */
+
+test.describe('P-01 · the header cluster no longer forces horizontal overflow', () => {
+  for (const page_ of PAGES) {
+    test(`${page_} has zero document overflow at every width`, async ({ page }) => {
+      // One navigation, then resize. Overflow here is decided entirely by CSS, and a cold
+      // page load in CI costs more than every measurement in this test put together.
+      await open(page, PORTAL + page_);
+      for (const w of ALL_WIDTHS) {
+        await page.setViewportSize({ width: w, height: 900 });
+        await page.waitForTimeout(120);
+        const overflow = await page.evaluate(() =>
+          document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        // Measured before the fix: 75px at 414 and 128px at 360 on the four content pages.
+        expect(overflow, `${page_} at ${w}px`).toBeLessThanOrEqual(0);
+      }
+    });
+  }
+
+  test('the action cluster and its flex children can compress', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 900 });
+    await open(page, PORTAL + 'index.html');
+    const acts = page.locator('.pf-top__acts');
+    await expect(acts).toBeVisible();
+    const right = await acts.evaluate(el => Math.round(el.getBoundingClientRect().right));
+    // It used to sit at a fixed ~488px regardless of a 360px viewport.
+    expect(right).toBeLessThanOrEqual(360);
+  });
+});
+
+test.describe('P-07 · the sovereignty statement never truncates', () => {
+  test('no truncation at any width', async ({ page }) => {
+    await open(page, PORTAL + 'index.html');
+    for (const w of [1440, 900, 640, 414, 360, 320]) {
+      await page.setViewportSize({ width: w, height: 900 });
+      await page.waitForTimeout(120);
+      const clipped = await page.locator('.pf-ribbon__gov')
+        .evaluate(el => el.scrollWidth > el.clientWidth + 0.5);
+      expect(clipped, `a clipped national identity statement at ${w}px names a different country`).toBe(false);
+    }
+  });
+
+  test('the short form replaces the long one below the phone breakpoint', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 900 });
+    await open(page, PORTAL + 'index.html');
+    await expect(page.locator('.pf-gov-short')).toBeVisible();
+    await expect(page.locator('.pf-gov-long')).toBeHidden();
+  });
+});
+
+test.describe('P-02 · 404 keeps its navigation at every width', () => {
+  test('wayfinding is reachable at every width', async ({ page }) => {
+    await open(page, PORTAL + '404.html');
+    for (const w of [1440, 900, 414, 360]) {
+      await page.setViewportSize({ width: w, height: 900 });
+      await page.waitForTimeout(120);
+      const reachable = await page.evaluate(() => {
+        const nav = [...document.querySelectorAll('.pf-nav a')].filter(a => a.offsetParent !== null).length;
+        const burger = [...document.querySelectorAll('.pf-burger')].filter(a => a.offsetParent !== null).length;
+        return nav + burger;
+      });
+      // Before: 0 nav links and 0 menu controls at and below 768px.
+      expect(reachable, `the page a mistyped URL lands on had no header navigation at ${w}px`).toBeGreaterThan(0);
+    }
+  });
+
+  test('404 carries the standard footer, not a reduced bar', async ({ page }) => {
+    await open(page, PORTAL + '404.html');
+    expect(await page.locator('.pf-foot__grid a').count()).toBeGreaterThan(8);
+  });
+});
+
+test.describe('P-05 · one footer submit list, in the catalogue’s own names', () => {
+  test('every page publishes an identical list', async ({ page }) => {
+    test.setTimeout(180000); // five cold navigations
+    const lists = [];
+    for (const p of PAGES) {
+      await open(page, PORTAL + p);
+      lists.push(await page.locator('#footSubmit a').allTextContents());
+    }
+    expect(lists[0].length, 'the list is rendered from the catalogue').toBeGreaterThan(0);
+    for (const l of lists) expect(l).toEqual(lists[0]);
+    // submit.html used to abbreviate this one to "Proposal or EOI".
+    expect(lists[0]).toContain('Proposal or expression of interest');
+  });
+});
+
+test.describe('P-03 / V-07 · step 1 flags and focuses the control it rejected', () => {
+  test('a failed Continue moves focus and marks the radiogroup invalid', async ({ page }) => {
+    await open(page, PORTAL + 'submit.html');
+    await page.click('#nextBtn');
+    await expect(page.locator('#serviceList')).toHaveAttribute('aria-invalid', 'true');
+    expect(await page.evaluate(() => document.activeElement?.id)).toBe('serviceList');
+    await expect(page.locator('#service-err')).toBeVisible();
+  });
+});
+
+test.describe('V-01 / V-03 / P-04 · the portal publishes only figures it can stand behind', () => {
+  test.skip(DEMO_ONLY, 'measures the unconfigured (demonstration) portal; a deployed Portal is configured');
+  test('a configured deployment installs no demonstration records', async ({ page, context }) => {
+    await context.addInitScript(() => {
+      window.PF_CONFIG = { endpoints: { SUBMISSION: 'http://127.0.0.1:9/never' } };
+    });
+    await open(page, PORTAL + 'index.html');
+    const r = await page.evaluate(() => ({
+      demo: PF.demoMode(),
+      records: PF.store.all().length,
+      tickets: PF.store.tickets().length,
+      onTimeRate: PF.metrics().onTimeRate,
+      notice: !!document.querySelector('#demoNote')
+    }));
+    expect(r.demo).toBe(false);
+    // Sixteen seed records used to install themselves into every visitor's browser and
+    // every public figure on the front door was computed from them.
+    expect(r.records).toBe(0);
+    expect(r.tickets).toBe(0);
+    // It used to fall back to 100 — a perfect on-time score on an empty register.
+    expect(r.onTimeRate).toBeNull();
+    expect(r.notice).toBe(false);
+  });
+
+  test('an unavailable figure is suppressed, not rendered as a number', async ({ page, context }) => {
+    await context.addInitScript(() => {
+      window.PF_CONFIG = { endpoints: { SUBMISSION: 'http://127.0.0.1:9/never' } };
+    });
+    await open(page, PORTAL + 'index.html');
+    const labels = await page.locator('#heroStats .pf-stat__l').allTextContents();
+    expect(labels).not.toContain('Closed within target');
+    await open(page, PORTAL + 'support.html');
+    expect((await page.locator('#supportStats').textContent()) || '').not.toContain('on time');
+  });
+
+  test('a demonstration build says so, and states its real figures before any scroll', async ({ page }) => {
+    await open(page, PORTAL + 'index.html');
+    await expectUnconfigured(page);
+    await expect(page.locator('#demoNote')).toBeVisible();
+    const shown = await page.locator('#heroStats .pf-stat__v').allTextContents();
+    // The band used to render four literal zeros until an IntersectionObserver fired at 40%
+    // visibility, so anyone who did not scroll read "0 requests in the registry".
+    expect(shown.every(v => v === '0' || v === '0%')).toBe(false);
+  });
+});
+
+test.describe('V-02 · a submission is never reported as received when it was not sent', () => {
+  test.skip(DEMO_ONLY, 'measures the unconfigured (demonstration) portal; a deployed Portal is configured');
+  test('an unconnected registry produces a truthful receipt', async ({ page }) => {
+    await open(page, PORTAL + 'submit.html');
+    await expectUnconfigured(page);
+    await page.click('#serviceList input[type=radio]');
+    await page.click('#nextBtn');
+    await page.fill('#name', 'Test Submitter');
+    await page.fill('#email', 'test@example.gov.ng');
+    await page.fill('#org', 'Test Organisation');
+    await page.selectOption('#orgType', { index: 1 });
+    await page.selectOption('#state', { index: 1 });
+    await page.click('#nextBtn');
+    await page.fill('#title', 'A test subject line');
+    await page.fill('#description', 'A description comfortably over twenty characters long.');
+    await page.setInputFiles('input[type=file]', {
+      name: 'evidence.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 test')
+    });
+    await page.check('#declare');
+    await page.click('#nextBtn');
+    await page.click('#nextBtn');
+    await page.click('[data-act="ok"]');
+    await expect(page.locator('#result')).toBeVisible();
+    // It used to read "Submission received" and fire a success toast on the local write
+    // alone, then hand over a tracking ID for a document the registry never saw.
+    await expect(page.locator('#resultTitle')).toHaveText('Saved on this device only');
+    await expect(page.locator('#deliveryState')).toContainText('has not been sent');
+  });
+});
+
+/* ============================================================
+   Internal platform
+   ============================================================ */
+
+async function enterPlatform(page) {
+  /* A deployed Workspace has no demonstration sign-in: the session proof signs the officer in, so enter directly. */
+  if (DEMO_ONLY) { await open(page, '/index.html?skipWelcome=1'); await page.waitForSelector('dgo-shell'); await page.waitForTimeout(800); return; }
+  await open(page, '/index.html');
+  await page.waitForSelector('[data-sso]');
+  await page.click('[data-sso]');
+  await page.waitForSelector('[data-enter]', { state: 'visible' });
+  await page.click('[data-enter]');
+  await page.waitForSelector('dgo-shell');
+  await page.waitForTimeout(800);
+}
+
+const ROUTES = ['home', 'ecm-erp-charter', 'activities', 'correspondence', 'response-tracking',
+  'orchestrator', 'single-assignment', 'bulk-assignment', 'fasttrack', 'approvals',
+  'acknowledgment', 'dispatch', 'scan-intake', 'registry', 'briefs', 'meetings', 'projects',
+  'comments', 'reports', 'statistics', 'executive', 'assistant', 'lookup', 'operator-hud',
+  'settings', 'diagnostics', 'user-admin', 'archive', 'correspondence-email'];
+
+test.describe('I-02 / I-17 · one name per screen', () => {
+  test('every route’s heading matches its navigation label, and the title names the screen', async ({ page }) => {
+    test.setTimeout(300000);
+    await enterPlatform(page);
+    const mismatches = [];
+    for (const r of ROUTES) {
+      await page.evaluate(h => { location.hash = '#/' + h; }, r);
+      await page.waitForTimeout(500);
+      const d = await page.evaluate(() => ({
+        h1: document.querySelector('#main h1')?.textContent.trim(),
+        nav: document.querySelector('[data-context]')?.textContent.trim(),
+        title: document.title
+      }));
+      if (d.h1 !== d.nav) mismatches.push(`${r}: nav="${d.nav}" heading="${d.h1}"`);
+      // The title was one static string on all 29 screens, naming a release codename.
+      expect(d.title, r).toBe(`${d.nav} — NITDA Folio`);
+      expect(d.title, r).not.toContain('R11.6');
+      expect(d.title, r).not.toContain('Obsidian');
+    }
+    // Before: 13 of 29.
+    expect(mismatches, mismatches.join('\n')).toEqual([]);
+  });
+});
+
+test.describe('I-01 · every built screen is reachable by a link', () => {
+  test('every place and every Administration tab is linked from the shell', async ({ page }) => {
+    /* Since the cut-over (essentials plan UX-401/402) the screens are the three places, linked from the sidebar, and
+       Administration's tabs, linked from the profile menu and Administration's own tab strip. Every other route redirects
+       to one of them (tests/cutover.spec.js). */
+    test.setTimeout(120000);
+    await enterPlatform(page);
+    const { places } = await page.evaluate(async () => {
+      const m = await import('./config/workflow-clarity.config.js');
+      return { places: [...m.VisibleWorkspaces.map(w => w.route), ...m.AdministrationWorkspace.tabs.map(t => t.route)] };
+    });
+    const reachable = new Set();
+    for (const r of places) {
+      await page.evaluate(h => { location.hash = '#/' + h; }, r);
+      await page.waitForTimeout(DEMO_ONLY ? 1500 : 400);
+      for (const href of await page.locator('.dgo-sidebar__item, .dgo-wtab, [data-admin-entry]').evaluateAll(
+        els => els.map(e => e.getAttribute('href')))) {
+        if (href?.startsWith('#/')) reachable.add(href.slice(2));
+      }
+    }
+    const unreachable = places.filter(r => !reachable.has(r));
+    expect(unreachable, unreachable.join(', ')).toEqual([]);
+  });
+});
+
+test.describe('I-03 · the KPI band never strands a tile beside dead space', () => {
+  /* Since the cut-over (essentials plan UX-401) the band is the Overview's figures. */
+  for (const w of [1440, 1280, 1024, 924]) {
+    test(`Overview at ${w}px`, async ({ page }) => {
+      await page.setViewportSize({ width: w, height: 900 });
+      await enterPlatform(page);
+      await page.evaluate(() => { location.hash = '#/home'; });
+      await page.waitForSelector('[data-figure]');
+      const { rows, band } = await page.evaluate(() => {
+        const strip = document.querySelector('[data-figure]').parentElement, byRow = {};
+        strip.querySelectorAll('[data-figure]').forEach(k => {
+          const r = k.getBoundingClientRect();
+          (byRow[Math.round(r.y)] = byRow[Math.round(r.y)] || []).push(Math.round(r.width));
+        });
+        return { rows: Object.values(byRow), band: Math.round(strip.getBoundingClientRect().width) };
+      });
+      expect(rows.length).toBeGreaterThan(0);
+      // A wrapped tile fills the row it wraps onto.
+      for (const row of rows.slice(1)) {
+        if (row.length === 1) expect(row[0]).toBeGreaterThan(band * 0.9);
+      }
+    });
+  }
+});
+
+test.describe('H-02 / V-06 · a real icon set, not typographic characters', () => {
+  test('every navigation and top-bar icon is a resolved sprite symbol', async ({ page }) => {
+    await enterPlatform(page);
+    const r = await page.evaluate(() => ({
+      sprite: !!document.getElementById('dgo-icon-sprite'),
+      navSvgs: document.querySelectorAll('.dgo-nav-icon svg use').length,
+      glyphText: [...document.querySelectorAll('.dgo-nav-icon')].map(n => n.textContent.trim()).filter(Boolean),
+      unresolved: [...document.querySelectorAll('svg use')]
+        .map(u => u.getAttribute('href'))
+        .filter(h => h && !document.getElementById(h.slice(1)))
+    }));
+    expect(r.sprite).toBe(true);
+    // 24 since the Figma "Application Shell" locked IA (audit finding I-01); 13 since module rationalisation Phase 2
+    // (2026-10-20) made the sidebar one entry per workspace; 3 since the essentials cut-over (UX-401/402, 2026-10-22):
+    // Overview, Inbox and Tasks, with Administration in the profile menu.
+    expect(r.navSvgs).toBe(3);
+    // "Email Desk" used to be a bullet, because it had no entry in the glyph map at all.
+    expect(r.glyphText).toEqual([]);
+    expect(r.unresolved).toEqual([]);
+  });
+
+  test('no two routes share an icon', async ({ page }) => {
+    await enterPlatform(page);
+    await page.evaluate(() => document.querySelector('dgo-shell').openCommandPalette());
+    await page.waitForTimeout(300);
+    const syms = await page.locator('.dgo-cmdk__icon use').evaluateAll(
+      els => els.map(e => e.getAttribute('href')));
+    // Since the cut-over it lists the places and Administration's tabs (redirected routes are not offered).
+    expect(syms.length).toBeGreaterThanOrEqual(4);
+    expect(new Set(syms).size, 'two routes drawn with the same icon').toBe(syms.length);
+  });
+});
+
+test.describe('I-10 · the sidebar shows that navigation continues below the fold', () => {
+  test('no item is sliced across the scroll boundary at a short viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 540 });
+    await enterPlatform(page);
+    const r = await page.evaluate(() => {
+      const nav = document.querySelector('.dgo-sidebar__nav');
+      const b = nav.getBoundingClientRect();
+      return {
+        scrollable: nav.dataset.scrollable,
+        sliced: [...document.querySelectorAll('.dgo-sidebar__item')]
+          .filter(a => { const r = a.getBoundingClientRect(); return r.top < b.bottom && r.bottom > b.bottom + 0.5; })
+          .map(a => a.textContent.trim())
+      };
+    });
+    // Three entries since the cut-over: nothing need scroll, and nothing may be cut.
+    expect(r.sliced, 'a half-cut row with no scroll affordance').toEqual([]);
+  });
+});
+
+test.describe('I-09 · the intake toolbar wraps instead of pinning its primary action to the edge', () => {
+  /* The finding was measured at a 700px main width: the primary action abutted the right boundary. Since the cut-over
+     (essentials plan UX-401) the toolbar is the Inbox's one control bar. */
+  for (const w of [1440, 900, 700]) {
+    test(`the Inbox bar keeps every control inside it — at ${w}px`, async ({ page }) => {
+      await page.setViewportSize({ width: w, height: 900 });
+      await enterPlatform(page);
+      await page.evaluate(() => { location.hash = '#/correspondence'; });
+      await page.waitForSelector('[data-inbox-register]');
+      const r = await page.evaluate(() => {
+        const bar = document.querySelector('.essential-bar .cc-controls').getBoundingClientRect();
+        const kids = [...document.querySelectorAll('.essential-bar .cc-controls > *')].map(e => e.getBoundingClientRect());
+        const primary = document.querySelector('[data-inbox-register]').getBoundingClientRect();
+        return { overflow: kids.filter(k => k.right > bar.right + 1).length, rows: new Set(kids.map(k => Math.round(k.top))).size, primaryGap: Math.round(bar.right - primary.right) };
+      });
+      expect(r.overflow, 'a control runs past the bar').toBe(0);
+      expect(r.primaryGap, 'Register a document is past the pane edge').toBeGreaterThanOrEqual(0);
+      if (w >= 1440) expect(r.rows, 'the bar should fit one row here').toBe(1);
+    });
+  }
+});
+
+test.describe('I-20 / I-22 · controls carry names, prose is not styled as a link', () => {
+  test('the intake filters are labelled and no control hides behind an overflow', async ({ page }) => {
+    await enterPlatform(page);
+    await page.evaluate(() => { location.hash = '#/correspondence'; });
+    await page.waitForTimeout(900);
+    expect(await page.locator('.cc-filter > span').allTextContents()).toEqual(['Source', 'Status', 'Category']);
+    // Essentials plan UX-107: no overflow menu. Since the cut-over the one export is the Overview's (UX-303).
+    await expect(page.locator('.cc-more-btn')).toHaveCount(0);
+  });
+});
+
+test.describe('I-05 / I-12 / I-19 · operator surfaces speak to operators', () => {
+  test('the sign-in control does not advertise skipping verification', async ({ page }) => {
+    test.skip(DEMO_ONLY, 'the demonstration sign-in control exists only on the unconfigured build');
+    await open(page, '/index.html');
+    await page.waitForSelector('[data-sso]');
+    const label = await page.textContent('[data-sso]');
+    expect(label).not.toContain('skip');
+    expect(label).not.toContain('OTP');
+  });
+
+  test('the identity block shows a role, not a stored slug', async ({ page }) => {
+    await enterPlatform(page);
+    await expect(page.locator('[data-role]')).toContainText('Administrator');
+    expect(await page.locator('[data-role]').textContent()).not.toContain('admin ·');
+  });
+
+  test('Scan Intake gives a clerk an action, not a configuration key', async ({ page }) => {
+    await enterPlatform(page);
+    await page.evaluate(() => { location.hash = '#/scan-intake'; });
+    await page.waitForTimeout(900);
+    const body = await page.locator('#main').textContent();
+    expect(body).not.toContain('config.local.js');
+    expect(body).not.toContain('DGO_CONFIG');
+    expect(body).not.toContain('Byte path');
+  });
+});

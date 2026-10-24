@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Opening the Folio Workspace</title>
+<!-- Link forwarder. Notification emails sent before the move to this host link to
+     /index_Bulk.html; this passes the link to the Workspace unchanged, naming the page it came
+     through, so core/deeplink-parse.js routes it exactly as before. Spec: PLATFORM_ACCESS_SPEC.md §8a. -->
+<script>location.replace('./index.html' + (location.search ? location.search + '&' : '?') + 'page=index_Bulk.html' + location.hash);</script>
+</head>
+<body>
+<p>Opening the Folio Workspace… <a href="./index.html">Continue</a></p>
+</body>
+</html>

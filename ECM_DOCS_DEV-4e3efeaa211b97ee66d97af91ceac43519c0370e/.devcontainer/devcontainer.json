@@ -1,0 +1,38 @@
+{
+  "name": "DGO Digital Operations",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+
+  // Installs dependencies and writes the two config files, so the codespace is ready to use
+  // the moment it finishes building.
+  //
+  // THIS IS ALSO THE AUTO-WIRING STEP. `npm run setup` reads the DGO_VALUES repository
+  // secret — one secret carrying the whole values file `npm run values:template` writes —
+  // so a codespace created with that secret set comes up wired to the live estate with no
+  // command typed. Without it the configs are scaffolded EMPTY: the platform boots in demo
+  // mode, renders, and transmits nothing. Both are intended states; `npm run wire -- --dry`
+  // says which one you are in.
+  "postCreateCommand": "npm install && npm run setup",
+
+  // Starts the runtime automatically on every attach. `npm run start:all` brings up the
+  // other seven as well; `npm run platforms` lists what there is.
+  "postAttachCommand": "npm start",
+
+  // Every port a platform binds, so `npm run start:all` forwards rather than opening eight
+  // ports one at a time in the Ports panel. The list is held against
+  // scripts/platforms.config.mjs by tests/platforms.test.mjs — a platform added there and
+  // not here fails the build rather than quietly serving a port nothing forwards.
+  "forwardPorts": [8080, 8081, 8083, 8787, 8844],
+  "portsAttributes": {
+    "8080": { "label": "DGO R11.6 Runtime", "onAutoForward": "openBrowser" },
+    "8081": { "label": "Document Portal", "onAutoForward": "notify" },
+    "8083": { "label": "DGO Correspondence Mailer", "onAutoForward": "notify" },
+    "8787": { "label": "Flow Capsule Registry", "onAutoForward": "silent" },
+    "8844": { "label": "Central Administration Centre", "onAutoForward": "notify" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
+}

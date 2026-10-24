@@ -1,0 +1,20 @@
+[Unit]
+Description=Flow URL Capsule Registry
+After=network-online.target
+[Service]
+User=flowcapsule
+Group=flowcapsule
+WorkingDirectory=/opt/flowcapsule
+Environment=FLOWCAP_DATA_DIR=/var/lib/flowcapsule
+Environment=FLOWCAP_HOST=127.0.0.1
+ExecStart=/usr/bin/python3 /opt/flowcapsule/flowcapsule.py
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/flowcapsule
+UMask=0077
+[Install]
+WantedBy=multi-user.target

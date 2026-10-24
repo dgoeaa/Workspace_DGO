@@ -1,0 +1,2125 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "description": "DGO Correspondence Mailer: operator sign-in. requestCode mails a one-time code to an active operator; verifyCode exchanges it for a session token; signOut ends it; admins manage DGOMailOperators.",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "manual": {
+      "type": "Request",
+      "kind": "Http",
+      "inputs": {
+        "triggerAuthenticationType": "All",
+        "method": "POST",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "operation": {
+              "type": "string"
+            },
+            "requestId": {
+              "type": "string"
+            },
+            "validationOnly": {
+              "type": "boolean"
+            },
+            "operatorKey": {
+              "type": "string"
+            },
+            "sessionToken": {
+              "type": "string"
+            },
+            "operator": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "payload": {
+              "type": "object"
+            },
+            "_platform": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "correlationId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "Compose_Config": {
+      "type": "Compose",
+      "inputs": {
+        "endpointKey": "MAIL_AUTH",
+        "flowIdentity": "DGO_MAIL_AUTH",
+        "contractVersion": "dgo-mail/2.0",
+        "environment": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1",
+        "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+        "allowedOrigin": "https://folio-platform.page.gd",
+        "operatorKey": "__SET_OPERATOR_KEY_AFTER_IMPORT__",
+        "logList": "DGOMailLog",
+        "directoryList": "DGOMailDirectory",
+        "templatesList": "DGOMailTemplates",
+        "operatorsList": "DGOMailOperators",
+        "sessionsList": "DGOMailSessions",
+        "codeMinutes": 10,
+        "maxCodeAttempts": 5,
+        "sessionHours": 12,
+        "codesPerWindow": 5,
+        "codeWindowMinutes": 10
+      },
+      "runAfter": {}
+    },
+    "Compose_Request": {
+      "type": "Compose",
+      "inputs": {
+        "operation": "@toLower(string(coalesce(triggerBody()?['_platform']?['operation'], triggerBody()?['operation'], '')))",
+        "requestId": "@string(coalesce(triggerBody()?['requestId'], triggerBody()?['_platform']?['correlationId'], guid()))",
+        "validationOnly": "@equals(triggerBody()?['validationOnly'], true)",
+        "operatorEmail": "@string(coalesce(triggerBody()?['operator']?['email'], ''))",
+        "operatorName": "@string(coalesce(triggerBody()?['operator']?['name'], ''))",
+        "keyConfigured": "@and(not(startsWith(string(outputs('Compose_Config')?['operatorKey']), '__')), greaterOrEquals(length(string(outputs('Compose_Config')?['operatorKey'])), 16))",
+        "sessionToken": "@trim(string(coalesce(triggerBody()?['sessionToken'], '')))",
+        "isAdmin": "@and(and(not(startsWith(string(outputs('Compose_Config')?['operatorKey']), '__')), greaterOrEquals(length(string(outputs('Compose_Config')?['operatorKey'])), 16)), equals(string(coalesce(triggerBody()?['operatorKey'], '')), string(outputs('Compose_Config')?['operatorKey'])))"
+      },
+      "runAfter": {
+        "Compose_Config": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varCallerSessions": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varCallerSessions",
+            "type": "array",
+            "value": []
+          }
+        ]
+      },
+      "runAfter": {
+        "Compose_Request": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Initialize_varCallerOperators": {
+      "type": "InitializeVariable",
+      "inputs": {
+        "variables": [
+          {
+            "name": "varCallerOperators",
+            "type": "array",
+            "value": []
+          }
+        ]
+      },
+      "runAfter": {
+        "Initialize_varCallerSessions": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Condition_Refuse_Unconfigured": {
+      "type": "If",
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "@and(not(contains(createArray('verify', 'healthcheck', 'requestcode', 'verifycode'), outputs('Compose_Request')?['operation'])), not(outputs('Compose_Request')?['keyConfigured']))",
+              true
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "Condition_Refuse_Unconfigured_Respond": {
+          "type": "Response",
+          "kind": "Http",
+          "inputs": {
+            "statusCode": 503,
+            "headers": {
+              "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+              "Access-Control-Allow-Methods": "POST, OPTIONS",
+              "Access-Control-Allow-Headers": "Content-Type",
+              "Vary": "Origin",
+              "Content-Type": "application/json"
+            },
+            "body": {
+              "success": false,
+              "validationOnly": false,
+              "endpoint": {
+                "key": "@outputs('Compose_Config')?['endpointKey']"
+              },
+              "requestId": "@outputs('Compose_Request')?['requestId']",
+              "runId": "@workflow()?['run']?['name']",
+              "data": null,
+              "error": {
+                "code": "NOT_CONFIGURED",
+                "message": "This flow has not been configured: set operatorKey in Compose_Config (16+ characters, not starting with \"__\").",
+                "details": null
+              }
+            }
+          },
+          "runAfter": {}
+        },
+        "Condition_Refuse_Unconfigured_Stop": {
+          "type": "Terminate",
+          "inputs": {
+            "runStatus": "Succeeded"
+          },
+          "runAfter": {
+            "Condition_Refuse_Unconfigured_Respond": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      },
+      "runAfter": {
+        "Initialize_varCallerOperators": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Condition_Check_Session": {
+      "type": "If",
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "@contains(createArray('verify', 'healthcheck', 'requestcode', 'verifycode'), outputs('Compose_Request')?['operation'])",
+              false
+            ]
+          },
+          {
+            "equals": [
+              "@outputs('Compose_Request')?['isAdmin']",
+              false
+            ]
+          },
+          {
+            "equals": [
+              "@empty(outputs('Compose_Request')?['sessionToken'])",
+              false
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "SP_Find_Session": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "HttpRequest"
+            },
+            "parameters": {
+              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+              "parameters/method": "GET",
+              "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '?$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(outputs('Compose_Request')?['sessionToken']), '''', ''''''), '''')))",
+              "parameters/headers": {
+                "Accept": "application/json;odata=nometadata",
+                "Content-Type": "application/json;odata=nometadata"
+              }
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {}
+        },
+        "Filter_Active_Session": {
+          "type": "Query",
+          "inputs": {
+            "from": "@coalesce(body('SP_Find_Session')?['value'], createArray())",
+            "where": "@and(equals(string(item()?['Status']), 'Active'), equals(string(item()?['Token']), string(outputs('Compose_Request')?['sessionToken'])), greater(ticks(string(coalesce(item()?['TokenExpiresAt'], '1900-01-01T00:00:00Z'))), ticks(utcNow())))"
+          },
+          "runAfter": {
+            "SP_Find_Session": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Set_varCallerSessions": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varCallerSessions",
+            "value": "@body('Filter_Active_Session')"
+          },
+          "runAfter": {
+            "Filter_Active_Session": [
+              "Succeeded"
+            ]
+          }
+        },
+        "SP_Find_Caller_Operator": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "HttpRequest"
+            },
+            "parameters": {
+              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+              "parameters/method": "GET",
+              "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['operatorsList'], ''')/items'), '?$select=Title,DisplayName,Role&$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(toLower(string(coalesce(first(variables('varCallerSessions'))?['Email'], '-')))), '''', ''''''), ''' and Active eq 1')))",
+              "parameters/headers": {
+                "Accept": "application/json;odata=nometadata",
+                "Content-Type": "application/json;odata=nometadata"
+              }
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Set_varCallerSessions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Set_varCallerOperators": {
+          "type": "SetVariable",
+          "inputs": {
+            "name": "varCallerOperators",
+            "value": "@coalesce(body('SP_Find_Caller_Operator')?['value'], createArray())"
+          },
+          "runAfter": {
+            "SP_Find_Caller_Operator": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      },
+      "runAfter": {
+        "Condition_Refuse_Unconfigured": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Compose_Caller": {
+      "type": "Compose",
+      "inputs": {
+        "authenticated": "@or(outputs('Compose_Request')?['isAdmin'], and(greater(length(variables('varCallerSessions')), 0), greater(length(variables('varCallerOperators')), 0)))",
+        "via": "@if(outputs('Compose_Request')?['isAdmin'], 'admin-key', if(and(greater(length(variables('varCallerSessions')), 0), greater(length(variables('varCallerOperators')), 0)), 'session', 'none'))",
+        "email": "@if(outputs('Compose_Request')?['isAdmin'], outputs('Compose_Request')?['operatorEmail'], toLower(string(coalesce(first(variables('varCallerSessions'))?['Email'], ''))))",
+        "name": "@if(outputs('Compose_Request')?['isAdmin'], outputs('Compose_Request')?['operatorName'], string(coalesce(first(variables('varCallerOperators'))?['DisplayName'], first(variables('varCallerSessions'))?['DisplayName'], '')))",
+        "role": "@if(outputs('Compose_Request')?['isAdmin'], 'admin', if(and(greater(length(variables('varCallerSessions')), 0), greater(length(variables('varCallerOperators')), 0)), toLower(string(coalesce(first(variables('varCallerOperators'))?['Role'], 'operator'))), ''))",
+        "sessionId": "@first(variables('varCallerSessions'))?['Id']",
+        "expiresAt": "@first(variables('varCallerSessions'))?['TokenExpiresAt']",
+        "lookupFailed": "@contains(createArray('Failed', 'TimedOut'), string(actions('Condition_Check_Session')?['status']))"
+      },
+      "runAfter": {
+        "Condition_Check_Session": [
+          "Succeeded",
+          "Failed",
+          "TimedOut"
+        ]
+      }
+    },
+    "Condition_Refuse_Unauthorised": {
+      "type": "If",
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "@and(not(contains(createArray('verify', 'healthcheck', 'requestcode', 'verifycode'), outputs('Compose_Request')?['operation'])), not(outputs('Compose_Caller')?['authenticated']))",
+              true
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "Condition_Refuse_Unauthorised_Respond": {
+          "type": "Response",
+          "kind": "Http",
+          "inputs": {
+            "statusCode": "@if(outputs('Compose_Caller')?['lookupFailed'], 503, 401)",
+            "headers": {
+              "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+              "Access-Control-Allow-Methods": "POST, OPTIONS",
+              "Access-Control-Allow-Headers": "Content-Type",
+              "Vary": "Origin",
+              "Content-Type": "application/json"
+            },
+            "body": {
+              "success": false,
+              "validationOnly": false,
+              "endpoint": {
+                "key": "@outputs('Compose_Config')?['endpointKey']"
+              },
+              "requestId": "@outputs('Compose_Request')?['requestId']",
+              "runId": "@workflow()?['run']?['name']",
+              "data": null,
+              "error": {
+                "code": "@if(outputs('Compose_Caller')?['lookupFailed'], 'SIGN_IN_CHECK_FAILED', 'SIGN_IN_REQUIRED')",
+                "message": "@if(outputs('Compose_Caller')?['lookupFailed'], 'The sign-in could not be checked just now (SharePoint did not answer). Nothing was done; try again in a moment.', 'Sign in first: the session is missing, has expired, was signed out, or its operator is no longer active.')",
+                "details": null
+              }
+            }
+          },
+          "runAfter": {}
+        },
+        "Condition_Refuse_Unauthorised_Stop": {
+          "type": "Terminate",
+          "inputs": {
+            "runStatus": "Succeeded"
+          },
+          "runAfter": {
+            "Condition_Refuse_Unauthorised_Respond": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      },
+      "runAfter": {
+        "Compose_Caller": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Scope_Try": {
+      "type": "Scope",
+      "runAfter": {
+        "Condition_Refuse_Unauthorised": [
+          "Succeeded"
+        ]
+      },
+      "actions": {
+        "Switch_Operation": {
+          "type": "Switch",
+          "expression": "@outputs('Compose_Request')?['operation']",
+          "cases": {
+            "Verify": {
+              "case": "verify",
+              "actions": {
+                "Respond_Verify": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "verified": true,
+                      "flowIdentity": "@outputs('Compose_Config')?['flowIdentity']",
+                      "environment": "@outputs('Compose_Config')?['environment']",
+                      "contractVersion": "@outputs('Compose_Config')?['contractVersion']",
+                      "correlationId": "@triggerBody()?['_platform']?['correlationId']",
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      }
+                    }
+                  },
+                  "runAfter": {}
+                }
+              }
+            },
+            "HealthCheck": {
+              "case": "healthcheck",
+              "actions": {
+                "Condition_Health_Requires_ValidationOnly": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@not(outputs('Compose_Request')?['validationOnly'])",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Health_Requires_ValidationOnly_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 400,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "VALIDATION_ONLY_REQUIRED",
+                            "message": "healthCheck must be called with validationOnly:true.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Health_Requires_ValidationOnly_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Health_Requires_ValidationOnly_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  }
+                },
+                "SP_Health_Probe": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "GET",
+                      "parameters/uri": "@concat('_api/web/lists?$select=Title&$filter=', encodeUriComponent(concat('Title eq ''', outputs('Compose_Config')?['operatorsList'], '''', ' or ', 'Title eq ''', outputs('Compose_Config')?['sessionsList'], '''')))",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      }
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Condition_Health_Requires_ValidationOnly": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Health": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": true,
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "flowIdentity": "@outputs('Compose_Config')?['flowIdentity']",
+                        "contractVersion": "@outputs('Compose_Config')?['contractVersion']",
+                        "operatorKeyConfigured": "@outputs('Compose_Request')?['keyConfigured']",
+                        "sharePointReachable": "@equals(actions('SP_Health_Probe')?['status'], 'Succeeded')",
+                        "listsFound": "@coalesce(body('SP_Health_Probe')?['value'], createArray())",
+                        "listsExpected": "@createArray(outputs('Compose_Config')?['operatorsList'], outputs('Compose_Config')?['sessionsList'])"
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "SP_Health_Probe": [
+                      "Succeeded",
+                      "Failed",
+                      "TimedOut"
+                    ]
+                  }
+                }
+              }
+            },
+            "RequestCode": {
+              "case": "requestcode",
+              "actions": {
+                "Compose_Challenge": {
+                  "type": "Compose",
+                  "inputs": {
+                    "email": "@toLower(trim(string(coalesce(triggerBody()?['payload']?['email'], ''))))",
+                    "challengeId": "@concat(replace(guid(), '-', ''), replace(guid(), '-', ''))",
+                    "code": "@string(rand(10000000, 100000000))",
+                    "expiresAt": "@addMinutes(utcNow(), int(outputs('Compose_Config')?['codeMinutes']))"
+                  },
+                  "runAfter": {}
+                },
+                "SP_Find_Requesting_Operator": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "GET",
+                      "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['operatorsList'], ''')/items'), '?$select=Title,DisplayName&$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(outputs('Compose_Challenge')?['email']), '''', ''''''), ''' and Active eq 1')))",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      }
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Compose_Challenge": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Known_Operator": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@greater(length(coalesce(body('SP_Find_Requesting_Operator')?['value'], createArray())), 0)",
+                          true
+                        ]
+                      },
+                      {
+                        "equals": [
+                          "@outputs('Compose_Request')?['validationOnly']",
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "SP_Find_Rate": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                          "parameters/method": "GET",
+                          "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '?$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(concat('rate:', outputs('Compose_Challenge')?['email'])), '''', ''''''), '''')))",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          }
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Rate_Row": {
+                      "type": "Compose",
+                      "inputs": "@coalesce(first(coalesce(body('SP_Find_Rate')?['value'], createArray())), json('{}'))",
+                      "runAfter": {
+                        "SP_Find_Rate": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Compose_Rate": {
+                      "type": "Compose",
+                      "inputs": {
+                        "open": "@less(ticks(utcNow()), ticks(string(coalesce(outputs('Compose_Rate_Row')?['CodeExpiresAt'], '1900-01-01T00:00:00Z'))))",
+                        "count": "@if(less(ticks(utcNow()), ticks(string(coalesce(outputs('Compose_Rate_Row')?['CodeExpiresAt'], '1900-01-01T00:00:00Z')))), int(coalesce(outputs('Compose_Rate_Row')?['Attempts'], 0)), 0)"
+                      },
+                      "runAfter": {
+                        "Compose_Rate_Row": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Condition_Rate_Allows": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@less(outputs('Compose_Rate')?['count'], int(outputs('Compose_Config')?['codesPerWindow']))",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Compose_Challenge_Item": {
+                          "type": "Compose",
+                          "inputs": {
+                            "Title": "@outputs('Compose_Challenge')?['challengeId']",
+                            "Email": "@outputs('Compose_Challenge')?['email']",
+                            "DisplayName": "@substring(string(coalesce(first(body('SP_Find_Requesting_Operator')?['value'])?['DisplayName'], '')), 0, min(length(string(coalesce(first(body('SP_Find_Requesting_Operator')?['value'])?['DisplayName'], ''))), 255))",
+                            "Code": "@outputs('Compose_Challenge')?['code']",
+                            "CodeExpiresAt": "@outputs('Compose_Challenge')?['expiresAt']",
+                            "Attempts": 0,
+                            "Status": "Pending"
+                          },
+                          "runAfter": {}
+                        },
+                        "SP_Create_Challenge": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connectionName": "shared_sharepointonline",
+                              "operationId": "HttpRequest"
+                            },
+                            "parameters": {
+                              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                              "parameters/method": "POST",
+                              "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items')",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=nometadata",
+                                "Content-Type": "application/json;odata=nometadata"
+                              },
+                              "parameters/body": "@string(outputs('Compose_Challenge_Item'))"
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          },
+                          "runAfter": {
+                            "Compose_Challenge_Item": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Send_Code": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                              "connectionName": "shared_office365",
+                              "operationId": "SendEmailV2"
+                            },
+                            "parameters": {
+                              "emailMessage/To": "@outputs('Compose_Challenge')?['email']",
+                              "emailMessage/Subject": "@concat('DGO Correspondence Mailer sign-in code: ', outputs('Compose_Challenge')?['code'])",
+                              "emailMessage/Body": "@concat('<p>Your sign-in code for the DGO Correspondence Mailer is:</p><p style=\"font-size:28px;font-weight:bold;letter-spacing:4px\">', outputs('Compose_Challenge')?['code'], '</p><p>It works once, for ', string(outputs('Compose_Config')?['codeMinutes']), ' minutes. If you did not ask for it, ignore this message: nobody can sign in without the code.</p>')",
+                              "emailMessage/Importance": "High"
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          },
+                          "runAfter": {
+                            "SP_Create_Challenge": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Condition_Rate_Row_Exists": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@empty(string(coalesce(outputs('Compose_Rate_Row')?['Id'], '')))",
+                                  false
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Compose_Rate_Update": {
+                              "type": "Compose",
+                              "inputs": {
+                                "Attempts": "@add(outputs('Compose_Rate')?['count'], 1)",
+                                "CodeExpiresAt": "@if(outputs('Compose_Rate')?['open'], outputs('Compose_Rate_Row')?['CodeExpiresAt'], addMinutes(utcNow(), int(outputs('Compose_Config')?['codeWindowMinutes'])))"
+                              },
+                              "runAfter": {}
+                            },
+                            "SP_Update_Rate": {
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connectionName": "shared_sharepointonline",
+                                  "operationId": "HttpRequest"
+                                },
+                                "parameters": {
+                                  "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                                  "parameters/method": "POST",
+                                  "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '(', string(outputs('Compose_Rate_Row')?['Id']), ')')",
+                                  "parameters/headers": {
+                                    "Accept": "application/json;odata=nometadata",
+                                    "Content-Type": "application/json;odata=nometadata",
+                                    "IF-MATCH": "*",
+                                    "X-HTTP-Method": "MERGE"
+                                  },
+                                  "parameters/body": "@string(outputs('Compose_Rate_Update'))"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              },
+                              "runAfter": {
+                                "Compose_Rate_Update": [
+                                  "Succeeded"
+                                ]
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Compose_Rate_Item": {
+                                "type": "Compose",
+                                "inputs": {
+                                  "Title": "@substring(string(concat('rate:', outputs('Compose_Challenge')?['email'])), 0, min(length(string(concat('rate:', outputs('Compose_Challenge')?['email']))), 255))",
+                                  "Email": "@outputs('Compose_Challenge')?['email']",
+                                  "Attempts": 1,
+                                  "CodeExpiresAt": "@addMinutes(utcNow(), int(outputs('Compose_Config')?['codeWindowMinutes']))",
+                                  "Status": "RateLimit"
+                                },
+                                "runAfter": {}
+                              },
+                              "SP_Create_Rate": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                    "connectionName": "shared_sharepointonline",
+                                    "operationId": "HttpRequest"
+                                  },
+                                  "parameters": {
+                                    "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                                    "parameters/method": "POST",
+                                    "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items')",
+                                    "parameters/headers": {
+                                      "Accept": "application/json;odata=nometadata",
+                                      "Content-Type": "application/json;odata=nometadata"
+                                    },
+                                    "parameters/body": "@string(outputs('Compose_Rate_Item'))"
+                                  },
+                                  "authentication": "@parameters('$authentication')"
+                                },
+                                "runAfter": {
+                                  "Compose_Rate_Item": [
+                                    "Succeeded"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "runAfter": {
+                            "Send_Code": [
+                              "Succeeded"
+                            ]
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {}
+                      },
+                      "runAfter": {
+                        "Compose_Rate": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "SP_Find_Requesting_Operator": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Code_Requested": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": "@outputs('Compose_Request')?['validationOnly']",
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "challengeId": "@outputs('Compose_Challenge')?['challengeId']",
+                        "expiresAt": "@outputs('Compose_Challenge')?['expiresAt']",
+                        "message": "If this address belongs to a mailer operator, a sign-in code has been mailed to it."
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "Condition_Known_Operator": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Cleanup_Sessions": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@outputs('Compose_Request')?['validationOnly']",
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "SP_Read_Oldest_Sessions": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                          "parameters/method": "GET",
+                          "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '?$orderby=Id%20asc&$top=50')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          }
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      },
+                      "runAfter": {}
+                    },
+                    "Filter_Expired_Sessions": {
+                      "type": "Query",
+                      "inputs": {
+                        "from": "@coalesce(body('SP_Read_Oldest_Sessions')?['value'], createArray())",
+                        "where": "@or(equals(item()?['Status'], 'Revoked'), and(equals(item()?['Status'], 'RateLimit'), less(ticks(string(coalesce(item()?['CodeExpiresAt'], '1900-01-01T00:00:00Z'))), ticks(utcNow()))), and(contains(createArray('Pending', 'Locked'), string(item()?['Status'])), less(ticks(string(coalesce(item()?['CodeExpiresAt'], '1900-01-01T00:00:00Z'))), ticks(utcNow()))), and(equals(item()?['Status'], 'Active'), less(ticks(string(coalesce(item()?['TokenExpiresAt'], '1900-01-01T00:00:00Z'))), ticks(utcNow()))))"
+                      },
+                      "runAfter": {
+                        "SP_Read_Oldest_Sessions": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Apply_to_each_Expired_Session": {
+                      "type": "Foreach",
+                      "foreach": "@body('Filter_Expired_Sessions')",
+                      "runtimeConfiguration": {
+                        "concurrency": {
+                          "repetitions": 1
+                        }
+                      },
+                      "actions": {
+                        "SP_Delete_Expired_Session": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connectionName": "shared_sharepointonline",
+                              "operationId": "HttpRequest"
+                            },
+                            "parameters": {
+                              "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                              "parameters/method": "POST",
+                              "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '(', string(items('Apply_to_each_Expired_Session')?['Id']), ')')",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=nometadata",
+                                "Content-Type": "application/json;odata=nometadata",
+                                "IF-MATCH": "*",
+                                "X-HTTP-Method": "DELETE"
+                              }
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          },
+                          "runAfter": {}
+                        }
+                      },
+                      "runAfter": {
+                        "Filter_Expired_Sessions": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "Respond_Code_Requested": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "VerifyCode": {
+              "case": "verifycode",
+              "actions": {
+                "SP_Find_Challenge": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "GET",
+                      "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '?$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(trim(string(coalesce(triggerBody()?['payload']?['challengeId'], '')))), '''', ''''''), '''')))",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      }
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Challenge_Row": {
+                  "type": "Compose",
+                  "inputs": "@coalesce(first(coalesce(body('SP_Find_Challenge')?['value'], createArray())), json('{}'))",
+                  "runAfter": {
+                    "SP_Find_Challenge": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Challenge_Unusable": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@or(empty(string(coalesce(outputs('Compose_Challenge_Row')?['Id'], ''))), not(equals(string(outputs('Compose_Challenge_Row')?['Status']), 'Pending')), less(ticks(string(coalesce(outputs('Compose_Challenge_Row')?['CodeExpiresAt'], '1900-01-01T00:00:00Z'))), ticks(utcNow())), greaterOrEquals(int(coalesce(outputs('Compose_Challenge_Row')?['Attempts'], 0)), int(outputs('Compose_Config')?['maxCodeAttempts'])))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Challenge_Unusable_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 401,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "CODE_EXPIRED",
+                            "message": "This code has expired, was already used, or had too many wrong tries. Ask for a new code.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Challenge_Unusable_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Challenge_Unusable_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "Compose_Challenge_Row": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "SP_Read_Challenge_Version": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "GET",
+                      "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '(', string(outputs('Compose_Challenge_Row')?['Id']), ')')",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=verbose",
+                        "Content-Type": "application/json;odata=verbose"
+                      }
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Condition_Challenge_Unusable": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Attempt_Item": {
+                  "type": "Compose",
+                  "inputs": {
+                    "Attempts": "@add(int(coalesce(body('SP_Read_Challenge_Version')?['d']?['Attempts'], 0)), 1)",
+                    "Status": "@if(greaterOrEquals(add(int(coalesce(body('SP_Read_Challenge_Version')?['d']?['Attempts'], 0)), 1), int(outputs('Compose_Config')?['maxCodeAttempts'])), 'Locked', 'Pending')"
+                  },
+                  "runAfter": {
+                    "SP_Read_Challenge_Version": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "SP_Count_Attempt": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '(', string(outputs('Compose_Challenge_Row')?['Id']), ')')",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata",
+                        "IF-MATCH": "@string(body('SP_Read_Challenge_Version')?['d']?['__metadata']?['etag'])",
+                        "X-HTTP-Method": "MERGE"
+                      },
+                      "parameters/body": "@string(outputs('Compose_Attempt_Item'))"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Compose_Attempt_Item": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Attempt_Not_Counted": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@not(equals(actions('SP_Count_Attempt')?['status'], 'Succeeded'))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Attempt_Not_Counted_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 429,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "TRY_AGAIN",
+                            "message": "Another try with this code is being checked. Wait a moment, then enter the code again.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Attempt_Not_Counted_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Attempt_Not_Counted_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "SP_Count_Attempt": [
+                      "Succeeded",
+                      "Failed",
+                      "TimedOut"
+                    ]
+                  }
+                },
+                "Condition_Too_Many_Attempts": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@greater(add(int(coalesce(body('SP_Read_Challenge_Version')?['d']?['Attempts'], 0)), 1), int(outputs('Compose_Config')?['maxCodeAttempts']))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Too_Many_Attempts_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 401,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "CODE_EXPIRED",
+                            "message": "This code has expired, was already used, or had too many wrong tries. Ask for a new code.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Too_Many_Attempts_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Too_Many_Attempts_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "Condition_Attempt_Not_Counted": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Code_Wrong": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@equals(trim(string(coalesce(triggerBody()?['payload']?['code'], ''))), string(outputs('Compose_Challenge_Row')?['Code']))",
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Respond_Code_Wrong": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 401,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "CODE_INVALID",
+                            "message": "@concat('That code is not right. ', string(max(0, sub(int(outputs('Compose_Config')?['maxCodeAttempts']), add(int(coalesce(body('SP_Read_Challenge_Version')?['d']?['Attempts'], 0)), 1)))), ' try(s) left for this code.')",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Stop_Code_Wrong": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Respond_Code_Wrong": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "Condition_Too_Many_Attempts": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Token": {
+                  "type": "Compose",
+                  "inputs": {
+                    "token": "@concat(replace(guid(), '-', ''), replace(guid(), '-', ''))",
+                    "expiresAt": "@addHours(utcNow(), int(outputs('Compose_Config')?['sessionHours']))"
+                  },
+                  "runAfter": {
+                    "Condition_Code_Wrong": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Active_Item": {
+                  "type": "Compose",
+                  "inputs": {
+                    "Title": "@outputs('Compose_Token')?['token']",
+                    "Status": "Active",
+                    "Token": "@outputs('Compose_Token')?['token']",
+                    "TokenExpiresAt": "@outputs('Compose_Token')?['expiresAt']",
+                    "Code": ""
+                  },
+                  "runAfter": {
+                    "Compose_Token": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "SP_Activate_Session": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '(', string(outputs('Compose_Challenge_Row')?['Id']), ')')",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata",
+                        "IF-MATCH": "*",
+                        "X-HTTP-Method": "MERGE"
+                      },
+                      "parameters/body": "@string(outputs('Compose_Active_Item'))"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Compose_Active_Item": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Signed_In": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": false,
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "token": "@outputs('Compose_Token')?['token']",
+                        "expiresAt": "@outputs('Compose_Token')?['expiresAt']",
+                        "email": "@toLower(string(outputs('Compose_Challenge_Row')?['Email']))",
+                        "name": "@string(coalesce(outputs('Compose_Challenge_Row')?['DisplayName'], ''))"
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "SP_Activate_Session": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "SignOut": {
+              "case": "signout",
+              "actions": {
+                "Condition_Has_Session": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@empty(string(coalesce(outputs('Compose_Caller')?['sessionId'], '')))",
+                          false
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Compose_Revoked_Item": {
+                      "type": "Compose",
+                      "inputs": {
+                        "Status": "Revoked"
+                      },
+                      "runAfter": {}
+                    },
+                    "SP_Revoke_Session": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['sessionsList'], ''')/items'), '(', string(outputs('Compose_Caller')?['sessionId']), ')')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata",
+                            "IF-MATCH": "*",
+                            "X-HTTP-Method": "MERGE"
+                          },
+                          "parameters/body": "@string(outputs('Compose_Revoked_Item'))"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      },
+                      "runAfter": {
+                        "Compose_Revoked_Item": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  }
+                },
+                "Respond_Signed_Out": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": false,
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "signedOut": true
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "Condition_Has_Session": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "WhoAmI": {
+              "case": "whoami",
+              "actions": {
+                "Respond_Who": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": false,
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "email": "@outputs('Compose_Caller')?['email']",
+                        "name": "@outputs('Compose_Caller')?['name']",
+                        "role": "@outputs('Compose_Caller')?['role']",
+                        "via": "@outputs('Compose_Caller')?['via']",
+                        "expiresAt": "@outputs('Compose_Caller')?['expiresAt']"
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {}
+                }
+              }
+            },
+            "ListOperators": {
+              "case": "listoperators",
+              "actions": {
+                "Condition_List_Operators_Admin_Only": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@not(equals(outputs('Compose_Caller')?['role'], 'admin'))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_List_Operators_Admin_Only_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 403,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "FORBIDDEN",
+                            "message": "Only a mailer admin can manage operators.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_List_Operators_Admin_Only_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_List_Operators_Admin_Only_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {}
+                },
+                "SP_List_Operators": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "GET",
+                      "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['operatorsList'], ''')/items'), '?$select=Title,DisplayName,Active,Role,Modified&$top=500&$orderby=Title')",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      }
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Condition_List_Operators_Admin_Only": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Select_Operators": {
+                  "type": "Select",
+                  "inputs": {
+                    "from": "@coalesce(body('SP_List_Operators')?['value'], createArray())",
+                    "select": {
+                      "email": "@item()?['Title']",
+                      "name": "@item()?['DisplayName']",
+                      "active": "@item()?['Active']",
+                      "role": "@item()?['Role']",
+                      "modified": "@item()?['Modified']"
+                    }
+                  },
+                  "runAfter": {
+                    "SP_List_Operators": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Operators": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": false,
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "items": "@body('Select_Operators')",
+                        "count": "@length(body('Select_Operators'))"
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "Select_Operators": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "UpsertOperator": {
+              "case": "upsertoperator",
+              "actions": {
+                "Condition_Upsert_Operator_Admin_Only": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@not(equals(outputs('Compose_Caller')?['role'], 'admin'))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Upsert_Operator_Admin_Only_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 403,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "FORBIDDEN",
+                            "message": "Only a mailer admin can manage operators.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Upsert_Operator_Admin_Only_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Upsert_Operator_Admin_Only_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {}
+                },
+                "Condition_Operator_Email_Required": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@not(contains(toLower(trim(string(coalesce(triggerBody()?['payload']?['operator']?['email'], '')))), '@'))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Operator_Email_Required_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 400,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": false,
+                          "validationOnly": false,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": null,
+                          "error": {
+                            "code": "EMAIL_REQUIRED",
+                            "message": "payload.operator.email must be an email address.",
+                            "details": null
+                          }
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Operator_Email_Required_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Operator_Email_Required_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "Condition_Upsert_Operator_Admin_Only": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "SP_Find_Operator_Record": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                      "parameters/method": "GET",
+                      "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['operatorsList'], ''')/items'), '?$select=Id,Title&$top=1&$filter=', encodeUriComponent(concat('Title eq ''', replace(string(toLower(trim(string(coalesce(triggerBody()?['payload']?['operator']?['email'], ''))))), '''', ''''''), '''')))",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=nometadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      }
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {
+                    "Condition_Operator_Email_Required": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Operator_Item": {
+                  "type": "Compose",
+                  "inputs": {
+                    "Title": "@substring(string(toLower(trim(string(coalesce(triggerBody()?['payload']?['operator']?['email'], ''))))), 0, min(length(string(toLower(trim(string(coalesce(triggerBody()?['payload']?['operator']?['email'], '')))))), 255))",
+                    "DisplayName": "@substring(string(coalesce(triggerBody()?['payload']?['operator']?['name'], '')), 0, min(length(string(coalesce(triggerBody()?['payload']?['operator']?['name'], ''))), 255))",
+                    "Active": "@if(equals(triggerBody()?['payload']?['operator']?['active'], false), false, true)",
+                    "Role": "@if(equals(toLower(string(coalesce(triggerBody()?['payload']?['operator']?['role'], ''))), 'admin'), 'admin', 'operator')"
+                  },
+                  "runAfter": {
+                    "SP_Find_Operator_Record": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Operator_ValidationOnly": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@outputs('Compose_Request')?['validationOnly']",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_Operator_ValidationOnly_Respond": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 200,
+                        "headers": {
+                          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type",
+                          "Vary": "Origin",
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "success": true,
+                          "validationOnly": true,
+                          "endpoint": {
+                            "key": "@outputs('Compose_Config')?['endpointKey']"
+                          },
+                          "requestId": "@outputs('Compose_Request')?['requestId']",
+                          "runId": "@workflow()?['run']?['name']",
+                          "data": {
+                            "item": "@outputs('Compose_Operator_Item')"
+                          },
+                          "error": null
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Condition_Operator_ValidationOnly_Stop": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "runAfter": {
+                        "Condition_Operator_ValidationOnly_Respond": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {}
+                  },
+                  "runAfter": {
+                    "Compose_Operator_Item": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Operator_Exists": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@greater(length(coalesce(body('SP_Find_Operator_Record')?['value'], createArray())), 0)",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "SP_Update_Operator": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "@concat(concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['operatorsList'], ''')/items'), '(', string(first(body('SP_Find_Operator_Record')?['value'])?['Id']), ')')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata",
+                            "IF-MATCH": "*",
+                            "X-HTTP-Method": "MERGE"
+                          },
+                          "parameters/body": "@string(outputs('Compose_Operator_Item'))"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      },
+                      "runAfter": {}
+                    }
+                  },
+                  "else": {
+                    "actions": {
+                      "SP_Create_Operator": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "HttpRequest"
+                          },
+                          "parameters": {
+                            "dataset": "@outputs('Compose_Config')?['siteUrl']",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/GetByTitle(''', outputs('Compose_Config')?['operatorsList'], ''')/items')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata"
+                            },
+                            "parameters/body": "@string(outputs('Compose_Operator_Item'))"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        },
+                        "runAfter": {}
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Condition_Operator_ValidationOnly": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Operator_Saved": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type",
+                      "Vary": "Origin",
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "success": true,
+                      "validationOnly": false,
+                      "endpoint": {
+                        "key": "@outputs('Compose_Config')?['endpointKey']"
+                      },
+                      "requestId": "@outputs('Compose_Request')?['requestId']",
+                      "runId": "@workflow()?['run']?['name']",
+                      "data": {
+                        "operator": "@outputs('Compose_Operator_Item')"
+                      },
+                      "error": null
+                    }
+                  },
+                  "runAfter": {
+                    "Condition_Operator_Exists": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "actions": {
+              "Respond_Unknown_Operation": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 400,
+                  "headers": {
+                    "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Vary": "Origin",
+                    "Content-Type": "application/json"
+                  },
+                  "body": {
+                    "success": false,
+                    "validationOnly": false,
+                    "endpoint": {
+                      "key": "@outputs('Compose_Config')?['endpointKey']"
+                    },
+                    "requestId": "@outputs('Compose_Request')?['requestId']",
+                    "runId": "@workflow()?['run']?['name']",
+                    "data": null,
+                    "error": {
+                      "code": "UNKNOWN_OPERATION",
+                      "message": "@concat('Unsupported operation ''', outputs('Compose_Request')?['operation'], '''. Supported: ', 'verify, healthcheck, requestcode, verifycode, signout, whoami, listoperators, upsertoperator')",
+                      "details": null
+                    }
+                  }
+                },
+                "runAfter": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "Respond_Unhandled_Failure": {
+      "type": "Response",
+      "kind": "Http",
+      "inputs": {
+        "statusCode": 500,
+        "headers": {
+          "Access-Control-Allow-Origin": "@outputs('Compose_Config')?['allowedOrigin']",
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Vary": "Origin",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "success": false,
+          "validationOnly": false,
+          "endpoint": {
+            "key": "@outputs('Compose_Config')?['endpointKey']"
+          },
+          "requestId": "@outputs('Compose_Request')?['requestId']",
+          "runId": "@workflow()?['run']?['name']",
+          "data": null,
+          "error": {
+            "code": "FLOW_FAILED",
+            "message": "@concat('The flow failed before it could answer. Run id: ', workflow()?['run']?['name'])",
+            "details": "@string(result('Scope_Try'))"
+          }
+        }
+      },
+      "runAfter": {
+        "Scope_Try": [
+          "Failed",
+          "TimedOut"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}

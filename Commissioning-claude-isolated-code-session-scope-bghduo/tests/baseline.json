@@ -1,0 +1,75 @@
+{
+  "_comment": "Measured baselines for tests/static/css-contract.mjs. Every number here was measured against the tree it ships with, not chosen. A number may only go DOWN. Raising one requires a recorded justification in the commit body.",
+  "_measuredAt": "2026-09-09",
+  "_measuredAgainst": "dgoeaa/ECM_DOCS_DEV, branch claude/system-remediation-gaps-ahpmsy, measured by an actual run of tests/static/css-contract.mjs over the 19 stylesheets and 105 JS files it reads (core/ 67, modules/ 30, shared/ 8). Taken after the R-1..R-4 mobile-shell files were ported in, at which point the tree already held every metric the workstream's own baseline recorded: the .dgo-sidebar__badge fix (9px -> var(--dgo-type-floor)) that clears DGO-R5-TYPO-01, the .cc-source-list wrap that clears the inverted column cascade, and the R3-D1/R3-D3/R-D2 shell changes. Only accessibility.formControls (222 -> 225) and accessibility.labelled (193 -> 196) moved, both gains from the persona panel's markup.",
+  "overrideOverlap": {
+    "_comment": "Class+property pairs declared in BOTH the overrides layer and a layer it overrides. This is the budget styles/index.css has always cited. The shared-layer arrangement in index.css stays accepted debt until platformAuthorityVsApp reaches 0.",
+    "platformAuthorityVsApp": 95,
+    "componentsVsApp": 75,
+    "total": 170
+  },
+  "important": {
+    "_comment": "!important declarations in app.css. Each one removes a component's ability to adapt in context.",
+    "appCss": 41,
+    "rulesContaining": 36
+  },
+  "tokens": {
+    "_comment": "orphans = defined but never referenced. undefined MUST stay 0 — a var() that resolves to nothing fails silently. shadowedByAppCss = design-system tokens redefined in the overrides layer.",
+    "defined": 417,
+    "orphans": 151,
+    "undefined": 0,
+    "shadowedByAppCss": 15
+  },
+  "typography": {
+    "_comment": "belowFloor counts font-size declarations under --dgo-type-floor (11px, DGO-R5-TYPO-01). It must reach 0 and stay there.",
+    "appCssLiteralFontSizes": 75,
+    "appCssTokenFontSizes": 34,
+    "distinctLiteralSizes": 18,
+    "belowFloor": 0
+  },
+  "colour": {
+    "_comment": "Literal hex occurrences in app.css against tokenised colour references.",
+    "appCssLiteralHex": 176,
+    "appCssDistinctHex": 62,
+    "appCssTokenRefs": 123
+  },
+  "responsive": {
+    "_comment": "invertedColumnCascades counts selectors whose column count RISES as the viewport narrows. Currently .cc-source-list only.",
+    "distinctQueryConditions": 17,
+    "queryBlocks": 65,
+    "invertedColumnCascades": 1,
+    "deadDeclarations": 16
+  },
+  "surface": {
+    "_comment": "Classes defined in CSS vs present in markup. wel-* is excluded from unstyledInMarkup because core/welcome-experience.js injects its own sheet — that exclusion is itself the S-3 finding and should disappear when S-3 is fixed.",
+    "classesDefined": 565,
+    "classesUsed": 337,
+    "styledNeverUsed": 301,
+    "unstyledInMarkup": 42
+  },
+  "accessibility": {
+    "_comment": "unlabelledControls excludes input[type=hidden]. labelForPairs is recorded to detect a shift away from label-wrapping, not because 0 is wrong.",
+    "formControls": 258,
+    "hiddenInputs": 9,
+    "labelled": 229,
+    "unlabelledControls": 20,
+    "labelForPairs": 1,
+    "ariaLiveRegions": 4
+  },
+  "accepted": {
+    "_comment": "Known, measured, deliberately not fixed. Each needs an owner and a reason, or it does not belong here.",
+    "sharedOverridesLayer": {
+      "reason": "No sub-layer order is behaviour-preserving; see styles/index.css. Safe to split once overrideOverlap.platformAuthorityVsApp reaches 0.",
+      "owner": "frontend"
+    },
+    "injectedWelcomeStylesheet": {
+      "reason": "core/welcome-experience.js ships its own sheet outside the cascade. Finding S-3; scheduled as action 2.",
+      "owner": "frontend"
+    },
+    "ccSourceListInversion": {
+      "reason": "Column count rises as viewport narrows. The truncation it caused is fixed by allowing labels to wrap; the inversion is documented as intentional at app.css A-1.",
+      "owner": "frontend"
+    }
+  },
+  "_state": "Clean pass. All must-be-zero metrics are 0; no metric is worse than baseline."
+}

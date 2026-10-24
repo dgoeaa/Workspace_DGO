@@ -1,0 +1,33 @@
+/* Platform Hub — page styles.
+   Every colour, size and radius is a --dgo-* or --bk-* token from brand/brand.css
+   (npm run test:brand fails on a literal colour here). */
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bk-ground); color: var(--bk-ink); font-family: var(--bk-font-body); line-height: 1.5; }
+.top, main { max-width: 1100px; margin: 0 auto; padding: var(--dgo-s-6) var(--dgo-s-4) 0; }
+h1 { margin: 0; font-family: var(--bk-font-display); color: var(--bk-ink-strong); }
+h2 { margin: var(--dgo-s-7) 0 var(--dgo-s-3); font-size: var(--dgo-size-12); color: var(--bk-ink-soft); text-transform: uppercase; letter-spacing: .06em; }
+.lede, .summary, .advisory { color: var(--bk-ink-soft); margin: var(--dgo-s-1) 0; }
+.advisory { border-left: 3px solid var(--bk-warn); padding-left: var(--dgo-s-2); }
+.filters { display: flex; flex-wrap: wrap; gap: var(--dgo-s-3); margin: var(--dgo-s-2) 0 var(--dgo-s-3); }
+.filters label { display: flex; flex-direction: column; gap: var(--dgo-s-1); flex: 1 1 180px; font-size: var(--dgo-size-12); color: var(--bk-ink-soft); }
+input, select { font: inherit; padding: var(--dgo-s-2) var(--dgo-s-3); border: 1px solid var(--bk-rule-strong); border-radius: var(--bk-radius-sm); background: var(--bk-surface); color: var(--bk-ink); }
+:focus-visible { outline: 2px solid var(--bk-focus); outline-offset: 2px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--dgo-s-3); }
+.card { display: flex; flex-direction: column; gap: var(--dgo-s-2); padding: var(--dgo-s-4); background: var(--bk-surface); border: 1px solid var(--bk-rule); border-radius: var(--bk-radius); box-shadow: var(--bk-shadow); }
+.card h3 { margin: 0; color: var(--bk-ink-strong); }
+.card p { margin: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: var(--dgo-s-1) var(--dgo-s-3); font-size: var(--dgo-size-12); color: var(--bk-ink-soft); }
+.badge { border: 1px solid var(--bk-rule); border-radius: 999px; padding: 0 var(--dgo-s-2); }
+.status { font-weight: 600; font-size: var(--dgo-size-12); }
+.status::before { content: "●"; margin-right: var(--dgo-s-2); }
+.status.up { color: var(--bk-ok); }
+.status.down { color: var(--bk-bad); }
+.status.unknown { color: var(--bk-warn); }
+.actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: var(--dgo-s-2); align-items: center; }
+.open { background: var(--bk-brand); color: var(--bk-on-brand); text-decoration: none; padding: var(--dgo-s-2) var(--dgo-s-4); border-radius: var(--bk-radius-sm); font-weight: 600; }
+.open:hover { background: var(--bk-brand-hover); }
+code { font-family: var(--bk-font-mono); font-size: .9em; overflow-wrap: anywhere; }
+.error { color: var(--bk-bad); }
+.brandrow { display: flex; align-items: center; gap: var(--dgo-s-3); margin-bottom: var(--dgo-s-3); }
+.bk-logo { height: 44px; width: auto; }

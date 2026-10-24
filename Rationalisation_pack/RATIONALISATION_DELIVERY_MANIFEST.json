@@ -1,0 +1,49 @@
+{
+  "delivery_date": "2026-10-22",
+  "source_integrity": {
+    "passed": 2038,
+    "total": 2038
+  },
+  "tests": {
+    "rationalisation": "34/34 modules PASS",
+    "imports": "221 modules, 2899 edges PASS",
+    "governance": "128 passed, 0 failed"
+  },
+  "files": [
+    {
+      "file": "config/module-rationalisation.config.js",
+      "bytes": 6362,
+      "sha256": "92168c8a27d83a26b9434c6db6a3c1e188a8cc26a7f43dba332bd28d28b43d9f"
+    },
+    {
+      "file": "config/module-boundaries.config.js",
+      "bytes": 9457,
+      "sha256": "31b193c79c6c89ada9aeb6dc5f1224d488e0ab8714954bc34b1d92e04dca0c43"
+    },
+    {
+      "file": "tests/module-rationalisation.test.mjs",
+      "bytes": 2392,
+      "sha256": "07f943c34bef384bfdcc9e51916183c7ce176018be5feb8fffde28e5d07be518"
+    },
+    {
+      "file": "docs/architecture/MODULE_RATIONALISATION_PLAN.md",
+      "bytes": 16774,
+      "sha256": "2ff54c1698f358dea6a08c6d752f9dbb62ddd11289b3e059f094e31100312240"
+    },
+    {
+      "file": "docs/architecture/MODULE_RATIONALISATION_EXECUTION.md",
+      "bytes": 1524,
+      "sha256": "3e2f8cc3e7c770f838f82de408ac3c9f360b6c50b7dedc6d6bf1b32c640f53cf"
+    },
+    {
+      "file": "package.json",
+      "bytes": 31391,
+      "sha256": "77391eddce6f993911201bdf73821bed6b1f08bd1ea0bce3ff9b3eeadb9dd21e"
+    },
+    {
+      "file": "RATIONALISATION_DELIVERY_REPORT.md",
+      "bytes": 1822,
+      "sha256": "277bbc37999bb01f8b6a16b77f07cde9233c720e180dc0199f05b4064b5bd0d6"
+    }
+  ]
+}

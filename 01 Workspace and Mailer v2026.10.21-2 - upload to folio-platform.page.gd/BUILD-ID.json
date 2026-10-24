@@ -1,0 +1,15 @@
+{
+  "schema": "folio-build-id/v1",
+  "package": "FOLIO-WORKSPACE",
+  "version": "2026.10.21-2",
+  "label": "FOLIO-WORKSPACE v2026.10.21-2",
+  "builtUtc": "2026-10-21T03:38:39.691Z",
+  "commit": "31e804758d7244d3178571b3ee6d014ba2dba98f",
+  "codeFingerprint": "9d490611dc7e487f",
+  "configDigest": "8d7c43b3a5a90761",
+  "files": 213,
+  "mailer": {
+    "file": "mailer.html",
+    "sha256": "50da4372dc726649"
+  }
+}

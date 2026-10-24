@@ -1,0 +1,318 @@
+/* Native Folio workspace redesign.
+   Presentation only: the existing router, modules, permissions, state and services remain intact. */
+
+:root {
+  --redesign-gap: var(--dgo-s-2, 8px);
+}
+
+@media (min-width: 901px) {
+  html,
+  body,
+  dgo-shell {
+    block-size: 100%;
+    overflow: hidden;
+  }
+
+  .dgo-ministry-bar {
+    block-size: 22px;
+    min-block-size: 22px;
+    max-block-size: 22px;
+  }
+
+  .dgo-shell-grid {
+    block-size: calc(100dvh - 22px);
+    max-block-size: calc(100dvh - 22px);
+  }
+
+  .dgo-brand-lockup {
+    min-block-size: 66px;
+    padding: 9px 14px;
+    gap: 7px;
+  }
+
+  .dgo-brand-lockup__agency {
+    inline-size: 104px;
+  }
+
+  .dgo-sidebar__nav {
+    padding: 5px 10px 7px;
+  }
+
+  .dgo-nav-group {
+    margin-block-start: 5px;
+  }
+
+  .dgo-nav-group__label {
+    padding: 0 10px 3px;
+    font-size: var(--dgo-type-floor);
+  }
+
+  .dgo-sidebar__item {
+    min-block-size: 32px;
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  .dgo-sidebar__identity {
+    padding: 9px 14px;
+  }
+
+  .dgo-workarea {
+    grid-template-rows: 68px auto minmax(0, 1fr) auto 30px;
+  }
+
+  .dgo-topbar {
+    block-size: 68px;
+    min-block-size: 68px;
+    max-block-size: 68px;
+    padding-inline: 18px;
+    gap: 12px;
+  }
+
+  .dgo-route-title {
+    min-inline-size: 250px;
+    max-inline-size: min(36vw, 460px);
+  }
+
+  .dgo-route-title small {
+    font-size: var(--dgo-type-floor);
+    letter-spacing: .1em;
+  }
+
+  .dgo-route-title b {
+    overflow: hidden;
+    font-size: 18px;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dgo-route-title [data-context-description] {
+    display: block;
+    margin-block-start: 2px;
+    overflow: hidden;
+    color: var(--dgo-color-fg-muted);
+    font-size: var(--dgo-type-floor);
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dgo-search-trigger {
+    inline-size: min(280px, 25vw);
+    min-block-size: 38px;
+  }
+
+  .dgo-main {
+    min-block-size: 0;
+    padding: 10px 14px;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dgo-page-head,
+  .pagehead {
+    display: none;
+  }
+
+  .dgo-footer {
+    block-size: 30px;
+    min-block-size: 30px;
+    max-block-size: 30px;
+  }
+
+  /* KPI label and value share one readable line. */
+  .kpi,
+  .dgo-metric,
+  .dgo-stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .kpi small,
+  .dgo-metric__label,
+  .dgo-stat__label {
+    min-inline-size: 0;
+    color: var(--dgo-color-fg-muted);
+    font-weight: 700;
+  }
+
+  .kpi b,
+  .dgo-metric__value,
+  .dgo-stat__value {
+    flex: 0 0 auto;
+    margin-block-start: 0;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  /* Command Center occupies the available canvas without page-level scrolling. */
+  dgo-shell[data-route="home"] .dgo-main {
+    overflow: hidden;
+  }
+
+  .cc-workspace {
+    block-size: 100%;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: var(--redesign-gap);
+  }
+
+  .cc-workspace > .dgo-page-head,
+  .cc-workspace > .pagehead {
+    display: none;
+  }
+
+  .cc-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(230px, .32fr);
+    gap: var(--redesign-gap);
+  }
+
+  .cc-kpi-band .kpis {
+    gap: var(--redesign-gap);
+  }
+
+  .cc-kpi-band .kpi {
+    min-block-size: 60px;
+    padding: 9px 11px;
+  }
+
+  .cc-source-strip {
+    min-block-size: 60px;
+    padding: 8px 10px;
+  }
+
+  .cc-source-list {
+    gap: 5px;
+  }
+
+  .cc-source-list span {
+    min-block-size: 23px;
+    padding: 4px 7px;
+  }
+
+  .cc-actions-panel {
+    min-block-size: 0;
+    padding: 8px;
+  }
+
+  .cc-actions-panel > .panel-eyebrow {
+    margin-block-end: 5px;
+  }
+
+  .cc-action-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--redesign-gap);
+  }
+
+  .action-card.cc-action {
+    min-block-size: 74px;
+    padding: 8px 10px;
+  }
+
+  .action-card.cc-action h2 {
+    margin: 2px 0;
+    font-size: 15px;
+  }
+
+  .action-card.cc-action p {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: var(--dgo-type-floor);
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .action-card.cc-action .kpi-inline {
+    font-size: 20px;
+  }
+
+  .cc-support-panels {
+    min-block-size: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--redesign-gap);
+    overflow: hidden;
+  }
+
+  .cc-support-panels > .panel {
+    min-block-size: 0;
+    padding: 9px 11px;
+    overflow: auto;
+  }
+
+  .cc-progressive .journey-list {
+    margin-block-start: 4px;
+    font-size: var(--dgo-type-floor);
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1280px) {
+  .dgo-route-title {
+    min-inline-size: 190px;
+  }
+
+  .dgo-route-title [data-context-description] {
+    max-inline-size: 240px;
+  }
+
+  .dgo-persona-button > span:not(.dgo-avatar) {
+    display: none;
+  }
+
+  .cc-action-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .cc-support-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: auto;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 700px) {
+  .dgo-ministry-bar {
+    display: none;
+  }
+
+  .dgo-shell-grid {
+    block-size: 100dvh;
+    max-block-size: 100dvh;
+  }
+
+  .dgo-workarea {
+    grid-template-rows: 60px auto minmax(0, 1fr) auto 26px;
+  }
+
+  .dgo-topbar {
+    block-size: 60px;
+    min-block-size: 60px;
+    max-block-size: 60px;
+  }
+
+  .dgo-brand-lockup {
+    min-block-size: 58px;
+    padding-block: 6px;
+  }
+
+  .dgo-sidebar__item {
+    min-block-size: 29px;
+  }
+
+  .cc-kpi-band .kpi {
+    min-block-size: 50px;
+    padding-block: 6px;
+  }
+
+  .action-card.cc-action {
+    min-block-size: 62px;
+  }
+}
+
+@media (max-width: 900px) {
+  .dgo-route-title [data-context-description] {
+    display: none;
+  }
+}

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NITDA Flow Operations Workbench</title>
+<style>/*__CSS__*/</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <small>NITDA DGO · FLOW SHAPE ALIGNMENT</small>
+    <h1>Flow Operations Workbench</h1>
+    <p>Repository request shapes, embedded, validated, probed and exportable.</p>
+    <div class="tabs">
+      <button class="active" onclick="tab('dashboard',this)">Dashboard</button>
+      <button onclick="tab('inspect',this)">Inspect Shapes</button>
+      <button onclick="tab('compose',this)">Compose &amp; Validate</button>
+      <button onclick="tab('outcomes',this)">Outcomes</button>
+      <button onclick="tab('profilesPage',this)">Endpoint Profiles</button>
+      <button onclick="tab('help',this)">Activation</button>
+    </div>
+  </div>
+</header>
+
+<main class="main wrap">
+
+<section id="dashboard" class="page">
+  <div id="metrics" class="grid metrics"></div>
+  <div class="card">
+    <h2>Repository alignment scope</h2>
+    <p>The workbench embeds the complete trigger JSON Schema and flattened field definition for
+       every catalogued flow. Each one carries the path and SHA-256 of the definition file it was
+       extracted from, so any entry can be traced back to the repository.</p>
+    <p class="small">Flows whose trigger is <code>Request/PowerAppV2</code> are excluded at build
+       time: they are invoked by Power Apps through the Power Platform connector rather than by
+       posting to a URL. Every remaining flow is enabled for composing, validating and sending.</p>
+    <div class="toolbar">
+      <button class="primary" onclick="exportShapes()">Export all request shapes</button>
+      <button class="secondary" onclick="exportCatalog()">Export full catalog</button>
+    </div>
+  </div>
+</section>
+
+<section id="inspect" class="page hidden">
+  <div class="grid work">
+    <div class="card">
+      <label>Search<input id="q" placeholder="Search flow or field" oninput="renderList()"></label>
+      <label class="checkline"><input id="only" type="checkbox" onchange="renderList()"><span>HTTP triggers only</span></label>
+      <div id="listCount" class="small"></div>
+      <div id="flowList" class="list"></div>
+    </div>
+    <div>
+      <div class="card">
+        <h2 id="flowTitle"></h2>
+        <div id="meta"></div>
+      </div>
+      <div class="card">
+        <h3>Request field contract</h3>
+        <div class="scroll"><table id="shapeTable"></table></div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Complete trigger JSON Schema</h3>
+          <pre id="schema"></pre>
+        </div>
+        <div class="card">
+          <h3>Response action shapes</h3>
+          <pre id="responses"></pre>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Action graph</h3>
+        <div class="scroll"><table id="actions"></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="compose" class="page hidden">
+  <div class="grid two">
+    <div>
+      <div class="card">
+        <h2>Schema-guided composer</h2>
+        <div id="triggerNote" class="info hidden"></div>
+        <label>Selected flow<input id="selectedName" disabled></label>
+        <div id="shapeForm"></div>
+      </div>
+      <div class="card">
+        <h2>Raw request</h2>
+        <label>Mode<select id="mode" onchange="renderModeHint()">
+          <option value="direct">Direct browser</option>
+          <option value="relay">Local loopback relay</option>
+        </select></label>
+        <div id="modeHint" class="warn">Checking for the local relay...</div>
+        <label>Authorized endpoint URL
+          <div class="urlrow">
+            <input id="url" type="password" autocomplete="off" spellcheck="false" oninput="updateSendState()">
+            <button id="revealBtn" class="secondary" onclick="toggleUrl()">Reveal</button>
+            <button class="secondary" onclick="saveProfile()">Store</button>
+          </div>
+        </label>
+        <div class="grid two">
+          <label>Method<select id="method">
+            <option>POST</option><option>GET</option><option>PUT</option>
+            <option>PATCH</option><option>DELETE</option>
+          </select></label>
+          <label>Timeout (seconds)<input id="timeout" type="number" value="60" min="1" max="300"></label>
+        </div>
+        <label>Headers JSON<textarea id="headers">{}</textarea></label>
+        <label>Body JSON<textarea id="requestBody" oninput="fillFormFromJson()">{}</textarea></label>
+        <div id="validation" class="warn">Awaiting validation.</div>
+        <div class="toolbar">
+          <button class="secondary" onclick="validatePayload()">Validate</button>
+          <button class="secondary" onclick="exportAlignment()">Export alignment</button>
+          <button id="sendBtn" class="primary" onclick="sendRequest()">Validate and send</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>Alignment report</h2>
+        <pre id="alignResult"></pre>
+      </div>
+      <div class="card">
+        <h2>Response</h2>
+        <pre id="result">No request sent.</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="outcomes" class="page hidden">
+  <div class="toolbar">
+    <button class="primary" onclick="exportHistory()">Export outcomes</button>
+    <button class="danger" onclick="clearHistory()">Clear</button>
+  </div>
+  <div class="card scroll"><table id="history"></table></div>
+  <div class="card"><pre id="historyDetail"></pre></div>
+</section>
+
+<section id="profilesPage" class="page hidden">
+  <div class="toolbar">
+    <button class="secondary" onclick="exportProfiles()">Export redacted profiles</button>
+  </div>
+  <div class="card scroll"><table id="profiles"></table></div>
+  <div class="warn">Endpoint URLs are held only in this browser's local storage and are never sent
+    anywhere except to the endpoint itself. Exports replace the value of signature, token, code, key,
+    secret and password query parameters with <code>REDACTED</code>.</div>
+</section>
+
+<section id="help" class="page hidden">
+  <div class="grid two">
+    <div class="card">
+      <h2>Inspection only</h2>
+      <ol>
+        <li>Open <code>index.html</code> directly in a browser.</li>
+        <li>Select a flow under Inspect Shapes.</li>
+        <li>Compose and validate a payload.</li>
+      </ol>
+      <p class="small">Sending will not work in this mode: Power Automate endpoints return no CORS
+        headers, so the browser cannot read the response. Use the relay below to send.</p>
+    </div>
+    <div class="card">
+      <h2>Sending, via the relay</h2>
+      <ol>
+        <li>Run <code>python3 local_agent.py</code> from this directory.</li>
+        <li>Open <code>http://127.0.0.1:8765</code> — not the file on disk.</li>
+        <li>Mode switches to <em>Local loopback relay</em> automatically.</li>
+        <li>Supply the authorized endpoint URL and the actual payload values.</li>
+      </ol>
+      <p class="small">The relay listens only on 127.0.0.1, accepts requests only from its own
+        origin, and forwards only to HTTPS targets. Stop it with Ctrl-C when finished.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="runtime" class="runtime">INITIALIZING</div>
+<script>/*__CATALOG__*/</script>
+<script>/*__APP__*/</script>
+</body>
+</html>

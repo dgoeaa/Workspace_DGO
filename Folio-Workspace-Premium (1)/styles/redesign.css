@@ -1,0 +1,758 @@
+/* Native Folio workspace redesign.
+   Presentation only: the existing router, modules, permissions, state and services remain intact. */
+
+:root {
+  --redesign-gap: var(--dgo-s-2, 8px);
+}
+
+@media (min-width: 901px) {
+  html,
+  body,
+  dgo-shell {
+    block-size: 100%;
+    overflow: hidden;
+  }
+
+  .dgo-ministry-bar {
+    block-size: 22px;
+    min-block-size: 22px;
+    max-block-size: 22px;
+  }
+
+  .dgo-shell-grid {
+    block-size: calc(100dvh - 22px);
+    max-block-size: calc(100dvh - 22px);
+  }
+
+  .dgo-brand-lockup {
+    min-block-size: 66px;
+    padding: 9px 14px;
+    gap: 7px;
+  }
+
+  .dgo-brand-lockup__agency {
+    inline-size: 104px;
+  }
+
+  .dgo-sidebar__nav {
+    padding: 5px 10px 7px;
+  }
+
+  .dgo-nav-group {
+    margin-block-start: 5px;
+  }
+
+  .dgo-nav-group__label {
+    padding: 0 10px 3px;
+    font-size: var(--dgo-type-floor);
+  }
+
+  .dgo-sidebar__item {
+    min-block-size: 32px;
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  .dgo-sidebar__identity {
+    padding: 9px 14px;
+  }
+
+  .dgo-workarea {
+    grid-template-rows: 68px auto minmax(0, 1fr) auto 30px;
+  }
+
+  .dgo-topbar {
+    block-size: 68px;
+    min-block-size: 68px;
+    max-block-size: 68px;
+    padding-inline: 18px;
+    gap: 12px;
+  }
+
+  .dgo-route-title {
+    min-inline-size: 250px;
+    max-inline-size: min(36vw, 460px);
+  }
+
+  .dgo-route-title small {
+    font-size: var(--dgo-type-floor);
+    letter-spacing: .1em;
+  }
+
+  .dgo-route-title b {
+    overflow: hidden;
+    font-size: 18px;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dgo-route-title [data-context-description] {
+    display: block;
+    margin-block-start: 2px;
+    overflow: hidden;
+    color: var(--dgo-color-fg-muted);
+    font-size: var(--dgo-type-floor);
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dgo-search-trigger {
+    inline-size: min(280px, 25vw);
+    min-block-size: 38px;
+  }
+
+  .dgo-main {
+    min-block-size: 0;
+    padding: 10px 14px;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dgo-page-head,
+  .pagehead {
+    display: none;
+  }
+
+  .dgo-footer {
+    block-size: 30px;
+    min-block-size: 30px;
+    max-block-size: 30px;
+  }
+
+  /* KPI label and value share one readable line. */
+  .kpi,
+  .dgo-metric,
+  .dgo-stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .kpi small,
+  .dgo-metric__label,
+  .dgo-stat__label {
+    min-inline-size: 0;
+    color: var(--dgo-color-fg-muted);
+    font-weight: 700;
+  }
+
+  .kpi b,
+  .dgo-metric__value,
+  .dgo-stat__value {
+    flex: 0 0 auto;
+    margin-block-start: 0;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  /* Command Center occupies the available canvas without page-level scrolling. */
+  dgo-shell[data-route="home"] .dgo-main {
+    overflow: hidden;
+  }
+
+  .cc-workspace {
+    block-size: 100%;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: var(--redesign-gap);
+  }
+
+  .cc-workspace > .dgo-page-head,
+  .cc-workspace > .pagehead {
+    display: none;
+  }
+
+  .cc-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(230px, .32fr);
+    gap: var(--redesign-gap);
+  }
+
+  .cc-kpi-band .kpis {
+    gap: var(--redesign-gap);
+  }
+
+  .cc-kpi-band .kpi {
+    min-block-size: 60px;
+    padding: 9px 11px;
+  }
+
+  .cc-source-strip {
+    min-block-size: 60px;
+    padding: 8px 10px;
+  }
+
+  .cc-source-list {
+    gap: 5px;
+  }
+
+  .cc-source-list span {
+    min-block-size: 23px;
+    padding: 4px 7px;
+  }
+
+  .cc-actions-panel {
+    min-block-size: 0;
+    padding: 8px;
+  }
+
+  .cc-actions-panel > .panel-eyebrow {
+    margin-block-end: 5px;
+  }
+
+  .cc-action-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--redesign-gap);
+  }
+
+  .action-card.cc-action {
+    min-block-size: 74px;
+    padding: 8px 10px;
+  }
+
+  .action-card.cc-action h2 {
+    margin: 2px 0;
+    font-size: 15px;
+  }
+
+  .action-card.cc-action p {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: var(--dgo-type-floor);
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .action-card.cc-action .kpi-inline {
+    font-size: 20px;
+  }
+
+  .cc-support-panels {
+    min-block-size: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--redesign-gap);
+    overflow: hidden;
+  }
+
+  .cc-support-panels > .panel {
+    min-block-size: 0;
+    padding: 9px 11px;
+    overflow: auto;
+  }
+
+  .cc-progressive .journey-list {
+    margin-block-start: 4px;
+    font-size: var(--dgo-type-floor);
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1280px) {
+  .dgo-route-title {
+    min-inline-size: 190px;
+  }
+
+  .dgo-route-title [data-context-description] {
+    max-inline-size: 240px;
+  }
+
+  .dgo-persona-button > span:not(.dgo-avatar) {
+    display: none;
+  }
+
+  .cc-action-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .cc-support-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: auto;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 700px) {
+  .dgo-ministry-bar {
+    display: none;
+  }
+
+  .dgo-shell-grid {
+    block-size: 100dvh;
+    max-block-size: 100dvh;
+  }
+
+  .dgo-workarea {
+    grid-template-rows: 60px auto minmax(0, 1fr) auto 26px;
+  }
+
+  .dgo-topbar {
+    block-size: 60px;
+    min-block-size: 60px;
+    max-block-size: 60px;
+  }
+
+  .dgo-brand-lockup {
+    min-block-size: 58px;
+    padding-block: 6px;
+  }
+
+  .dgo-sidebar__item {
+    min-block-size: 29px;
+  }
+
+  .cc-kpi-band .kpi {
+    min-block-size: 50px;
+    padding-block: 6px;
+  }
+
+  .action-card.cc-action {
+    min-block-size: 62px;
+  }
+}
+
+@media (max-width: 900px) {
+  .dgo-route-title [data-context-description] {
+    display: none;
+  }
+}
+
+/* Premium interaction and surface pass. */
+@media (min-width: 901px) {
+  .dgo-ministry-bar,
+  .dgo-footer,
+  .dgo-related {
+    display: none;
+  }
+
+  .dgo-shell-grid {
+    block-size: 100dvh;
+    max-block-size: 100dvh;
+  }
+
+  .dgo-workarea {
+    grid-template-rows: 64px auto minmax(0, 1fr);
+  }
+
+  .dgo-brand-lockup {
+    min-block-size: 56px;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--dgo-s-2) var(--dgo-s-3);
+    gap: var(--dgo-s-3);
+    background: var(--dgo-color-surface-on-brand-veil);
+    border-block-end-color: var(--dgo-color-border-on-brand-soft);
+  }
+
+  .dgo-brand-lockup__agency {
+    inline-size: 82px;
+  }
+
+  .dgo-brand-lockup .bk-sub {
+    padding-inline-start: var(--dgo-s-3);
+    border-inline-start: 1px solid var(--dgo-color-border-on-brand-soft);
+  }
+
+  .dgo-brand-lockup > span:last-child {
+    display: none;
+  }
+
+  .dgo-sidebar {
+    background:
+      radial-gradient(circle at 50% 0%, var(--dgo-color-surface-on-brand-veil), transparent 38%),
+      var(--dgo-sidebar-bg);
+    box-shadow: var(--dgo-elevation-raised);
+  }
+
+  .dgo-sidebar__item {
+    border-radius: var(--dgo-radius-control);
+    transition:
+      background var(--dgo-motion-state),
+      color var(--dgo-motion-state),
+      transform var(--dgo-motion-state);
+  }
+
+  .dgo-sidebar__item:hover {
+    transform: translateX(var(--dgo-s-1));
+  }
+
+  .dgo-sidebar__item.active {
+    background: var(--dgo-color-surface-on-brand-veil);
+    box-shadow: inset 0 0 0 1px var(--dgo-color-border-on-brand-soft);
+  }
+
+  .dgo-topbar {
+    block-size: 64px;
+    min-block-size: 64px;
+    max-block-size: 64px;
+    background: color-mix(in srgb, var(--dgo-color-surface-page) 94%, transparent);
+    border-block-end-color: var(--dgo-color-border-default);
+    box-shadow: var(--dgo-shadow-1);
+    backdrop-filter: blur(var(--dgo-s-3));
+  }
+
+  .dgo-route-title small {
+    display: none;
+  }
+
+  .dgo-route-title b {
+    font-size: var(--dgo-type-h4);
+    letter-spacing: var(--dgo-tr-tight);
+  }
+
+  .dgo-route-title [data-context-description] {
+    max-inline-size: 44ch;
+    color: var(--dgo-color-fg-muted);
+  }
+
+  .dgo-search-trigger {
+    border: 1px solid var(--dgo-color-border-default);
+    background: var(--dgo-color-surface-sunken);
+    box-shadow: inset 0 1px 0 var(--dgo-color-surface-raised);
+    transition:
+      border-color var(--dgo-motion-state),
+      background var(--dgo-motion-state),
+      box-shadow var(--dgo-motion-state);
+  }
+
+  .dgo-search-trigger:hover,
+  .dgo-search-trigger:focus-visible {
+    border-color: var(--dgo-color-border-brand);
+    background: var(--dgo-color-surface-page);
+    box-shadow: var(--dgo-elevation-card);
+  }
+
+  .dgo-main {
+    background:
+      radial-gradient(circle at 90% 0%, var(--dgo-color-action-primary-soft), transparent 30%),
+      var(--dgo-color-surface-sunken);
+  }
+
+  .dgo-wtabs {
+    border-block-end: 1px solid var(--dgo-color-border-default);
+    background: var(--dgo-color-surface-page);
+    box-shadow: var(--dgo-shadow-1);
+  }
+
+  .panel,
+  .dgo-card,
+  .toolbar,
+  .tablewrap,
+  .dgo-table-wrap {
+    min-block-size: 0;
+    border-color: var(--dgo-color-border-default);
+    border-radius: var(--dgo-radius-card);
+    background: var(--dgo-color-surface-raised);
+    box-shadow: var(--dgo-shadow-1);
+  }
+
+  .panel,
+  .dgo-card {
+    transition:
+      border-color var(--dgo-motion-state),
+      box-shadow var(--dgo-motion-state),
+      transform var(--dgo-motion-state);
+  }
+
+  .action-card:hover,
+  .dgo-card--hoverable:hover,
+  .record:hover {
+    border-color: var(--dgo-color-border-brand);
+    box-shadow: var(--dgo-elevation-raised);
+  }
+
+  .toolbar,
+  .dgo-toolbar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--dgo-z-sticky);
+    min-block-size: 48px;
+    margin-block-end: var(--dgo-s-2);
+    padding: var(--dgo-s-2);
+    background: var(--dgo-color-surface-raised);
+    box-shadow: var(--dgo-shadow-2);
+  }
+
+  .btn,
+  .dgo-btn,
+  button,
+  a.btn {
+    transition:
+      background var(--dgo-motion-state),
+      border-color var(--dgo-motion-state),
+      color var(--dgo-motion-state),
+      box-shadow var(--dgo-motion-state),
+      transform var(--dgo-motion-state);
+  }
+
+  .btn:hover:not(:disabled),
+  .dgo-btn:hover:not(:disabled),
+  a.btn:hover {
+    transform: translateY(calc(var(--dgo-s-px) * -1));
+    box-shadow: var(--dgo-elevation-card);
+  }
+
+  input,
+  select,
+  textarea,
+  .dgo-input,
+  .dgo-select,
+  .dgo-textarea {
+    border-color: var(--dgo-color-border-strong);
+    border-radius: var(--dgo-radius-control);
+    background: var(--dgo-color-surface-page);
+    transition:
+      border-color var(--dgo-motion-state),
+      box-shadow var(--dgo-motion-state),
+      background var(--dgo-motion-state);
+  }
+
+  input:hover,
+  select:hover,
+  textarea:hover {
+    border-color: var(--dgo-color-border-brand);
+  }
+
+  .dgo-table thead,
+  table thead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--dgo-z-raised);
+  }
+
+  .dgo-table tbody tr,
+  table tbody tr {
+    transition: background var(--dgo-motion-state);
+  }
+
+  .dgo-table tbody tr:hover td,
+  table tbody tr:hover td {
+    background: var(--dgo-table-row-hover);
+  }
+
+  .dgo-dialog-backdrop,
+  .dgo-cmdk:not([hidden]) {
+    background: var(--dgo-color-surface-overlay);
+    backdrop-filter: blur(var(--dgo-s-2));
+  }
+
+  .dgo-dialog,
+  .dgo-cmdk__dialog {
+    border-color: var(--dgo-color-border-on-brand);
+    border-radius: var(--dgo-radius-frame);
+    box-shadow: var(--dgo-elevation-modal);
+    animation: redesign-dialog-in var(--dgo-motion-enter);
+  }
+
+  .dgo-dialog header,
+  .dgo-dialog footer {
+    background: var(--dgo-color-surface-sunken);
+  }
+
+  .cc-workspace {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .cc-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, .3fr);
+  }
+
+  .cc-kpi-band .kpi {
+    position: relative;
+    overflow: hidden;
+    border-inline-start: var(--dgo-bw-3) solid var(--dgo-color-action-accent);
+  }
+
+  .cc-kpi-band .kpi::after {
+    content: "";
+    position: absolute;
+    inset: auto calc(var(--dgo-s-3) * -1) calc(var(--dgo-s-4) * -1) auto;
+    inline-size: var(--dgo-s-12);
+    block-size: var(--dgo-s-12);
+    border-radius: var(--dgo-radius-circle);
+    background: var(--dgo-color-action-primary-soft);
+    opacity: .7;
+  }
+
+  .cc-kpi-band .kpi > * {
+    position: relative;
+    z-index: var(--dgo-z-raised);
+  }
+
+  .cc-source-strip {
+    border-color: var(--dgo-color-border-brand);
+    background:
+      linear-gradient(135deg, var(--dgo-color-action-primary-soft), var(--dgo-color-surface-raised));
+  }
+
+  .action-card.cc-action {
+    border-inline-start-color: var(--dgo-color-border-default);
+    background: var(--dgo-color-surface-raised);
+  }
+
+  .action-card.cc-action:hover,
+  .action-card.cc-action:focus-visible {
+    transform: translateY(calc(var(--dgo-s-1) * -1));
+    border-color: var(--dgo-color-border-brand);
+    box-shadow: var(--dgo-elevation-raised);
+  }
+
+  .action-card.cc-primary-action {
+    border-inline-start-color: var(--dgo-color-action-accent);
+  }
+
+  .records,
+  .panel-stack,
+  .split,
+  .grid,
+  .quick-grid {
+    gap: var(--dgo-s-2);
+  }
+
+  .record {
+    border-radius: var(--dgo-radius-card);
+  }
+
+  .pill,
+  .chip,
+  .dgo-chip,
+  .dgo-status {
+    border-radius: var(--dgo-radius-circle);
+  }
+
+  * {
+    scrollbar-color: var(--dgo-color-border-strong) transparent;
+    scrollbar-width: thin;
+  }
+}
+
+/* Welcome and sign-in: premium, calm and recognisably part of the same product. */
+.dgo-welcome {
+  background:
+    radial-gradient(circle at 18% 8%, var(--dgo-color-surface-on-brand-veil), transparent 28%),
+    radial-gradient(circle at 88% 92%, var(--dgo-color-surface-on-brand-veil), transparent 32%),
+    var(--dgo-color-surface-inverse);
+}
+
+.dgo-welcome::before,
+.dgo-welcome::after {
+  content: "";
+  position: fixed;
+  inline-size: min(42vw, 520px);
+  aspect-ratio: 1;
+  border: 1px solid var(--dgo-color-border-on-brand-soft);
+  border-radius: var(--dgo-radius-circle);
+  pointer-events: none;
+}
+
+.dgo-welcome::before {
+  inset: -24vw auto auto -18vw;
+}
+
+.dgo-welcome::after {
+  inset: auto -22vw -28vw auto;
+}
+
+.dgo-welcome__card {
+  position: relative;
+  border: 1px solid var(--dgo-color-border-on-brand);
+  border-radius: var(--dgo-radius-frame);
+  background: var(--dgo-color-surface-raised);
+  box-shadow: var(--dgo-elevation-modal);
+  overflow: hidden;
+}
+
+.dgo-welcome__card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  block-size: var(--dgo-s-1);
+  background: linear-gradient(90deg, var(--dgo-color-action-primary), var(--dgo-color-action-accent));
+}
+
+.dgo-welcome__brand {
+  padding-block-end: var(--dgo-s-4);
+  border-block-end: 1px solid var(--dgo-color-border-default);
+}
+
+.dgo-welcome__spotlight article {
+  border-color: var(--dgo-color-border-default);
+  border-radius: var(--dgo-radius-card);
+  background: var(--dgo-color-surface-sunken);
+  transition:
+    border-color var(--dgo-motion-state),
+    transform var(--dgo-motion-state),
+    box-shadow var(--dgo-motion-state);
+}
+
+.dgo-welcome__spotlight article:hover {
+  transform: translateY(calc(var(--dgo-s-1) * -1));
+  border-color: var(--dgo-color-border-brand);
+  box-shadow: var(--dgo-elevation-card);
+}
+
+.dgo-dialog-backdrop[data-dialog="sign-in"] {
+  background:
+    radial-gradient(circle at 20% 0%, var(--dgo-color-surface-on-brand-veil), transparent 30%),
+    var(--dgo-color-surface-inverse);
+}
+
+.dgo-dialog-backdrop[data-dialog="sign-in"] .dgo-dialog {
+  border-color: var(--dgo-color-border-on-brand);
+  box-shadow: var(--dgo-elevation-modal);
+}
+
+@keyframes redesign-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--dgo-s-3)) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .dgo-topbar {
+    box-shadow: var(--dgo-shadow-1);
+  }
+
+  .dgo-main {
+    padding: var(--dgo-s-3);
+    background: var(--dgo-color-surface-sunken);
+  }
+
+  .panel,
+  .dgo-card,
+  .toolbar,
+  .tablewrap {
+    border-radius: var(--dgo-radius-card);
+  }
+
+  .cc-action-grid,
+  .cc-support-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .dgo-welcome {
+    padding: var(--dgo-s-3);
+  }
+
+  .dgo-welcome__card {
+    padding: var(--dgo-s-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dgo-dialog,
+  .dgo-cmdk__dialog,
+  .panel,
+  .dgo-card,
+  .btn,
+  .dgo-btn,
+  .dgo-sidebar__item {
+    animation: none;
+    transition: none;
+  }
+}

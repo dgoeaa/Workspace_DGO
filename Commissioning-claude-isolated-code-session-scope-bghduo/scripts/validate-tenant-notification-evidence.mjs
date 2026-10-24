@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+import { readFileSync } from 'node:fs';
+import { resolve, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { RequiredNotifications } from '../config/notification-matrix.config.js';
+const ROOT=resolve(fileURLToPath(new URL('..',import.meta.url)));
+const strict=process.argv.includes('--strict');
+const read=p=>JSON.parse(readFileSync(join(ROOT,p),'utf8'));
+const base='docs/deployment/notification-instrument/tenant-execution';
+const decisions=read(`${base}/decisions/agency-decisions.json`);
+const inventory=read(`${base}/evidence/tenant-inventory.json`);
+const connections=read(`${base}/evidence/connection-verification.json`);
+const results=read(`${base}/evidence/notification-test-results.json`);
+const cutover=read(`${base}/cutover-register.json`);
+const authorisation=read(`${base}/production-authorisation-template.json`);
+const release=read('docs/deployment/notification-instrument/notification-release-manifest.json');
+const errors=[],blocked=[],warnings=[];
+const err=x=>errors.push(x), block=x=>blocked.push(x), warn=x=>warnings.push(x);
+const dangerous=/sig=|password|client[_ -]?secret|cookie|verification.?code\s*[:=]\s*\d{4,8}/i;
+for(const [name,obj] of Object.entries({decisions,inventory,connections,results,cutover,authorisation})) if(dangerous.test(JSON.stringify(obj)))err(`${name} appears to contain prohibited secret or OTP material`);
+if(decisions.status!=='APPROVED')block('agency decisions are not APPROVED');
+for(const [k,v] of Object.entries({frequency:decisions.recurrence.frequency,interval:decisions.recurrence.interval,maxAttempts:decisions.retryPolicy.maxAttempts,claimExpiryMinutes:decisions.claimPolicy.claimExpiryMinutes,maximumConcurrency:decisions.claimPolicy.maximumConcurrency}))if(v===null||v==='')block(`decision missing: ${k}`);
+if(!Array.isArray(decisions.retryPolicy.delayMinutes)||!decisions.retryPolicy.delayMinutes.length)block('decision missing: retry delayMinutes');
+if(inventory.evidenceStatus!=='CAPTURED')block('tenant inventory not captured');
+if(!inventory.authoritativeCommit)block('authoritative production commit not recorded');
+if(!inventory.flows.length)block('tenant flow inventory is empty');
+if(!inventory.endpoints.length)block('endpoint-to-flow inventory is empty');
+if(connections.status!=='VERIFIED')block('connection verification is incomplete');
+if(String(connections.outlook.authenticatedAccount||'').toLowerCase()!==String(connections.outlook.approvedServiceMailbox||'').toLowerCase())block('Outlook authenticated account does not match approved service mailbox');
+if(!(connections.outlook.sendAsVerified||connections.outlook.sendOnBehalfVerified))block('neither send-as nor send-on-behalf is verified');
+const known=new Set(RequiredNotifications.map(x=>x.id));
+const seen=new Set();
+for(const r of results.results){if(!known.has(r.requirementId))err(`unknown result requirement: ${r.requirementId}`);if(seen.has(r.requirementId))err(`duplicate result: ${r.requirementId}`);seen.add(r.requirementId);if(r.status==='PASSED'){for(const f of ['flowId','runId','idempotencyKey','resolvedRecipientMasked','senderIdentity','testedBy','testedAtUtc'])if(!r[f])err(`${r.requirementId} PASSED without ${f}`);if(!r.evidenceFiles?.length)err(`${r.requirementId} PASSED without evidenceFiles`);}}
+for(const id of known)if(!seen.has(id))block(`${id} has no tenant result`);
+const passed=results.results.filter(x=>x.status==='PASSED').length,risk=results.results.filter(x=>x.status==='RISK_ACCEPTED').length,failed=results.results.filter(x=>x.status==='FAILED').length;
+const critical=new Set(RequiredNotifications.filter(x=>x.severity==='CRITICAL'&&x.status!=='PROVISIONED').map(x=>x.id));
+for(const id of critical){const r=results.results.find(x=>x.requirementId===id);if(!r||!['PASSED','RISK_ACCEPTED'].includes(r.status))block(`critical ${id} is not passed or risk accepted`);}
+if(!cutover.rollbackRehearsed)block('rollback has not been rehearsed');
+if(release.tenantApplied!==true)warn('repository release manifest still says tenantApplied=false');
+if(authorisation.status!=='APPROVED')block('production authorisation is not approved');
+const output={ready:errors.length===0&&blocked.length===0,counts:{required:RequiredNotifications.length,results:results.results.length,passed,riskAccepted:risk,failed},errors,blocked,warnings};
+console.log(JSON.stringify(output,null,2));
+process.exit(strict&&!output.ready?1:errors.length?1:0);

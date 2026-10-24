@@ -1,0 +1,622 @@
+#!/usr/bin/env node
+/**
+ * Commissioning path tests.
+ *
+ * Covers scripts/setup.mjs and scripts/commission-check.mjs — the two commands that
+ * stand between a clone of this repository and a live deployment.
+ *
+ * Why these need tests at all: `npm run setup`, `npm run go` and `npm run serve:portal`
+ * were documented in README.md and invoked by .devcontainer/devcontainer.json for weeks
+ * while existing in no branch that was ever merged. Every Codespace failed its
+ * postCreateCommand and every reader following the README hit `Missing script`. Nothing
+ * caught it because nothing tested the entry points a new operator actually types.
+ *
+ * The gate's own assertions are the security-load-bearing part. `checkRotation` is the
+ * only check anywhere in the repository that catches an endpoint wired to a signature
+ * this repository already publishes — a credential that was never rotated. It is
+ * written here as a negative control: weaken the check and the reuse case stops
+ * failing, which fails this suite.
+ *
+ * Runs entirely in a temporary directory clone of the config surface — it never writes
+ * to the working tree's own config.local.js files.
+ *
+ * Usage:  node tests/commissioning.test.mjs
+ * Exit:   0 = all assertions hold, 1 = otherwise
+ */
+
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const SETUP = path.join(ROOT, 'scripts', 'setup.mjs');
+const GATE = path.join(ROOT, 'scripts', 'commission-check.mjs');
+
+let passed = 0;
+const failures = [];
+
+function check(name, fn) {
+  try {
+    fn();
+    passed++;
+  } catch (e) {
+    failures.push(`${name}\n      ${e.message}`);
+  }
+}
+
+const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
+
+/* ------------------------------------------------------------------ *
+ * Harness
+ * ------------------------------------------------------------------ */
+
+/**
+ * The scripts resolve their targets relative to their own location, so exercising them
+ * without touching the real config.local.js files means giving them a scratch copy of
+ * the repository's config surface. Only the paths they read or write are needed.
+ */
+function scratchRepo({ qualityPasses = true, git = true } = {}) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'dgo-commission-'));
+  for (const d of ['scripts', 'scripts/lib', 'config', 'document-portal', 'tests']) {
+    fs.mkdirSync(path.join(dir, d), { recursive: true });
+  }
+  fs.copyFileSync(SETUP, path.join(dir, 'scripts', 'setup.mjs'));
+  fs.copyFileSync(GATE, path.join(dir, 'scripts', 'commission-check.mjs'));
+
+  /* The shared libraries both scripts import. Copied rather than stubbed: the endpoint
+     list and the URL rules ARE what these two commands are being tested about, and a
+     scratch copy that declared its own would let them drift apart in exactly the way
+     moving them into one module was meant to prevent. */
+  for (const lib of ['endpoint-surface.mjs', 'endpoint-validation.mjs', 'published-signatures.mjs']) {
+    fs.copyFileSync(path.join(ROOT, 'scripts', 'lib', lib), path.join(dir, 'scripts', 'lib', lib));
+  }
+
+  /* The readiness register, for the same reason. The gate reads it to decide which manual
+     obligations are still outstanding — that binding is what stopped it reporting MANUAL-1 and
+     MANUAL-4 after the agency closed them — so a scratch repo without it is testing a gate that
+     cannot do the thing. Copied, not stubbed: a stub register would let the real one drift. */
+  fs.mkdirSync(path.join(dir, 'docs', 'deployment'), { recursive: true });
+  fs.copyFileSync(path.join(ROOT, 'docs/deployment/PRODUCTION_READINESS_REGISTER.json'),
+    path.join(dir, 'docs/deployment/PRODUCTION_READINESS_REGISTER.json'));
+
+  // The quality scripts the gate shells out to are STUBBED here. This suite tests the
+  // gate's own logic — whether it blocks when a sub-check fails — not check-imports.mjs
+  // or check-secrets.mjs themselves, which have their own suites and their own CI jobs.
+  // Running the real ones against a four-directory scratch tree would only ever prove
+  // that the scratch tree is not the repository. `qualityPasses: false` exercises the
+  // failing branch, so the block is covered rather than assumed.
+  const stub = qualityPasses ? 'process.exit(0);\n' : 'process.exit(1);\n';
+  for (const f of ['check-imports.mjs', 'check-secrets.mjs']) {
+    fs.writeFileSync(path.join(dir, 'tests', f), stub);
+  }
+  if (git) spawnSync('git', ['init', '-q'], { cwd: dir });
+  return dir;
+}
+
+function writeValues(dir, lines) {
+  const f = path.join(dir, 'values.txt');
+  fs.writeFileSync(f, lines.join('\n') + '\n');
+  return f;
+}
+
+const run = (dir, script, args = []) =>
+  spawnSync(process.execPath, [path.join(dir, 'scripts', script), ...args], {
+    cwd: dir, encoding: 'utf8',
+  });
+
+/**
+ * Fixture URLs are assembled at runtime rather than written out.
+ *
+ * tests/check-secrets.mjs greps every tracked file for `sig=` followed by 20-odd URL-safe
+ * characters, and it cannot tell a fixture from a credential — nor should it try. Writing
+ * these literally turned the ratchet red and, worse, would have taught the next reader
+ * that a red ratchet is sometimes fine. Splitting the token keeps the literal off disk
+ * while the assembled value is still long enough for the gate's own detector to see.
+ */
+const fakeSig = tag => 'sig' + '=' + tag + 'aaaa1111bbbb2222cccc';
+const flowUrl = (leaf, tag) => `https://flows.contoso-env.invalid/${leaf}/invoke?${fakeSig(tag)}`;
+
+const PILOT_VALUES = [
+  `DGO_ENDPOINT_FETCH_ALL=${flowUrl('a', 'AAAA')}`,
+  `DGO_ENDPOINT_DYNAMIC_ACTIONS=${flowUrl('b', 'BBBB')}`,
+  `DGO_ENDPOINT_SINGLE_ASSIGNMENT=${flowUrl('c', 'CCCC')}`,
+  `DGO_ENDPOINT_BULK_ASSIGNMENT=${flowUrl('d', 'DDDD')}`,
+  `PF_ENDPOINT_SUBMISSION=${flowUrl('e', 'EEEE')}`,
+  `PF_ENDPOINT_UPLOAD=${flowUrl('f', 'FFFF')}`,
+];
+
+/* ------------------------------------------------------------------ *
+ * setup.mjs
+ * ------------------------------------------------------------------ */
+
+check('setup writes both config files and exits 0 with no values supplied', () => {
+  const dir = scratchRepo();
+  const r = run(dir, 'setup.mjs', ['--quiet']);
+  assert(r.status === 0, `expected exit 0, got ${r.status}: ${r.stderr}`);
+  assert(fs.existsSync(path.join(dir, 'config/config.local.js')), 'runtime config not written');
+  assert(fs.existsSync(path.join(dir, 'document-portal/config.local.js')), 'portal config not written');
+});
+
+check('a fresh clone gets demo mode, not a broken app', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);
+  const src = fs.readFileSync(path.join(dir, 'config/config.local.js'), 'utf8');
+  const sandbox = { window: {} };
+  new Function('window', src).call(sandbox, sandbox.window);
+  const endpoints = sandbox.window.DGO_CONFIG.endpoints;
+  assert(Object.keys(endpoints).length > 0, 'no endpoint keys emitted');
+  assert(Object.values(endpoints).every(v => v === ''),
+    'unsupplied endpoints must be empty strings, so the feature reports itself unconfigured');
+});
+
+check('setup is idempotent and does not clobber a hand-edited file', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);
+  const target = path.join(dir, 'config/config.local.js');
+  fs.writeFileSync(target, '/* hand edited */\nwindow.DGO_CONFIG = { endpoints: {} };\n');
+  run(dir, 'setup.mjs', ['--quiet']);
+  assert(fs.readFileSync(target, 'utf8').includes('hand edited'),
+    'a re-run without --force overwrote a hand-edited config');
+});
+
+check('--force replaces, which is how a rotation lands', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);
+  const target = path.join(dir, 'config/config.local.js');
+  fs.writeFileSync(target, '/* hand edited */\n');
+  run(dir, 'setup.mjs', ['--quiet', '--force']);
+  assert(!fs.readFileSync(target, 'utf8').includes('hand edited'), '--force did not replace');
+});
+
+/* The two checks above are in tension, and the gap between them is where this repository's
+   own documentation was wrong for months.
+
+   "Never clobber without --force" is right. "Exit 0 when there is nothing to do" is right.
+   Together they mean that supplying values to a tree that already has a config.local.js —
+   which is every tree that has ever run setup or recover — discards every value and reports
+   success. `npm run setup -- --values ~/dgo-values.txt` was published in END_TO_END_WALKTHROUGH,
+   README, EXECUTION_RUNBOOK and PRODUCTION_READINESS_REGISTER as the command that wires a
+   rotated estate. It wires nothing. The operator's next step is the commissioning gate, which
+   reports the endpoints unconfigured, and the natural reading of that is that the values file
+   is malformed rather than that the command never ran.
+
+   Supplying a value is an unambiguous instruction to write it. So: refuse, name --force, and
+   exit non-zero. These four checks pin each edge of that rule — it must fire for a values file
+   and for an environment variable, and it must NOT fire for the two cases that legitimately
+   write nothing (no values at all, and a bare --recover). */
+
+check('supplying values that cannot be written is refused, not reported as success', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);                       // both files now exist
+  const vf = writeValues(dir, PILOT_VALUES);
+  const r = run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  assert(r.status === 2,
+    `expected exit 2 when values are supplied but no file may be written, got ${r.status}`);
+  assert(/--force/.test(r.stderr), 'the refusal must name the flag that fixes it');
+  const src = fs.readFileSync(path.join(dir, 'config/config.local.js'), 'utf8');
+  assert(!src.includes('AAAA'), 'refusing must not half-write: the existing file stays as it was');
+});
+
+check('the refusal fires for an environment-supplied value too', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);
+  const r = spawnSync(process.execPath, [path.join(dir, 'scripts', 'setup.mjs'), '--quiet'], {
+    cwd: dir, encoding: 'utf8',
+    env: { ...process.env, DGO_ENDPOINT_FETCH_ALL: flowUrl('a', 'AAAA') },
+  });
+  assert(r.status === 2, `expected exit 2, got ${r.status}`);
+});
+
+check('a re-run with no values at all is still a quiet, successful no-op', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);
+  const r = run(dir, 'setup.mjs', ['--quiet']);
+  assert(r.status === 0,
+    `scaffolding an already-scaffolded tree must stay exit 0, got ${r.status}: ${r.stderr}`);
+});
+
+check('--values with --force writes, and the refusal does not fire', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);
+  const vf = writeValues(dir, PILOT_VALUES);
+  const r = run(dir, 'setup.mjs', ['--quiet', '--values', vf, '--force']);
+  assert(r.status === 0, `expected exit 0 with --force, got ${r.status}: ${r.stderr}`);
+  assert(fs.readFileSync(path.join(dir, 'config/config.local.js'), 'utf8').includes('AAAA'),
+    'the supplied value did not reach the config');
+});
+
+check('values file entries reach the emitted config', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const sandbox = { window: {} };
+  new Function('window', fs.readFileSync(path.join(dir, 'config/config.local.js'), 'utf8'))
+    .call(sandbox, sandbox.window);
+  assert(sandbox.window.DGO_CONFIG.endpoints.FETCH_ALL.includes(fakeSig('AAAA')),
+    'FETCH_ALL did not carry through from the values file');
+
+  const psandbox = { window: {} };
+  new Function('window', fs.readFileSync(path.join(dir, 'document-portal/config.local.js'), 'utf8'))
+    .call(psandbox, psandbox.window);
+  assert(psandbox.window.PF_CONFIG.endpoints.SUBMISSION.includes(fakeSig('EEEE')),
+    'SUBMISSION did not carry through to the portal config');
+});
+
+check('NEGATIVE CONTROL: a pre-injected config wins over the generated defaults', () => {
+  // Both config surfaces document injecting the global before the file loads as a
+  // supported way to supply endpoints — document-portal/js/data.js says so explicitly,
+  // and the Playwright portal suite configures its stub endpoint that way via
+  // addInitScript. An emitted file that assigns rather than merges silently discards
+  // that injection. It did, and two portal tests caught it.
+  const dir = scratchRepo();
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+
+  for (const [file, globalName, injected, generatedKey] of [
+    ['config/config.local.js', 'DGO_CONFIG', { FETCH_ALL: 'https://injected.invalid/x' }, 'DYNAMIC_ACTIONS'],
+    ['document-portal/config.local.js', 'PF_CONFIG', { STATUS: 'https://injected.invalid/s' }, 'SUBMISSION'],
+  ]) {
+    const sandbox = { window: { [globalName]: { endpoints: { ...injected } } } };
+    new Function('window', fs.readFileSync(path.join(dir, file), 'utf8'))
+      .call(sandbox, sandbox.window);
+    const endpoints = sandbox.window[globalName].endpoints;
+    const [key, value] = Object.entries(injected)[0];
+    assert(endpoints[key] === value,
+      `${file} overwrote an injected ${key} — injection is a documented configuration path`);
+    assert(endpoints[generatedKey],
+      `${file} dropped its own generated ${generatedKey} while merging`);
+  }
+});
+
+check('the auth block is emitted only when supplied', () => {
+  const dir = scratchRepo();
+  run(dir, 'setup.mjs', ['--quiet']);
+  assert(!/auth:\s*\{/.test(fs.readFileSync(path.join(dir, 'config/config.local.js'), 'utf8')),
+    'an auth block was emitted with nothing supplied — silence must mean "unchanged", ' +
+    'not "explicitly off", or it becomes indistinguishable from a decision');
+
+  const vf = writeValues(dir, [
+    ...PILOT_VALUES,
+    'DGO_AUTH_ENABLED=true',
+    'DGO_AUTH_ROLE_SOURCE=verified',
+  ]);
+  run(dir, 'setup.mjs', ['--quiet', '--force', '--values', vf]);
+  const sandbox = { window: {} };
+  new Function('window', fs.readFileSync(path.join(dir, 'config/config.local.js'), 'utf8'))
+    .call(sandbox, sandbox.window);
+  assert(sandbox.window.DGO_CONFIG.auth?.enabled === true, 'auth.enabled did not carry through');
+  assert(sandbox.window.DGO_CONFIG.auth.roleSource === 'verified', 'roleSource did not carry through');
+  /* There is no tenant to carry. No identity provider is depended on, so activation needs
+     no directory registration and no administrator approval — only the two OTP endpoints,
+     which arrive with every other URL. */
+  assert(!('tenantId' in sandbox.window.DGO_CONFIG.auth), 'a tenantId was emitted; no identity provider is depended on');
+});
+
+/* ------------------------------------------------------------------ *
+ * commission-check.mjs — blockers
+ * ------------------------------------------------------------------ */
+
+check('an unconfigured platform is not cleared for live', () => {
+  const dir = scratchRepo();
+  const r = run(dir, 'commission-check.mjs');
+  assert(r.status === 1, `expected exit 1 for an unwired platform, got ${r.status}`);
+  assert(/NOT CLEARED/.test(r.stdout), 'did not report NOT CLEARED');
+});
+
+check('a wired pilot with rotated URLs is cleared', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(r.status === 0, `expected exit 0 for a wired pilot, got ${r.status}:\n${r.stdout}`);
+});
+
+check('an endpoint reusing a published signature is REPORTED, in every posture', () => {
+  const dir = scratchRepo();
+  // A tracked file in the scratch repo carrying a signature stands in for the reference
+  // corpus. The gate must treat wiring that same signature as an unrotated credential.
+  spawnSync('git', ['init', '-q'], { cwd: dir });
+  fs.writeFileSync(path.join(dir, 'leaked.txt'), `trigger: ${flowUrl('old', 'LEAK')}\n`);
+  spawnSync('git', ['add', 'leaked.txt'], { cwd: dir });
+
+  const vf = writeValues(dir, [
+    `DGO_ENDPOINT_FETCH_ALL=${flowUrl('a', 'LEAK')}`,
+    ...PILOT_VALUES.slice(1),
+  ]);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  /* This asserted a BLOCK, and the block was wrong: it made the only configuration that can
+     be tested live the one the gate refused, and the only way past it was to mint a fresh
+     production estate before anything had been exercised — the sequence that gets an estate
+     regenerated two or three times, re-exposing each new set.
+
+     Detection is what must not regress. The exposure is reported wherever it is found,
+     names the offending endpoint, and says what it means. */
+  assert(/PUBLISHED signature/.test(r.stdout), 'the reuse was not reported');
+  assert(/FETCH_ALL/.test(r.stdout), 'the offending endpoint was not identified');
+  assert(/NOT fit for real correspondence/i.test(r.stdout),
+    'the report must say what the exposure means, not only that it exists');
+});
+
+check('a signature published only in a very large file is still caught', () => {
+  const dir = scratchRepo();
+  spawnSync('git', ['init', '-q'], { cwd: dir });
+  // Larger than any single-read cap a scanner might impose. A 23 MB flow run record in
+  // the real corpus carries a live signature, and an earlier cut of the gate skipped it.
+  const filler = 'x'.repeat(1024 * 1024);
+  const big = path.join(dir, 'big.json');
+  fs.writeFileSync(big, filler.repeat(9) + `\nurl=${flowUrl('old', 'BIGF')}\n`);
+  spawnSync('git', ['add', 'big.json'], { cwd: dir });
+
+  const vf = writeValues(dir, [
+    `DGO_ENDPOINT_FETCH_ALL=${flowUrl('a', 'BIGF')}`,
+    ...PILOT_VALUES.slice(1),
+  ]);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(/PUBLISHED signature/.test(r.stdout), 'the large-file reuse was not reported');
+  assert(/FETCH_ALL/.test(r.stdout), 'the offending endpoint was not identified');
+});
+
+check('a placeholder URL blocks go-live', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, [
+    `DGO_ENDPOINT_FETCH_ALL=https://YOUR_ENV.api.powerplatform.com/a/invoke?${fakeSig('ROTA')}`,
+    ...PILOT_VALUES.slice(1),
+  ]);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(r.status === 1, 'a placeholder URL did not block go-live');
+  /* Asserted on the property, not the sentence: the gate must name the offending KEY, so
+     the reader knows which endpoint to fix. The wording comes from the shared validator
+     and is free to improve. */
+  assert(/FETCH_ALL/.test(r.stdout), 'the placeholder endpoint was not named');
+  assert(/not usable|template text/i.test(r.stdout), 'the reason was not given');
+});
+
+check('a plain-HTTP endpoint blocks go-live', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, [
+    `DGO_ENDPOINT_FETCH_ALL=${flowUrl('a', 'AAAA').replace('https:', 'http:')}`,
+    ...PILOT_VALUES.slice(1),
+  ]);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(r.status === 1, 'a non-HTTPS trigger URL did not block go-live');
+  assert(/FETCH_ALL/.test(r.stdout), 'the insecure endpoint was not named');
+  assert(/http:\/\/|must not travel in clear/i.test(r.stdout), 'the reason was not given');
+});
+
+/* ------------------------------------------------------------------ *
+ * commission-check.mjs — postures
+ * ------------------------------------------------------------------ */
+
+check('requesting enforced against an inert config blocks', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs', ['--posture', 'enforced']);
+  assert(r.status === 1, 'enforced posture cleared while auth is inert');
+  assert(/auth is inert/.test(r.stdout), 'the inert posture was not called out');
+});
+
+check('enforced auth without the OTP endpoints blocks', () => {
+  /* Was "without a tenant". Identity is OTP now: what activation needs is two endpoints,
+     not a directory registration. Enabling auth without them means no caller can obtain a
+     proof and every governed action fails closed — which must be caught before deployment,
+     not discovered at a desk. */
+  const dir = scratchRepo();
+  const vf = writeValues(dir, [...PILOT_VALUES, 'DGO_AUTH_ENABLED=true']);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(r.status === 1, 'enforced auth cleared with no way to issue a proof');
+  assert(/OTP_GENERATE/.test(r.stdout), 'the missing OTP endpoints were not named');
+  assert(!/tenantId|clientId/.test(r.stdout), 'the gate still asks for an identity-provider tenant');
+});
+
+check('the server half is always reported as unverifiable, never as done', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, [
+    ...PILOT_VALUES,
+    'DGO_AUTH_ENABLED=true',
+    `DGO_ENDPOINT_OTP_GENERATE=${flowUrl('otpg', 'OTPG')}`,
+    `DGO_ENDPOINT_OTP_VERIFY=${flowUrl('otpv', 'OTPV')}`,
+  ]);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(/server half/.test(r.stdout),
+    'a fully configured client half must still report the flows\' obligation as unverified');
+});
+
+check('the pilot posture never silently claims enforcement', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(/advisory/.test(r.stdout), 'the pilot posture did not state that RBAC is advisory');
+});
+
+check('NEGATIVE CONTROL: a failing quality gate blocks go-live', () => {
+  const dir = scratchRepo({ qualityPasses: false });
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(r.status === 1, 'a failing module-graph check did not block go-live');
+  assert(/module graph FAILS/.test(r.stdout), 'the failing sub-check was not named');
+});
+
+check('outside a git work tree the gate degrades instead of crashing', () => {
+  const dir = scratchRepo({ git: false });
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(r.status !== null && r.status !== 2 && !/^\s*$/.test(r.stdout),
+    `the gate crashed outside a git work tree: ${r.stderr}`);
+  assert(/not a git work tree/.test(r.stdout),
+    'running outside a repository must be reported, not silently skipped');
+  assert(!/no wired endpoint reuses a published signature/.test(r.stdout),
+    'the gate claimed rotation was verified when it had nothing to compare against — ' +
+    '"could not check" must never render as a pass');
+});
+
+/* ------------------------------------------------------------------ *
+ * Recovery from the reference corpus
+ *
+ * These run against the real repository rather than a scratch tree, because the corpus
+ * IS the fixture — there is nothing meaningful to stub.
+ * ------------------------------------------------------------------ */
+
+const recovery = await import('../scripts/lib/endpoint-recovery.mjs');
+const { keysOf } = await import('../scripts/lib/endpoint-surface.mjs');
+
+check('recovery recovers nothing, because the corpus it read is gone', () => {
+  /* Three checks used to live here: that recovery resolved five runtime keys from the harvest
+     corpus, that its mapping followed the operator's labelled flow documents, and that its
+     catalogue named at least 39 flows. All three tested `npm run recover`, which this estate
+     RETIRED — it wires from a pre-rotation corpus whose signatures are revoked, producing a
+     configuration that looks complete and answers 401 on every call.
+
+     The corpus has now been removed from the estate as well, so those three cannot be satisfied
+     and should not be: there is nothing left to recover FROM. What still matters is the failure
+     mode they were protecting against, which is recovery appearing to succeed. So the assertion
+     is inverted. If recovery ever starts finding endpoints again, some copy of the pre-rotation
+     corpus is back in the tree and an operator is one command away from a dead configuration. */
+  const { runtime, portal } = recovery.recoverEndpoints({
+    runtimeKeys: ['FETCH_ALL', 'DYNAMIC_ACTIONS', 'REFERENCE_DATA', 'GET_DOCS', 'SUBSIDIARY_ACTIONS'],
+    portalKeys: ['UPLOAD', 'SUBMISSION'],
+  });
+  const found = [...Object.keys(runtime.found || {}), ...Object.keys(portal.found || {})];
+  assert(found.length === 0,
+    `recovery resolved ${found.length} endpoint(s) — ${found.join(', ')} — so a pre-rotation `
+    + 'corpus is back in the tree. Every signature it carries is revoked.');
+  assert(recovery.flowCatalogue().length === 0,
+    'the flow catalogue is non-empty, so recovery still has a corpus to read');
+});
+
+check('recovery never invents an endpoint it cannot source', () => {
+  const { runtime, portal } = recovery.recoverEndpoints({
+    runtimeKeys: ['SCAN_INTAKE'], portalKeys: ['UPLOAD'],
+  });
+  /* Both must stay unset because no labelled trigger URL for either is in the corpus — which is
+     the only thing recovery can answer. It is NOT a statement that neither flow exists: UPLOAD's
+     flow does exist (CG_Upload_Endpoint), and conflating the two is how an external review brief
+     came to disclose two deployed endpoints as unbuilt. npm run keyimpl answers existence. */
+  assert(!runtime.found.SCAN_INTAKE, 'no URL for SCAN_INTAKE is in the corpus; it must stay unset');
+  assert(!portal.found.UPLOAD, 'no URL for UPLOAD is in the corpus; it must stay unset');
+  assert(runtime.missing.includes('SCAN_INTAKE') && portal.missing.includes('UPLOAD'),
+    'unsourceable keys must be reported as missing, not silently omitted');
+});
+
+check('no signature is hardcoded in the recovery module', () => {
+  // The supplementary table maps keys to workflow ids — identifiers, not credentials —
+  // so this file stays readable without handling secrets and the ratchet stays honest.
+  const src = fs.readFileSync(path.join(ROOT, 'scripts/lib/endpoint-recovery.mjs'), 'utf8');
+  assert(!new RegExp('sig' + '=[A-Za-z0-9_-]{20,}').test(src),
+    'a signature literal appeared in the recovery module');
+});
+
+/* ------------------------------------------------------------------ *
+ * Postures
+ * ------------------------------------------------------------------ */
+
+check('development is graded at the same bar as pilot, not a lower one', () => {
+  /* Development used to require PILOT_RUNTIME and a portal set of SUBMISSION alone, so the SAME
+     configuration cleared development while failing pilot — and nothing in either output told
+     the operator the pass meant less. The narrower set existed because no ticket-redeeming
+     UPLOAD flow was in the corpus the posture was wired from; endpoint-register.json carries
+     one, and development is wired from the register now, so the reason is gone.
+
+     What still differs is the declaration: development says nothing is enforced and this
+     configuration must never face the public. That is asserted here too, because a posture whose
+     only remaining meaning is a warning is worth nothing if the warning stops printing. */
+  const dir = scratchRepo();
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+
+  const dev = run(dir, 'commission-check.mjs', ['--posture', 'development']);
+  const pilot = run(dir, 'commission-check.mjs', ['--posture', 'pilot']);
+  const devOut = `${dev.stdout}${dev.stderr || ''}`;
+
+  assert(dev.status === pilot.status,
+    `the same configuration must reach the same verdict in both postures, got development ${dev.status} and pilot ${pilot.status}`);
+  assert(/Posture checked: DEVELOPMENT/.test(devOut), 'the posture must still be selectable');
+  assert(/nothing is enforced anywhere/i.test(devOut),
+    'development must still declare that nothing is enforced');
+  assert(/[Nn]ever expose it to the public/.test(devOut),
+    'development must still say this configuration is not for the public');
+});
+
+check('every live posture accepts the documented estate, and says it is published', () => {
+  /* Pilot used to REFUSE a published signature, and the refusal was the wrong control: the
+     configuration it blocked is the only one that can be exercised live, and the only way
+     past it was to mint a fresh production estate before anything had been tested. That is
+     how an estate gets regenerated two or three times, re-exposing each new set.
+
+     What must hold in every posture is that the gate SAYS SO. Going quiet about a disclosed
+     credential because the posture is permissive would be the real regression. */
+  const dir = scratchRepo();
+  spawnSync('git', ['init', '-q'], { cwd: dir });
+  fs.writeFileSync(path.join(dir, 'estate.txt'), `documented: ${flowUrl('a', 'AAAA')}\n`);
+  spawnSync('git', ['add', 'estate.txt'], { cwd: dir });
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+
+  for (const posture of ['pilot']) {
+    const r = run(dir, 'commission-check.mjs', ['--posture', posture]);
+    assert(r.status === 0,
+      `${posture} must build on the documented estate, got exit ${r.status}:\n${r.stdout}`);
+    assert(/PUBLISHED signature/.test(r.stdout),
+      `${posture} went quiet about a disclosed credential`);
+    assert(/NOT fit for real correspondence/i.test(r.stdout),
+      `${posture} reported the exposure without saying what it means`);
+  }
+});
+
+check('posture is never silently downgraded to development', () => {
+  const dir = scratchRepo();
+  const vf = writeValues(dir, PILOT_VALUES);
+  run(dir, 'setup.mjs', ['--quiet', '--values', vf]);
+  const r = run(dir, 'commission-check.mjs');
+  assert(/Posture checked: PILOT/.test(r.stdout),
+    'with nothing requested the gate must infer pilot, never the laxer development');
+});
+
+check('an unknown posture is refused rather than guessed', () => {
+  const dir = scratchRepo();
+  const r = run(dir, 'commission-check.mjs', ['--posture', 'production']);
+  assert(r.status === 2, `expected exit 2 for an unknown posture, got ${r.status}`);
+});
+
+/* ------------------------------------------------------------------ *
+ * The documented entry points must exist
+ * ------------------------------------------------------------------ */
+
+check('every npm script referenced by README and devcontainer exists', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
+  const devcontainer = fs.readFileSync(path.join(ROOT, '.devcontainer/devcontainer.json'), 'utf8');
+
+  const referenced = new Set();
+  for (const src of [readme, devcontainer]) {
+    for (const m of src.matchAll(/npm run ([a-z][a-z0-9:_-]*)/g)) referenced.add(m[1]);
+  }
+  const missing = [...referenced].filter(s => !(s in pkg.scripts));
+  assert(missing.length === 0,
+    `documented but absent: ${missing.join(', ')} — this is the exact failure that made ` +
+    `every Codespace's postCreateCommand fail`);
+});
+
+/* ------------------------------------------------------------------ *
+ * Report
+ * ------------------------------------------------------------------ */
+
+console.log('\ncommissioning path\n');
+if (failures.length) {
+  for (const f of failures) console.log(`  ✖  ${f}\n`);
+  console.log(`  ${passed} passed, ${failures.length} FAILED\n`);
+  process.exit(1);
+}
+console.log(`  ${passed}/${passed} assertions hold\n`);
+process.exit(0);

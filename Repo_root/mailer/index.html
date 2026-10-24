@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en-GB" data-platform="dgo-ops">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="referrer" content="no-referrer">
+  <!-- connect-src allows the Power Automate trigger hosts (logic.azure.com, powerplatform.com /
+       api.powerplatform.com for newer environments), plus loopback for the mock flows
+       (npm run mailer:mock). Nothing else is fetched. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self' about:; connect-src 'self' https://*.logic.azure.com https://*.powerplatform.com https://*.api.powerplatform.com http://127.0.0.1:* http://localhost:*; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>Correspondence Mailer · NITDA</title>
+  <!-- brand/ is written by `npm run brand:sync` from styles/dgo-design-system/: the tokens, the
+       kit and the NITDA logo, all loaded from this folder, as the policy above requires. -->
+  <link rel="icon" type="image/svg+xml" href="brand/dgo-mark.svg">
+  <link rel="stylesheet" href="brand/brand.css">
+  <link rel="stylesheet" href="css/mailer.css">
+  <script src="brand/brand.js"></script>
+  <script src="config.js"></script>
+  <!-- Git-ignored; absent in a fresh clone, where this 404 is expected and harmless. (No
+       onerror="void 0" as elsewhere in the repo: the CSP above forbids inline handlers.) -->
+  <script src="config.local.js"></script>
+</head>
+<body>
+  <!-- The DGO Digital Ops lockup for this staff-facing tool, kept current by `npm run brand:sync`;
+       js/app.js clones it into the top bar. Letters this tool sends carry NITDA only. -->
+  <template id="dgo-sub-tpl"><span class="bk-sub" data-bk-sub><span class="bk-sub__word" aria-hidden="true">DG<svg class="bk-sub__o" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle class="ring" cx="28" cy="28" r="20"/><circle class="dot" cx="28" cy="28" r="6.5"/></svg></span><span class="bk-sub__name" aria-hidden="true"><span>Digital</span><span>Ops</span></span><span class="bk-sub__sr">DGO Digital Ops</span><!--/bk-sub--></span></template>
+  <div id="app"><p class="booting">Loading the Correspondence Mailer…</p></div>
+  <noscript><p style="padding:24px">The mailer needs JavaScript.</p></noscript>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

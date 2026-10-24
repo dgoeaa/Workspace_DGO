@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-GB" data-platform="dgo-ops">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Folio Central Administration Centre — administration, management and monitoring of every platform in the Folio portfolio.">
+  <title>Central Administration Centre · Folio · NITDA</title>
+  <!-- brand/ is written by `npm run brand:sync` from styles/dgo-design-system/. Do not edit it here.
+       The server sends a Content-Security-Policy that allows scripts and styles from this origin only,
+       so nothing on this page is inline. -->
+  <link rel="icon" type="image/svg+xml" href="brand/dgo-mark.svg">
+  <link rel="stylesheet" href="brand/brand.css">
+  <link rel="stylesheet" href="app.css">
+  <script src="brand/brand.js"></script>
+</head>
+<body class="bk-app-body">
+  <a class="bk-skip" href="#bk-main">Skip to content</a>
+
+  <!-- ── Locked: the access screen ─────────────────────────────────────────────────────── -->
+  <section class="lock" id="lock" aria-labelledby="lock-title">
+    <div class="lock__card">
+      <div class="lock__brand">
+        <img class="bk-logo bk-logo--on-light" src="brand/nitda-lockup-digital-colour.png" alt="National Information Technology Development Agency" width="572" height="260">
+        <img class="bk-logo bk-logo--on-dark" src="brand/nitda-lockup-digital-white.png" alt="" aria-hidden="true" width="544" height="254">
+        <span class="bk-sub" data-bk-sub><span class="bk-sub__word" aria-hidden="true">DG<svg class="bk-sub__o" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle class="ring" cx="28" cy="28" r="20"/><circle class="dot" cx="28" cy="28" r="6.5"/></svg></span><span class="bk-sub__name" aria-hidden="true"><span>Digital</span><span>Ops</span></span><span class="bk-sub__sr">DGO Digital Ops</span><!--/bk-sub--></span>
+      </div>
+      <p class="bk-eyebrow">Folio portfolio</p>
+      <h1 id="lock-title" class="lock__title">Central Administration Centre</h1>
+      <p class="lock__lede">Administration, management and monitoring of the Workspace, Document Portal, Estate Console, Correspondence Mailer, Flow Workbench and Vault.</p>
+
+      <form id="unlock-form" class="bk-stack" novalidate>
+        <div class="bk-field">
+          <label for="token">Access token</label>
+          <div class="input-row">
+            <input class="bk-input" id="token" name="token" type="password" autocomplete="off" spellcheck="false" required aria-describedby="token-help">
+            <button class="bk-btn bk-btn--ghost bk-btn--sm" type="button" id="token-show" aria-pressed="false" aria-controls="token">Show</button>
+          </div>
+          <p class="hint" id="token-help">Super administrators read it from <code>config/admin.token</code> on this host. Operators use the token issued to them under Access.</p>
+        </div>
+        <div class="bk-field" id="actor-field">
+          <label for="actor">Your accountable name</label>
+          <input class="bk-input" id="actor" name="actor" autocomplete="username" spellcheck="false" maxlength="80" placeholder="e.g. portfolio-administrator" aria-describedby="actor-help">
+          <p class="hint" id="actor-help">Recorded as the actor on every change you make. Required with the bootstrap token; operator tokens carry their own name.</p>
+        </div>
+        <p class="form-error" id="unlock-error" role="alert" hidden></p>
+        <button class="bk-btn bk-btn--primary lock__submit" type="submit" id="unlock">Unlock centre</button>
+      </form>
+      <p class="lock__foot">Loopback only. The token is held in this tab's session storage and cleared on Lock, on idle timeout, or when the browser session ends. Never paste signed trigger URLs, passwords or tokens into any record.</p>
+    </div>
+  </section>
+
+  <!-- ── Unlocked: the application shell ───────────────────────────────────────────────── -->
+  <div class="bk-app" id="app" hidden>
+    <header class="bk-header bk-header--light">
+      <button class="bk-btn bk-btn--icon bk-nav-toggle" type="button" data-bk-nav-toggle aria-controls="bk-nav" aria-expanded="false" aria-label="Show navigation">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <a class="bk-brand" href="#/overview" aria-label="Central Administration Centre — overview">
+        <img class="bk-logo bk-logo--on-light" src="brand/nitda-lockup-digital-colour.png" alt="National Information Technology Development Agency" width="572" height="260">
+        <img class="bk-logo bk-logo--on-dark" src="brand/nitda-lockup-digital-white.png" alt="" aria-hidden="true" width="544" height="254">
+        <span class="bk-brand__text"><span class="bk-brand__title">Central Administration Centre</span><span class="bk-brand__sub">Folio · Portfolio control plane</span></span>
+      </a>
+      <span class="bk-sub" data-bk-sub><span class="bk-sub__word" aria-hidden="true">DG<svg class="bk-sub__o" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle class="ring" cx="28" cy="28" r="20"/><circle class="dot" cx="28" cy="28" r="6.5"/></svg></span><span class="bk-sub__name" aria-hidden="true"><span>Digital</span><span>Ops</span></span><span class="bk-sub__sr">DGO Digital Ops</span><!--/bk-sub--></span>
+      <div class="header-search" role="search">
+        <label class="sr-only" for="global-search">Search records</label>
+        <input class="bk-input bk-search" id="global-search" type="search" placeholder="Search platforms, endpoints, alerts…  /" autocomplete="off" data-bk-search aria-controls="search-results" aria-expanded="false">
+        <div class="search-results" id="search-results" role="listbox" hidden></div>
+      </div>
+      <div class="bk-header__actions">
+        <span class="live" id="live" role="status" aria-live="polite"><span class="live__dot" aria-hidden="true"></span><span id="live-text">Connecting…</span></span>
+        <span class="whoami" id="whoami"></span>
+        <button class="bk-btn bk-btn--icon" type="button" data-bk-theme-toggle aria-label="Switch colour theme" title="Switch colour theme">
+          <svg class="bk-i-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+          <svg class="bk-i-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        </button>
+        <button class="bk-btn bk-btn--sm" type="button" id="lock-btn">Lock</button>
+      </div>
+    </header>
+
+    <div class="bk-body">
+      <nav class="bk-nav" id="bk-nav" aria-label="Centre">
+        <p class="bk-nav__label">Monitor</p>
+        <a href="#/overview" data-view="overview">Overview</a>
+        <a href="#/portfolio" data-view="portfolio">Portfolio</a>
+        <a href="#/health" data-view="health">Health</a>
+        <a href="#/flows" data-view="flows">Flows <span class="nav-count" data-count="flows"></span></a>
+        <p class="bk-nav__label">Operate</p>
+        <a href="#/alerts" data-view="alerts">Alerts <span class="nav-count" data-count="alerts"></span></a>
+        <a href="#/incidents" data-view="incidents">Incidents <span class="nav-count" data-count="incidents"></span></a>
+        <a href="#/changes" data-view="changes">Changes <span class="nav-count" data-count="changes"></span></a>
+        <a href="#/test" data-view="test">Test a flow</a>
+        <p class="bk-nav__label">Govern</p>
+        <a href="#/estate" data-view="estate">Flow &amp; Endpoint Estate</a>
+        <a href="#/configuration" data-view="configuration">Configuration</a>
+        <a href="#/audit" data-view="audit">Audit &amp; Evidence</a>
+        <a href="#/vault" data-view="vault">Vault</a>
+        <p class="bk-nav__label">Reference</p>
+        <a href="#/console" data-view="console">Estate Console</a>
+        <a href="#/packages" data-view="packages">Flow packages</a>
+        <p class="bk-nav__label">Administer</p>
+        <a href="#/access" data-view="access" data-perm="access.manage">Access</a>
+        <a href="#/operations" data-view="operations">Operations</a>
+        <a href="#/help" data-view="help">Guide</a>
+      </nav>
+      <main class="bk-main" id="bk-main" tabindex="-1">
+        <div class="bk-content bk-content--wide">
+          <div class="banner" id="banner" role="alert" hidden></div>
+          <div id="view" aria-live="polite"></div>
+        </div>
+      </main>
+    </div>
+    <footer class="bk-footer">
+      <span id="foot-system">Folio Central Administration Centre</span>
+      <span id="foot-updated"></span>
+    </footer>
+  </div>
+
+  <!-- One dialog serves every form; one sheet serves every record. Both are filled by app.js. -->
+  <dialog class="dlg" id="dlg" aria-labelledby="dlg-title">
+    <form method="dialog" class="dlg__form" id="dlg-form" novalidate>
+      <header class="dlg__head"><h2 id="dlg-title"></h2><button class="bk-btn bk-btn--icon bk-btn--ghost" type="button" data-close aria-label="Close">✕</button></header>
+      <div class="dlg__body" id="dlg-body"></div>
+      <p class="form-error" id="dlg-error" role="alert" hidden></p>
+      <footer class="dlg__foot" id="dlg-foot"></footer>
+    </form>
+  </dialog>
+  <dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
+    <header class="dlg__head"><h2 id="sheet-title"></h2><button class="bk-btn bk-btn--icon bk-btn--ghost" type="button" data-close aria-label="Close">✕</button></header>
+    <div class="sheet__body" id="sheet-body"></div>
+  </dialog>
+
+  <noscript><p class="noscript">The Administration Centre needs JavaScript.</p></noscript>
+  <script src="app.js"></script>
+  <script type="module" src="estate-check.js"></script>
+</body>
+</html>

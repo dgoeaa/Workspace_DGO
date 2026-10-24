@@ -1,0 +1,49 @@
+/* ============================================================
+   Platform variant bindings (Tier 3 of the NITDA Portfolio Brand and Design System)
+   Source: Portfolio package 1.0.0, tokens/portfolio.platforms.css, values unchanged.
+   Loads AFTER the core token stack. Re-binds semantic/component intent only; redeclaring a
+   --dgo-* primitive here is prohibited (package rule GOV-04).
+   Usage: <html data-platform="nitda-web|dgo-ops|portal">
+
+   In this repository (styles/dgo-design-system/README.md, exception RX-01):
+     dgo-ops  binds Folio Workspace and the Folio tools. "dgo-ops" is the package's machine id;
+              machine ids keep their dgo spelling (docs/reference/PLATFORM_NAMING.md).
+     portal   binds the NITDA Document Portal.
+     nitda-web is the agency's public website, which is not in this repository.
+   ============================================================ */
+
+:root {
+  --pf-reading-family:   var(--dgo-family-body);
+  --pf-content-max:      1200px;
+  --pf-header-surface:   var(--dgo-color-surface-brand);
+  --pf-header-fg:        var(--dgo-color-fg-on-brand);
+  --pf-radius-surface:   var(--dgo-radius-card);
+  --pf-motion-state:     var(--dgo-motion-state);
+}
+
+/* P1 · NITDA Public Web — institutional, long-form, comfortable */
+[data-platform="nitda-web"] {
+  --pf-reading-family:   var(--dgo-family-body);
+  --pf-content-max:      1200px;
+  --pf-header-surface:   var(--dgo-color-surface-brand);
+  --pf-header-fg:        var(--dgo-color-fg-on-brand);
+  --pf-radius-surface:   var(--dgo-radius-card);
+}
+
+/* P2 · Folio Workspace (the package names P2 for the DGO sub-brand; see RX-01) — data-dense, compact */
+[data-platform="dgo-ops"] {
+  --pf-reading-family:   var(--dgo-family-sans);
+  --pf-content-max:      none;
+  --pf-header-surface:   var(--dgo-color-surface-raised);
+  --pf-header-fg:        var(--dgo-color-fg-default);
+  --pf-radius-surface:   var(--dgo-radius-control);
+}
+
+/* P3 · NITDA Document Portal (package: NITDA Intelligent Portal) — citizen service */
+[data-platform="portal"] {
+  --pf-reading-family:   var(--dgo-family-sans);
+  --pf-content-max:      1120px;
+  --pf-header-surface:   var(--dgo-color-surface-brand);
+  --pf-header-fg:        var(--dgo-color-fg-on-brand);
+  --pf-radius-surface:   var(--dgo-radius-card);
+}

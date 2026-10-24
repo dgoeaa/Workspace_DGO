@@ -1,0 +1,26 @@
+# Builders whose output is NOT tracked — see .gitignore, "Derived documentation".
+# One npm script per line. Rebuilt by scripts/generate-all.mjs.
+#
+# Only builders that own an untracked file belong here. A builder whose output
+# is committed (npm run console, npm run surface) must stay out: its output is
+# reviewed in a diff, and several stamp a build date that would churn on every
+# run.
+
+catalogue             # docs/reference/FLOW_CATALOGUE.md
+registry:decisions    # docs/reference/REGISTRY_DECISIONS.md
+actions               # docs/deployment/ACTION_PLAN.md
+disposition           # docs/deployment/CLOSURE_DISPOSITION.md
+runbook               # docs/deployment/EXECUTION_RUNBOOK.md
+walkthrough           # docs/deployment/IMPLEMENTATION_WALKTHROUGH.md
+estatedocs            # docs/deployment/sharepoint/{FLOW_STRUCTURES,LISTS,PORTAL_DATA_CONTRACT}.md
+dynamicops            # docs/deployment/internal/dynamic-operations.json
+sweep                 # docs/deployment/internal/flows/designer-paste/DGO_SCHEDULED_SWEEP.variables.md
+build:freshflow       # docs/deployment/power-automate-flows/fresh-flow/BUILD.md
+rotation:worksheet    # docs/deployment/rotation/ROTATION.md
+provisioning          # docs/reference/provisioning/ — flows, packages, register
+provisioningconsole   # docs/reference/provisioning/provisioning-{detail,index}.js
+master                # docs/deployment/MASTER_REGISTER.{md,json}
+external              # docs/deployment/EXTERNAL_EXECUTION.{md,json}
+closed                # docs/deployment/CLOSED.md
+outstanding           # docs/deployment/OUTSTANDING.md
+process:discover      # docs/reference/process-inventory.json

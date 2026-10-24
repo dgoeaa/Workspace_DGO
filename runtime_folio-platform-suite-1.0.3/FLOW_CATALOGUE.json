@@ -1,0 +1,284 @@
+{
+  "catalogueFormat": "dgo.flow-catalogue/1",
+  "package": "dgo-internal-platform",
+  "platform": "Internal operations platform",
+  "buildId": "f4e797added9eea9",
+  "builtAt": "2026-01-01T00:00:00.000Z",
+  "posture": "demo",
+  "availableFlowsRetired": "availableFlows is empty, and that is the current correct state rather than a build fault. It carried the documented estate, whose trigger signatures ITEM-22 revoked: all 25 contract keys now resolve to different workflows than that corpus records. Listing those URLs here would ship dead bearer credentials inside a deliverable and offer them as flows to point a key at. For what the tenant actually holds — 25 keys across 20 workflows, and all 51 workflows in the environment, with every signature removed — read docs/folio-Master-Flows-and-Endpoints/registers/endpoint-register.json or open tools/admin-console.html.",
+  "howToRepoint": "To point a key at a different flow: find the flow in docs/folio-Master-Flows-and-Endpoints/registers/endpoint-register.json (or tools/admin-console.html), take its trigger URL from the flow's own trigger card in Power Automate — the register carries every URL complete except the signature, which it may never hold — write \"<PREFIX><KEY>=<url>\" into a values file (prefix DGO_ENDPOINT_), and rebuild with `npm run package -- --values <file>`. There is no longer a fallback: a key you do not supply ships unprovisioned and says so.",
+  "provisioned": [
+    {
+      "key": "FETCH_ALL",
+      "transport": "json",
+      "pilot": true,
+      "actions": [
+        "fetchAll"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "DYNAMIC_ACTIONS",
+      "transport": "json",
+      "pilot": true,
+      "actions": [
+        "dynamicGlobalAction",
+        "dispatchOutbound",
+        "archiveReference",
+        "transitionStatus",
+        "logAuditEvent"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "USER_ADMIN",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "userAdmin"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "ACTIVITY_LIFECYCLE",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "activityLifecycle"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "SINGLE_ASSIGNMENT",
+      "transport": "json",
+      "pilot": true,
+      "actions": [
+        "singleassignment"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "BULK_ASSIGNMENT",
+      "transport": "json",
+      "pilot": true,
+      "actions": [
+        "bulkassignment"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "FETCH_ACTIVITIES",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "LIST-ACTIVITIES"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "REFERENCE_DATA",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "lookups"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "GET_DOCS",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "getDocs"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "FETCH_EMAIL_ATTACHMENTS",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "fetchEmailAttachments"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "EMAIL",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "dispatchEmail"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "EMAIL_RELATED_TASK",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "emailtotaskassignment"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "AI_EMAIL_ANALYSIS",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "aiAnalyseEmail"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "AI_DOC_ANALYSIS",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "aiAnalyseEventDocs"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "AI_CHAT",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "aiChat"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "OTP_GENERATE",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "generate"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "OTP_VERIFY",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "verify"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "SUBSIDIARY_ACTIONS",
+      "transport": "json",
+      "pilot": false,
+      "actions": [
+        "INIT",
+        "REFRESH_EMAILS",
+        "LOAD_EMAIL_DETAILS",
+        "AI_ANALYSE_EMAIL",
+        "CREATE_TASK",
+        "UPDATE_TASK",
+        "LOAD_EVENT_INFO",
+        "AI_CHAT",
+        "TRACK",
+        "ACKNOWLEDGE",
+        "GET_ALL",
+        "GET_BOOTSTRAP",
+        "LISTDOCS",
+        "GETDOC",
+        "BULKASSIGN",
+        "CREATESUPPORTREQUEST",
+        "GETREFERENCES",
+        "LIST-ACTIVITIES"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    },
+    {
+      "key": "SCAN_INTAKE",
+      "transport": "bytes",
+      "pilot": false,
+      "actions": [
+        "(raw PUT)"
+      ],
+      "url": null,
+      "workflowId": null,
+      "flow": null,
+      "source": "not provisioned",
+      "alternates": []
+    }
+  ],
+  "availableFlows": [],
+  "availableFlowCount": 0,
+  "unwiredFlowCount": 0,
+  "unavailable": {}
+}

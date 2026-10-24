@@ -1,0 +1,146 @@
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:#f4f6f8;
+  color:#17212b;
+  /* room for the fixed runtime badge so it never covers the last control */
+  padding-bottom:52px;
+}
+
+header{background:#05583b;color:#fff;padding:19px}
+header h1{margin:.2em 0;font-size:1.6rem;line-height:1.2}
+header p{margin:.4em 0 0}
+.wrap{max-width:1650px;margin:auto}
+.main{padding:18px}
+
+.tabs,.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.tabs{margin-top:14px}
+
+button{
+  border:0;border-radius:9px;padding:10px 14px;
+  font:inherit;font-weight:650;cursor:pointer;
+  min-height:40px;
+}
+button[disabled]{opacity:.5;cursor:not-allowed}
+.tabs button{background:#ffffff22;color:#fff}
+.tabs button.active{background:#fff;color:#05583b}
+.primary{background:#05583b;color:#fff}
+.danger{background:#a31229;color:#fff}
+.secondary{background:#e5ece9;color:#05583b}
+/* Comfortable touch targets on phones and tablets. */
+@media(pointer:coarse){button{min-height:44px}}
+
+/* --- layout ---------------------------------------------------------------
+ * Every grid track is minmax(0,1fr) and every grid child gets min-width:0.
+ * A bare 1fr track has an automatic minimum of min-content, so one wide child
+ * — the action table, whose paths run long — would stretch its track and push
+ * the whole page into horizontal scrolling. Letting the track shrink keeps the
+ * overflow inside .scroll, where it belongs. */
+.grid{display:grid;gap:14px}
+.grid > *{min-width:0}
+.metrics{grid-template-columns:repeat(5,minmax(0,1fr))}
+.work{grid-template-columns:370px minmax(0,1fr)}
+.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+.card{background:#fff;border:1px solid #d9e2e6;border-radius:14px;padding:16px;min-width:0}
+.card h2,.card h3{margin-top:0}
+.metric b{font-size:25px;display:block}
+
+.list{max-height:76vh;overflow-y:auto;overflow-x:hidden}
+.flow{
+  display:block;width:100%;text-align:left;background:#fff;
+  border:1px solid #d6e0e4;padding:11px;margin:7px 0;border-radius:10px;
+  /* flow names and workflow ids are long unbroken tokens */
+  overflow-wrap:anywhere;
+}
+.flow.sel{border-color:#078c5b;background:#edf9f3}
+
+label{display:block}
+
+/* Checkboxes must escape the full-width text-input rules above. */
+.checkline{display:flex;align-items:center;gap:9px;margin:10px 0;min-height:44px}
+.checkline input[type=checkbox]{
+  width:20px;height:20px;min-height:0;flex:0 0 auto;margin:0;padding:0;accent-color:#05583b;
+}
+.checkline span{line-height:1.3}
+input,select,textarea{
+  width:100%;padding:10px;border:1px solid #c6d1d6;border-radius:8px;
+  margin-top:4px;font:inherit;min-height:40px;
+}
+@media(pointer:coarse){input,select{min-height:44px}}
+textarea{min-height:150px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+.small{font-size:12px;color:#61707a}
+.badge{display:inline-block;padding:3px 7px;border-radius:99px;font-size:10px;font-weight:800}
+.yes{background:#e7f8ee;color:#087241}
+.alt{background:#eef2fb;color:#2a4b8d}
+.no{background:#feecee;color:#a31229}
+.required{color:#a31229;font-weight:800}
+.optional{color:#4d6673}
+
+.warn{padding:11px;border-radius:9px;background:#fff5d8;border:1px solid #ead079}
+.error{padding:11px;border-radius:9px;background:#feecee;border:1px solid #e2a4ad}
+.ok{padding:11px;border-radius:9px;background:#e7f8ee;border:1px solid #9ed5b6}
+.info{padding:11px;border-radius:9px;background:#eef2fb;border:1px solid #b9c7e6}
+.warn,.error,.ok,.info{overflow-wrap:anywhere}
+.hidden{display:none}
+
+/* Wide content scrolls inside its own box, never the page. */
+.scroll{overflow:auto;max-height:600px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid #dfe6e9;vertical-align:top}
+td code{overflow-wrap:anywhere}
+#actions td,#shapeTable td{overflow-wrap:anywhere}
+#meta{overflow-wrap:anywhere;line-height:1.6}
+
+pre{
+  white-space:pre-wrap;word-break:break-word;
+  background:#12221c;color:#daf5e7;padding:12px;border-radius:9px;
+  max-height:600px;overflow:auto;
+}
+
+.runtime{
+  position:fixed;right:10px;bottom:10px;z-index:10;
+  background:#087241;color:#fff;padding:7px 10px;border-radius:99px;
+  font-size:11px;max-width:calc(100vw - 20px);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+.shape{padding:10px;border:1px solid #dbe4e7;border-radius:9px;margin:8px 0;min-width:0}
+.shape input,.shape textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+.urlrow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.urlrow input{flex:1 1 12rem;min-width:0}
+.urlrow button{white-space:nowrap;flex:0 0 auto}
+
+/* --- tablet --------------------------------------------------------------- */
+@media(max-width:950px){
+  .work,.two,.three{grid-template-columns:minmax(0,1fr)}
+  .metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .list{max-height:52vh}
+}
+
+/* --- phone ---------------------------------------------------------------- */
+@media(max-width:560px){
+  /* Not all mobile browsers report pointer:coarse, so size for touch by width too. */
+  button{min-height:44px}
+  input,select{min-height:44px}
+  header{padding:14px}
+  header h1{font-size:1.25rem}
+  .main{padding:12px}
+  .grid{gap:10px}
+  .card{padding:13px;border-radius:12px}
+  /* two stat tiles per row: five full-width cards is a lot of scrolling */
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .metric b{font-size:21px}
+  /* the endpoint field gets its own row; the buttons share the next one */
+  .urlrow input{flex:1 1 100%}
+  .urlrow button{flex:1 1 0}
+  .scroll{max-height:60vh}
+  pre{max-height:45vh;font-size:12px}
+  .list{max-height:none}
+  textarea{min-height:120px}
+}

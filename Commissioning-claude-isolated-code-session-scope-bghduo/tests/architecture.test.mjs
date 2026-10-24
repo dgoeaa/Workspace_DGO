@@ -1,0 +1,285 @@
+#!/usr/bin/env node
+/**
+ * The architecture diagrams must not drift from the code.
+ *
+ * A hand-drawn diagram is accurate the day it is drawn and misleading a month later, and the
+ * reader has no way to tell which. Every count and every named route on
+ * docs/architecture/components.html is asserted here against the live configuration, so a
+ * route added without updating the sheet fails the build instead of quietly making the
+ * picture wrong.
+ *
+ * This is deliberately assertion-by-value rather than a snapshot: a snapshot test would fail
+ * on a colour change and pass on a wrong number, which is exactly backwards.
+ *
+ * Run: node tests/architecture.test.mjs
+ */
+
+import assert from 'node:assert/strict';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = p => readFileSync(path.join(ROOT, p), 'utf8');
+
+const { Routes } = await import('../config/routes.config.js');
+const { VisibleWorkspaces, HiddenTechnicalRoutes } = await import('../config/workflow-clarity.config.js');
+const { RequiredStateCollections } = await import('../config/state-schema.config.js');
+const { EndpointKeys } = await import('../config/endpoints.config.js');
+
+let passed = 0, failed = 0;
+const t = (label, fn) => {
+  try { fn(); passed++; console.log(`  ✅ ${label}`); }
+  catch (e) { failed++; console.log(`  ❌ ${label}\n       ${e.message}`); }
+};
+const section = s => console.log(`\n${s}`);
+
+const PAGE = 'docs/architecture/components.html';
+const html = read(PAGE);
+const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+
+console.log('\nArchitecture diagrams');
+
+/* ── the page exists and is self-contained ─────────────────────────────────── */
+section('The page stands alone');
+
+t('the components sheet exists', () => assert.ok(existsSync(path.join(ROOT, PAGE))));
+
+t('it loads nothing from the network', () => {
+  // Same rule as every other shipped asset: no CDN, no remote font, no external script.
+  const remote = html.match(/(?:src|href)\s*=\s*["']https?:\/\/[^"']+/gi) || [];
+  assert.deepEqual(remote, [], `remote references: ${remote.join(', ')}`);
+});
+
+t('every diagram is inline SVG, not an image reference', () => {
+  const svgs = html.match(/<svg[\s>]/g) || [];
+  assert.ok(svgs.length >= 4, `expected at least 4 sheets, found ${svgs.length}`);
+  assert.ok(!/<img\b/i.test(html), 'diagrams must be drawn, not linked');
+});
+
+t('each SVG carries an accessible label', () => {
+  for (const tag of html.match(/<svg[^>]*>/g) || []) {
+    assert.match(tag, /role="img"/, `missing role: ${tag.slice(0, 60)}`);
+    assert.match(tag, /aria-label="/, `missing aria-label: ${tag.slice(0, 60)}`);
+  }
+});
+
+t('each SVG scales rather than fixing a pixel size', () => {
+  for (const tag of html.match(/<svg[^>]*>/g) || []) {
+    assert.match(tag, /viewBox="/, 'an SVG without a viewBox cannot scale');
+    assert.ok(!/\swidth="\d/.test(tag), 'a hardcoded width breaks the responsive container');
+  }
+});
+
+t('it renders in both themes', () => {
+  assert.match(html, /prefers-color-scheme:\s*dark/, 'no dark-scheme support');
+  assert.match(html, /\[data-theme="dark"\]/, 'the explicit theme toggle must win too');
+  assert.match(html, /\[data-theme="light"\]/);
+});
+
+/* ── the counts on the page are the counts in the code ─────────────────────── */
+section('Counts match the configuration');
+
+const claims = [
+  ['routes', Routes.length, /(\d+)\s+routes/],
+  ['visible workspaces', VisibleWorkspaces.length, /(\d+)\s+visible workspaces/],
+  ['technical routes', Object.keys(HiddenTechnicalRoutes).length, /(\d+)\s+technical routes/],
+  ['state collections', RequiredStateCollections.length, /(\d+)\s+state collections/],
+  ['contract keys', EndpointKeys.length, /(\d+)\s+contract keys/],
+];
+
+for (const [label, expected, re] of claims) {
+  t(`the page states ${expected} ${label}`, () => {
+    const m = text.match(re);
+    assert.ok(m, `the page never states a ${label} count`);
+    assert.equal(Number(m[1]), expected,
+      `the page says ${m[1]} ${label}; the configuration says ${expected}`);
+  });
+}
+
+t('the zone count in the strip is the number of zones actually drawn', () => {
+  /* Zones are not a config value, so this cannot be checked against the code the way the
+     counts above are. What CAN be checked is that the page agrees with itself.
+
+     It did not. Removing the proxy correctly removed the enforcement zone from the diagram
+     — three zones are drawn — but the strip went on claiming four, and nothing noticed
+     because every other count on that strip is config-derived and this one had no owner.
+     A summary figure that outlives the thing it summarises is how a diagram starts lying. */
+  /* Scoped to the trust-zone sheet by its own aria-label. `t-zone` styles labels on more
+     than one diagram, so an unscoped count reads the lifecycle sheet's swimlanes too and
+     fails for the wrong reason. */
+  const sheet = html.split(/<svg\b/).find(s => /aria-label="[^"]*trust zones/i.test(s));
+  assert.ok(sheet, 'no diagram declares itself the trust-zone sheet');
+  const drawn = [...sheet.matchAll(/class="t-zone"[^>]*>([^<]+)</g)]
+    .map(m => m[1].trim()).filter(Boolean);
+  assert.ok(drawn.length, 'no zone labels found in the trust-zone diagram');
+  const m = text.match(/(\d+)\s+zones/);
+  assert.ok(m, 'the page never states a zone count');
+  assert.equal(Number(m[1]), drawn.length,
+    `the strip says ${m[1]} zones; the diagram draws ${drawn.length} (${drawn.join(', ')})`);
+});
+
+t('the module and file counts in sheet 5 are real', () => {
+  // `.json` counts as well as `.js`: config/ declares product-definition.config.json alongside
+  // its modules, and the sheet counts declaration files, not only the executable ones.
+  // `*.local.js` is excluded: it is git-ignored deploy-time config written by
+  // `npm run setup`, so counting it would make this assertion depend on whether the
+  // operator has wired their endpoints. The generator applies the same exclusion.
+  const dirCount = d => readdirSync(path.join(ROOT, d))
+    .filter(f => /\.(js|json)$/.test(f) && !f.endsWith('.local.js')).length;
+  for (const [dir, re] of [['config', /(\d+)\s+declaration files/], ['core', /(\d+)\s+files\s+—\s+state, auth/],
+                           ['shared', /(\d+)\s+files\s+—\s+app shell/], ['modules', /(\d+)\s+workspaces, one per route/]]) {
+    const m = text.match(re);
+    assert.ok(m, `sheet 5 never states a count for ${dir}/`);
+    assert.equal(Number(m[1]), dirCount(dir), `${dir}/ — page says ${m[1]}`);
+  }
+});
+
+/* ── every route is drawn ──────────────────────────────────────────────────── */
+section('Every route appears on the relationship sheet');
+
+t('all 29 routes are named somewhere on the page', () => {
+  // A route that exists but is not drawn is the drift this test exists to catch.
+  const missing = Routes.map(r => r.path).filter(p => !text.includes(p));
+  assert.deepEqual(missing, [], `routes absent from the diagrams: ${missing.join(', ')}`);
+});
+
+t('no route is drawn that does not exist', () => {
+  // The other direction: a route deleted from config but left on the sheet.
+  const declared = new Set(Routes.map(r => r.path));
+  const drawn = [...html.matchAll(/class="t-mono"[^>]*>([a-z][a-z-]{3,})</g)].map(m => m[1]);
+  const phantom = [...new Set(drawn)].filter(d => !declared.has(d) &&
+    // Non-route mono labels that legitimately appear: layer names, field names, prose.
+    !['config', 'core', 'shared', 'modules', 'closure', 'operations', 'correspondence',
+      'approvals', 'dispatch', 'holds', 'channel', 'top', 'base'].includes(d));
+  assert.deepEqual(phantom, [], `drawn but not declared: ${phantom.join(', ')}`);
+});
+
+t('every visible workspace is drawn with its label', () => {
+  for (const w of VisibleWorkspaces) {
+    assert.ok(text.includes(w.route), `${w.route} is not on the sheet`);
+  }
+});
+
+t('the four intake channels are all present', () => {
+  for (const c of ['Portal', 'Email', 'Registry', 'Document']) {
+    assert.ok(text.includes(`channel: ${c}`), `channel ${c} is not drawn on the lifecycle sheet`);
+  }
+});
+
+/* ── the derived dataset agrees ────────────────────────────────────────────── */
+section('The derived dataset is current');
+
+t('architecture-data.json exists and is regenerable', () => {
+  const p = 'docs/architecture/architecture-data.json';
+  assert.ok(existsSync(path.join(ROOT, p)), `${p} is missing — run scripts/architecture-data.mjs --write`);
+});
+
+t('the dataset matches the configuration it was derived from', () => {
+  const d = JSON.parse(read('docs/architecture/architecture-data.json'));
+  assert.equal(d.routes.total, Routes.length, 'stale dataset — regenerate it');
+  assert.equal(d.routes.visible, VisibleWorkspaces.length);
+  assert.equal(d.state.collections, RequiredStateCollections.length);
+  assert.equal(d.endpoints.keys, EndpointKeys.length);
+  assert.deepEqual(d.routeList, Routes.map(r => r.path).sort());
+});
+
+t('the STATIC layer graph is acyclic, and the page says so', () => {
+  const d = JSON.parse(read('docs/architecture/architecture-data.json'));
+  assert.equal(d.layers.acyclic, true,
+    'a static cycle makes sheet 2 false — fix the import, not the diagram');
+  assert.ok(/static graph is/.test(text) || /static layers: acyclic/.test(text),
+    'the page must say WHICH graph is acyclic, not just that one is');
+});
+
+t('the composition root is disclosed rather than hidden', () => {
+  /* core/boot.js dynamically imports every module — a genuine upward reference. An earlier
+     generator matched only `from '…'` and so reported a tidier graph than the code has.
+     The sheet must name this, because a diagram claiming a clean hierarchy while this exists
+     is the exact failure these tests are for. */
+  const d = JSON.parse(read('docs/architecture/architecture-data.json'));
+  assert.equal(d.layers.compositionRoot.file, 'core/boot.js');
+  assert.equal(d.layers.compositionRoot.dynamicModuleImports, Routes.length,
+    'boot must lazily import exactly one module per route');
+  assert.equal(d.layers.acyclicIncludingDynamic, false,
+    'if this became true the composition root changed — redraw sheet 2');
+  assert.ok(/[Cc]omposition root/.test(text), 'sheet 2 does not name the composition root');
+  assert.ok(text.includes('core/boot.js'), 'sheet 2 does not name the file');
+});
+
+t('the extractor counts bare and dynamic imports, not only `from`', () => {
+  // The regression that produced the wrong graph in the first place.
+  const gen = read('scripts/architecture-data.mjs');
+  assert.match(gen, /DYNAMIC\s*=/, 'dynamic imports are not extracted');
+  assert.match(gen, /\^\\s\*import\\s\+/, 'bare side-effect imports are not extracted');
+});
+
+/* THE CHECK THAT WAS MISSING.
+   Every assertion in this file compares the page against `architecture-data.json`. None
+   compared that file against the generator that produces it, so a committed dataset could
+   drift from the tree and the page would still be "consistent" — consistent with a stale
+   number. It had: `modules->core` was committed as 249 and measured 248, and every
+   assertion here passed over it, including the edge-label check directly below, because
+   the page had been drawn from the same stale figure.
+
+   docs/visual/ has this check and names the same failure mode in its own words. The
+   generator writes byte-identical JSON to stdout with no flag and carries no timestamp or
+   commit sha, so the comparison is exact rather than field-by-field. */
+t('the committed dataset is what the generator produces now', () => {
+  const run = spawnSync(process.execPath, [path.join(ROOT, 'scripts/architecture-data.mjs')],
+    { cwd: ROOT, encoding: 'utf8' });
+  assert.equal(run.status, 0, `the generator failed: ${run.stderr}`);
+  const fresh = JSON.parse(run.stdout);
+  const committed = JSON.parse(read('docs/architecture/architecture-data.json'));
+  if (JSON.stringify(fresh) === JSON.stringify(committed)) return;
+
+  /* Name the paths that differ. A deepEqual on this object prints one long line and
+     truncates it, which tells the reader that something drifted and nothing about what. */
+  const diffs = [];
+  (function walk(a, b, at) {
+    if (diffs.length >= 8) return;
+    if (a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a)) {
+      for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) walk(a[k], b[k], at ? `${at}.${k}` : k);
+      return;
+    }
+    if (JSON.stringify(a) !== JSON.stringify(b)) diffs.push(`${at}: generated ${JSON.stringify(a)} · committed ${JSON.stringify(b)}`);
+  })(fresh, committed, '');
+  assert.fail(`docs/architecture/architecture-data.json is stale — run \`npm run architecture\`\n     ${diffs.join('\n     ')}`);
+});
+
+t('the edge counts drawn on sheet 2 are the measured ones', () => {
+  /* Scoped to the edge-label group, and compared as a SET.
+     This assertion used to be `text.includes(String(n))` — a substring match against the
+     whole page. It passed while the layer graph drew 37 for core->config and the extractor
+     measured 40, because "40" happened to appear somewhere else in the prose. A check that
+     passes on a wrong number is precisely what this file's header says it must not be. */
+  const d = JSON.parse(read('docs/architecture/architecture-data.json'));
+  const group = (html.match(/<g class="t-edge"[^>]*>([\s\S]*?)<\/g>/) || [])[1] || '';
+  const drawn = [...group.matchAll(/<text[^>]*>(\d+)<\/text>/g)].map(m => Number(m[1]));
+  assert.ok(drawn.length, 'no edge labels found in the layer-graph diagram');
+  for (const [edge, n] of Object.entries(d.layers.edges)) {
+    assert.ok(drawn.includes(n),
+      `sheet 2 draws [${drawn.join(', ')}]; ${edge} measures ${n}`);
+  }
+});
+
+/* ── the retirements stay retired ──────────────────────────────────────────── */
+section('Retired components are recorded, not erased');
+
+t('all four retired trees are named on the inventory sheet', () => {
+  for (const tree of ['newack/', 'document-portal_Central_NITDA_/', 'ECM_ActivityHub_Portal/', 'proxy/']) {
+    assert.ok(text.includes(tree), `${tree} is missing from the retired list`);
+  }
+});
+
+t('the page does not describe a retired tree as present', () => {
+  // It must appear only in the retired paragraph, never as a live component row.
+  const inventory = html.slice(html.indexOf('<tbody>'), html.indexOf('</tbody>'));
+  for (const tree of ['newack', 'ECM_ActivityHub_Portal', 'proxy']) {
+    assert.ok(!inventory.includes(tree), `${tree} is listed as a live component`);
+  }
+});
+
+console.log(`\n${failed ? '❌' : '✅'} ${passed} passed, ${failed} failed\n`);
+process.exit(failed ? 1 : 0);

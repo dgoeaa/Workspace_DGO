@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-GB" data-platform="dgo-ops">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Platform Hub</title>
+  <link rel="stylesheet" href="brand/brand.css">
+  <link rel="stylesheet" href="hub.css">
+  <script src="brand/brand.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brandrow">
+      <img class="bk-logo bk-logo--on-light" src="brand/nitda-lockup-digital-colour.png" alt="National Information Technology Development Agency" width="572" height="260">
+      <img class="bk-logo bk-logo--on-dark" src="brand/nitda-lockup-digital-white.png" alt="" aria-hidden="true" width="544" height="254">
+      <span class="bk-sub" data-bk-sub><span class="bk-sub__word" aria-hidden="true">DG<svg class="bk-sub__o" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle class="ring" cx="28" cy="28" r="20"/><circle class="dot" cx="28" cy="28" r="6.5"/></svg></span><span class="bk-sub__name" aria-hidden="true"><span>Digital</span><span>Ops</span></span><span class="bk-sub__sr">DGO Digital Ops</span><!--/bk-sub--></span>
+    </div>
+    <div>
+      <h1>Platform Hub</h1>
+      <p class="lede">Every DGO Digital Operations platform: what it's for, who it's for, and whether it's running.</p>
+    </div>
+  </header>
+
+  <main>
+    <form class="filters" role="search" onsubmit="return false">
+      <label>Search <input id="q" type="search" placeholder="e.g. letters, flows, audit" autocomplete="off"></label>
+      <label>Audience
+        <select id="aud"><option value="">All</option></select>
+      </label>
+      <label>View as role
+        <select id="role">
+          <option value="">Any role</option>
+          <option>viewer</option><option>operator</option><option>director</option>
+          <option>executive</option><option>userAdmin</option><option>systemAdmin</option>
+        </select>
+      </label>
+    </form>
+    <p class="advisory" id="advisory" hidden>Role filtering is advisory: authentication is not yet active, so it controls what is shown, not what is reachable.</p>
+    <p id="summary" class="summary" aria-live="polite"></p>
+    <div id="groups"></div>
+    <p id="error" class="error" hidden></p>
+  </main>
+
+  <script type="module" src="hub.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+# Line endings for GENERATED files only.
+#
+# Several --check stages compare a generated file byte-for-byte against a fresh run. Git's
+# default on Windows (core.autocrlf=true) rewrites LF to CRLF on checkout, so those files come
+# out of a Windows clone with different bytes from the ones the generator writes — and every
+# one of them is reported stale with nothing changed. Pinning them to LF fixes that at source.
+#
+# Deliberately NOT repo-wide. 105 tracked files are stored with CRLF, almost all of them
+# PowerShell-generated tenant exports under docs/folio-Master-Flows-and-Endpoints/contracts/deployed/ and
+# docs/reference/foundational/. Those are evidence, recorded verbatim; a blanket rule would
+# renormalise all of them and change the bytes of the record.
+
+docs/folio-Master-Flows-and-Endpoints/registers/flow-list-map.json            text eol=lf
+docs/folio-Master-Flows-and-Endpoints/FLOW_CATALOGUE.md             text eol=lf
+docs/folio-Master-Flows-and-Endpoints/registers/endpoint-workflow-ids.json    text eol=lf
+docs/folio-Master-Flows-and-Endpoints/registers/portal-endpoint-workflow-ids.json text eol=lf
+docs/folio-Master-Flows-and-Endpoints/registers/flow-trigger-auth.json        text eol=lf
+docs/reference/process-inventory.json        text eol=lf
+docs/folio-Master-Flows-and-Endpoints/registers/http-flow-registry-spec.json  text eol=lf
+docs/deployment/EXECUTION_RUNBOOK.md         text eol=lf
+docs/folio-Master-Flows-and-Endpoints/deployment/internal/dynamic-operations.json text eol=lf
+docs/visual/platform-data.js                 text eol=lf
+
+# DGO Correspondence Mailer: generated flow definitions are held byte-for-byte by
+# `npm run test:mailer`; the zips are binary and must never be touched by EOL conversion.
+mailer/flows/definitions/*.json              text eol=lf
+mailer/flows/flows.catalogue.json            text eol=lf
+mailer/flows/packages/*.zip                  binary
+releases/*.zip                               binary

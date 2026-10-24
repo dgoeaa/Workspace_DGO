@@ -1,0 +1,29 @@
+Files in the repository that are not in this copy. Each is a record of the flow estate before its addresses were rotated (ITEM-22)
+and holds signed addresses of that estate. None is a live address. They remain in the repository.
+
+  docs/forensic/dd2e909/00-provenance.md
+  docs/reference/foundational/canvas/Endpoints (2).txt
+  docs/reference/foundational/flows/DOC-ASSIGN GEM DIREC CREAT ASSIGN FLOW URL.HTML
+  docs/reference/foundational/flows/DOCUMENT SUBMISSION PORTAL POWER AU.txt
+  docs/reference/foundational/flows/WEB PRIMARY HTTP POWER AUTOMATE FLOWS STRUCTURE AND PARAMETERS.txt
+  docs/reference/foundational/flows/details/ALL_FLOWS_ENDPOINT-URL_GETDOCS_GETTASKS_GETEMAILS_GETREFERENCES-&-LOOKUPS.txt
+  docs/reference/foundational/flows/details/Consolidated flow URLS.txt
+  docs/reference/foundational/flows/details/FlowDetails.txt
+  docs/reference/foundational/flows/details/Flows structures documentation.txt
+  docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt
+  docs/reference/foundational/flows/details/Power Automate HTTP Flow URL's Request Schemas and response body structures.txt
+  docs/reference/foundational/flows/response-samples/Documents Data and Assignments Flows.txt
+  docs/reference/foundational/spas/DAA_DGO_HUB_ASSIGN_ITEM_DIRECT_Build_v2.0.html
+  docs/reference/foundational/spas/DGCEO Correspondence & Decision Hub.html
+  docs/reference/foundational/spas/DGO_FastTrack_Monitoring_SPA.html
+  docs/reference/foundational/spas/HTML Reports_Builder_SPA.html
+  docs/reference/foundational/spas/NITDA_DGO_HUB_ACK.html
+  docs/reference/foundational/spas/NITDA_Digital_Ops_Hub_patched.html
+  docs/reference/foundational/spas/Optimized_NITDA DGO Smart Orchestrator Merged Launcher.html
+  docs/reference/foundational/spas/REGEN_DGO_LIVE_V2_8_ENHANCED_FINAL.html
+  docs/reference/foundational/spas/Reports_Dashboard_Live.html
+  docs/reference/foundational/spas/Response Tracking & Matrix.html
+  docs/reference/foundational/spas/Response matrix v2.html
+  docs/reference/foundational/spas/Unified Smart Orchestrator.html
+  docs/reference/foundational/spas/approvals.html
+  docs/reference/foundational/spas/stats_screen_spa-2.html

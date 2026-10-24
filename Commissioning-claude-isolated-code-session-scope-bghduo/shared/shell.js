@@ -1,0 +1,431 @@
+import { Routes } from '../config/routes.config.js';
+import { NavGroups } from '../config/nav.config.js';
+import { VisibleWorkspaces, HiddenTechnicalRoutes, workspaceGuide } from '../config/workflow-clarity.config.js';
+import { State } from '../core/state.js';
+import { createFocusTrap } from '../core/focus-trap.js';
+import { Router } from '../core/router.js';
+import { fmtDateTime } from '../core/ui.js';
+import { setTheme, setDensity, nextTheme, nextDensity, applyRootAttributes, escapeHtml as esc, normalizeTheme, normalizeDensity } from './design-system-adapter.js';
+import { CommandPalette, ToastHost } from './components.js';
+import { installAccessibilityShortcuts, afterRouteChange } from './accessibility.js';
+import { allWorkspaceCommands, guideFor } from './workspace-guide.js';
+import { canCurrentUserAccess, personaLabel } from '../core/current-user.js';
+import { NotificationCenter } from '../core/notification-center.js';
+
+/* H-02 / V-06 — the internal platform had no icon set. Navigation, top-bar actions and
+   source filters were drawn with Unicode typographic characters rendered in whatever glyph
+   the user's system font happened to provide: 21 distinct symbols plus six bare ASCII
+   letters standing in for icons (R, ∑, E, O, D, U), two routes sharing ▣, and "Email Desk"
+   falling through to the '•' default because it had no entry at all. Glyph icons vary by
+   operating system, sit off the text baseline, cannot be sized or coloured reliably, and
+   carry no shared meaning.
+   The portal already shipped a proper SVG sprite. It is now shipped with both packages and
+   every route and action maps to a real symbol — 29 routes, 29 distinct icons. */
+const I = Object.freeze({
+  home:'i-home','ecm-erp-charter':'i-file-text',activities:'i-activity',correspondence:'i-inbox',
+  orchestrator:'i-briefcase','response-tracking':'i-clock','single-assignment':'i-user-check',
+  'bulk-assignment':'i-users',fasttrack:'i-flag',approvals:'i-check-square',
+  acknowledgment:'i-check-circle',dispatch:'i-arrow-up-right','scan-intake':'i-upload-cloud',registry:'i-box',
+  briefs:'i-clipboard',meetings:'i-calendar',projects:'i-layers',comments:'i-chat',
+  reports:'i-bar-chart-2',statistics:'i-trending-up',executive:'i-pie-chart',assistant:'i-compass',
+  lookup:'i-search','operator-hud':'i-navigation-2',settings:'i-settings',diagnostics:'i-server',
+  'user-admin':'i-user',archive:'i-archive','correspondence-email':'i-mail',
+  /* The Admin Suite and the Endpoint Console were both falling through to routeIcon()'s
+     `i-file` default — the suite in the sidebar, the console in the command palette. One
+     fallback is a plain icon; two are the same icon on two different destinations, which is
+     the collision `no two routes share an icon` exists to catch, and it would have fired on
+     whichever route was added next. */
+  'admin-suite':'i-shield','endpoint-console':'i-globe'
+});
+const icon = (name, cls='dgo-icon') => `<svg class="${cls}" aria-hidden="true" focusable="false"><use href="#${name||'i-info'}"></use></svg>`;
+const routeIcon = route => icon(I[route] || 'i-file');
+// The SYSTEM routes an ordinary account cannot open even if RBAC ever widened by mistake —
+// carries the visual "IT" badge in the sidebar's restricted panel (see systemNavHtml below).
+// The Admin Suite joins them: it is the one screen that can clear a queue, reset the
+// commissioning record and roll a registry alias back, so it belongs behind the same badge
+// rather than reading as an ordinary destination that happens to sit under SYSTEM.
+const SYSTEM_RESTRICTED = new Set(['settings','diagnostics','admin-suite']);
+
+// The sidebar collapses to an off-canvas drawer at this width (see the `@media (max-width:900px)`
+// block in styles/app.css that parks `.dgo-sidebar` at translateX(-100%)). Kept in sync by hand:
+// the two have to agree or the drawer is either inert while visible, or tabbable while hidden.
+const NAV_DRAWER_MAX = 900;
+
+// Guarded: the custom element is only declared/registered in a browser, so this module is
+// safely importable in non-browser (diagnostic) contexts without a ReferenceError.
+if (typeof HTMLElement !== 'undefined' && typeof customElements !== 'undefined') {
+class Shell extends HTMLElement{
+  connectedCallback(){ this._installed=false; this.render(); this._off=State.on(()=>this.refreshIdentityAndNav()); Router.start(); if(!this._installed){ installAccessibilityShortcuts(this); this._installed=true; } }
+  disconnectedCallback(){ this._off?.(); this._offFeed?.(); }
+  render(){
+    const s=State.get(); const route=Router.path(); const theme=normalizeTheme(s.settings.theme); const density=normalizeDensity(s.settings.density); applyRootAttributes(route,{theme,density});
+    this.innerHTML=`<div class="dgo-ministry-bar"><span class="dgo-ministry-bar__text">Federal Ministry of Communications, Innovation &amp; Digital Economy</span></div>
+    <div class="dgo-shell-grid" data-shell-grid>
+      <aside class="dgo-sidebar" aria-label="Primary navigation" data-nav>
+        <div class="dgo-brand-lockup"><img class="dgo-brand-lockup__agency" src="assets/nitda-lockup-white.png" alt="National Information Technology Development Agency" width="544" height="254"><span><b>DG<span>O</span> Digital Ops</b><small>An Initiative of NITDA</small></span></div>
+        ${/* The wrapping <aside> is named "Primary navigation"; this inner <nav> had no name at
+             all, so a screen reader's landmark list showed an anonymous navigation region
+             inside a named one. It is the scrolling list of workspaces — that is what it is
+             called. The two names differ deliberately: identical names on nested landmarks
+             are as unhelpful as no name. */''}
+        <nav class="dgo-sidebar__nav" aria-label="Workspaces">${this.navHtml()}</nav>
+        <div class="dgo-sidebar__identity"><b data-name>${esc(s.profile.name)}</b><small data-role>${esc(personaLabel(s.profile.persona))} · ${esc(s.profile.email)}</small></div>
+      </aside>
+      <section class="dgo-workarea">
+        <header class="dgo-topbar">
+          <button type="button" class="dgo-iconbtn dgo-hamburger" data-menu aria-label="Toggle navigation">${icon('i-menu')}</button>
+          <div class="dgo-route-title"><small data-eyebrow>ACTIVE WORKSPACE</small><b data-context data-tb-title>${esc(this.routeLabel(route))}</b></div>
+          <div class="dgo-topbar__spacer"></div>
+          <button type="button" class="dgo-search-trigger" data-palette aria-label="Search and command palette">${icon('i-search')}<span>Search references, tasks, people...</span><kbd>Ctrl K</kbd></button>
+          ${/* R3-D1 — a wrapper the ≤640px tier can bound to one scrollable row instead of
+               letting the topbar's own flex-wrap grow it past --dgo-shell-topbar-h.
+               Carries no ARIA role and changes no control's own class/attributes/order,
+               only its parent (see app.css for the sizing rules this enables). */''}
+          <div class="dgo-topbar__controls">
+            <button type="button" class="dgo-iconbtn" data-guide aria-label="Workspace guide" title="Workspace guide" style="display:var(--tb-ctl)">${icon('i-help')}</button>
+            <button type="button" class="dgo-iconbtn" data-sync aria-label="Synchronize data" title="Synchronize data" style="display:var(--tb-ctl)">${icon('i-refresh')}</button>
+            <button type="button" class="dgo-iconbtn" data-more-open aria-label="More controls" aria-haspopup="menu" aria-expanded="false" title="More controls" style="display:var(--tb-more)">${icon('i-more')}</button>
+            <button type="button" class="dgo-iconbtn" data-density aria-label="Toggle density" title="Density: ${esc(density)}">${icon('i-chevron-down')}</button>
+            <button type="button" class="dgo-iconbtn" data-theme aria-label="Switch theme" title="Theme: ${esc(theme)}">${icon('i-globe')}</button>
+            <button type="button" class="dgo-iconbtn dgo-notify-trigger" data-notify-open aria-label="Activity and notifications" title="Activity" aria-haspopup="dialog" aria-expanded="false">${icon('i-bell')}<span class="dgo-notify-badge" data-notify-badge hidden></span></button>
+            <button type="button" class="dgo-persona-button" data-persona aria-haspopup="menu" aria-expanded="false"><span class="dgo-avatar">${esc((s.profile.name||'R').slice(0,1).toUpperCase())}</span><span><b>${esc(s.profile.name)}</b><small>${esc(personaLabel(s.profile.persona))}</small></span></button>
+          </div>
+        </header>
+        <main id="main" class="dgo-main dgo-scroll" data-outlet tabindex="-1"></main>
+        ${/* I-11 — route changes used to leave the previous screen's heading and KPI values on
+             screen with no signal that a change was in progress; an operator acting quickly
+             could read a number from the wrong route. core/router.js keeps the outgoing mount
+             in the DOM until the incoming one is ready (avoids a worse "flash of nothing"
+             regression, and the generation-token guard means a mount that loses the race never
+             reaches [data-outlet] regardless) — the fix belongs in the shell as a skeleton
+             overlay, shown only once a mount has taken longer than the router's
+             PENDING_AFTER_MS threshold so an instant route never flickers. */''}
+        <div class="dgo-route-loading" data-route-loading aria-hidden="true">
+          <div class="dgo-route-loading__bar"></div>
+          ${Array.from({length:4}).map(()=>`<div class="dgo-route-loading__row"><span></span><div><i></i><i></i></div></div>`).join('')}
+        </div>
+        ${/* I-01 — the twenty guided routes are declared as handoffs of a visible workspace
+             but had no link anywhere in the shell, so the only way to reach them was the
+             command palette or a typed hash. This strip renders the current workspace's
+             declared handoffs as links. It does not decide which of the twenty belong in
+             the sidebar — that is the agency's triage — but it does mean no built screen
+             is reachable only by knowing its URL. */''}
+        <nav class="dgo-related" data-related aria-label="Related workspaces" hidden></nav>
+        <footer class="dgo-footer"><span>DGO Digital Operations</span><small>Governed runtime · ${esc(fmtDateTime(new Date().toISOString()))}</small></footer>
+      </section>
+    </div>
+    <div class="dgo-scrim" data-scrim hidden></div>
+    <div class="dgo-live-region" aria-live="polite" data-live-region></div>
+    ${ToastHost()}${CommandPalette()}${this.notifyPanelHtml()}${this.moreMenuHtml()}${this.personaPanelHtml()}`;
+    this.bind(); this.active(route); this.watchNavBreakpoint(); this.syncNavInert(); this.syncNavScrollHint(); addEventListener('resize',()=>this.syncNavScrollHint());
+  }
+  // SYSTEM contains the platform's IT-only screens (Administration, System Health) alongside
+  // Assistant and Operator HUD. The Figma shell sets it apart visually — a recessed panel
+  // docked above the identity footer rather than another scrolling group — so an operator
+  // scanning the primary groups reads it as a different kind of destination, and the two
+  // screens an ordinary user cannot act on carry a small "IT" badge rather than relying on
+  // RBAC alone to communicate that (this platform's route access already gates them; the
+  // badge is the visual half of that same fact).
+  navGroupHtml(routes){ return routes.map(r=>`<a class="dgo-sidebar__item" href="#/${r.path}" data-route="${esc(r.path)}" title="${esc(r.label)}"><span class="dgo-nav-icon">${routeIcon(r.path)}</span><span>${esc(r.label)}</span>${SYSTEM_RESTRICTED.has(r.path)?'<span class="dgo-sidebar__badge">IT</span>':''}</a>`).join(''); }
+  routesForGroup(group){ return VisibleWorkspaces.filter(w=>w.group===group).map(w=>Routes.find(r=>r.path===w.route)).filter(r=>r&&canCurrentUserAccess(r.path)); }
+  // SYSTEM stays inside the same scrollable region as every other group — pulling it into a
+  // separate fixed panel outside .dgo-sidebar__nav starved the scrollable area of height on
+  // short viewports and produced the exact half-cut row I-10 exists to prevent. It still reads
+  // as a different kind of destination: a recessed background, a top rule, and an "IT" badge
+  // on the two screens an ordinary account cannot open (see SYSTEM_RESTRICTED above).
+  navHtml(){ return NavGroups.map(g=>{ const routes=this.routesForGroup(g.group); if(!routes.length) return ''; const system=g.group==='SYSTEM'; return `<div class="dgo-nav-group${system?' dgo-nav-group--system':''}"><div class="dgo-nav-group__label">${system?'SYSTEM &middot; RESTRICTED':esc(g.group)}</div>${this.navGroupHtml(routes)}</div>`; }).join(''); }
+  bind(){
+    this.querySelector('[data-menu]')?.addEventListener('click',()=>this.toggleNav());
+    this.querySelector('[data-scrim]')?.addEventListener('click',()=>this.closeNav());
+    this.querySelector('[data-theme]')?.addEventListener('click',()=>{ const t=setTheme(nextTheme()); this.toast(`Theme set to ${t}`,'success'); });
+    this.querySelector('[data-density]')?.addEventListener('click',()=>{ const d=setDensity(nextDensity()); this.toast(`Density set to ${d}`,'success'); });
+    this.querySelector('[data-palette]')?.addEventListener('click',()=>this.openCommandPalette());
+    this.querySelector('[data-guide]')?.addEventListener('click',()=>this.showGuide());
+    this.querySelector('[data-sync]')?.addEventListener('click',()=>this.runSync());
+    this.querySelectorAll('.dgo-sidebar__item').forEach(a=>a.addEventListener('click',()=>this.closeNav()));
+    this.querySelector('[data-command-close]')?.addEventListener('click',()=>this.closeCommandPalette());
+    this.querySelector('[data-command-input]')?.addEventListener('input',e=>this.renderCommandResults(e.target.value));
+    this.querySelector('[data-notify-open]')?.addEventListener('click',()=>this.toggleNotifications());
+    this.querySelector('[data-notify-close]')?.addEventListener('click',()=>this.closeNotifications());
+    this.querySelector('[data-notify-clear]')?.addEventListener('click',()=>{ NotificationCenter.clear(); this.announce('Activity history cleared'); });
+    this._offFeed?.(); this._offFeed=NotificationCenter.subscribe(()=>this.renderNotifications());
+    this.renderNotifications();
+    this.querySelector('[data-more-open]')?.addEventListener('click',()=>this.toggleMoreMenu());
+    this.querySelector('[data-more-panel]')?.addEventListener('click',e=>{
+      const btn=e.target.closest('[data-more-action]'); if(!btn) return;
+      const action=btn.dataset.moreAction; this.closeMoreMenu();
+      if(action==='guide') this.showGuide();
+      else if(action==='sync') this.runSync();
+      else if(action==='density'){ const d=setDensity(nextDensity()); this.toast(`Density set to ${d}`,'success'); }
+      else if(action==='theme'){ const t=setTheme(nextTheme()); this.toast(`Theme set to ${t}`,'success'); }
+    });
+    // R3-D3 — persona joins the mutual-exclusion set. It previously had no open/close
+    // behaviour at all (aria-haspopup/aria-expanded were static markup with nothing behind
+    // them); this wires it to the same toggle/focus-trap/aria-expanded pattern notifications
+    // and the overflow menu already use.
+    this.querySelector('[data-persona]')?.addEventListener('click',()=>this.togglePersonaPanel());
+    this.querySelector('[data-persona-close]')?.addEventListener('click',()=>this.closePersonaPanel());
+    // Click-outside dismissal (finding: notifications/persona have none; the overflow
+    // menu is the one surface this directive requires it for). Bound once — render()
+    // runs a single time per Shell instance, so this listener is never duplicated.
+    document.addEventListener('click',e=>{
+      const panel=this.querySelector('[data-more-panel]'); if(!panel||panel.hidden) return;
+      if(panel.contains(e.target)||e.target.closest('[data-more-open]')) return;
+      this.closeMoreMenu();
+    });
+  }
+  /* ── Overflow menu (D-6) — collapses workspace-guide, synchronise, density and theme
+     into one popover once the topbar can no longer show them beside a two-line route
+     title. Density/theme rows call the same setDensity/setTheme entry points as their
+     topbar buttons rather than re-implementing persistence, so the two paths never
+     desynchronise. */
+  moreMenuHtml(){
+    return `<div class="dgo-more-menu" data-more-panel hidden role="menu" aria-label="More controls">${this.moreMenuItemsHtml()}</div>`;
+  }
+  moreMenuItemsHtml(){
+    const s=State.get();
+    const density=normalizeDensity(s.settings.density), theme=normalizeTheme(s.settings.theme);
+    const items=[
+      {action:'guide',icon:'i-help',label:'Workspace guide',value:''},
+      {action:'sync',icon:'i-refresh',label:'Synchronise data',value:this._syncing?'Working':''},
+      {action:'density',icon:'i-filter',label:'Density',value:density},
+      {action:'theme',icon:'i-eye',label:'Theme',value:theme}
+    ];
+    return items.map(it=>`<button type="button" role="menuitem" class="dgo-more-menu__item" data-more-action="${it.action}">${icon(it.icon)}<span>${esc(it.label)}</span><small>${esc(it.value)}</small></button>`).join('');
+  }
+  renderMoreMenuItems(){ const panel=this.querySelector('[data-more-panel]'); if(panel) panel.innerHTML=this.moreMenuItemsHtml(); }
+  toggleMoreMenu(){ this.querySelector('[data-more-panel]')?.hidden ? this.openMoreMenu() : this.closeMoreMenu(); }
+  openMoreMenu(){
+    this.closeNotifications();
+    this.closePersonaPanel();
+    const panel=this.querySelector('[data-more-panel]'); if(!panel) return;
+    this.renderMoreMenuItems();
+    panel.hidden=false;
+    this.querySelector('[data-more-open]')?.setAttribute('aria-expanded','true');
+    createFocusTrap(panel,{onEscape:()=>this.closeMoreMenu()});
+    requestAnimationFrame(()=>panel.querySelector('button')?.focus());
+  }
+  closeMoreMenu(){
+    const panel=this.querySelector('[data-more-panel]'); if(!panel||panel.hidden) return;
+    panel._releaseTrap?.(); panel._releaseTrap=null;
+    panel.hidden=true;
+    const trigger=this.querySelector('[data-more-open]');
+    trigger?.setAttribute('aria-expanded','false');
+    trigger?.focus();
+  }
+  // Shared by the topbar [data-sync] button and the overflow menu's "Synchronise data"
+  // row, so the transient "Working" label (900ms, matching the design source's own
+  // timing) reflects one piece of state instead of two independently-tracked ones.
+  runSync(){
+    this._syncing=true; this.renderMoreMenuItems();
+    State.patch({runtime:{...State.get().runtime,lastLoad:new Date().toISOString()}},{module:'shell',action:'sync',event:'audit:sync-requested'});
+    this.toast('Synchronization requested','info');
+    setTimeout(()=>{ this._syncing=false; this.renderMoreMenuItems(); },900);
+  }
+
+  /* ── Durable feedback surface (finding 03) ─────────────────────────────────────────
+     The toast remains the at-a-glance signal; this is where it goes afterwards, so an
+     outcome the user did not happen to be looking at is still recoverable. */
+  notifyPanelHtml(){
+    return `<div class="dgo-notify-panel" data-notify-panel hidden>
+      <section role="dialog" aria-modal="false" aria-label="Activity and notifications">
+        <header>
+          <h2>Activity</h2>
+          <div>
+            <button type="button" class="dgo-btn dgo-btn--secondary dgo-btn--sm" data-notify-clear>Clear all</button>
+            <button type="button" class="dgo-iconbtn" data-notify-close aria-label="Close activity">&times;</button>
+          </div>
+        </header>
+        <ol data-notify-list></ol>
+      </section>
+    </div>`;
+  }
+  renderNotifications(){
+    const badge=this.querySelector('[data-notify-badge]');
+    const list=this.querySelector('[data-notify-list]');
+    const items=NotificationCenter.all();
+    const unread=NotificationCenter.unreadCount();
+    if(badge){ badge.hidden=unread===0; badge.textContent=unread>99?'99+':String(unread); }
+    const trigger=this.querySelector('[data-notify-open]');
+    if(trigger) trigger.setAttribute('aria-label',unread?`Activity and notifications, ${unread} unread`:'Activity and notifications');
+    if(!list) return;
+    list.innerHTML = items.length
+      ? items.map(r=>`<li class="dgo-notify-item dgo-notify-item--${esc(r.tone)}${r.read?'':' is-unread'}">
+          <div>
+            <p>${esc(r.message)}</p>
+            <small>${esc(fmtDateTime(r.at))}${r.module?` &middot; ${esc(r.module)}`:''}${r.ref?` &middot; ${esc(r.ref)}`:''}</small>
+          </div>
+          <button type="button" class="dgo-iconbtn" data-notify-dismiss="${esc(r.id)}" aria-label="Dismiss: ${esc(r.message)}">&times;</button>
+        </li>`).join('')
+      : '<li class="dgo-notify-empty">Nothing yet. Actions you take, and anything that fails, will be recorded here.</li>';
+    list.querySelectorAll('[data-notify-dismiss]').forEach(b=>b.addEventListener('click',()=>NotificationCenter.dismiss(b.dataset.notifyDismiss)));
+  }
+  toggleNotifications(){ this.querySelector('[data-notify-panel]')?.hidden ? this.openNotifications() : this.closeNotifications(); }
+  openNotifications(){
+    this.closeMoreMenu();
+    this.closePersonaPanel();
+    const panel=this.querySelector('[data-notify-panel]'); if(!panel) return;
+    panel.hidden=false;
+    this.querySelector('[data-notify-open]')?.setAttribute('aria-expanded','true');
+    NotificationCenter.markAllRead();
+    this.renderNotifications();
+    createFocusTrap(panel,{onEscape:()=>this.closeNotifications()});
+    requestAnimationFrame(()=>panel.querySelector('button')?.focus());
+  }
+  closeNotifications(){
+    const panel=this.querySelector('[data-notify-panel]'); if(!panel||panel.hidden) return;
+    panel._releaseTrap?.(); panel._releaseTrap=null;
+    panel.hidden=true;
+    const trigger=this.querySelector('[data-notify-open]');
+    trigger?.setAttribute('aria-expanded','false');
+    trigger?.focus();
+  }
+  /* R3-D3 — persona popover. The trigger (data-persona) already carried
+     aria-haspopup="menu" aria-expanded="false" in the markup but nothing behind it: no
+     panel, no click handler, no aria-expanded toggling. This gives it the same
+     open/close/focus-trap/aria-expanded contract as the overflow menu and notifications,
+     and folds it into their existing mutual exclusion (openMoreMenu/openNotifications/
+     showGuide already close it above; this closes them in the other direction). Content is
+     the same identity summary already shown in the button and the sidebar footer — there is
+     no persona-switching feature in this codebase to surface here. */
+  personaPanelHtml(){
+    const s=State.get();
+    return `<div class="dgo-more-menu dgo-persona-panel" data-persona-panel hidden role="menu" aria-label="Account">
+      <div class="dgo-persona-panel__identity">
+        <span class="dgo-avatar">${esc((s.profile.name||'R').slice(0,1).toUpperCase())}</span>
+        <span><b>${esc(s.profile.name)}</b><small>${esc(personaLabel(s.profile.persona))} &middot; ${esc(s.profile.email)}</small></span>
+      </div>
+      <button type="button" role="menuitem" class="dgo-more-menu__item" data-persona-close>${icon('i-close')}<span>Close</span></button>
+    </div>`;
+  }
+  togglePersonaPanel(){ this.querySelector('[data-persona-panel]')?.hidden ? this.openPersonaPanel() : this.closePersonaPanel(); }
+  /* R4-D2 — focus ordering on cross-surface open (F-4, documented not fixed). Opening this
+     panel calls closeNotifications() and closeMoreMenu() first, and each of those returns
+     focus to its own trigger synchronously — that happens even here, mid-open, not only when
+     they are invoked as a plain close. What keeps that from reading as a focus break is timing:
+     this method's own focus move is deferred one frame, in the requestAnimationFrame call
+     below, so it always lands after whichever trigger the synchronous closes just focused,
+     overwriting it before the user perceives anything. That ordering is required, not
+     incidental — dropping the rAF in favour of a synchronous focus call here would put this
+     panel's focus first and the closed surfaces' triggers last, stranding focus on whichever
+     trigger a prior panel happened to own; making either close path conditional on which
+     surface is opening next would do the same by skipping the trigger-focus step it currently
+     always runs. The same contract governs openNotifications(), openMoreMenu() and showGuide()
+     — each closes its siblings synchronously and defers its own focus move to the next frame,
+     for the same reason. */
+  openPersonaPanel(){
+    this.closeNotifications();
+    this.closeMoreMenu();
+    const panel=this.querySelector('[data-persona-panel]'); if(!panel) return;
+    panel.hidden=false;
+    this.querySelector('[data-persona]')?.setAttribute('aria-expanded','true');
+    createFocusTrap(panel,{onEscape:()=>this.closePersonaPanel()});
+    requestAnimationFrame(()=>panel.querySelector('button')?.focus());
+  }
+  closePersonaPanel(){
+    const panel=this.querySelector('[data-persona-panel]'); if(!panel||panel.hidden) return;
+    panel._releaseTrap?.(); panel._releaseTrap=null;
+    panel.hidden=true;
+    const trigger=this.querySelector('[data-persona]');
+    trigger?.setAttribute('aria-expanded','false');
+    trigger?.focus();
+  }
+  announce(message){ const live=this.querySelector('[data-live-region]'); if(live) live.textContent=String(message||''); }
+  toggleNav(){ const open=this.dataset.navopen==='true'; this.dataset.navopen=open?'false':'true'; this.querySelector('[data-scrim]').hidden=open; this.syncNavInert(); }
+  closeNav(){ this.dataset.navopen='false'; const s=this.querySelector('[data-scrim]'); if(s) s.hidden=true; this.syncNavInert(); }
+  // Below the drawer breakpoint the sidebar is parked off-canvas with translateX(-100%), which
+  // hides it visually but leaves every link tabbable: keyboard users land on invisible controls
+  // they cannot scroll into view. `inert` removes the subtree from both the tab order and the
+  // accessibility tree while it is closed. It must be scoped to the drawer layout — above the
+  // breakpoint the sidebar is permanently visible, and marking it inert would strip primary
+  // navigation from keyboard and screen-reader users entirely.
+  syncNavInert(){
+    const nav=this.querySelector('[data-nav]'); if(!nav) return;
+    const drawer=typeof matchMedia==='function' && matchMedia(`(max-width:${NAV_DRAWER_MAX}px)`).matches;
+    nav.inert = drawer && this.dataset.navopen!=='true';
+  }
+  watchNavBreakpoint(){
+    if(this._navQuery || typeof matchMedia!=='function') return;
+    this._navQuery=matchMedia(`(max-width:${NAV_DRAWER_MAX}px)`);
+    this._navQuery.addEventListener('change',()=>this.syncNavInert());
+  }
+  // Keyboard-accessible modal focus management: trap Tab within an open surface and return focus to
+  // the opener on close. Dialogs additionally own an Escape handler that settles their own
+  // dismissal contract (see dialog()/confirm()).
+  _trapFocus(surface){
+    // Single shared implementation so dialogs, drawers, the command palette and the
+    // welcome/OTP overlay all deliver the same keyboard contract.
+    createFocusTrap(surface);
+  }
+  // A dialog that carries a pending promise (confirm) must be dismissed through its own
+  // _dismiss() so the awaiting governed action is cancelled rather than stranded.
+  closeTransientSurfaces(){ this.closeNav(); this.closeCommandPalette(); this.querySelectorAll('[data-dialog]').forEach(d=>{ if(d._dismiss){ d._dismiss(); return; } d._releaseTrap?.(); d.remove(); }); }
+  active(route){ applyRootAttributes(route); this.querySelectorAll('.dgo-sidebar__item').forEach(a=>{ const on=a.dataset.route===route; a.classList.toggle('active',on); if(on)a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); }); const ctx=this.querySelector('[data-context]'); if(ctx)ctx.textContent=this.routeLabel(route); const mainEl=this.querySelector('#main'); if(mainEl)mainEl.setAttribute('aria-label',this.routeLabel(route)); this.renderRelated(route); this.applyTitle(route); afterRouteChange(); }
+  routeLabel(route){ return Routes.find(r=>r.path===route)?.label || route || 'Command Center'; }
+  // I-17 — the tab title names the screen, matching the portal's own pattern
+  // ("Track a request — NITDA Intelligent Portal"). It used to be one static string on
+  // every screen, and that string was the internal release codename and design-system
+  // version: "R11.6 Obsidian Harmonized Design System Runtime". A tab title is how a user
+  // finds the right window among ten.
+  applyTitle(route){ document.title=`${this.routeLabel(route)} — DGO Digital Operations`; }
+  // I-10 — mark the nav as scrollable only when it actually overflows, so the fade at the
+  // boundary is a signal that there is more below rather than permanent decoration. A flexed
+  // container's natural height is essentially never an exact multiple of a 44px item plus an
+  // interleaved group label, so without the clip pass below the scroll boundary lands mid-row
+  // more often than not — that half-cut row, with no indication further navigation exists, was
+  // the original bug. The clip finds the first item or group label whose box would straddle
+  // the boundary and stops the container's visible height just above it, so every row is
+  // either fully shown or fully hidden.
+  syncNavScrollHint(){
+    const nav=this.querySelector('.dgo-sidebar__nav'); if(!nav) return;
+    nav.style.maxBlockSize='';
+    nav.dataset.scrollable=String(nav.scrollHeight>nav.clientHeight+1);
+    if(nav.dataset.scrollable!=='true') return;
+    const navTop=nav.getBoundingClientRect().top;
+    const avail=nav.clientHeight;
+    for(const el of nav.querySelectorAll('.dgo-sidebar__item, .dgo-nav-group__label')){
+      const r=el.getBoundingClientRect();
+      const relTop=r.top-navTop, relBottom=r.bottom-navTop;
+      if(relTop<avail && relBottom>avail+0.5){ nav.style.maxBlockSize=Math.max(0,relTop)+'px'; break; }
+    }
+  }
+  // I-01 — render the current workspace's declared handoffs as links.
+  renderRelated(route){
+    const host=this.querySelector('[data-related]'); if(!host) return;
+    const g=guideFor(route);
+    const targets=(g?.handoffs||[]).filter(p=>p!==route&&Routes.some(r=>r.path===p)&&canCurrentUserAccess(p));
+    if(!targets.length){ host.hidden=true; host.innerHTML=''; return; }
+    host.hidden=false;
+    host.innerHTML=`<span class="dgo-related__label">Continue in</span>${targets.map(p=>`<a class="dgo-related__link" href="#/${esc(p)}">${routeIcon(p)}${esc(this.routeLabel(p))}</a>`).join('')}`;
+  }
+  refreshIdentityAndNav(){ const s=State.get(); const n=this.querySelector('[data-name]'), r=this.querySelector('[data-role]'); if(n)n.textContent=s.profile.name; if(r)r.textContent=`${personaLabel(s.profile.persona)} · ${s.profile.email}`; applyRootAttributes(Router.path()); }
+  openCommandPalette(){ const p=this.querySelector('[data-command-palette]'); if(!p)return; p.hidden=false; this.renderCommandResults(''); this._trapFocus(p); requestAnimationFrame(()=>this.querySelector('[data-command-input]')?.focus()); }
+  closeCommandPalette(){ const p=this.querySelector('[data-command-palette]'); if(p){ p.hidden=true; p._releaseTrap?.(); } }
+  renderCommandResults(q=''){ const box=this.querySelector('[data-command-results]'); if(!box)return; const query=String(q).toLowerCase(); const items=allWorkspaceCommands().filter(c=>canCurrentUserAccess(c.route)).filter(c=>!query || `${c.label} ${c.route} ${c.purpose}`.toLowerCase().includes(query)).slice(0,20); box.innerHTML=items.map(c=>`<button type="button" role="option" class="dgo-cmdk__item" data-open-route="${esc(c.route)}"><span class="dgo-cmdk__icon">${routeIcon(c.route)}</span><span><b>${esc(c.label)}</b><small>${esc(c.primary?'Workspace':(c.visibleThrough||'Contextual'))}</small></span></button>`).join('') || '<div class="dgo-cmdk__empty">No matching workspace.</div>'; box.querySelectorAll('[data-open-route]').forEach(b=>b.addEventListener('click',()=>{Router.go(b.dataset.openRoute); this.closeCommandPalette();})); }
+  // G-6 gap: the guide dialog is modal (z-index 1300, above both popovers) so it visually
+  // covered an open notify/more panel without closing it - closing the dialog afterwards
+  // left the popover still open underneath, with its own aria-expanded still true. Closing
+  // all three here matches the mutual exclusion openMoreMenu/openNotifications/
+  // openPersonaPanel already have with each other, so exactly one of the four named surfaces
+  // (notifications, persona, guide, overflow menu) is ever open at once. The reverse
+  // direction - opening one of the other three while guide is open - needs no code: guide's
+  // own backdrop (position:fixed, inset:0) and focus trap mean none of their triggers are
+  // reachable by mouse or keyboard while it is showing.
+  showGuide(){ this.closeNotifications(); this.closeMoreMenu(); this.closePersonaPanel(); const route=Router.path(); const g=guideFor(route); const title=g?.label || this.routeLabel(route); const body=`<p>${esc(g?.purpose || g?.reason || 'This workspace is governed by the DGO operating model.')}</p>${g?.owns?`<p><b>Owns:</b> ${esc(g.owns.join(', '))}</p>`:''}${g?.handoffs?`<p><b>Handoffs:</b> ${esc(g.handoffs.join(', '))}</p>`:''}`; this.dialog(title, body); }
+  /* The transient half of the feedback channel. Every toast is also written to the
+     notification centre before it is shown, so the 4200ms timeout below decides only how
+     long the message stays in front of the user — never whether it survives at all. */
+  toast(message,tone='info',meta={}){
+    NotificationCenter.push(message,tone,meta);
+    const host=this.querySelector('[data-toast-host]'); if(!host)return;
+    const node=document.createElement('div'); node.className=`dgo-toast dgo-toast--${tone}`; node.textContent=String(message||'');
+    host.appendChild(node); setTimeout(()=>node.remove(),4200);
+  }
+  dialog(title, body){ const wrap=document.createElement('div'); wrap.className='dgo-dialog-backdrop'; wrap.dataset.dialog='guide'; wrap.innerHTML=`<section class="dgo-dialog" role="dialog" aria-modal="true" aria-label="${esc(title)}"><header><h2>${esc(title)}</h2><button type="button" class="dgo-iconbtn" data-dialog-close aria-label="Close dialog">×</button></header><div class="dgo-dialog__body">${body}</div><footer><button type="button" class="dgo-btn dgo-btn--primary" data-dialog-close>Close</button></footer></section>`; const close=()=>{ wrap._releaseTrap?.(); wrap.remove(); }; wrap._dismiss=close; wrap.querySelectorAll('[data-dialog-close]').forEach(b=>b.addEventListener('click',close)); this.appendChild(wrap); createFocusTrap(wrap,{onEscape:close}); requestAnimationFrame(()=>wrap.querySelector('button')?.focus()); }
+  confirm(options){ const o=typeof options==='string'?{title:'Confirm action',body:options}:options||{}; return new Promise(resolve=>{ const wrap=document.createElement('div'); wrap.className='dgo-dialog-backdrop'; wrap.dataset.dialog='confirm'; wrap.innerHTML=`<section class="dgo-dialog" role="dialog" aria-modal="true" aria-label="${esc(o.title||'Confirm action')}"><header><h2>${esc(o.title||'Confirm action')}</h2></header><div class="dgo-dialog__body">${/<[a-z][\s\S]*>/i.test(o.body||'')?(o.body||''):('<p>'+esc(o.body||'Do you want to continue?')+'</p>')}</div><footer><button type="button" class="dgo-btn dgo-btn--secondary" data-no>Cancel</button><button type="button" class="dgo-btn dgo-btn--primary" data-yes>Continue</button></footer></section>`;
+    // Every dismissal route (Cancel, Escape, global transient close) must resolve the
+    // promise: an unresolved confirm would strand the governed action awaiting it.
+    let settled=false; const settle=value=>{ if(settled) return; settled=true; wrap._releaseTrap?.(); wrap.remove(); resolve(value); }; wrap._dismiss=()=>settle(false); wrap.querySelector('[data-no]').addEventListener('click',()=>settle(false)); wrap.querySelector('[data-yes]').addEventListener('click',()=>settle(true)); this.appendChild(wrap); createFocusTrap(wrap,{initialFocus:'[data-yes]',onEscape:()=>settle(false)}); requestAnimationFrame(()=>wrap.querySelector('[data-yes]')?.focus()); }); }
+}
+customElements.define('dgo-shell', Shell);
+}

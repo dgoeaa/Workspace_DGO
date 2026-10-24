@@ -1,0 +1,36 @@
+# Section owners, carried over from the ECM-Platform-Folio OWNERS.yaml (2026-09-30).
+# The folio's numbered sections are mapped onto the paths they were copied from.
+repository:
+  owner: platform-operations
+  review_cycle: quarterly
+paths:
+  # 01-platform
+  core/: platform-engineering
+  modules/: platform-engineering
+  shared/: platform-engineering
+  config/: platform-engineering
+  document-portal/: platform-engineering
+  mailer/: platform-engineering
+  docs/architecture/: platform-engineering
+  # 02-processes
+  docs/process/: process-governance
+  # 03-automation
+  flows/: automation-engineering
+  docs/folio-Master-Flows-and-Endpoints/: automation-engineering
+  # 04-operations
+  docs/deployment/: platform-operations
+  docs/cutover/: platform-operations
+  # 05-governance
+  docs/governance/: governance-and-assurance
+  docs/audits/: governance-and-assurance
+  docs/forensic/: governance-and-assurance
+  evidence/: governance-and-assurance
+  # 06-reference
+  docs/reference/: platform-architecture
+  # 07-tools
+  scripts/: platform-engineering
+  tests/: platform-engineering
+  tools/: platform-engineering
+  # assets
+  assets/: design-system-owner
+  styles/: design-system-owner

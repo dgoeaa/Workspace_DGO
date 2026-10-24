@@ -1,0 +1,184 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# NODE 22, NOT 20, EVERYWHERE.
+#
+# Two reasons, and the first one was failing silently. `linkinator` pulls in `undici@8`,
+# which declares `node: >=22.19.0`; npm prints that as an EBADENGINE warning and installs it
+# anyway, so the Link check job crashed on every run with
+# `TypeError: webidl.util.markAsUncloneable is not a function` — an error that names neither
+# the engine constraint nor the package. It was invisible because that job is
+# `continue-on-error` by design, so its failure never blocked anything and nobody read it.
+#
+# Second: GitHub is deprecating Node 20 on its runners and already force-runs the checkout
+# and setup actions on a newer one, which means the version pinned here was diverging from
+# the version the job actually got.
+#
+# The delivered platforms need no Node at all — they are static sites with no build step.
+# This is the tooling's floor, not the product's, which is why raising it costs nothing.
+jobs:
+  # Runs first and finishes in seconds. This is the check that would have caught the 12
+  # config modules that were imported but never committed — a failure that produced no
+  # thrown error at runtime, only an infinite boot spinner.
+  imports:
+    name: Module graph
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check every relative import resolves
+        run: node tests/check-imports.mjs
+
+      # Ownership, RBAC, idempotency, audit and endpoint contracts. No browser.
+      - name: Check governance spine
+        run: node tests/governance.test.mjs
+
+      # Output encoding at every generated-markup boundary. Written as negative controls:
+      # removing an escaper fails the matching case rather than passing silently.
+      - name: Check output encoding
+        run: node tests/output-encoding.test.mjs
+
+      # Hardening regressions: backend defaults, iframe sandboxing, service-worker
+      # precache and remote-script pinning. Negative controls -- reverting a fix fails.
+      - name: Check hardening
+        run: node tests/hardening.test.mjs
+
+      # Asserts the auth layer is inert (development unchanged) AND that the enforced
+      # posture blocks anonymous requests and ignores local role tampering.
+      # Also verifies direct endpoint routing (no proxy required) in both postures.
+      - name: Check authentication postures
+        run: node tests/auth-posture.test.mjs
+
+      # Identity and role assignment against DGO_UserDirectory. Negative controls: the
+      # directory role must survive normalisation, a disabled user must not arrive active,
+      # and an EMPTY directory response must not promote the caller to systemAdmin.
+      - name: Check identity and role assignment
+        run: node tests/identity-directory.test.mjs
+
+      # The DGO_RoleCatalogue seed is generated from config/rbac.config.js. This fails if
+      # the two have drifted — which they had: the provisioning workbook predates D6(b) and
+      # scan-intake, and granted three roles fewer routes than the platform actually does.
+      - name: Check role catalogue seed is current
+        run: node scripts/role-catalogue-seed.mjs --check
+
+      # The commissioning path: `npm run setup` and the `npm run commission` readiness
+      # gate. Includes the check that every npm script named by README.md and
+      # devcontainer.json actually exists — three of them did not, so every Codespace
+      # failed its postCreateCommand and every reader following the README hit
+      # `Missing script`. Nothing caught it because nothing tested what an operator types.
+      - name: Check commissioning path
+        run: node tests/commissioning.test.mjs
+
+      # Packaging and endpoint provisioning. The architecture decision is that every
+      # endpoint is called directly with its complete URL configured into the delivered
+      # artefact; this is the suite that holds the build step to it. Negative controls
+      # throughout: a truncated trigger URL must be REFUSED, a tampered package must FAIL
+      # verification, and a key added to the runtime but not to the shared endpoint surface
+      # must break the build rather than ship as a silently unprovisioned endpoint.
+      - name: Check packaging and endpoint provisioning
+        run: node tests/packaging.test.mjs
+
+      # Build both packages for real. The suite above builds into a temp directory with
+      # synthetic values; this proves the repository as committed can still produce the two
+      # artefacts that get handed over, and that each resolves its own module graph.
+      - name: Build the delivered packages
+        run: node scripts/package.mjs --quiet
+
+      - name: Verify the packages against their manifests
+        run: |
+          node scripts/package.mjs --verify dist/dgo-internal-platform
+          node scripts/package.mjs --verify dist/dgo-document-portal
+
+  # THE WHOLE GATE, NOT A SELECTION OF IT.
+  #
+  # The job above names nine suites. `npm run test:node` runs sixty-one, so until this job
+  # existed the other fifty-two ran only on a developer's machine. Three of them are staleness
+  # gates over generated artefacts — the flow → list map, the platform atlas dataset and the
+  # process inventory — and all three were red on this branch for several commits because
+  # nothing on a push or a pull request ever ran them. A gate that is not wired to CI is a
+  # gate that reports the state of whoever last remembered to run it.
+  #
+  # `test:node` is `npm test` without the Playwright suite, which has its own job below with
+  # the browser download it needs. Every script in the chain invokes `node` against a file in
+  # this repository and imports nothing outside `node:` builtins, so this job needs no
+  # `npm ci` and no cache — it is a checkout, a Node, and the suite.
+  gate:
+    name: Full gate
+    runs-on: ubuntu-latest
+    needs: imports
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run every non-browser suite
+        run: npm run test:node
+
+  smoke:
+    name: Smoke tests
+    runs-on: ubuntu-latest
+    needs: imports
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run smoke suite
+        run: npm run test:smoke
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  links:
+    name: Link check
+    runs-on: ubuntu-latest
+    needs: imports
+    # It used to be continue-on-error, because the crawl reached external hosts and a
+    # flaky CDN could block a merge. Two things changed. The external hosts are gone —
+    # nothing in either tree fetches off-origin any more — and the one remaining outbound
+    # link, the agency's own site, is now skipped by name in scripts/check-links.mjs. The
+    # crawl therefore touches nothing but the local server, so a failure is a broken link
+    # inside this commit and is worth blocking on. It is also the job whose silent failure
+    # the Node 22 note above describes: allowed to fail, and so never read.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:links
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Ratchet, not a gate: fails on a NEW leak, reports the already-known ones from
+      # tests/secrets-baseline.txt. The baselined signatures (gap G-03) must be ROTATED in
+      # Power Automate before removal — deleting a file revokes nothing — so failing the
+      # build on them would only make CI permanently red without improving security.
+      - name: Check for new SAS signatures
+        run: node tests/check-secrets.mjs

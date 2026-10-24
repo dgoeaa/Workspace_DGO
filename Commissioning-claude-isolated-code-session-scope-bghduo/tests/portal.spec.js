@@ -1,0 +1,549 @@
+/**
+ * Document portal — page-load and correspondence-model coverage.
+ *
+ * The portal had NO behavioural test of any kind (F-021): 41 files, five pages, a service
+ * worker and a client-side console, and the only thing in the test surface that mentioned
+ * it was a credential-suppression entry and one read of its source as text.
+ *
+ * These tests also pin the Step 2 model correction — the portal classifies incoming
+ * correspondence, it does not sell services — so a revert to the service catalogue fails
+ * here rather than silently reappearing.
+ */
+
+import { test, expect } from '@playwright/test';
+
+/** This used to be an allow-list of hosts "we do not control" — fonts.googleapis.com,
+ *  fonts.gstatic.com, cdn.tailwindcss.com, unpkg.com — whose failures were swallowed so a
+ *  flaky CDN could not redden the suite. The portal fetches from none of them any more, so
+ *  the allow-list had become the opposite of a guard: it would have silently absorbed the
+ *  Google Fonts @import coming back, which is the defect it was written around. Nothing
+ *  off-origin is tolerated now; `watch()` records any such request as a failure. */
+const ORIGIN = 'http://localhost:8080';
+
+/** Git-ignored deployment config. A 404 on a clean checkout is expected and is why the
+ *  tag carries onerror="void 0" — the portal falls back to demo mode. */
+const OPTIONAL_404 = [/\/document-portal\/config\.local\.js$/];
+const isOptional = url => OPTIONAL_404.some(re => re.test(url));
+
+/** Same-origin failures only, and never the unattributable bare console line. */
+function watch(page) {
+  const errs = [];
+  page.on('pageerror', e => errs.push(`pageerror: ${e.message}`));
+  page.on('console', m => {
+    if (m.type() !== 'error') return;
+    const t = m.text();
+    // Chromium logs "Failed to load resource: …" with no URL, so it cannot be attributed.
+    // The response handler below asserts subresource failures precisely instead.
+    if (/^Failed to load resource:/.test(t)) return;
+    errs.push(`console: ${t}`);
+  });
+  // Every request the page makes must be same-origin. A public portal that advertises an
+  // offline shell has no business reaching a third party to render.
+  page.on('request', r => {
+    if (new URL(r.url()).origin !== ORIGIN) errs.push(`off-origin request: ${r.url()}`);
+  });
+  page.on('response', r => {
+    const url = r.url();
+    if (r.status() < 400 || isOptional(url)) return;
+    if (new URL(url).origin !== ORIGIN) return;
+    errs.push(`${r.status()} ${url}`);
+  });
+  return errs;
+}
+
+const PAGES = ['index.html', 'submit.html', 'track.html', 'support.html', '404.html'];
+
+test.describe('document portal', () => {
+  /* Step 6 retired the staff console. It shipped three username/password pairs in a
+   * public JavaScript file and checked them in the browser. These assert the deletion,
+   * because "we removed the console" is only true while nothing links it back in.
+   *
+   * These fetch the markup rather than navigating, because what is being asserted is a
+   * property of the served bytes. (They were also written this way because every page
+   * carried a render-blocking stylesheet from fonts.googleapis.com and each navigation
+   * stalled until that request gave up wherever egress is blocked — a per-page navigation
+   * loop did not fit in one test timeout. That @import is gone; the reason above is the
+   * one that remains.) */
+  const linksIn = html => [...html.matchAll(/<a[^>]+href="([^"]*)"/g)].map(m => m[1]);
+
+  test('the staff console is gone, not merely unlinked', async ({ request }) => {
+    const res = await request.get('/document-portal/admin.html');
+    expect(res.status(), 'admin.html must not be served').toBe(404);
+    for (const js of ['admin.js', 'admin-panels.js']) {
+      const r = await request.get(`/document-portal/js/${js}`);
+      expect(r.status(), `${js} must not be served`).toBe(404);
+    }
+  });
+
+  test('no page links to the retired console, and none to the retired service keys', async ({ request }) => {
+    // Step 2 converted submit.html's footer and missed the other three, which went on
+    // advertising "IT project clearance" and "Accreditation" to the public.
+    for (const p of PAGES) {
+      const html = await (await request.get(`/document-portal/${p}`)).text();
+      const hrefs = linksIn(html);
+      expect(hrefs, `${p} still links to the console`).not.toContain('admin.html');
+      expect(hrefs.filter(h => /[?&]service=/.test(h)), `${p} links to retired service keys`).toEqual([]);
+    }
+  });
+
+  test('the console\'s credentials and session helper are deleted from the runtime', async ({ page }) => {
+    await page.goto('/document-portal/index.html', { waitUntil: 'domcontentloaded' });
+    const state = await page.evaluate(() => ({
+      staff: window.PF.STAFF,
+      adminStore: !!(window.PF.store && window.PF.store.admin),
+      staleSession: sessionStorage.getItem('nitda.portal.admin'),
+    }));
+    expect(state.staff, 'PF.STAFF must be deleted, not emptied').toBeUndefined();
+    expect(state.adminStore, 'PF.store.admin must be gone with it').toBe(false);
+    expect(state.staleSession, 'a session left by the retired console must be cleared on load').toBeNull();
+  });
+
+  for (const p of PAGES) {
+    test(`${p} loads with no same-origin failure`, async ({ page }) => {
+      const errs = watch(page);
+      await page.goto(`/document-portal/${p}`, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(600);
+      expect(errs, `${p}:\n${errs.join('\n')}`).toEqual([]);
+    });
+  }
+
+  /* WCAG 2.4.7. ds/styles/reset.css clears the UA focus outline on every element, and
+     nothing restored it for links on this platform: measured in Chromium, focusing any
+     content link on any of these five pages changed no computed property at all — not
+     colour, not decoration, not outline, not shadow. A keyboard visitor could not tell
+     where they were. document-portal/portal.css now carries the ring the runtime has
+     always had in styles/app.css.
+
+     Asserted on the rendered page rather than on the stylesheet, because the first attempt
+     at this fix passed a source-text check and still did nothing on screen: it targeted
+     .dgo-link, and most links here carry no class. */
+  for (const p of PAGES) {
+    test(`${p}: every visible link shows a focus affordance`, async ({ page }) => {
+      await page.goto(`/document-portal/${p}`, { waitUntil: 'domcontentloaded' });
+      const inert = await page.evaluate(() => {
+        const snap = el => {
+          const s = getComputedStyle(el);
+          return [s.color, s.textDecorationColor, s.outlineStyle, s.outlineWidth, s.boxShadow].join('|');
+        };
+        const out = [];
+        for (const a of [...document.querySelectorAll('a[href]')].filter(x => x.offsetParent !== null)) {
+          const before = snap(a);
+          a.focus();
+          const after = snap(a);
+          a.blur();
+          if (before === after) out.push(`${(a.textContent || '').trim().slice(0, 40)} [${a.className || 'no class'}]`);
+        }
+        return out;
+      });
+      expect(inert, `${p}: link(s) with no focus affordance:\n${inert.join('\n')}`).toEqual([]);
+    });
+  }
+
+  test('the wizard offers correspondence types, not a service catalogue', async ({ page }) => {
+    await page.goto('/document-portal/submit.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#serviceList .pf-choice__t');
+    const labels = await page.$$eval('#serviceList .pf-choice__t', ns => ns.map(n => n.textContent.trim()));
+
+    expect(labels.length).toBeGreaterThan(3);
+
+    // Assert against the retired catalogue's actual entries, not against generic words.
+    // "Regulatory or compliance filing" is a legitimate correspondence type; matching a
+    // loose /compliance filing/ would fail on correct content, which is a worse test than
+    // none at all.
+    const RETIRED = [
+      'IT Project Clearance', 'Data Protection Compliance Filing',
+      'Digital Economy Strategy Submission', 'Policy Document Review',
+      'Startup Act Labelling Support', 'Accreditation & Licensing',
+    ];
+    for (const name of RETIRED) {
+      expect(labels, `"${name}" is a retired service, not a correspondence type`).not.toContain(name);
+    }
+    expect(labels.join(' ')).toMatch(/letter|correspondence/i);
+  });
+
+  test('guidance promises acknowledgement of receipt, not a decision date', async ({ page }) => {
+    await page.goto('/document-portal/submit.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#serviceList label');
+    await page.click('#serviceList label:first-child');
+    const req = await page.textContent('#serviceReq');
+    expect(req).toMatch(/acknowledges receipt/i);
+    expect(req).not.toMatch(/decision is due/i);
+  });
+
+  test('registry records carry the correspondence shape', async ({ page }) => {
+    await page.goto('/document-portal/index.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.PF && PF.store && PF.store.all().length);
+    const rec = await page.evaluate(() => PF.store.all()[0]);
+
+    expect(rec.correspondenceType, 'external submissions are Incoming').toBe('Incoming');
+    expect(rec.channel, 'the channel that distinguishes portal intake').toBe('Portal');
+    expect(rec.category, 'every submission lands on an internal registry category').toBeTruthy();
+    expect(rec.typeLabel).toBeTruthy();
+
+    // The service-desk fields must be gone, not merely unused.
+    expect(rec.serviceName, 'serviceName belongs to the retired model').toBeUndefined();
+    expect(rec.serviceCode, 'serviceCode belongs to the retired model').toBeUndefined();
+    expect(rec.dueAt, 'dueAt was a decision deadline; the portal commits to acknowledgement').toBeUndefined();
+    expect(rec.ackDueAt, 'acknowledgement target replaces the per-service SLA').toBeTruthy();
+  });
+
+  /* Step 2 renamed the model's fields (name/code/sla -> label/category) but two render
+   * paths kept reading the old ones, so they interpolated `undefined` into the page. No
+   * console error, no failed request, no failing test — it just silently said "undefined"
+   * to the public. These assert the rendered text, which is the only thing that catches it. */
+  test('the home page category cards render their labels, not undefined', async ({ page }) => {
+    await page.goto('/document-portal/index.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#catalogue .pf-cat__t');
+    const titles = await page.$$eval('#catalogue .pf-cat__t', ns => ns.map(n => n.textContent.trim()));
+    expect(titles.length).toBeGreaterThan(3);
+    for (const t of titles) expect(t, 'a card title must be a real label').toBeTruthy();
+
+    const html = await page.innerHTML('#catalogue');
+    expect(html, 'no field may interpolate as undefined').not.toMatch(/undefined/);
+  });
+
+  test('the tracked record view renders its correspondence type, not undefined', async ({ page }) => {
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.PF && PF.store && PF.store.all().length);
+    const seed = await page.evaluate(() => {
+      const r = PF.store.all().find(x => x.seeded);
+      return { id: r.id, email: r.email };
+    });
+    await page.fill('#trackId', seed.id);
+    await page.fill('#trackEmail', seed.email);
+    await page.click('#lookupBtn');
+    await page.waitForSelector('#trackOut .pf-kv');
+
+    const out = await page.innerHTML('#trackOut');
+    expect(out, 'no field may interpolate as undefined').not.toMatch(/undefined/);
+    expect(out, 'the retired service vocabulary must not be back').not.toMatch(/<dt>Service<\/dt>/);
+  });
+
+  /* Step 6: the tracking page reads status back from the registry.
+   * Before this it read localStorage and nothing else, so it could not report a decision
+   * the registry had taken, and a submission made on a phone did not exist on a laptop.
+   *
+   * The status flow is stubbed at the network boundary — the portal calls it directly, so
+   * the stub is the configured endpoint itself. What is under test is the client's three
+   * resolutions and — the part that matters — that device data is never presented as
+   * though it came from the registry. */
+  const STATUS_ENDPOINT = 'http://flow.test/intake-status';
+  async function withStatusEndpoint(page, fulfil) {
+    await page.addInitScript(url => { window.PF_CONFIG = { endpoints: { STATUS: url } }; }, STATUS_ENDPOINT);
+    await page.route(STATUS_ENDPOINT, fulfil);
+  }
+  const seedOf = page => page.evaluate(() => {
+    const r = PF.store.all().find(x => x.seeded);
+    return { id: r.id, email: r.email };
+  });
+
+  test('a match is rendered from the registry and labelled as such', async ({ page }) => {
+    await withStatusEndpoint(page, route => route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ ok: true, record: {
+        referenceId: 'NITDA-2026-000318', status: 'review', statusLabel: 'Under review by the registry',
+        category: 'Application', subject: 'Clearance for the national records platform',
+        receivedAt: '2026-07-20T09:00:00Z', acknowledgedAt: '2026-07-21T10:00:00Z',
+        updatedAt: '2026-07-30T09:00:00Z', actionRequired: false,
+        timeline: [{ at: '2026-07-21T10:00:00Z', status: 'received', label: 'Receipt acknowledged.', note: 'Logged by the registry.' }],
+      } }),
+    }));
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    await page.fill('#trackId', 'NITDA-2026-000318');
+    await page.fill('#trackEmail', 'someone@example.org');
+    await page.click('#lookupBtn');
+    await page.waitForSelector('#trackOut .pf-kv');
+
+    const out = await page.innerHTML('#trackOut');
+    expect(out).toMatch(/Clearance for the national records platform/);
+    expect(out).toMatch(/Under review by the registry/);
+    expect(out, 'the source must be stated').toMatch(/Read from the NITDA registry/);
+    expect(out, 'device data must not be claimed').not.toMatch(/Shown from this device/);
+    expect(out).not.toMatch(/undefined/);
+    // The projection carries no officer or attachment list, so those rows must be absent
+    // rather than rendered empty.
+    expect(out).not.toMatch(/<dt>Reviewing officer<\/dt>/);
+    expect(out).not.toMatch(/<dt>Attachments<\/dt>/);
+  });
+
+  test('a denial is one message that does not say which half was wrong', async ({ page }) => {
+    await withStatusEndpoint(page, route => route.fulfill({
+      status: 404, contentType: 'application/json', body: JSON.stringify({ ok: false, error: 'not_found' }),
+    }));
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    const seed = await seedOf(page);
+
+    // The reference exists in the device store and the email matches. A denial from the
+    // registry is still authoritative — falling back here would resurrect the local echo.
+    await page.fill('#trackId', seed.id);
+    await page.fill('#trackEmail', seed.email);
+    await page.click('#lookupBtn');
+    await page.waitForSelector('#trackOut .dgo-alert');
+
+    const out = await page.innerText('#trackOut');
+    expect(out).toMatch(/No request matches that tracking ID and email/);
+    expect(out, 'the reference must not be confirmed to exist').not.toMatch(/exists/i);
+    expect(out, 'nothing may distinguish an unknown reference from a wrong email')
+      .not.toMatch(/does not match this request|registered to a different address/i);
+  });
+
+  /* Verified status lookup. The portal gated SUBMISSION behind a verified address and left
+     STATUS ungated — but the reference-and-email pair is the entire gate on reading a
+     record back, and a forwarded receipt is the ordinary way a correct pair reaches someone
+     it does not belong to.
+
+     The client cannot close that; only the flow can. What these assert is that the client
+     is CAPABLE when the flow asks, so enabling it is a flow-side configuration event rather
+     than a development one — the same dormant-provisioning pattern as auth.enabled. A flow
+     that never asks never triggers any of this. */
+  const VERIFY_ENDPOINT = 'http://flow.test/verify';
+  const CONFIRM_ENDPOINT = 'http://flow.test/verify-confirm';
+
+  async function withVerification(page, { statusHandler, verifyOk = true, sent = true, proof = 'PROOF-OK' }) {
+    await page.addInitScript(([s, v, c]) => {
+      window.PF_CONFIG = { endpoints: { STATUS: s, VERIFY: v, VERIFY_CONFIRM: c } };
+    }, [STATUS_ENDPOINT, VERIFY_ENDPOINT, CONFIRM_ENDPOINT]);
+    await page.route(STATUS_ENDPOINT, statusHandler);
+    await page.route(VERIFY_ENDPOINT, route => route.fulfill({
+      status: verifyOk ? 200 : 429, contentType: 'application/json',
+      body: JSON.stringify(verifyOk ? { ok: true, sent } : { error: 'rate_limited' }),
+    }));
+    await page.route(CONFIRM_ENDPOINT, route => route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify({ verification: proof }),
+    }));
+  }
+
+  test('a flow demanding proof is answered with verification, not reported as no match', async ({ page }) => {
+    let sawProof = null;
+    let sawEmailWithProof = null;
+    await withVerification(page, {
+      statusHandler: route => {
+        const body = JSON.parse(route.request().postData() || '{}');
+        if (!body.verification) {
+          return route.fulfill({
+            status: 403, contentType: 'application/json',
+            body: JSON.stringify({ error: 'verification_required' }),
+          });
+        }
+        sawProof = body.verification;
+        // Property 1 of the verified-read-back contract in document-portal/README.md: the
+        // address is resolved from the proof, so the body must not also carry one. A flow
+        // that sees both will eventually be called with `email` alone by something, and the
+        // unverified path survives inside the verified one.
+        sawEmailWithProof = Object.prototype.hasOwnProperty.call(body, 'email');
+        return route.fulfill({
+          status: 200, contentType: 'application/json',
+          body: JSON.stringify({ ok: true, record: {
+            referenceId: 'NITDA-2026-000318', status: 'review', statusLabel: 'Under review by the registry',
+            category: 'Application', subject: 'Verified lookup', receivedAt: '2026-07-20T09:00:00Z',
+            updatedAt: '2026-07-30T09:00:00Z', actionRequired: false, timeline: [],
+          } }),
+        });
+      },
+    });
+
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    await page.fill('#trackId', 'NITDA-2026-000318');
+    await page.fill('#trackEmail', 'someone@example.org');
+    await page.click('#lookupBtn');
+
+    // THE PROPERTY: a demand for proof is not a denial. Saying "no match" here would tell a
+    // legitimate submitter their own reference does not exist.
+    await page.waitForSelector('#sendCode');
+    const prompt = await page.innerText('#trackOut');
+    expect(prompt).toMatch(/Confirm your email address/);
+    expect(prompt, 'a verification demand must never read as a denial')
+      .not.toMatch(/No request matches/);
+
+    await page.click('#sendCode');
+    await page.waitForSelector('#verifyCode');
+    await page.fill('#verifyCode', '123456');
+    await page.click('#confirmCode');
+    await page.waitForSelector('#trackOut .pf-kv');
+
+    expect(sawProof, 'the proof must be carried on the retry').toBe('PROOF-OK');
+    expect(sawEmailWithProof, 'the email must leave the body once a proof is sent').toBe(false);
+    expect(await page.innerHTML('#trackOut')).toMatch(/Verified lookup/);
+
+    // And it must not survive in the URL bar, the history entry or the Referer header.
+    expect(page.url(), 'a verified lookup must not leave the address in the URL')
+      .not.toMatch(/email=/);
+    expect(page.url()).toMatch(/id=NITDA-2026-000318/);
+  });
+
+  test('a flow that does not ask for proof is unaffected', async ({ page }) => {
+    let calls = 0;
+    await withVerification(page, {
+      statusHandler: route => {
+        calls++;
+        return route.fulfill({
+          status: 200, contentType: 'application/json',
+          body: JSON.stringify({ ok: true, record: {
+            referenceId: 'NITDA-2026-000318', status: 'review', statusLabel: 'Under review',
+            category: 'Application', subject: 'Unverified lookup', receivedAt: '2026-07-20T09:00:00Z',
+            updatedAt: '2026-07-30T09:00:00Z', actionRequired: false, timeline: [],
+          } }),
+        });
+      },
+    });
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    await page.fill('#trackId', 'NITDA-2026-000318');
+    await page.fill('#trackEmail', 'someone@example.org');
+    await page.click('#lookupBtn');
+    await page.waitForSelector('#trackOut .pf-kv');
+
+    expect(calls, 'one call, no verification round-trip').toBe(1);
+    expect(await page.innerHTML('#trackOut')).toMatch(/Unverified lookup/);
+    expect(await page.locator('#sendCode').count(), 'nothing may be asked of the submitter').toBe(0);
+  });
+
+  test('a deployment that cannot send a code says so rather than starting a flow it cannot finish', async ({ page }) => {
+    // STATUS demands proof, but VERIFY/VERIFY_CONFIRM are unconfigured.
+    await page.addInitScript(s => { window.PF_CONFIG = { endpoints: { STATUS: s } }; }, STATUS_ENDPOINT);
+    await page.route(STATUS_ENDPOINT, route => route.fulfill({
+      status: 403, contentType: 'application/json', body: JSON.stringify({ error: 'verification_required' }),
+    }));
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    await page.fill('#trackId', 'NITDA-2026-000318');
+    await page.fill('#trackEmail', 'someone@example.org');
+    await page.click('#lookupBtn');
+    await page.waitForSelector('#trackOut .dgo-alert');
+
+    const out = await page.innerText('#trackOut');
+    expect(out).toMatch(/needs email verification/);
+    expect(out, 'the submitter must not be told the request was not received')
+      .toMatch(/does not mean/i);
+    expect(await page.locator('#sendCode').count(), 'no code button when there is nowhere to redeem it').toBe(0);
+  });
+
+  test('an unreachable registry falls back to device data and says so', async ({ page }) => {
+    await withStatusEndpoint(page, route => route.abort('connectionrefused'));
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    const seed = await seedOf(page);
+    await page.fill('#trackId', seed.id);
+    await page.fill('#trackEmail', seed.email);
+    await page.click('#lookupBtn');
+    await page.waitForSelector('#trackOut .pf-kv');
+
+    const out = await page.innerHTML('#trackOut');
+    expect(out, 'the fallback must be declared, never silent').toMatch(/Shown from this device/);
+    expect(out).not.toMatch(/Read from the NITDA registry/);
+    expect(out).not.toMatch(/undefined/);
+  });
+
+  test('an unreachable registry with no device copy reports unavailable, not not-found', async ({ page }) => {
+    await withStatusEndpoint(page, route => route.abort('connectionrefused'));
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    await page.fill('#trackId', 'NITDA-2026-000999');
+    await page.fill('#trackEmail', 'nobody@example.org');
+    await page.click('#lookupBtn');
+    await page.waitForSelector('#trackOut .dgo-alert');
+
+    const out = await page.innerText('#trackOut');
+    expect(out).toMatch(/Status is unavailable right now/);
+    expect(out, 'an unreachable registry is not evidence the request was never received')
+      .not.toMatch(/No request matches/);
+  });
+
+  /* ------------------------------------------------------------------
+   * Public disclosure. The portal is unauthenticated, so anything it renders is published.
+   *
+   * The landing page listed PF.store.all() — every record, each row a tracking ID linking to
+   * track.html?id= — while the visitor's own requests sat in a separate panel from
+   * PF.store.mine(). And the tracking page offered "sample record" chips carrying data-email,
+   * which the click handler fed straight into the ID+email gate.
+   *
+   * These assert the property, not the wording: no identifier belonging to a record the visitor
+   * did not submit may reach an unauthenticated page. They are written to fail on a
+   * reintroduction, including a differently-shaped one, which is why they read the rendered DOM
+   * and compare it against the store rather than matching a removed string.
+   * ------------------------------------------------------------------ */
+
+  test('the landing page publishes no tracking ID from the register', async ({ page }) => {
+    await page.goto('/document-portal/index.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.PF && PF.store && PF.store.all().length);
+
+    // A first visit has submitted nothing, so every record in the store belongs to someone else.
+    const ids = await page.evaluate(() => ({
+      all: PF.store.all().map(r => r.id),
+      mine: PF.store.mine().map(m => m.id),
+    }));
+    expect(ids.mine, 'precondition: a fresh visit owns no submission').toEqual([]);
+    expect(ids.all.length, 'precondition: the store holds records').toBeGreaterThan(0);
+
+    const body = await page.innerText('body');
+    for (const id of ids.all) {
+      expect(body, `tracking ID ${id} is published on an unauthenticated page`).not.toContain(id);
+    }
+
+    // Nor may a row link to one. The deep link is the disclosure even when the ID is not shown.
+    const hrefs = await page.$$eval('a[href]', ns => ns.map(n => n.getAttribute('href')));
+    expect(hrefs.filter(h => /track\.html\?[^"]*\bid=/.test(h)),
+      'no landing-page link may carry a tracking ID').toEqual([]);
+  });
+
+  test('the registry panel still reports the register, in aggregate', async ({ page }) => {
+    await page.goto('/document-portal/index.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#liveFeed li');
+
+    // Removing the leak must not empty the panel — otherwise the fix gets reverted for looking
+    // broken. Counts and status labels are what a registry can say without naming anyone.
+    const rows = await page.$$eval('#liveFeed li', ns => ns.map(n => n.innerText.trim()));
+    expect(rows.length, 'the panel must still say something').toBeGreaterThan(0);
+
+    const known = await page.evaluate(() => Object.keys(PF.STATUS).map(k => PF.STATUS[k].label));
+    for (const row of rows) {
+      expect(known.some(l => row.includes(l)), `"${row}" must be a status label`).toBe(true);
+      expect(row, 'an aggregate row carries no email').not.toMatch(/@/);
+      expect(row, 'an aggregate row carries no tracking ID').not.toMatch(/NITDA-/);
+    }
+  });
+
+  test('no page hands out an email address belonging to a record', async ({ page }) => {
+    const emails = new Set();
+    for (const p of ['index.html', 'track.html']) {
+      await page.goto(`/document-portal/${p}`, { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => window.PF && PF.store && PF.store.all().length);
+      const found = await page.evaluate(() => {
+        const submitters = PF.store.all().map(r => String(r.email || '').toLowerCase()).filter(Boolean);
+        const haystack = (document.body.innerHTML + ' ' + document.body.innerText).toLowerCase();
+        return submitters.filter(e => haystack.includes(e));
+      });
+      found.forEach(e => emails.add(`${p}: ${e}`));
+    }
+    // The ID+email gate in track.js is only as strong as the email being unpublished.
+    expect([...emails], 'a submitter email is rendered on an unauthenticated page').toEqual([]);
+  });
+
+  test('the tracking page prefills only requests made on this device', async ({ page }) => {
+    await page.goto('/document-portal/track.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.PF && PF.store && PF.store.all().length);
+
+    const state = await page.evaluate(() => ({
+      mine: PF.store.mine().length,
+      chips: [...document.querySelectorAll('#quickPicks [data-fill]')].map(b => ({
+        id: b.getAttribute('data-fill'), email: b.getAttribute('data-email'),
+      })),
+    }));
+    expect(state.mine, 'precondition: a fresh visit owns no submission').toBe(0);
+    expect(state.chips, 'with nothing of your own, there is nothing to prefill').toEqual([]);
+
+    // And the panel must still tell the visitor what to do, rather than going blank.
+    const text = await page.innerText('#quickPicks');
+    expect(text).toMatch(/tracking ID/i);
+    expect(text).toMatch(/email/i);
+  });
+
+  test('every correspondence type maps to an internal category', async ({ page }) => {
+    await page.goto('/document-portal/index.html', { waitUntil: 'domcontentloaded' });
+    const types = await page.evaluate(() => PF.CORRESPONDENCE_TYPES);
+    expect(types.length).toBeGreaterThan(3);
+    for (const t of types) {
+      expect(t.category, `${t.key} must map to a registry category`).toBeTruthy();
+      expect(t.sla, `${t.key} must not carry a per-service SLA`).toBeUndefined();
+    }
+    // An unknown key must fall back to the catch-all, never to whatever is last in the list.
+    const fallback = await page.evaluate(() => PF.correspondenceType('no-such-key').key);
+    expect(fallback).toBe('other');
+  });
+});

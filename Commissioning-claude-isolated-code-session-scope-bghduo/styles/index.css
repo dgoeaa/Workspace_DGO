@@ -1,0 +1,47 @@
+/* DGO R11.6 — deterministic @layer cascade. Later layer wins.
+
+   `overrides` still holds two authorities (platform-authority.css, then app.css), and no
+   sub-layer order is behaviour-preserving. The reason is structural. Layers are compared BEFORE
+   specificity, and their order is INVERTED for `!important`. Today's winner is therefore decided
+   per rule: by specificity for normal declarations (platform-authority's `.chip:not(.active)`
+   and `[tabindex]:focus-visible` beat app.css's `.chip` and `:focus-visible`) and by import
+   order for `!important` — app.css carries 92 important declarations against this authority's
+   28, and it is imported second. A single layer order cannot reproduce a per-rule mix.
+
+   The split becomes safe only once the two sheets no longer declare the same property on the
+   same selector. That is the `override-overlap`, it currently stands at 89 contended
+   (selector, property) pairs, and tests/css-cascade-contract.mjs measures it and refuses to let
+   it grow. Until it reaches 0 the sheets stay in one layer, and the shared-layer finding is
+   accepted, measured debt — register item G-08.
+
+   CORRECTED 2026-09-03. This block previously cited tests/tools/cascade-snapshot.mjs,
+   tests/static/css-contract.mjs and tests/baseline.json, and quoted element-digest figures from
+   them. None of those three files exists in this repository, so none of those figures could be
+   reproduced, and the one that could be checked was wrong: the important counts were given as 51
+   and 4. Paths inside a CSS comment are not links, so the reference gate never resolved them and
+   the claim stood. The reasoning above was sound throughout; only its evidence was imaginary. */
+@layer tokens, brand, base, layout, components, overrides;
+
+@import url("dgo-design-system/colors_and_type.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.primitive.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.semantic.css") layer(tokens);
+/* Component/density/enhanced defaults are declared on :root, which has the SAME specificity
+   as [data-theme=...]. They must therefore be imported BEFORE the theme files, otherwise the
+   theme re-binds (card, input, table, sidebar, command palette) would be silently overridden
+   by source order. No static contract asserts this ordering; it is only caught after the fact,
+   by tests/tools/cascade-snapshot.mjs reporting the theme re-binds as changed digests. */
+@import url("dgo-design-system/tokens/tokens.breakpoint.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.component.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.density.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.enhanced.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.theme-light.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.theme-dark.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.theme-hc.css") layer(tokens);
+@import url("dgo-design-system/tokens/tokens.legacy-bridge.css") layer(tokens);
+@import url("dgo-design-system/brand-type.css") layer(brand);
+@import url("dgo-design-system/reset.css") layer(base);
+@import url("dgo-design-system/base.css") layer(base);
+@import url("dgo-design-system/layout.css") layer(layout);
+@import url("dgo-design-system/components.css") layer(components);
+@import url("dgo-design-system/platform-authority.css") layer(overrides);
+@import url("app.css") layer(overrides);

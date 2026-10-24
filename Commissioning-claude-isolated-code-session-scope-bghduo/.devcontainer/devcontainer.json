@@ -1,0 +1,22 @@
+{
+  "name": "DGO Digital Operations",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+
+  // Installs dependencies and wires the pilot endpoints automatically, so the
+  // codespace is ready to use the moment it finishes building. Nothing to configure.
+  "postCreateCommand": "npm install && npm run setup",
+
+  // Starts the server automatically on every attach.
+  "postAttachCommand": "npm start",
+
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": { "label": "DGO Platform", "onAutoForward": "openBrowser" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
+}

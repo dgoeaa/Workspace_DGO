@@ -1,0 +1,73 @@
+{
+ "note": "What each supporting evidence file in the handover pack records, as the Evidence Index prints it. npm run handover fails when the Commissioning Report cites a file not described here.",
+ "files": {
+  "2026-10-18-test-record-cleanup.json": {
+   "title": "Test records removed: first pass (MANUAL-2)",
+   "records": "Commissioning test records removed with the owner's approval and read back: test records in DGO DIGITAL OPS, Global Tracking Queue and the identity map, and Portal records NITDA-2026-00019 and 00020. The counters and the delivery records were kept."
+  },
+  "2026-10-18-test-record-cleanup-2.json": {
+   "title": "Test records removed: second pass (MANUAL-2)",
+   "records": "Portal records NITDA-2026-00001 to 00018 with their status timelines, and Portal Support Cases 65 to 87, removed and read back."
+  },
+  "2026-10-19-test-record-cleanup-3.json": {
+   "title": "Test records removed: third pass (MANUAL-2)",
+   "records": "Portal Support Cases 1 to 64 removed and read back, and case 92, deleted by the owner."
+  },
+  "2026-10-19-flow-throttling-incident.json": {
+   "title": "Workspace data-load flow held back by Power Automate",
+   "records": "Power Automate held back FETCH_ALL, the flow every Workspace load reads, twice under test load on 18 and 19 October 2026: what was observed, the cause, the actions taken and the recovery."
+  },
+  "2026-10-19-flows-apply.json": {
+   "title": "Release 38 applied",
+   "records": "Eight flows written and read back: telemetry mail (RN-025), task reminders (RN-035) and the directorate view (ITEM-91)."
+  },
+  "2026-10-19-flows-apply-2.json": {
+   "title": "Release 39 applied",
+   "records": "Twenty-one flows written and read back: links and images moved to folio-platform.page.gd and folio-portal.page.gd."
+  },
+  "2026-10-19-flows-apply-3.json": {
+   "title": "Release 40 applied",
+   "records": "The scan processing flow written and read back: the New E-Scan notice goes to dgs@nitda.gov.ng, as the owner set it in the designer."
+  },
+  "2026-10-19-flows-apply-4.json": {
+   "title": "Release 41 applied",
+   "records": "The bulk assignment and scheduled sweep flows written and read back, and the Portal daily sweep confirmed current: digest, reminder and bulk-failure links go to /acknowledge.html."
+  },
+  "2026-10-19-live-browser-suite-pagegd.json": {
+   "title": "Browser suite against the deployed applications (MANUAL-3)",
+   "records": "The browser suite run signed in against the deployed Workspace and Portal: 159 passed, 0 failed, 19 not applicable; the in-app notices shown live; the one defect found."
+  },
+  "2026-10-19-mailer-origin-move.json": {
+   "title": "Correspondence Mailer moved to the Workspace's address",
+   "records": "The owner's decision that the Mailer uses folio-platform.page.gd; its seven flows changed to accept that address, read back, and each health check answered live."
+  },
+  "2026-10-19-release-38-proofs.json": {
+   "title": "Release 38: the owner's decision and the live proofs",
+   "records": "The owner's decision to build RN-025, RN-035 and ITEM-91 rather than accept or defer them, and the live proof of each."
+  },
+  "2026-10-19-rn020-rn022-live.json": {
+   "title": "Comment notice and Email dispatch, live (RN-020, RN-022)",
+   "records": "Both notices sent from the live Workspace, signed in, each with its run and its Portal Outbox Receipts row. The comment notice went to the registry mailbox under the staff-notice hold."
+  },
+  "2026-10-19-rn027-rn028-runs.json": {
+   "title": "Abandoned-message report and provisioning report (RN-027, RN-028)",
+   "records": "RN-027: one sweep run with a one-run test step, approved by the owner and removed straight after. RN-028: the governance registry flow's defect corrected, and the owner's run that validated the registry with 0 errors."
+  },
+  "2026-10-19-staff-notice-hold.json": {
+   "title": "Staff notifications held",
+   "records": "The owner's instruction to hold automated notices to staff until their own testing is done: what was changed, what was not, and how to switch staff notices on."
+  },
+  "2026-10-19-tools-commissioning.json": {
+   "title": "Administrator tools commissioned",
+   "records": "Every tool started as an administrator starts it, opened in a browser and used, with its result; the two defects found and their correction."
+  },
+  "2026-10-20-final-live-set.json": {
+   "title": "The commissioned live set",
+   "records": "Every Folio flow read from the tenant on 20 October 2026 with its state and last run, the 27 packages and their fingerprints, and the builds delivered."
+  },
+  "2026-10-20-centre-flow-watch-live.json": {
+   "title": "Administration Centre watching every Folio flow, live",
+   "records": "The extended Centre run read-only against the tenant: all 43 Folio flows watched, 33 of 33 endpoint identities verified, no flow out of its expected state; the bulk assignment flow the owner's list leaves out, now read by its id; and the steps of Single_Task_Assignment's run of 10 October."
+  }
+ }
+}

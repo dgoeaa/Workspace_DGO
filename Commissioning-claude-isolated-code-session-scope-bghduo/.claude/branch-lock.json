@@ -1,0 +1,8 @@
+{
+  "_comment": "The ONLY repo+branch a Claude Code session here may touch. Change it with scripts/lock-branch.sh, run outside a session.",
+  "repo": "dgoeaa/Commissioning.git",
+  "branch": "digital-servant-commissioning",
+  "allow_web": false,
+  "allow_subagents": true,
+  "extra_read_roots": []
+}

@@ -1,0 +1,91 @@
+/* ============================================================================================
+   Platform chrome and the DGO Digital Ops sub-brand.
+
+   One file, two consumers: the runtime imports it into its `brand` layer (styles/index.css), and
+   scripts/lib/brand-kit.mjs bundles it into every embedded and packaged copy of the kit. So the
+   lockup and the header colours are defined once.
+
+   THE BRAND ARCHITECTURE (styles/dgo-design-system/README.md)
+     NITDA            the master brand; its logo is on every surface.
+     DGO Digital Ops  the endorsed internal sub-brand: the Director-General's Office's operational
+                      technology. Its lockup sits beside the NITDA logo on internal surfaces only.
+     Folio …          product names inside DGO Digital Ops (Folio Workspace, Estate Console, …).
+   External surfaces (the Document Portal, public email, letters to other institutions) carry
+   NITDA alone. test:brand enforces both halves.
+
+   HEADER COLOURS FOLLOW THE PLATFORM BINDING
+   tokens.platforms.css (Portfolio package, Tier 3) gives each platform its header surface:
+   Deep Green by default and for the portal, the raised surface for data-platform="dgo-ops".
+   Everything drawn on a header reads --bk-hdr-*, so one attribute on <html> re-skins it.
+   ============================================================================================ */
+
+:root{
+  --bk-hdr-bg:          var(--pf-header-surface, var(--dgo-color-surface-brand));
+  --bk-hdr-fg:          var(--pf-header-fg, var(--dgo-color-fg-on-brand));
+  --bk-hdr-muted:       var(--dgo-color-fg-on-brand-muted);
+  --bk-hdr-soft:        var(--dgo-color-fg-on-brand-soft);
+  --bk-hdr-line:        var(--dgo-color-border-on-brand-soft);
+  --bk-hdr-veil:        var(--dgo-color-surface-on-brand-veil);
+  --bk-hdr-veil-strong: color-mix(in srgb, var(--dgo-color-fg-on-brand) 20%, transparent);
+  --bk-hdr-mark:        var(--dgo-color-fg-on-brand);   /* the DGO letters and the O's centre */
+  --bk-hdr-accent:      var(--dgo-smart-400);
+}
+[data-platform="dgo-ops"]{
+  --bk-hdr-muted:       var(--dgo-color-fg-muted);
+  --bk-hdr-soft:        var(--dgo-color-fg-muted);
+  --bk-hdr-line:        var(--dgo-color-border-default);
+  --bk-hdr-veil:        color-mix(in srgb, var(--dgo-color-fg-default) 5%, var(--dgo-color-surface-raised));
+  --bk-hdr-veil-strong: color-mix(in srgb, var(--dgo-color-fg-default) 10%, var(--dgo-color-surface-raised));
+  --bk-hdr-mark:        var(--dgo-color-fg-brand);
+}
+
+/* ── NITDA logo on a header: the white lockup on a dark bar, the colour lockup on a light one.
+   Deliberately not :where(): a page's own img rules must not bring both back. ─────────────── */
+.bk-logo--on-light{ display: none !important; }
+:root[data-platform="dgo-ops"]:not([data-theme="dark"]) .bk-logo--on-light{ display: block !important; }
+:root[data-platform="dgo-ops"]:not([data-theme="dark"]) .bk-logo--on-dark{ display: none !important; }
+@media (prefers-color-scheme: dark){
+  :root[data-platform="dgo-ops"]:not([data-theme="light"]) .bk-logo--on-light{ display: none !important; }
+  :root[data-platform="dgo-ops"]:not([data-theme="light"]) .bk-logo--on-dark{ display: block !important; }
+}
+
+/* ── The DGO Digital Ops lockup ────────────────────────────────────────────────────────────
+   "DG" set in the display face, the O drawn as the atomic-orbit mark (a Smart Green ring round a
+   centre dot), then DIGITAL / OPS stacked in small caps behind a Smart Green rule. Built from
+   text and geometry, never from a picture of text, so it is crisp at any size and cannot clip
+   when a face is missing. Letters and dot take --bk-sub-ink (Deep Green on light, white on dark);
+   the ring is always Smart Green. Markup: scripts/lib/brand-kit.mjs subLockup(). */
+.bk-sub{
+  --bk-sub-ink: var(--bk-hdr-mark, var(--dgo-color-fg-brand));
+  display: inline-flex; align-items: center; gap: .55em;
+  color: var(--bk-sub-ink); line-height: 1; white-space: nowrap; text-decoration: none;
+  font-size: 16px;
+}
+.bk-sub__word{
+  display: inline-flex; align-items: center;
+  font: 800 1.55em/1 var(--dgo-family-display); letter-spacing: -.035em;
+}
+.bk-sub__o{ width: .84em; height: .84em; margin-left: .05em; flex: none; overflow: visible; }
+.bk-sub__o .ring{ fill: none; stroke: var(--dgo-smart-400); stroke-width: 5.5; }
+.bk-sub__o .dot{ fill: currentColor; }
+.bk-sub__name{
+  display: grid; gap: .12em;
+  padding-left: .6em; border-left: 1.5px solid var(--dgo-smart-400);
+  font: 700 .56em/1.05 var(--dgo-family-display); letter-spacing: .18em; text-transform: uppercase;
+}
+.bk-sub__endorse{
+  display: block; margin-top: .35em;
+  font: 600 .44em/1 var(--dgo-family-sans); letter-spacing: .16em; text-transform: uppercase; opacity: .8;
+}
+.bk-sub__endorse::before{ content: ""; display: inline-block; width: .6em; height: .6em; margin-right: .5em; border-radius: 50%; background: var(--dgo-smart-400); vertical-align: -.05em; }
+.bk-sub--mark-only .bk-sub__name{ display: none; }
+.bk-sub--lg{ font-size: 22px; }
+.bk-sub--sm{ font-size: 13px; }
+.bk-sub--reverse{ --bk-sub-ink: var(--dgo-color-fg-on-brand); }
+.bk-sub--brand{ --bk-sub-ink: var(--dgo-color-fg-brand); }
+.bk-sub .bk-sub__sr{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (forced-colors: active){
+  .bk-sub__o .ring{ stroke: CanvasText; }
+  .bk-sub__name{ border-left-color: CanvasText; }
+}

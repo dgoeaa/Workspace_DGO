@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Folio Flow Estate — Interactive Report</title>
+<style>
+:root{--deep:{{deepGreen}};--smart:{{smartGreen}};--ink:{{ink}};--line:{{line}};--paper:{{paper}};--muted:{{muted}};--on:{{onAccent}};--warn:#A87500;--bad:#C8102E;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 "Segoe UI",Arial,sans-serif}
+a{color:var(--deep)}
+header.top{background:var(--deep);color:#fff;padding:14px 22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+header.top .min{font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+header.top h1{margin:2px 0 0;font-size:18px}
+header.top .meta{font-size:12px;opacity:.9}
+header.top .tools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+button,.chip{font:inherit;font-size:12px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+button.primary{background:var(--smart);color:var(--on);border-color:var(--smart)}
+.chip[aria-pressed=true]{background:var(--deep);color:#fff;border-color:var(--deep)}
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 70px)}
+nav.side{border-right:1px solid var(--line);background:#fff;padding:14px 10px;position:sticky;top:70px;height:calc(100vh - 70px);overflow:auto}
+nav.side a{display:flex;justify-content:space-between;padding:7px 10px;border-radius:8px;text-decoration:none;color:var(--ink);font-size:13px}
+nav.side a:hover,nav.side a.on{background:var(--paper);color:var(--deep);font-weight:600}
+nav.side .n{color:var(--muted);font-weight:400}
+main{padding:20px 26px;min-width:0}
+section{margin:0 0 30px;scroll-margin-top:84px}
+section>h2{color:var(--deep);font-size:18px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--smart);display:flex;gap:10px;align-items:baseline}
+section>h2 .sub{font-size:12px;color:var(--muted);font-weight:400}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{background:#fff;border:1px solid var(--line);border-top:4px solid var(--smart);border-radius:12px;padding:10px 12px;cursor:default}
+.tile[data-go]{cursor:pointer}.tile[data-go]:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.tile b{display:block;font-size:24px;color:var(--deep)}
+.tile span{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tile.warn{border-top-color:var(--warn)}.tile.bad{border-top-color:var(--bad)}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.panel h3{margin:0 0 8px;font-size:13px;color:var(--deep)}
+.bar{display:grid;grid-template-columns:150px 1fr 40px;gap:8px;align-items:center;font-size:12px;margin:5px 0}
+.bar .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .trk{background:var(--paper);border-radius:6px;height:14px;overflow:hidden}
+.bar .fil{height:100%;background:var(--deep);border-radius:6px}
+.bar .val{text-align:right;color:var(--muted)}
+.donut{display:flex;gap:14px;align-items:center}
+.legend div{font-size:12px;display:flex;gap:6px;align-items:center;margin:3px 0}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.filters input{font:inherit;border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-width:240px}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
+th{background:var(--deep);color:#fff;text-align:left;padding:8px 10px;cursor:pointer;white-space:nowrap}
+th:after{content:" ↕";opacity:.5}
+td{padding:7px 10px;border-top:1px solid var(--line);vertical-align:top;word-break:break-word}
+tr:hover td{background:#EAF3EF}
+.pill{display:inline-block;white-space:nowrap;border-radius:999px;padding:1px 8px;font-size:11px;background:var(--paper);border:1px solid var(--line)}
+.pill.ok{background:#E6F7ED;border-color:#C2EED2;color:#05583B}.pill.no{background:#FBE7EB;border-color:#F6C2CB;color:var(--bad)}.pill.na{color:var(--muted)}
+details.flow{background:#fff;border:1px solid var(--line);border-left:5px solid var(--deep);border-radius:12px;margin:10px 0}
+details.flow>summary{list-style:none;cursor:pointer;padding:10px 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+details.flow>summary::-webkit-details-marker{display:none}
+details.flow>summary b{color:var(--deep);font-size:14px}
+details.flow .body{padding:0 14px 14px}
+.kv{display:grid;grid-template-columns:200px 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kv div{padding:6px 10px;border-top:1px solid var(--line);font-size:12.5px;word-break:break-all}
+.kv div:nth-child(-n+2){border-top:0}
+.kv .k{color:var(--muted);background:var(--paper)}
+.tabs{display:flex;gap:6px;margin:12px 0 8px}
+pre.def{background:#022819;color:#CFE3D8;border-radius:8px;padding:12px;max-height:420px;overflow:auto;font-size:11.5px;white-space:pre-wrap;word-break:break-all}
+.empty{color:var(--muted);font-style:italic;padding:8px 0}
+footer{border-top:1px solid var(--line);padding:14px 22px;color:var(--muted);font-size:12px;background:#fff}
+@media (max-width:860px){.layout{grid-template-columns:1fr}nav.side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px}.kv{grid-template-columns:1fr}.bar{grid-template-columns:110px 1fr 34px}th{position:static}}
+@media print{header.top{position:static}nav.side,.filters,.tools,.tabs{display:none}.layout{display:block}details.flow{break-inside:avoid}details.flow .body{display:block}pre.def{max-height:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><div class="min">{{ministry}}</div><h1>{{agency}} — Folio Flow Estate</h1><div class="meta" id="meta"></div></div>
+  <div class="tools">
+    <button id="expand">Expand all</button><button id="collapse">Collapse all</button>
+    <button id="dl">Download JSON</button><button class="primary" onclick="window.print()">Print / PDF</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="side" id="nav"></nav>
+  <main id="main"></main>
+</div>
+<footer>Confidentiality Notice: This report is for internal use within the Agency. Callback URLs are shown with their signature removed; the signed URLs are filed separately in the restricted callback file. · {{agency}} · {{office}}</footer>
+<script>
+var DATA = "__REPORT_DATA__";
+(function () {
+  var D = typeof DATA === 'string' ? JSON.parse(DATA) : DATA;
+  var flows = D.flowsLive || [], gone = D.notRetrieved || [], changes = D.changesSinceBaseline || [], lists = D.listsTouched || [], T = D.totals || {}, R = D.report || {};
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var pill = function (v) { var s = String(v); var c = /^(yes|started|true|on)$/i.test(s) ? 'ok' : /^(no|false|stopped|suspended)$/i.test(s) ? 'no' : 'na'; return '<span class="pill ' + c + '">' + esc(s) + '</span>'; };
+  var count = function (arr, key) { var m = {}; arr.forEach(function (x) { var k = x[key] === '' || x[key] == null ? '(none)' : String(x[key]); m[k] = (m[k] || 0) + 1; }); return Object.keys(m).map(function (k) { return [k, m[k]]; }).sort(function (a, b) { return b[1] - a[1]; }); };
+  $('#meta').textContent = 'Read live ' + (R.generatedUtc || '') + ' UTC · run ' + (R.runId || '') + ' · ' + (R.environment || '');
+
+  var sections = [
+    ['overview', 'Overview', ''], ['dashboard', 'Dashboard', ''], ['endpoints', 'Endpoints & flows', flows.length],
+    ['details', 'Flow details', flows.length], ['changes', 'Changes', changes.length], ['unread', 'Not readable', gone.length],
+    ['lists', 'SharePoint lists', lists.length], ['governance', 'Governance lists', ''], ['sources', 'Sources', '']];
+  $('#nav').innerHTML = sections.map(function (s) { return '<a href="#' + s[0] + '" data-s="' + s[0] + '">' + s[1] + '<span class="n">' + s[2] + '</span></a>'; }).join('');
+
+  var tile = function (n, l, go, cls) { return '<div class="tile ' + (cls || '') + '"' + (go ? ' data-go="' + go + '"' : '') + '><b>' + esc(n) + '</b><span>' + esc(l) + '</span></div>'; };
+  var bars = function (rows) { var max = Math.max.apply(null, rows.map(function (r) { return r[1]; }).concat([1])); return rows.map(function (r) { return '<div class="bar"><span class="lbl" title="' + esc(r[0]) + '">' + esc(r[0]) + '</span><span class="trk"><span class="fil" style="display:block;width:' + (100 * r[1] / max) + '%"></span></span><span class="val">' + r[1] + '</span></div>'; }).join('') || '<div class="empty">Nothing to show.</div>'; };
+  var donut = function (rows) {
+    var cols = ['{{deepGreen}}', '{{smartGreen}}', '#A87500', '#C8102E', '#5F5C5D', '#0B6BB0'], tot = rows.reduce(function (s, r) { return s + r[1]; }, 0) || 1, a = 0, segs = '';
+    rows.forEach(function (r, i) { var f = r[1] / tot, x1 = Math.cos(2 * Math.PI * a), y1 = Math.sin(2 * Math.PI * a); a += f; var x2 = Math.cos(2 * Math.PI * a), y2 = Math.sin(2 * Math.PI * a);
+      segs += f >= 1 ? '<circle r="1" fill="' + cols[i % 6] + '"/>' : '<path d="M0 0 L' + x1 + ' ' + y1 + ' A1 1 0 ' + (f > .5 ? 1 : 0) + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + cols[i % 6] + '"/>'; });
+    return '<div class="donut"><svg viewBox="-1.1 -1.1 2.2 2.2" width="120" height="120" style="transform:rotate(-90deg)">' + segs + '<circle r=".55" fill="#fff"/></svg><div class="legend">' + rows.map(function (r, i) { return '<div><i style="background:' + cols[i % 6] + '"></i>' + esc(r[0]) + ' — ' + r[1] + '</div>'; }).join('') + '</div></div>';
+  };
+  var connectorRows = (function () { var m = {}; flows.forEach(function (f) { String(f.Connectors || '').split('; ').filter(Boolean).forEach(function (c) { m[c] = (m[c] || 0) + 1; }); }); return Object.keys(m).map(function (k) { return [k.replace(/^shared_/, ''), m[k]]; }).sort(function (a, b) { return b[1] - a[1]; }); })();
+  var platformAll = count(flows.concat(gone), 'Platform');
+
+  var main = '';
+  main += '<section id="overview"><h2>Overview <span class="sub">Only what the folio\'s platforms call now, read live from the tenant</span></h2><div class="tiles">' +
+    tile(T.inUse, 'In use by the platforms', 'endpoints') + tile(T.retrievedLive, 'Read live', 'details') + tile(T.notRetrieved, 'Not readable', 'unread', T.notRetrieved ? 'bad' : '') +
+    tile(T.on, 'On') + tile(T.notOn, 'Not on', '', T.notOn ? 'warn' : '') + tile(T.callbackMatches, 'Callback = configured', 'endpoints') +
+    tile(T.callbackMismatches, 'Callback ≠ configured', 'endpoints', T.callbackMismatches ? 'bad' : '') + tile(T.modifiedSinceBaseline, 'Modified since 2026-09-26', 'changes') +
+    tile(T.stateChanged, 'State changed', 'changes', T.stateChanged ? 'warn' : '') + tile(T.inRegistry, 'In flow registry') + tile(T.listTouches, 'List touches', 'lists') + '</div></section>';
+  main += '<section id="dashboard"><h2>Dashboard</h2><div class="charts">' +
+    '<div class="panel"><h3>In use, by platform</h3>' + bars(platformAll) + '</div>' +
+    '<div class="panel"><h3>Read status</h3>' + donut([['Read live', flows.length], ['Not readable', gone.length]]) + '</div>' +
+    '<div class="panel"><h3>Live state</h3>' + donut(count(flows, 'State')) + '</div>' +
+    '<div class="panel"><h3>Callback URL against configuration</h3>' + donut(count(flows, 'CallbackMatchesConfiguration')) + '</div>' +
+    '<div class="panel"><h3>Trigger type</h3>' + bars(count(flows, 'TriggerType')) + '</div>' +
+    '<div class="panel"><h3>Connectors used (flows)</h3>' + bars(connectorRows) + '</div>' +
+    '<div class="panel"><h3>Actions per flow</h3>' + bars(flows.map(function (f) { return [f.Name, Number(f.ActionCount) || 0]; }).sort(function (a, b) { return b[1] - a[1]; })) + '</div>' +
+    '<div class="panel"><h3>SharePoint lists per flow</h3>' + bars(flows.map(function (f) { return [f.Name, Number(f.ListCount) || 0]; }).filter(function (r) { return r[1]; }).sort(function (a, b) { return b[1] - a[1]; })) + '</div>' +
+    '</div></section>';
+  var platforms = platformAll.map(function (r) { return r[0]; });
+  main += '<section id="endpoints"><h2>Endpoints &amp; flows <span class="sub">click a heading to sort · click a name for its details</span></h2>' +
+    '<div class="filters"><input id="q" type="search" placeholder="Search name, contract key, workflow or flow ID…">' +
+    '<button class="chip" aria-pressed="true" data-p="*">All platforms</button>' + platforms.map(function (p) { return '<button class="chip" aria-pressed="false" data-p="' + esc(p) + '">' + esc(p) + '</button>'; }).join('') +
+    '<button class="chip" aria-pressed="false" data-x="mismatch">Callback ≠ configured</button></div>' +
+    '<table id="tbl"><thead><tr><th data-k="Name">Flow</th><th data-k="Platform">Platform</th><th data-k="ContractKeys">Contract keys</th><th data-k="State">State</th><th data-k="TriggerType">Trigger</th><th data-k="ActionCount">Actions</th><th data-k="CallbackMatchesConfiguration">Callback = configured</th><th data-k="Modified">Modified</th></tr></thead><tbody></tbody></table></section>';
+  main += '<section id="details"><h2>Flow details <span class="sub">every field, the redacted callback URL and the full live definition</span></h2><div id="cards"></div></section>';
+  var simple = function (id, title, cols, rows, keys) { return '<section id="' + id + '"><h2>' + title + '</h2>' + (rows.length ? '<table><thead><tr>' + cols.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>' + rows.map(function (r) { return '<tr>' + keys.map(function (k) { return '<td>' + (k === 'OpenInDesigner' ? (r[k] ? '<a target="_blank" href="' + esc(r[k]) + '">Open</a>' : '') : esc(r[k])) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>' : '<div class="empty">None.</div>') + '</section>'; };
+  main += simple('changes', 'Changes since the 2026-09-26 export', ['Flow', 'Change', 'Designer'], changes, ['Flow', 'Change', 'OpenInDesigner']);
+  main += simple('unread', 'Not readable', ['Flow', 'Platform', 'Contract keys', 'Workflow ID', 'Candidates', 'Reason'], gone, ['Name', 'Platform', 'ContractKeys', 'WorkflowId', 'CandidateFlows', 'Reason']);
+  main += simple('lists', 'SharePoint lists the flows touch (live definitions)', ['Flow', 'List', 'Sites in that flow'], lists, ['Flow', 'List', 'Sites']);
+  var G = D.governance || {};
+  main += '<section id="governance"><h2>Governance lists</h2><table><thead><tr><th>List</th><th>Read</th><th>Rows</th></tr></thead><tbody>' + ['Registry', 'Ledger', 'Exceptions'].map(function (k) { var g = G[k] || {}; return '<tr><td>' + esc(g.list) + '</td><td>' + (g.read ? pill('Yes') : pill('No') + ' ' + esc(g.error)) + '</td><td>' + esc(g.rowCount) + '</td></tr>'; }).join('') + '</tbody></table></section>';
+  main += '<section id="sources"><h2>Sources</h2><div class="kv">' + Object.keys(R.sources || {}).map(function (k) { return '<div class="k">' + esc(k) + '</div><div>' + esc(R.sources[k]) + '</div>'; }).join('') + '</div></section>';
+  $('#main').innerHTML = main;
+
+  var FIELDS = [['Platform', 'Platform'], ['Contract keys', 'ContractKeys'], ['Configured workflow ID', 'WorkflowId'], ['Configured endpoint (register)', 'ConfiguredUrl'], ['Live callback URL', 'CallbackUrlRedacted'], ['Callback signature length', 'CallbackSignatureLength'], ['Callback = configured', 'CallbackMatchesConfiguration'], ['Tenant flow ID', 'FlowGuid'], ['Candidates checked', 'CandidateFlows'], ['State (live / 2026-09-26)', ['State', 'BaselineState']], ['Modified (live / 2026-09-26)', ['Modified', 'BaselineModified']], ['Created', 'Created'], ['Trigger', ['TriggerType', 'Method']], ['Actions', 'ActionCount'], ['Connectors', 'Connectors'], ['SharePoint sites', 'Sites'], ['SharePoint lists', 'ListCount'], ['Owners', ['Owners', 'OwnerRoles']], ['Creator (object ID)', 'Creator'], ['Failure alerts', 'FailureAlerts'], ['In DGO_HTTPFlowRegistry', 'InRegistry'], ['Execution ledger mentions', 'LedgerMentions'], ['Registry exception mentions', 'ExceptionMentions']];
+  $('#cards').innerHTML = flows.map(function (f, i) {
+    var kv = FIELDS.map(function (x) { var v = Array.isArray(x[1]) ? x[1].map(function (k) { return f[k]; }).filter(function (s) { return s !== '' && s != null; }).join(' / ') : f[x[1]]; return '<div class="k">' + x[0] + '</div><div>' + esc(v) + '</div>'; }).join('');
+    return '<details class="flow" id="f-' + esc(f.FlowGuid) + '"><summary><b>' + esc(f.Name) + '</b><span class="pill">' + esc(f.Platform) + '</span>' + pill(f.State) + '<span class="pill">' + esc(f.TriggerType) + '</span>' + (f.OpenInDesigner ? '<a target="_blank" href="' + esc(f.OpenInDesigner) + '" onclick="event.stopPropagation()">Open in designer</a>' : '') + '</summary><div class="body"><div class="kv">' + kv + '</div>' +
+      '<div class="tabs"><button data-t="def" data-i="' + i + '">Definition</button><button data-t="trg" data-i="' + i + '">Triggers</button><button data-t="cr" data-i="' + i + '">Connection references</button><button data-t="copy" data-i="' + i + '">Copy definition</button></div><pre class="def" id="pre-' + i + '">Choose Definition, Triggers or Connection references.</pre></div></details>';
+  }).join('') || '<div class="empty">No flow was read.</div>';
+
+  var state = { q: '', p: '*', mismatch: false, sort: 'Name', dir: 1 };
+  var render = function () {
+    var q = state.q.toLowerCase();
+    var rows = flows.filter(function (f) { return (state.p === '*' || f.Platform === state.p) && (!state.mismatch || f.CallbackMatchesConfiguration === 'No') && (!q || [f.Name, f.ContractKeys, f.WorkflowId, f.FlowGuid, f.Platform].join(' ').toLowerCase().indexOf(q) > -1); })
+      .sort(function (a, b) { var x = a[state.sort], y = b[state.sort]; return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y))) * state.dir; });
+    $('#tbl tbody').innerHTML = rows.map(function (f) { return '<tr><td><a href="#f-' + esc(f.FlowGuid) + '" data-open="' + esc(f.FlowGuid) + '">' + esc(f.Name) + '</a></td><td>' + esc(f.Platform) + '</td><td>' + esc(f.ContractKeys) + '</td><td>' + pill(f.State) + '</td><td>' + esc(f.TriggerType) + (f.Method ? ' · ' + esc(f.Method) : '') + '</td><td>' + esc(f.ActionCount) + '</td><td>' + pill(f.CallbackMatchesConfiguration) + '</td><td>' + esc(f.Modified) + '</td></tr>'; }).join('') || '<tr><td colspan="8" class="empty">No flow matches.</td></tr>';
+  };
+  render();
+  $('#q').addEventListener('input', function (e) { state.q = e.target.value; render(); });
+  document.querySelectorAll('.chip[data-p]').forEach(function (b) { b.addEventListener('click', function () { document.querySelectorAll('.chip[data-p]').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); }); b.setAttribute('aria-pressed', 'true'); state.p = b.getAttribute('data-p'); render(); }); });
+  $('.chip[data-x]').addEventListener('click', function (e) { state.mismatch = !state.mismatch; e.target.setAttribute('aria-pressed', String(state.mismatch)); render(); });
+  document.querySelectorAll('#tbl th').forEach(function (th) { th.addEventListener('click', function () { var k = th.getAttribute('data-k'); state.dir = state.sort === k ? -state.dir : 1; state.sort = k; render(); }); });
+  document.addEventListener('click', function (e) {
+    var o = e.target.closest('[data-open]'); if (o) { var d = document.getElementById('f-' + o.getAttribute('data-open')); if (d) d.open = true; }
+    var g = e.target.closest('[data-go]'); if (g) location.hash = g.getAttribute('data-go');
+    var t = e.target.closest('[data-t]'); if (t) { var f = flows[+t.getAttribute('data-i')], k = t.getAttribute('data-t'), pre = document.getElementById('pre-' + t.getAttribute('data-i'));
+      if (k === 'copy') { navigator.clipboard && navigator.clipboard.writeText(JSON.stringify(f.Definition, null, 2)); t.textContent = 'Copied'; return; }
+      pre.textContent = JSON.stringify(k === 'def' ? f.Definition : k === 'trg' ? f.Triggers : f.ConnectionReferences, null, 2); }
+  });
+  $('#expand').onclick = function () { document.querySelectorAll('details.flow').forEach(function (d) { d.open = true; }); };
+  $('#collapse').onclick = function () { document.querySelectorAll('details.flow').forEach(function (d) { d.open = false; }); };
+  $('#dl').onclick = function () { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(D, null, 2)], { type: 'application/json' })); a.download = 'Folio-Flow-Estate.json'; a.click(); };
+  var links = document.querySelectorAll('nav.side a');
+  var spy = function () { var y = window.scrollY + 120, cur = sections[0][0]; sections.forEach(function (s) { var el = document.getElementById(s[0]); if (el && el.offsetTop <= y) cur = s[0]; }); links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-s') === cur); }); };
+  window.addEventListener('scroll', spy); spy();
+})();
+</script>
+</body>
+</html>
