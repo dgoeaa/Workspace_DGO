@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -71,4 +71,39 @@ test('timeouts fail and clean source tests cannot confer release approval', () =
   assert.ok(releaseBlockers({ affectedFiles: 0 }, [{ passed: true }]).length >= 3);
   assert.ok(releaseBlockers({ affectedFiles: 1 }, [{ passed: false }]).length >= 5);
   assert.equal(main('package'), 2);
+});
+
+test('CLI modes distinguish source success, audit findings and unconditional release no-go', { timeout: 90_000 }, () => {
+  const root = mkdtempSync(path.join(os.tmpdir(), 'workspace-cli-'));
+  try {
+    mkdirSync(path.join(root, 'scripts'));
+    mkdirSync(path.join(root, BASELINE));
+    const entry = path.join(root, 'scripts/workspace-check.mjs');
+    copyFileSync(new URL('../scripts/workspace-check.mjs', import.meta.url), entry);
+    writeFileSync(path.join(root, BASELINE, 'package.json'), JSON.stringify({
+      private: true,
+      scripts: Object.fromEntries(OFFLINE_CHECKS.map(name => [name, 'node -e "process.exit(0)"'])),
+    }));
+    execFileSync('git', ['init', '--quiet'], { cwd: root });
+    execFileSync('git', ['add', '--', '.'], { cwd: root });
+    const cli = mode => spawnSync(process.execPath, [entry, mode], {
+      cwd: root, encoding: 'utf8', timeout: 30_000,
+    });
+    const verified = cli('verify');
+    assert.equal(verified.status, 0);
+    assert.equal(verified.stdout.split('\n').filter(line => line.startsWith('PASS ')).length, OFFLINE_CHECKS.length);
+    assert.ok(!verified.stdout.includes('trackedFiles'));
+    assert.equal(cli('audit').status, 0);
+    const released = cli('release');
+    assert.equal(released.status, 1);
+    assert.match(released.stdout, /NO-GO: Tenant authentication/);
+    writeFileSync(path.join(root, 'config.local.js'), 'throw new Error("must not execute")');
+    execFileSync('git', ['add', '--', 'config.local.js'], { cwd: root });
+    const audited = cli('audit');
+    assert.equal(audited.status, 1);
+    assert.match(audited.stdout, /"private-config-review":1/);
+    assert.ok(!audited.stdout.includes('must not execute'));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

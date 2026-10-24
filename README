@@ -62,8 +62,9 @@ Bounded improvements
 * The import checker now keeps recursive regex iteration independent, rejects
   missing HTML/module entry points, and resolves browser query/fragment suffixes.
   Four fixture regressions test these cases.
-* Five gate tests cover redaction-by-design, tracked-only scanning, config and
-  container blockers, subprocess failures/timeouts and mandatory human gates.
+* Six gate tests cover redaction-by-design, tracked-only scanning, config and
+  container blockers, subprocess failures/timeouts, real CLI mode dispatch in
+  a throwaway repository and mandatory human gates.
 * A separate two-test Playwright configuration verifies local boot and blocked
   remote requests. It ignores inherited remote-base settings, uses loopback only,
   substitutes empty local config, blocks non-GET/HEAD requests and WebSockets,
@@ -102,25 +103,31 @@ matching browser is already installed). Port 18080 must be free. The server bind
 only 127.0.0.1 and refuses to reuse an existing server. Do not use the inherited
 remote-capable test:smoke command for this offline review. Browser dependencies
 are installed without lifecycle scripts; nothing is packaged.
+Browser tests are a separate explicit step, not part of verify:offline, which
+remains dependency-free. Release acceptance requires both; a Node pass alone
+cannot replace the isolated browser or externally authorised commissioning gates.
 
 Verification evidence and limitations
 ------------------------------------
 Executed with Node v22.23.3, npm 10.9.9 and installed /usr/bin/chromium:
 
-  npm run test:gate                 PASS: 9 tests
+  npm run test:gate                 PASS: 10 tests
   Repo_root/test:imports            PASS: 221 modules, 930 edges after fix
   Repo_root/test:recordview         PASS
   Repo_root/test:intakes            PASS
   Repo_root/test:entrypoints        PASS: 20 assertions
   Repo_root/test:secrets            PASS: existing narrowed ratchet only
   npm run verify:offline           FAIL: 5 passing scripts, 9 failing scripts
-  npm test                         FAIL: 9 new tests pass, then existing failures
+  npm test                         FAIL: 10 new tests pass, then existing failures
   npm run audit:tracked            FAIL: see scoped findings below
   npm run release:check            NO-GO: source failures and mandatory external gates
   Repo_root/npm ci (flags above)    PASS: existing lockfile; no version changes
   Repo_root/test:offline-browser    PASS: 2 isolated browser tests
   Python zipfile in-memory audit   21 ZIPs, 105 members, 885,848 uncompressed bytes;
                                   zero credential-pattern matches, no read errors
+  Changed-file secret scanning    PASS: no secrets detected in the 11 changed files
+  CodeQL                         SKIPPED: database too large; no analysis clearance
+  git diff --check                PASS
 
 The full existing test:node chain was attempted and stops at test:assetstamp.
 The explicit allowlist also exercises later relevant checks independently:
