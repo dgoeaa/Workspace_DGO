@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -63,6 +63,15 @@ test('offline allowlist continues after failures and never invokes packaging or 
     assert.equal(options.env.NODE_OPTIONS, undefined);
     assert.deepEqual(options.stdio, ['ignore', 'pipe', 'pipe']);
   }
+});
+
+test('test:node only invokes scripts defined by the canonical package', () => {
+  const appPackage = JSON.parse(readFileSync(path.join(BASELINE, 'package.json'), 'utf8'));
+  const chain = appPackage.scripts['test:node'];
+  const names = [...chain.matchAll(/\bnpm run ([\w:-]+)/g)].map((match) => match[1]);
+
+  assert.ok(names.length > 0);
+  for (const name of names) assert.ok(appPackage.scripts[name], `test:node references missing script: ${name}`);
 });
 
 test('timeouts fail and clean source tests cannot confer release approval', () => {

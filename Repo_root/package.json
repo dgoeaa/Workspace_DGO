@@ -51,7 +51,7 @@
     "recover": "node scripts/setup.mjs --recover",
     "verify:endpoints": "node scripts/verify-endpoints.mjs",
     "test": "npm run test:node && npm run test:smoke",
-    "test:node": "npm run test:imports && npm run test:assetstamp && npm run test:uxplan && npm run test:recordview && npm run test:intakes && npm run test:hygiene && npm run test:refs && npm run test:portaloutbox && npm run test:portalvault && npm run test:effectivity && npm run test:constraints",
+    "test:node": "npm run test:imports && npm run test:assetstamp && npm run test:uxplan && npm run test:recordview && npm run test:intakes && npm run test:hygiene && npm run test:refs && npm run test:portaloutbox && npm run test:portalvault",
     "disposition": "node scripts/build-closure-disposition.mjs",
     "test:disposition": "node scripts/build-closure-disposition.mjs --check",
     "test:closure": "node tests/closure-alignment.test.mjs",

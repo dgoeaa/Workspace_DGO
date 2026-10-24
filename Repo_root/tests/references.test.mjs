@@ -28,6 +28,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const REPOSITORY_ROOT = path.resolve(ROOT, '..');
+const TRACKED_REPOSITORY_FILES = new Set(askGit({
+  root: REPOSITORY_ROOT, what: 'repository files to resolve references against',
+}));
 
 /**
  * The harvest is excluded, and only the harvest.
@@ -103,6 +107,19 @@ function candidates(fromFile, ref) {
   return [relativeToFile];
 }
 
+function isWithinRepository(candidate) {
+  const target = path.resolve(ROOT, candidate);
+  const relative = path.relative(REPOSITORY_ROOT, target);
+  return relative === '' || (relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
+}
+
+function existsInRepository(candidate) {
+  if (!isWithinRepository(candidate)) return false;
+  const target = path.resolve(ROOT, candidate);
+  const relative = path.relative(REPOSITORY_ROOT, target).split(path.sep).join('/');
+  return TRACKED_REPOSITORY_FILES.has(relative) && fs.existsSync(target);
+}
+
 let passed = 0;
 const failures = [];
 const t = (label, fn) => {
@@ -111,6 +128,13 @@ const t = (label, fn) => {
 };
 
 console.log('\nReference integrity');
+
+t('references can reach tracked repository-level review files without escaping the repository', () => {
+  if (!existsInRepository('../README') || !existsInRepository('../RELEASE_REVIEW.txt')) {
+    throw new Error('repository-level review links no longer resolve');
+  }
+  if (isWithinRepository('../../outside')) throw new Error('reference resolution escaped the repository');
+});
 
 const files = trackedFiles();
 const broken = [];
@@ -181,7 +205,7 @@ for (const file of files) {
     if (/config\.local\.js$/.test(ref)) continue;
     checked++;
     const options = candidates(file, ref);
-    if (!options.some(c => c && !c.startsWith('..') && fs.existsSync(path.join(ROOT, c)))) {
+    if (!options.some(c => c && existsInRepository(c))) {
       broken.push({ file, ref });
     }
   }
