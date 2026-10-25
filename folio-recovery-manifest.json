@@ -1,0 +1,22 @@
+{
+  "repository": "dgoeaa/Workspace_DGO",
+  "commit": "b60f9e0e177d092279f87c6f79be2e2a78ef1a8b",
+  "source": "repository",
+  "destination": "Repo_root",
+  "authorization": "User-supplied cleaned Folio package for screened, provenance-checked source reconciliation; retained by the supplied curation registers.",
+  "limitations": [
+    "Selective recovery of an external-storage provenance inventory, not current approval or acceptance evidence.",
+    "The 317 referenced external payloads are not recovered or verified by copying this inventory.",
+    "No other uploaded paths, baseline reset, historical-record retirement, tenant action or release decision is authorized by this manifest.",
+    "Bounded offline screening is not exhaustive sensitivity clearance or verification of upstream assertions."
+  ],
+  "files": [
+    {
+      "path": "docs/governance/evidence-register.yaml",
+      "bytes": 112652,
+      "sha256": "24c275e6362a39f041a2570786e53bd73cd24e5ebc7f9671bb8ae7c6d59442c3",
+      "transformation": "none",
+      "purpose": "Restore the genuine external-storage inventory at its missing canonical path without promoting historical metadata into current approval."
+    }
+  ]
+}

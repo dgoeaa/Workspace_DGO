@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, lstatSync, readFileSync } from 'node:fs';
+import { lstatSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
@@ -75,6 +75,35 @@ test('package readers reject traversal, absolute and restricted paths', () => {
   ]) assert.throws(() => packageFile(name));
 });
 
+test('reference dispositions cover every original occurrence and use exact uploaded paths', () => {
+  const inventory = packageFile('docs/offline-remediation-inventory.txt').toString('utf8');
+  const original = [...inventory.matchAll(/^(R\d{2}) \| (.+):\d+ \| (.+)$/gm)];
+  assert.equal(original.length, 56);
+  const targets = new Map();
+  for (const [, id, source, target] of original) {
+    const normalized = path.posix.join(path.posix.dirname(source), target).replace(/\/$/, '');
+    targets.set(normalized, [...(targets.get(normalized) || []), id]);
+  }
+  assert.equal(targets.size, 32);
+  const rows = [...inventory.matchAll(/^((?:R\d{2},)*R\d{2}) \| (docs\/[^|]+) \| ([DGFACS])(?: |$)/gm)];
+  assert.equal(rows.length, targets.size);
+  const seen = new Set();
+  let retainedOccurrences = 0;
+  for (const [, ids, target, disposition] of rows) {
+    const normalized = target.trim().replace(/\/$/, '');
+    assert.ok(!seen.has(normalized), normalized);
+    seen.add(normalized);
+    assert.deepEqual(ids.split(','), targets.get(normalized), normalized);
+    const candidate = manifest.items.find(item => item.path === normalized);
+    assert.equal(Boolean(candidate), 'DGF'.includes(disposition), normalized);
+    if (candidate) {
+      assert.equal(candidate.relationship, 'version-1-only', normalized);
+      retainedOccurrences += ids.split(',').length;
+    }
+  }
+  assert.equal(retainedOccurrences, 47);
+});
+
 test('reconciliation preserves canonical governance boundaries rather than importing approvals', () => {
   assert.equal(sha256(packageFile('Repo_root/tests/repo-hygiene-baseline.json')),
     'f2b9eaae8ea7965dc3e533ce2327c7188b0f3bef8d99528de2f5bd6c4e1e19de');
@@ -84,6 +113,17 @@ test('reconciliation preserves canonical governance boundaries rather than impor
   assert.equal(record.size_bytes, 112652);
   assert.equal(record.sha256, '24c275e6362a39f041a2570786e53bd73cd24e5ebc7f9671bb8ae7c6d59442c3');
   assert.equal(sha256(packageFile(`repository/${record.path}`)), record.sha256);
-  assert.ok(!existsSync(path.join(root, 'Repo_root', record.path)),
-    'A canonical recovery requires a separately reviewed disposition, not this inventory check');
+  const recovery = JSON.parse(packageFile('folio-recovery-manifest.json'));
+  assert.equal(recovery.repository, 'dgoeaa/Workspace_DGO');
+  assert.equal(recovery.commit, 'b60f9e0e177d092279f87c6f79be2e2a78ef1a8b');
+  assert.equal(recovery.source, 'repository');
+  assert.equal(recovery.destination, 'Repo_root');
+  assert.equal(recovery.files.length, 1);
+  assert.equal(recovery.files[0].path, record.path);
+  assert.equal(recovery.files[0].bytes, record.size_bytes);
+  assert.equal(recovery.files[0].sha256, record.sha256);
+  assert.equal(recovery.files[0].transformation, 'none');
+  const recovered = packageFile(`${recovery.destination}/${record.path}`);
+  assert.equal(recovered.length, record.size_bytes);
+  assert.equal(sha256(recovered), record.sha256);
 });

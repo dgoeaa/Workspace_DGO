@@ -1,0 +1,1903 @@
+evidence_records:
+  - evidence_id: EVD-00001
+    original_path: "docs/folio-Master-Flows-and-Endpoints/artifacts/matched-flow-packages/2026-09-24/Matched_Flow_ZIP_Packages_Available.zip"
+    size_bytes: 169944
+    sha256: "7772b9dced20fd0098ea087119c1cb4018ec460eedcb16767c4427edc8126cab"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00002
+    original_path: "docs/archive/dgo-ops/.deployignore"
+    size_bytes: 212
+    sha256: "855fe30b21bc295b5e58e533101801861fd4388ff95c7fe38eb218ab5fa652bb"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00003
+    original_path: "docs/archive/dgo-ops/.gitignore"
+    size_bytes: 129
+    sha256: "f5b5057e85c7773c2f67016f6df2701487b1d48f4fa4a16c9571d13f9124beb3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00004
+    original_path: "docs/archive/dgo-ops/CLEANUP_REPORT.json"
+    size_bytes: 130480
+    sha256: "09366d3169673fa37985de16a432793991baa4dab6270731f47db6f30f4b5f65"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00005
+    original_path: "docs/archive/dgo-ops/Complete full-content JSON state file.json"
+    size_bytes: 2313655
+    sha256: "467a2c0e734650328d396f2006355f46eb6eeb78c0ec6e08c1d74cc2ddbdd41c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00006
+    original_path: "docs/archive/dgo-ops/Final verification report.json"
+    size_bytes: 1050
+    sha256: "ceb8ed2c0019347cf7c951821983a3abd50d695dd128b2f95a71b3e2249f2eea"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00007
+    original_path: "docs/archive/dgo-ops/MANIFEST.leanest.sha256.json"
+    size_bytes: 9939
+    sha256: "8215ca728ff74f98fc1f802ff2c23690dc5bb8a631347abbc619eb9c2aebe7e7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00008
+    original_path: "docs/archive/dgo-ops/MANIFEST.sha256.json"
+    size_bytes: 53684
+    sha256: "b5ef2a9ce7c61f83a8f43319c21719a5960c4e644b0ee289088a9da487a426c7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00009
+    original_path: "docs/archive/dgo-ops/README.md"
+    size_bytes: 3284
+    sha256: "25aacbc8f0d9fd1a5a3a694080f81112658db44ad28b0b08d51a1bf5771a5088"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00010
+    original_path: "docs/archive/dgo-ops/README_CLEANED_PACKAGE.md"
+    size_bytes: 1347
+    sha256: "825b07d04a84edfa447cda71c453d5b6e32367724a76c5bab7d72ba066714107"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00011
+    original_path: "docs/archive/dgo-ops/README_FINAL_CONSOLIDATED_CLEAN_FOLDER.md"
+    size_bytes: 1282
+    sha256: "b12bd9596ee5d2439d5f9959e1cbd05592fcef99c55b12254e0faf0a64a1586e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00012
+    original_path: "docs/archive/dgo-ops/VERIFICATION.json"
+    size_bytes: 171
+    sha256: "cfe4cca1e608703a8abae6c9e93664848c574443e61f531dd2043a412ffaf8c0"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00013
+    original_path: "docs/archive/dgo-ops/VERIFICATION.leanest.json"
+    size_bytes: 290
+    sha256: "7b02b83f53a1764323ae5a467e542fa97e80727d9648b0e53695378a729f4bc4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00014
+    original_path: "docs/archive/dgo-ops/Verification report (1).json"
+    size_bytes: 760
+    sha256: "aaa731d04e9886d5131433af2557d36d78ca9b7804f3ea336c5f04749babdc64"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00015
+    original_path: "docs/archive/dgo-ops/Verification report.json"
+    size_bytes: 760
+    sha256: "aaa731d04e9886d5131433af2557d36d78ca9b7804f3ea336c5f04749babdc64"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00016
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/precision_auditor_v3.py"
+    size_bytes: 11743
+    sha256: "8bef1d49a90abf6146bfe97ed8af8312b5e4a37e59b18960df0270c3e56d58c3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00017
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/aud_activityhubp_20260728_151904/activityhubp_rpt.html"
+    size_bytes: 23630
+    sha256: "7197e453a4c89720e0874d190d4478028433b9a27f03f0d47158a9fd4bfbc3d9"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00018
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/aud_activityhubp_20260728_151904/activityhubp_state.json"
+    size_bytes: 145553
+    sha256: "cbc3a74c292c9db959f77c339a74c82838967456e550648608255b7ad8d57ee1"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00019
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/aud_activityhubp_20260728_151904/activityhubp_sum.json"
+    size_bytes: 15697
+    sha256: "990dd3b58c1cf6a21c1799cc6a503c516a6116181fcde24f9363812ca7688dc3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00020
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/README.md"
+    size_bytes: 1370
+    sha256: "df99910ebf65b1ace586ebcb0d97ddf3933a648ca2903184bf282788b90d3cef"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00021
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/config.example.js"
+    size_bytes: 1100
+    sha256: "420a766570936f01bc5a881df6214bac3f314b51c03f88ed513d1978671650c3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00022
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/index.html"
+    size_bytes: 1967
+    sha256: "d238592a708329be3b4c08e33c6fdce25274074324893b1bd878f5bc23456ac1"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00023
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/powerAutomateClient.js"
+    size_bytes: 1389
+    sha256: "dac8f37aa6cb87001a77de91806396539391efe248c9182093dbe917f7f26f96"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00024
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/main.js"
+    size_bytes: 1068
+    sha256: "5df6111f100cf300d106919e90a74e572bb1bd57a90e3df524032706119b390a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00025
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/api/client.js"
+    size_bytes: 1112
+    sha256: "b02cf5c95831990edd8c2d48fff1f91ca618b5c393c707c0df701f7664a6a2a6"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00026
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/controllers/actions.js"
+    size_bytes: 10423
+    sha256: "f10279b3191f14b3d52ada7eda01d4f79d4d7b1cc3a566f7bd2803a0a392cf79"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00027
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/core/config.js"
+    size_bytes: 2332
+    sha256: "9a606a447c0414b09a102bb4f3cb7c403bef6f55f28b865d172dca7c87fefd48"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00028
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/core/router.js"
+    size_bytes: 931
+    sha256: "d712b7fa74fc660907ae2bf95f1291db7cd25d484186f167c5ff149b3f9a27f2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00029
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/core/store.js"
+    size_bytes: 2878
+    sha256: "88eabf51b258515c8bed510b11feff51f4cb7c6751b9f36d7233d5a82435292d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00030
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/data/demo.js"
+    size_bytes: 3934
+    sha256: "32b51c258061f633a4ba21193dabc6b2bd14e88eb036fd0c8d6605146e6a1b2d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00031
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/events/bindings.js"
+    size_bytes: 991
+    sha256: "a7ce6340444017ac4e6ecf416edee0c79ac4dc8d4d0fc2135fd102b819ffab07"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00032
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/ai.js"
+    size_bytes: 328
+    sha256: "1718684a8e0cf8b70717e617933d1eacea4b63503386307945e6ac4db279abe3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00033
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/approvals.js"
+    size_bytes: 991
+    sha256: "09c1c8782c56bd5920b4ac1c7ccbd9be1f23e3ed4a9af2c46bde3a5efbb4d0e4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00034
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/bootstrap.js"
+    size_bytes: 1270
+    sha256: "2f6535b123e48cdcf1afad1d823d148edc865c55e433254021278cb641877a70"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00035
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/briefs.js"
+    size_bytes: 1916
+    sha256: "4c8db1f280d17ff2da52e86872fc115bb727a94fddfdee1c6b1c3764593095b3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00036
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/correspondence.js"
+    size_bytes: 2343
+    sha256: "7cd115659e2711d421f55e7647375aafd1505094da1f6bc81365c4322a582326"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00037
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/decisions.js"
+    size_bytes: 1059
+    sha256: "b73b1d47f701eb089a1d84298963709ee1a1cca3ee58958bea66d023693398f5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00038
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/inbox.js"
+    size_bytes: 1694
+    sha256: "0f5263ca6df82addfd3615fbe41da2fabbeec3c9ebb90e505f00d5953a6001c1"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00039
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/kpi.js"
+    size_bytes: 457
+    sha256: "7c6b71af3039c3f4d76106edab00013ebc66f183d14193cb9762029654cc0661"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00040
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/meetings.js"
+    size_bytes: 1867
+    sha256: "c2be7159abc6be9d3037b738f31a73e70acfede10c0c4b8ca548b1de5e72a64b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00041
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/minutes.js"
+    size_bytes: 1967
+    sha256: "8e34dc43c6b658e4d5092b3a7da3d2760ba008373496b7b41b0dbbb403d0eae4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00042
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/ops.js"
+    size_bytes: 1686
+    sha256: "40dd742b36616d0ef4953f2efaee9fc4bf39cfecc44688002efdf40154224a89"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00043
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/projects.js"
+    size_bytes: 818
+    sha256: "5795772137f214c6ecbd326ab077fc06a4305c6a88d974ed76ca3606c9430f1e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00044
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/tasks.js"
+    size_bytes: 1844
+    sha256: "2ee77c55050a284b1d9a6989c93e9a9a0ea075cfb8300d12a99f52a17c9ccbe3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00045
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/utils/dom.js"
+    size_bytes: 152
+    sha256: "8efd118764a25cb673d7f549955bc71fd809a3c9490965790ce0a4d5a7541f97"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00046
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/utils/fn.js"
+    size_bytes: 848
+    sha256: "3e031be6241f7e6e5adc8849bb3efcf4fcea923108d69180ddeecda8fe263dcf"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00047
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/utils/toast.js"
+    size_bytes: 359
+    sha256: "feea5092136730b3ade340820fbe253ec8f80562294a57734d5dc6eba8e85047"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00048
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/header.js"
+    size_bytes: 1242
+    sha256: "3ac8a9f6fca446d8a71d716ecff77559ab9191bf5b465cd887ac847cc591c847"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00049
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/layout.js"
+    size_bytes: 1894
+    sha256: "fe05f08ce704bd005558b7ad5f852278d29dc336a058935ea4a9f2b573afabc6"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00050
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/router.js"
+    size_bytes: 1980
+    sha256: "723f3465adb9d2e981761e6fc1e07ccad2f4fbf7632cba87facc4ea0d745c8e0"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00051
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/sidebar.js"
+    size_bytes: 3235
+    sha256: "999380ac21058fa51af4a06e275a5f1a412f835a2339d3989acdaeddab63b7aa"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00052
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/components/modals.js"
+    size_bytes: 19736
+    sha256: "49cdf2b161a4ecf1dd988750d5d042557f8551a6bc57544d9411dc096831f568"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00053
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/components/ui.js"
+    size_bytes: 3151
+    sha256: "d81aebd32068a3dcd303dd115903b6a9e9c90f76b1b756255f26de72e417e3be"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00054
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/admin.js"
+    size_bytes: 1425
+    sha256: "b1b7706dc91c0d69b365ec2bbea5998f971855e035e2c9ae325a02067d00ce22"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00055
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/ai.js"
+    size_bytes: 1293
+    sha256: "8d9a443f0ec49c8d0aa6e31a2d0af27f1664f9b58652e6e09bf049e5d4948d39"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00056
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/approvals.js"
+    size_bytes: 1985
+    sha256: "e2c3beebf5506bfa5c38a07664ec3ed03cce6a257bb0d03a069e4aed890d155a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00057
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/audit.js"
+    size_bytes: 1401
+    sha256: "7352067c2428eeeb985241dfa5fd4e446f247a4103fea82d7a2f1228acfe7fad"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00058
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/briefs.js"
+    size_bytes: 2242
+    sha256: "366525d20fc7c614b57e3bda147c01a3fd3b161e7fb3637e7db12a459a83f34d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00059
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/dashboard.js"
+    size_bytes: 2472
+    sha256: "56e7102bae6a926602d449f6d5da8fc56dd62035ad92700e5198394b4285a494"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00060
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/decisions.js"
+    size_bytes: 1476
+    sha256: "ed46a08ed5a9830e5cc906e2b4a7e2bff7e27b1df803cab1c0ba81dee9ba6515"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00061
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/directory.js"
+    size_bytes: 1346
+    sha256: "dd9c090206d91f12355aa8e1880d3c1b588778f42e6ce1272977e3d238e64de5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00062
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/inbox.js"
+    size_bytes: 3495
+    sha256: "2d853a01306fa011919d9f0c45f1a55927fc0c1cd48d3bb0b4ee122252aa10ec"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00063
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/inward.js"
+    size_bytes: 2161
+    sha256: "9a81849e05e1a8068dac3a47085d39292adb813e3ae07b19f37657e6f2313e59"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00064
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/kpi.js"
+    size_bytes: 1253
+    sha256: "c43097bfd86204cb59581c42d052bf7cc78da181455e1dcdbdb38f4a2865db8b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00065
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/meetings.js"
+    size_bytes: 2614
+    sha256: "2760eda669f0c50e8a1ca7973b847f77a5543282b142c614827fdc9c0aa94b49"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00066
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/minutes.js"
+    size_bytes: 2191
+    sha256: "3af47756c40a4744820089a694c7075c63545e1336bedf862e3b344450c504aa"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00067
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/notfound.js"
+    size_bytes: 190
+    sha256: "aec6fae304e42967b4480fde625fb08a35b977dbdf915d27ffc87a807bf959cf"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00068
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/notifications.js"
+    size_bytes: 1738
+    sha256: "d96aa4368c81a1b6ac2986aa201df71db04bf00626ba42d1798c98bfaae95cf4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00069
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/outward.js"
+    size_bytes: 2115
+    sha256: "283c988bfef6ae589550c4b817049c2ff0a36494c1516d3855b92f5e2cff2df6"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00070
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/projects.js"
+    size_bytes: 2368
+    sha256: "9e68b72e5f1a5a6492cc4324852e666f4441b84263534d8832eaa033a1d95627"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00071
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/reports.js"
+    size_bytes: 942
+    sha256: "92e2359445c62b4d8f3c724bc2ceb5f8c017efcafc05507ba1f9341d52a2e044"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00072
+    original_path: "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/tasks.js"
+    size_bytes: 2267
+    sha256: "d3b586ee17944d169b2c8bf9f9ba4095a3c6c74ee07e3c82979295e91822e62f"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00073
+    original_path: "docs/archive/dgo-ops/design-system/CHANGELOG.md"
+    size_bytes: 6606
+    sha256: "edf295a6b417b2bdca47cb428318b3f5c90ba1683cb4c1e1d4b292e73ccb7d88"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00074
+    original_path: "docs/archive/dgo-ops/design-system/CONTRIBUTING.md"
+    size_bytes: 12608
+    sha256: "1a4eadcad215bab99c7cf1d083016e33d28050d4f8a1e6e078aec9cbaa19861b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00075
+    original_path: "docs/archive/dgo-ops/design-system/GOVERNANCE.md"
+    size_bytes: 9438
+    sha256: "982493d5d9a611daad95c005c86981e3ff7c7a60a5e40147b1e8c7f786fb8929"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00076
+    original_path: "docs/archive/dgo-ops/design-system/INTEGRATION.md"
+    size_bytes: 23805
+    sha256: "f973e08a43673f428059fd09f95d235908cc6678fc81363fe7303c85eb8d1046"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00077
+    original_path: "docs/archive/dgo-ops/design-system/LICENSE"
+    size_bytes: 3590
+    sha256: "dc928c8cd38866386420f3aa3959249e2eb0a19b5ee8092e7589414333233034"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00078
+    original_path: "docs/archive/dgo-ops/design-system/MIGRATION.md"
+    size_bytes: 5829
+    sha256: "1dce4e6568413df691827de24c392c2aeb5f3d7637f84301529d09e7eab4e449"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00079
+    original_path: "docs/archive/dgo-ops/design-system/README.md"
+    size_bytes: 10894
+    sha256: "31733da43ff517aa5ebdaff129e71c7b03e6a5606d965b693ba523311541cb02"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00080
+    original_path: "docs/archive/dgo-ops/design-system/assets/icons/sprite.svg"
+    size_bytes: 8017
+    sha256: "becd80d4fb0a9a94cf11997c7eb538ae082d37e0be143c8d5a1b47a67b838a22"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00081
+    original_path: "docs/archive/dgo-ops/design-system/assets/logo/horizontal.svg"
+    size_bytes: 751
+    sha256: "1cc9e9da494c508d932e1732943c09ecb503cf97f0a811807cac73c35e24c42e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00082
+    original_path: "docs/archive/dgo-ops/design-system/assets/logo/mark.svg"
+    size_bytes: 363
+    sha256: "8350259865b168f67579fca3ad5aa1c82e19d373b51d15cd3f28d3931d7c0ac3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00083
+    original_path: "docs/archive/dgo-ops/design-system/assets/logo/nitda-endorsed.svg"
+    size_bytes: 890
+    sha256: "3f65c5b9180b34b2bf346d5a284273554e1026642cf556a0fab3211dfbeee33b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00084
+    original_path: "docs/archive/dgo-ops/design-system/assets/logo/stacked.svg"
+    size_bytes: 694
+    sha256: "13a53e0082de461836c91d16ac7b78f83ae882ef6ef7703da8bb3f83bd8a633e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00085
+    original_path: "docs/archive/dgo-ops/design-system/assets/logo/white-out.svg"
+    size_bytes: 761
+    sha256: "00e12961cf9b1b89a2426d944c1e1eec052d1113f668fbbf2cc4d05eee2701bd"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00086
+    original_path: "docs/archive/dgo-ops/design-system/docs/00-foundations.md"
+    size_bytes: 15445
+    sha256: "018e036329c63992b3c001604358211db39b7b2f6d3eb126aa41ba6d137dd106"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00087
+    original_path: "docs/archive/dgo-ops/design-system/docs/01-tokens.md"
+    size_bytes: 11638
+    sha256: "c3b3133ecdf355dfe1396f8ea71927f67c4ff12669a5a291ee73a7da804813e2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00088
+    original_path: "docs/archive/dgo-ops/design-system/docs/02-color.md"
+    size_bytes: 16248
+    sha256: "7e2ed58c9b57ce00e739a48b2366440df19a8b0b08407c91ded3ecebdd5505cb"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00089
+    original_path: "docs/archive/dgo-ops/design-system/docs/03-typography.md"
+    size_bytes: 12473
+    sha256: "e83a02008c47ad56364f3f4826b2cb7c2cf327afb3b6fb215c927d97288ac62b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00090
+    original_path: "docs/archive/dgo-ops/design-system/docs/04-spacing-grid.md"
+    size_bytes: 8225
+    sha256: "306e652abc236645701297b2c3a9fa43bd09c7a2b67bc9298c2a7fdd584134d6"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00091
+    original_path: "docs/archive/dgo-ops/design-system/docs/05-iconography.md"
+    size_bytes: 8080
+    sha256: "84082d2a7d27c5df24f0a20037a746f90ceafd507b6f5490b8fb95eef262e28e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00092
+    original_path: "docs/archive/dgo-ops/design-system/docs/06-motion.md"
+    size_bytes: 10738
+    sha256: "28a68c4f2be10acbf38c53d6c1ed72a14f0a5905e7fea1f66f6d2e4e3a4a1caa"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00093
+    original_path: "docs/archive/dgo-ops/design-system/docs/07-elevation.md"
+    size_bytes: 10594
+    sha256: "b63cd7d5a9e407b006a9f4c35b53c77dc5616aed931393f55270a14a7c55dd6b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00094
+    original_path: "docs/archive/dgo-ops/design-system/docs/08-accessibility.md"
+    size_bytes: 25561
+    sha256: "a093acae33719da8c47405f7fd669a75bc45994bcd82846bfc829cd23b764551"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00095
+    original_path: "docs/archive/dgo-ops/design-system/docs/09-i18n-rtl.md"
+    size_bytes: 18443
+    sha256: "23ec184e4698d3552394ab6411b0b0f6908b5633e045f07337eca301a6bae30f"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00096
+    original_path: "docs/archive/dgo-ops/design-system/docs/10-content-voice.md"
+    size_bytes: 21273
+    sha256: "731c3dc70be769e77ca423f0a704d00243367307c87f5b74e4a6009b9052fc3b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00097
+    original_path: "docs/archive/dgo-ops/design-system/docs/11-component-template.md"
+    size_bytes: 13274
+    sha256: "28dc14b14e342dd52212b2da13b81a3d5b1a571b4a9ffec6eaf6f7be0bc2249f"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00098
+    original_path: "docs/archive/dgo-ops/design-system/docs/12-anti-patterns.md"
+    size_bytes: 26631
+    sha256: "56576d368c93e9f8b8d98bc54156e6e64084539e70b2b8360ec7a43eaab74e4a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00099
+    original_path: "docs/archive/dgo-ops/design-system/docs/13-complete-implementation.md"
+    size_bytes: 2302
+    sha256: "9737c0b8a0c4a3b1579979b293a7df928d5e616e50182a6c9dc06817385f02d9"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00100
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/alert.md"
+    size_bytes: 6374
+    sha256: "fd810b7577ec0cc5291ee4c5abfbf0a712ebf82631a9b95870268f1856ff7215"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00101
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/avatar.md"
+    size_bytes: 6158
+    sha256: "81dddb315a0eaec59d4d1d58b9263b6d07639150475fcc1e539c6e37693147bd"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00102
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/badge.md"
+    size_bytes: 7954
+    sha256: "1987dc3abc90055f0ddc70f265d5f3d84d14c7f4897a3549f836ada837a89863"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00103
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/breadcrumb.md"
+    size_bytes: 7647
+    sha256: "23710f69fde685cce943c10ec092a3f698382c90ddb9324d4ac80f43ab54f278"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00104
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/button.md"
+    size_bytes: 19789
+    sha256: "6aae29dc3654a96589f63b0fdfb911e47a97d717f36ded69922b9e71717d4836"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00105
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/card.md"
+    size_bytes: 6310
+    sha256: "520d088769569deb403043bb45cee1b00d32677ca79ee176f039124b953c39e4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00106
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/checkbox-radio.md"
+    size_bytes: 14739
+    sha256: "5f98e4af9d29fa57f51d93ee16450f815d0bb5f14e53c71498fc3469d6860021"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00107
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/command-palette.md"
+    size_bytes: 33538
+    sha256: "88b545a061c261578250cc8bf0b73f393d54d84d4febd279a5707138f48254c3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00108
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/empty-state.md"
+    size_bytes: 5479
+    sha256: "32b1c2060e95754a645139062e21a296d6a1817e2894a982c65f0264ce9bad7d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00109
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/filter-bar.md"
+    size_bytes: 5700
+    sha256: "6701dc8edddfdefa6722b6accf3ce99725223f748ea723bd8e968b4b2f65a662"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00110
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/input.md"
+    size_bytes: 23362
+    sha256: "6c50a6925c598f18127486699a250ba4f4897ba790a447b9387ab20558f6e357"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00111
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/kbd-code.md"
+    size_bytes: 5899
+    sha256: "7dbcacf327e9599ccc313732f932a81a525ee4da50c92e07b37157f2e3da5590"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00112
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/menu.md"
+    size_bytes: 18082
+    sha256: "43f41a661ed7b0604d0f172d42b85fc950bffbb7e55c3fcaf67188665672f1f7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00113
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/metric.md"
+    size_bytes: 6023
+    sha256: "29dabf27b1ac80c5b4ea43fe2085572404c04f7ae365a6c6dbe05a21a4c34a41"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00114
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/modal.md"
+    size_bytes: 24381
+    sha256: "42ea8ee19dfec648cd6fba01a20c390e79b7ed56b88a27196458fe7f8a8f0f03"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00115
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/progress.md"
+    size_bytes: 5922
+    sha256: "89597e4583fe03311ae72c060b8906db54d954fa9d218b38ea8536620e710d26"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00116
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/search.md"
+    size_bytes: 13728
+    sha256: "700fcb66f6e933b045f24e6f188a1bbd0b74f76012eda48c738453ae3050773a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00117
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/select.md"
+    size_bytes: 14211
+    sha256: "65dbe5b42de13bccff4d99a8a32d843f0f9c563ab5379356e55adc10a1a2c9d2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00118
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/sidebar.md"
+    size_bytes: 16733
+    sha256: "59a477e2c9ae9a4b1e4040c74dbd0aefe3f3624efdd72b1b72b45ecad30ffbda"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00119
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/skeleton.md"
+    size_bytes: 5471
+    sha256: "63e458e72d94da7efa57347e731e4a5146b9c740148434242b04e2f3a6b439a5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00120
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/stepper-pagination.md"
+    size_bytes: 15944
+    sha256: "904bc01016df4a485c9b1ca43eef9bcd1ce2217c5dc11f014318dcdcac165040"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00121
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/switch.md"
+    size_bytes: 15632
+    sha256: "7562a350d77abffc08da449756bacc1eecfef3c973d8803f895277b0ebfc5712"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00122
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/table.md"
+    size_bytes: 26188
+    sha256: "3dd69b7920e83698fb9622b661df3e71c0b47fb1923e6355f1e3e63570c38f35"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00123
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/tabs.md"
+    size_bytes: 20175
+    sha256: "1dd495f251ef523f53d81057ad0005bdb91f4d818dc8c1366f6f36de504f5467"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00124
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/toast.md"
+    size_bytes: 20035
+    sha256: "1b03702a1c464fc380d1519c4c6bd81ea0e9b5f431bbdec1d58c9031a24f205c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00125
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/tooltip-popover.md"
+    size_bytes: 21957
+    sha256: "d87f2dcd935580e7471f3075a3fb19e9b6b3f8d8b7f788617b544174337f3b2c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00126
+    original_path: "docs/archive/dgo-ops/design-system/docs/components/topbar.md"
+    size_bytes: 6665
+    sha256: "cd4f6f5575bb3cc92742e4cd7514b03f64e8f4cc2f826799932409a9ffe07ee2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00127
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/GUIDELINES.md"
+    size_bytes: 11352
+    sha256: "9011cbd5a52918d2a4e3bb0101a1415ee03b58258862a2937ba093f37d9c12f0"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00128
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/INDEX.md"
+    size_bytes: 6183
+    sha256: "597b29dd60297da89de18da1a5b67eb7f5d76d387db40e6139e745f1c32e2b26"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00129
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/README.md"
+    size_bytes: 5213
+    sha256: "cf151f72c5cb1032c7f721a22ce2caadbe692c68a555869828787edc29c0f6a5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00130
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/components.css"
+    size_bytes: 16982
+    sha256: "5bf942140941bc081a6b5d5f422f145c53927a1df62baad924acfe00aa37ede1"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00131
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/tokens.css"
+    size_bytes: 10226
+    sha256: "1be35479f691e38c1dbce23a1918b6c0f745cfe7e76fcb65ef79442b6c2c8b51"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00132
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/assets/endorsement.svg"
+    size_bytes: 316
+    sha256: "67d1f3c596305b82540f29d1e0984353ab77d712b2ce0e418b213908acec2093"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00133
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/assets/logo-horizontal.svg"
+    size_bytes: 531
+    sha256: "e02ced413df2e2f2ad8bfa22dfaa1a45e48e649778aa7b9d385a773bc7980d1c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00134
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/assets/logo-mark.svg"
+    size_bytes: 248
+    sha256: "c3c34c286f11b3ed02009c4ffcd9cbf9229d1b07d6f1cca51b4613f0c8b422c5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00135
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/assets/logo-stacked.svg"
+    size_bytes: 530
+    sha256: "80043528196dcd662bd82543ea0a9975e27628ff7fccda21a3909ed9eccbe5c4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00136
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/assets/logo-white-out.svg"
+    size_bytes: 545
+    sha256: "29d8a64af17de60c10fbbcc1e00e7fb16f6f86ec51cb0d671222cafa37223e69"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00137
+    original_path: "docs/archive/dgo-ops/design-system/legacy-v1/assets/logos.html"
+    size_bytes: 6703
+    sha256: "e3fc18ed2fcef544074ec9890c00b61f40f1d8e7ec342f6dac1ad32851a11a9d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00138
+    original_path: "docs/archive/dgo-ops/design-system/styles/base.css"
+    size_bytes: 4566
+    sha256: "fca1de68e642c17ee14863421ca0e57b8f8bb2886e772698c1f58b334e6a7a60"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00139
+    original_path: "docs/archive/dgo-ops/design-system/styles/components.css"
+    size_bytes: 39333
+    sha256: "f0c9e0e641e04fa7bf545e8bbfec22a871aad7ebbfc67467f7b755f2494dc2b9"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00140
+    original_path: "docs/archive/dgo-ops/design-system/styles/enhancements.css"
+    size_bytes: 9416
+    sha256: "580bc53611474aff2e1e0a3484d194ccbd2e3803f85e2f46f301c367a9cd0dc5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00141
+    original_path: "docs/archive/dgo-ops/design-system/styles/layout.css"
+    size_bytes: 3252
+    sha256: "84a3c4686b0a53666fcde3eceb7861c224c8a1af9ac8e6f1da6df13f30ba4b08"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00142
+    original_path: "docs/archive/dgo-ops/design-system/styles/reset.css"
+    size_bytes: 1152
+    sha256: "4378b202f44bc05f69abbff5cc20cf6f3f1b18551f6c0df5fdcd49f35dafae49"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00143
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/_index.css"
+    size_bytes: 3352
+    sha256: "e246fecb10ac49ce0cd74254ad77ff9a978bb3711561ee3ffb3d38ea74371e64"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00144
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/_utilities.css"
+    size_bytes: 1028
+    sha256: "f9d3d32ebb1f653358532703fe960cb79a7c278356241a285be4aea1b4ebc7b2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00145
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/alert.css"
+    size_bytes: 2378
+    sha256: "67ad0005dba5bf8e9f27578982fe47e543f33180d62056116516e6f4275a5684"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00146
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/avatar.css"
+    size_bytes: 1703
+    sha256: "3c427a33ddeb2c93c13f8be61117e1033f51b61381ee4b5bbeff7cda831b7c1a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00147
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/badge.css"
+    size_bytes: 4161
+    sha256: "7d566752b5b1cd3afc2020604d58109c22014354acf1cc6694720bf7b2e6af55"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00148
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/breadcrumb.css"
+    size_bytes: 1177
+    sha256: "643691a501352a2b17c6ded0c1a931e643c8a8c4e9451b21bb504d94983f9374"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00149
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/button.css"
+    size_bytes: 4974
+    sha256: "fe69fdd12f9f7f1227adaaefe7d19ccb2a32c18be2cc253abaeea3e122b8bbc7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00150
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/card.css"
+    size_bytes: 2325
+    sha256: "02640ef50825312239dd40b78e3cbe5a0a444f7af494184452d0924ce6cf38d2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00151
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/checkbox-radio.css"
+    size_bytes: 1286
+    sha256: "0ac22442a1b08209903f21a414223ef93be004dd39460cebb2acae296567975b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00152
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/command-palette.css"
+    size_bytes: 11685
+    sha256: "ff6cddd59c2ed09f16ea6a5fb56d064ebf037bded89085d5513f16ffebe57179"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00153
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/empty-state.css"
+    size_bytes: 1206
+    sha256: "1e8f2e7ae22c18335987485c21235599988b9b0bd20d188cc4d4310125cdd024"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00154
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/filter-bar.css"
+    size_bytes: 1466
+    sha256: "5e2d8c520e787f5587742aac82e950652223cae39394e23603c9aa74e28c91fd"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00155
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/input.css"
+    size_bytes: 3797
+    sha256: "d73ecd40c3a8a2dcc693abf49cba0e8fe291bc6d6d4899b16900a210625cc4e2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00156
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/kbd-code.css"
+    size_bytes: 1731
+    sha256: "7919796da74e0fe568b4d5d997e324df6ce27efa2c5768a47410dd930c4481a0"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00157
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/menu.css"
+    size_bytes: 1874
+    sha256: "b12a74f081a4f37abc95f2cd03fb22a6dee5eace4ccf22a7ee99a06de4b46808"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00158
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/metric.css"
+    size_bytes: 1785
+    sha256: "8aef676add02aec661b5e6a82f7e1ec9ba5873b2d92506ed40e17f67f6db4a62"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00159
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/modal.css"
+    size_bytes: 2692
+    sha256: "66a43a8a50a2c6d6e7437efa1ed9fb896933c83265dd8e39c4516f60c25bfe05"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00160
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/progress.css"
+    size_bytes: 2051
+    sha256: "72b345af9090e27b2462c946b2dc30cf157366a01804af9b5b6ff545c69e27f3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00161
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/search.css"
+    size_bytes: 1454
+    sha256: "eb4c160f5375b1df9eacdcf4e86290f9b67b58a18058364de2d7c12e405050ce"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00162
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/select.css"
+    size_bytes: 1384
+    sha256: "e886443672882eb9a5f48b2429e7cf4ac0702c5ed6e857fc29ecfff6c7ae7b96"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00163
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/sidebar.css"
+    size_bytes: 2705
+    sha256: "cb64ca43b8a68f30884faf2c7119d54fe4c97f8f47656fda387a852fd12d9816"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00164
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/skeleton.css"
+    size_bytes: 1234
+    sha256: "4cc5dfb4b0a03d4191fe7272e8790289e59c58288924e30f7da1227dfa54f758"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00165
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/stepper-pagination.css"
+    size_bytes: 2940
+    sha256: "8e99dc375627133228fe89b6d77df10277d6b3f838636eb17687e15eae731088"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00166
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/switch.css"
+    size_bytes: 1757
+    sha256: "96b62dc50b51d209cadad05612f3d167adb06e95315229c2ba670df762c032c6"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00167
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/table.css"
+    size_bytes: 2151
+    sha256: "35352ebe8b03d84cd459c7bef735cbcc8666c00cd6df3c9796c1f199cc6caa89"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00168
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/tabs.css"
+    size_bytes: 1651
+    sha256: "9d4e05975f9f6d38e350774f0b40f27301ae9cacbe211d7c77fcc5bd493493c6"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00169
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/toast.css"
+    size_bytes: 1509
+    sha256: "fa136a63b3960d3df09714f85b724cff2bf80bbc5c38c87190d7719579e91a2b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00170
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/tooltip-popover.css"
+    size_bytes: 1385
+    sha256: "9d75c5bd6c8dc90f0ae744ff8265c2abfabef469a5fa16a9f3cd716b3a22df11"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00171
+    original_path: "docs/archive/dgo-ops/design-system/styles/components/topbar.css"
+    size_bytes: 1060
+    sha256: "f253b1974c6ba45b089236d77a68f9093d501fcca8ea6ba96aaff9f237be2dea"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00172
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.component.css"
+    size_bytes: 5786
+    sha256: "d94ae4a79888097afb71a4ffe5433a115b04b8d720ef0ecbeea76823fa327d35"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00173
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.density.css"
+    size_bytes: 1285
+    sha256: "9fc3ded4c2802878c7292f08233a98e54def2c43ef016c3873b841bb1dfd7d8a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00174
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.enhanced.css"
+    size_bytes: 1094
+    sha256: "77f3e301ea8222726947db3fd5305bfebaf47ca817b2ebacde0de5e0f453c102"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00175
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.primitive.css"
+    size_bytes: 8731
+    sha256: "2832cde866d657df070570deb1a6e3b57e5687d9f380f979f1fc86676da05dc2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00176
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.semantic.css"
+    size_bytes: 6781
+    sha256: "4bae3911a11c09f529ebaec9bffb75778bbc58ade4234cab94711f8555f8dfc8"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00177
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.theme-dark.css"
+    size_bytes: 3096
+    sha256: "e5eed11e51d14bc2a20a00cde3feca1527733af3877924afd72971d86a1ca2bc"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00178
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.theme-hc.css"
+    size_bytes: 2575
+    sha256: "b81ec9463163c33f84ce8274be73e262145e53e3a294ff5590940f3fe55ca13d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00179
+    original_path: "docs/archive/dgo-ops/design-system/tokens/tokens.theme-light.css"
+    size_bytes: 753
+    sha256: "fd0c6c1fb18d32fad05aeb639193d241791790451d6ed97ce1516aa6e144addf"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00180
+    original_path: "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/.htaccess"
+    size_bytes: 509
+    sha256: "59b59bd8b2282ac46993c3f4b9a535ce19c516ef8d96f4fcb86f82bc341fa080"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00181
+    original_path: "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/ADMINdashboard.html"
+    size_bytes: 20382
+    sha256: "6075c781739bce6cf490e0cd24d482805eb28603d7f442897efec9a8e677a47e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00182
+    original_path: "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/index.html"
+    size_bytes: 16278
+    sha256: "bc89cc2faa2d8709ad00260a64d89dacd4be8d6c32cab60d4a57b7ac82ec8eb7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00183
+    original_path: "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/submit.html"
+    size_bytes: 24895
+    sha256: "22d17592505bd55373c2b07325096c8eb37bda89e5fe1f501e3a44802158793c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00184
+    original_path: "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/support.html"
+    size_bytes: 17160
+    sha256: "2f223a4baa648e1a7873bea150253db6d89f0582247e0fd494b68073689c4f38"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00185
+    original_path: "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/track.html"
+    size_bytes: 19085
+    sha256: "134c11cf4cbbae9d284cf5be366e7d5b3d90daf41dba6e561a6ba77d7363f9da"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00186
+    original_path: "docs/archive/dgo-ops/docs-root/AUDIT.md"
+    size_bytes: 6906
+    sha256: "5df402870bc4c65c1959a40dd78fff0a845e8fb614bdb6912a08629f2c323063"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00187
+    original_path: "docs/archive/dgo-ops/docs-root/CLEAN_PACKAGE_MANIFEST.json"
+    size_bytes: 1986
+    sha256: "37e76e67535feaad427602a28f1f6ff976cf0c4330af64518d58ba24ff54dd6e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00188
+    original_path: "docs/archive/dgo-ops/docs-root/CONTRIBUTING.md"
+    size_bytes: 2578
+    sha256: "0dbe0f764a55e36c342d9945375f059eba59d9b2461ae725665291cdbe3853a7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00189
+    original_path: "docs/archive/dgo-ops/docs-root/README.md"
+    size_bytes: 7585
+    sha256: "25a6cfaefcc78e070aa9aa993e5ea77cde9251300dfa9f52e3bcaa884a31476d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00190
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/.htaccess"
+    size_bytes: 522
+    sha256: "4c319d6d89c70800b5b12f1871954a16214ef55cdc9560d9748f6804505124ee"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00191
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/ADMINdashboard.html"
+    size_bytes: 11039
+    sha256: "994d27d179d31eb743c4d1e64330325eb962e0103126c31806d7b51d0cb00b62"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00192
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/brand.css"
+    size_bytes: 2005
+    sha256: "51da868c8da17ec8e0e31f63e2e92048d29576e2f5cce7e20240084345f010e7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00193
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/index.html"
+    size_bytes: 9759
+    sha256: "7154578dcf8be2cb2065dbcb277242fcdeed4452eb08350279508b719695be58"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00194
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/landing.html"
+    size_bytes: 7568
+    sha256: "43d1765ce1c73634750a335f8368aa27f36e48dcba4202b5986eeffd6f0a5034"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00195
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/submit.html"
+    size_bytes: 19809
+    sha256: "0e5fab207003b911415e8bb8f66dd3b9d8155813b05c118e199b73fcc83ca8d4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00196
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/support.html"
+    size_bytes: 14597
+    sha256: "8951a34799667b1af8be8345a840835a756dcc8915dd0d0f9278d79df9cf5122"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00197
+    original_path: "docs/archive/dgo-ops/intelhub.page.gd/htdocs/track.html"
+    size_bytes: 15812
+    sha256: "06d90450cb16635cbb797bf995ac2ce37742790ee56a3d897516c9147933e8fa"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00198
+    original_path: "docs/archive/dgo-ops/manifests/CLEAN_PACKAGE_MANIFEST.json"
+    size_bytes: 1986
+    sha256: "37e76e67535feaad427602a28f1f6ff976cf0c4330af64518d58ba24ff54dd6e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00199
+    original_path: "docs/archive/dgo-ops/templates/Bulk_NITDA.html"
+    size_bytes: 18846
+    sha256: "310dfea9a6747e19f6be65eba4332004f0669f9a0cffb986648b381a75bdc754"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00200
+    original_path: "docs/archive/dgo-ops/templates/EmailTask_NITDA.html"
+    size_bytes: 22927
+    sha256: "3fe791738488a321f5bf10f17557f93851b0c0a38cb4b60efed80276bbdd81c5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00201
+    original_path: "docs/archive/dgo-ops/templates/FLOW_EXPRESSIONS.md"
+    size_bytes: 23522
+    sha256: "69e4135cd7cd079dd1e6ba801c6dd1f0cf6343b06a260f7922a7e9a8e96d94c7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00202
+    original_path: "docs/archive/dgo-ops/templates/Single_Task_NITDA.html"
+    size_bytes: 27002
+    sha256: "c1a471c594d1e172208e0c5766d5493f37f16f33ef65ae4186b3b2dbd81e1c78"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00203
+    original_path: "docs/archive/dgo-ops/templates/index.html"
+    size_bytes: 9452
+    sha256: "bcc3ed41dbc75255249f7e728455bd305e8ae1f95990c7912738fa7d06e1396d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00204
+    original_path: "docs/archive/dgo-ops/templates/app-shell/AppShell.dc.html"
+    size_bytes: 31766
+    sha256: "a2dba10247363795b95c88275edd574164eb932b4b88e348df73e8b6bc790a77"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00205
+    original_path: "docs/archive/dgo-ops/templates/app-shell/ds-base.js"
+    size_bytes: 1472
+    sha256: "5504fba1d86f19a8b0557af22c6deb52e50740764eea9d882315dde006afb9af"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00206
+    original_path: "docs/archive/dgo-ops/templates/app-shell/support.js"
+    size_bytes: 53975
+    sha256: "505f94e08eeccbc87acc6fcc6a47dd9f51fcd74a8d28ab58eb7eb784f7b92efe"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00207
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/internal/evidence/2026-08-31-dynamic-actions-column-evidence.json"
+    size_bytes: 7170
+    sha256: "de71d7fde6cd5968098e3dd083b7f126b282be5128bd6ddd5dc430825999fda5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00208
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/internal/evidence/2026-09-04-origin-check-not-delegable.json"
+    size_bytes: 1964
+    sha256: "48d63d67a374c2517604bd58dcda80e2f1f275b8cb27210005b9c03e00174c3b"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00209
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/internal/evidence/2026-09-18-tenant-flow-inventory.json"
+    size_bytes: 29809
+    sha256: "8ad7188b57a0327bbcc320fa7315e2b162f30ec5bb3254f92a9d715ce34f9431"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00210
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/internal/evidence/2026-09-22-fetchall-authorisation-bypass.json"
+    size_bytes: 6696
+    sha256: "82681f1fb03088ffa05dd84d2fb046ffdbf8bb522123e494b6716b69ad03fc73"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00211
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/internal/evidence/2026-09-24-email-flow-adoption.json"
+    size_bytes: 3499
+    sha256: "4a5102b488a4088895d7358762c80bf71b2f304d87517ed0ec8b4d37882f0b15"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00212
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/internal/evidence/2026-09-24-tenant-remediation-verified.json"
+    size_bytes: 4647
+    sha256: "9e4b5fbe5fe9247156e50f85766f0930d06be555afc4d978b4abbf815508887a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00213
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/internal/evidence/2026-09-27-live-endpoint-wiring.json"
+    size_bytes: 14379
+    sha256: "b799c8cddc07c94c25bbd5a515e51e19d2fd4fb60270a609957ea0f86c638894"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00214
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/notification-instrument/tenant-execution/evidence/connection-verification.json"
+    size_bytes: 514
+    sha256: "336045673a9d97c2b1d37fba2c44fececd1aac18414921ba43ab203684ebcba4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00215
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/notification-instrument/tenant-execution/evidence/notification-test-results.json"
+    size_bytes: 304
+    sha256: "599c5953b2a92cd4c7ba113246cab8945f35d04232a0a0189813e2dde2f8dfce"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00216
+    original_path: "docs/folio-Master-Flows-and-Endpoints/deployment/notification-instrument/tenant-execution/evidence/tenant-inventory.json"
+    size_bytes: 268
+    sha256: "96016a26a01976e8f649961d52be276cb978c9446fca61883bf38546ad0d6dbb"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00217
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-19-provisioning-run.json"
+    size_bytes: 20333
+    sha256: "36a82e1e79ced8ee094d8cb360505c70f11e54347d4ddaadebfd71988c3a6213"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00218
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-30-flow-configuration-list.json"
+    size_bytes: 4014
+    sha256: "3dce7e06d347d3547e6de0e98c4ef70033311251c94e5c1f13a4ab1b7d502164"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00219
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-30-portal-paste-target-conflict.json"
+    size_bytes: 4869
+    sha256: "1114022a9a64526bb7f6fd4ff897298e528b956ad20cd185748ee59069da7d7a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00220
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-31-bridge-superseded-export.json"
+    size_bytes: 3747
+    sha256: "1230f6809ce8591c881c7f7b6494bc6b6bf959002dd4d9bb50e3bf3c17759084"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00221
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-31-portal-paste-target-resolution.json"
+    size_bytes: 6686
+    sha256: "ad7b0f28954bfc411d7ce8ea4b025a238681e305a24c951810915dbfe12d0ef1"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00222
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-31-preflight-first-run.json"
+    size_bytes: 6552
+    sha256: "aea4182d7c781cd60fd62d237920be5098166ded84b73692eeb7cf73b649177f"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00223
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-31-provisioning-run.json"
+    size_bytes: 6586
+    sha256: "b4637af4e97f88d15891392e08bc43cbdf2aae04c6e15ce88119bf3d4d878f07"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00224
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-01-content-approval-counts.json"
+    size_bytes: 4122
+    sha256: "9d7b7fc4ef17ddfdd4ac05cd0677f80b936f2b559d9bb980562f558628c11cba"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00225
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-01-live-vs-package-diff.json"
+    size_bytes: 4781
+    sha256: "0c75325558a756e4d4dd8e88a45a4bdb02539868011905c43614a72e1991f4d0"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00226
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-01-paste-state-by-flow.json"
+    size_bytes: 14379
+    sha256: "47986d34a36dd9c55facc309cb98d2d8bcabba842692d6415df15548593e2d1a"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00227
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-02-provisioning-dry-run.json"
+    size_bytes: 4305
+    sha256: "037c847385417f7e175811b22f2402af5ca01be7d1880cb1ada1e6a8a93ef5fe"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00228
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-03-inline-code-unavailable.json"
+    size_bytes: 4361
+    sha256: "2507f3d046749a59a35ced966d904f3ffd347b8a180df3ef86310f886918bbb0"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00229
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-03-provisioning-apply-run.json"
+    size_bytes: 9510
+    sha256: "66b235e8c46307406ca80f763c12f66326545868d0fbe55429c921df596f8768"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00230
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-04-origin-confirmed.json"
+    size_bytes: 1291
+    sha256: "bbf18a7a96b102261ac3b58891b06f0bb93385389ffadbcde1e43a9370c5915d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00231
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-04-otp-client-flow-mismatch.json"
+    size_bytes: 3256
+    sha256: "e28c2bab67bcd610f2cfc3cba10c11a7f56c9811dbe44dcb75a4fb96f938b9af"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00232
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-04-otp-verify-fresh-build.json"
+    size_bytes: 4995
+    sha256: "135422b6a16d0d78973c302f6706c83fff698926797be217c8a9a2b191b70dfe"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00233
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-05-provisioning-index-run.json"
+    size_bytes: 5550
+    sha256: "7e0c296a50a03ba0282297f09d8804f856c90fcea45bbc5ad720411cc7ddd957"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00234
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-05-scheduled-sweep-run.json"
+    size_bytes: 2301
+    sha256: "fffeb03c899b88929ad3e8c69e5d99d2334e6cb6c00dd8f22a9748269d3fcc60"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00235
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Status_Check_Endpoint__08584137919156416673751623729CU20__flow_run_record.json"
+    size_bytes: 207770
+    sha256: "c201a11e911b1509fd7d250ccb6088207167c97cf25d7438285be6cd05e23203"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00236
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Status_Check_Endpoint__08584138085141450839768565243CU26__flow_run_record.json"
+    size_bytes: 214682
+    sha256: "22791b645afe00d97ecda4f3739afd84a953bbbd87dad5cd78ef3b053e8f6fbc"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00237
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Submission_Endpoint__08584137927608470719525005334CU02__flow_run_record.json"
+    size_bytes: 307174
+    sha256: "5e4afc94ea474c8115c003a5ff5f604d5ba510ebbfa2e062cc12d425d1984a24"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00238
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Support_Endpoint__08584137894738044630941744668CU10__flow_run_record.json"
+    size_bytes: 166501
+    sha256: "5ce127f59574aca59482bfe60aeecf2db50f11fc8a0d3de83c5476b548de39e5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00239
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Support_Endpoint__08584137921492659877481988601CU02__flow_run_record.json"
+    size_bytes: 166894
+    sha256: "91ff4528a8ea9a5d9bd7e784ff803f15fc455003dbad2a75b12ca85c90eed0d8"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00240
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Verification_Confirmation_Endpoint__08584137908565990803803786617CU21__flow_run_record.json"
+    size_bytes: 213313
+    sha256: "4f55a1b4361e9003e1895e97b0bf85b2ab32fc133a5ceae2964a441f25723ffa"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00241
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Verification_Endpoint__08584137896697153410578873304CU25__flow_run_record.json"
+    size_bytes: 214774
+    sha256: "c42f29a3be6ee98f068ff5c6f543fe9620fdb0a43ed9aa07ed8fed5161c9ace4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00242
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Verification_Endpoint__08584137913631713143709681359CU22__flow_run_record.json"
+    size_bytes: 214099
+    sha256: "2bfba987777ed380d0330257ff2727b1a65e7b333e1270a2733cf3a069aec166"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00243
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Verification_Endpoint__08584137913696717377764070442CU01__flow_run_record.json"
+    size_bytes: 214099
+    sha256: "2dfbbf7462edaa1c1fd6ca4c765b1831a71d6ca3153579d5aed5957c7129f0b4"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00244
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Verification_Endpoint__08584137972568216863296945244CU21__flow_run_record.json"
+    size_bytes: 214093
+    sha256: "a5c93517781389b2fa27587162a5e92650b8c3a500bf6a9561e70796a9ca88d8"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00245
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Verification_Endpoint__08584138086136279055431329187CU21__flow_run_record.json"
+    size_bytes: 200299
+    sha256: "a624efad4fe32051761ddd7bd9fd79cc10102552e5c1ca3f7f71faa1dc8edf6e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00246
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/CG_Writeback_Endpoint__08584137910287173665684939547CU17__flow_run_record.json"
+    size_bytes: 192633
+    sha256: "a3f8a10aee162943e107216e2891f73c3fbba47d0a917d270e5dd315e82aaa21"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00247
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs/README.md"
+    size_bytes: 2192
+    sha256: "51c944e88c699cbcf037130d790873d8103e34ffb44d8f8ae211282099e90d30"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00248
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/Fetch_References_And_Lookups__08584121659893083764183371152CU00__flow_run_record.json"
+    size_bytes: 1597364
+    sha256: "a0e95f237bd32abbe9572d61996fcb12960069b8806692c3e989e806d518adb2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00249
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/Fetch_References_And_Lookups__08584126900802193553553972514CU18__flow_run_record.json"
+    size_bytes: 1596221
+    sha256: "15453a8c08182778457cc4febe51072b72eebfeb3de0911bffef6cc4eda900f5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00250
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/GOV-04-Audit-HTTP-Flow-Registry__08584121711625420435303880461CU06__execution_report.json"
+    size_bytes: 741
+    sha256: "772ee5f0b2e72fe8a325803fbaf1e6be830671aad06c0f870125c747a30105a3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00251
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/GOV-06-Registry-Exception-Notification__08584120991102970260555359768CU09__execution_report.json"
+    size_bytes: 800
+    sha256: "7ce4224eba88fa08988bbdde0e128ca5ec824545439fa2e818fe4eb0426434c7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00252
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/GOV-08-Discover-And-Register-HTTP-Consumers__08584121627965591673607458636CU07__execution_report.json"
+    size_bytes: 914
+    sha256: "1aaa8c4612d34c94055e5d1530fda05ef111c5a012b67d2ea6e2b0bc67234337"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00253
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/IP_Create_Task__08584121032392107627328339279CU09__flow_run_record.json"
+    size_bytes: 586702
+    sha256: "aaf1774603b05020024897419c0d64312369f884073f8f2446c2d8aaf3a5e992"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00254
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/Portal_Flow_Telemetry__2026-09-16__evidence-sample.json"
+    size_bytes: 97668
+    sha256: "da3016e6a23fc63162f28ed21ca918a0edd3246a9c0771231d37232293436ac9"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00255
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/Portal_Verify_Confirm__08584147448884678907654224342CU08__flow_run_record.json"
+    size_bytes: 288881
+    sha256: "dafaf6b21606af4f5ba42a072a29c3b3b4606998004d74850d0fdf57482d3e06"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00256
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/README.md"
+    size_bytes: 5608
+    sha256: "22a2f46c3b831155f33a6a0e6853d644256aa0fe19bfa326dc09339f3cdc89f3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00257
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/flow-extraction-report__2026-09-07__credentials-removed.json"
+    size_bytes: 315897
+    sha256: "ae77d374bacd3ec6c368d3f82f5bfa6a09821f135243a763ed56c2dc2994dc4c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00258
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/AI_Document_Processing_20260911185206.zip"
+    size_bytes: 5393
+    sha256: "7e9fc1e11b336f46da68928b7c181a580b6052f7db2761fbd6b637e717573ff0"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00259
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/BULKOPSDATARETRIEVALHTTP_20260911185143.zip"
+    size_bytes: 8678
+    sha256: "1f1856e17fab92b24d8d670e7cd2bf5f63eb4546a7b48e482aaf517ad42d4544"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00260
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_Bulk_Assign_Endpoint_20260911185130.zip"
+    size_bytes: 6470
+    sha256: "df4998ea8154092e46e23f0e0902ea1f5fa6103f75af27e83abcc6a34c7bba2c"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00261
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_Create_Email_Assignment_20260911185152.zip"
+    size_bytes: 27029
+    sha256: "deb9fba16ec205eaaab93cabe72a7e732c442a330d9f031786a87b23eae875b9"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00262
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_Create_Email_Assignment_Endpoint_20260906043757.zip"
+    size_bytes: 26932
+    sha256: "3c4838233d43269889b1ecbebf546878b80e12c545adeee7e3a2533ff69d60bd"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00263
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_Dynamic_Global_Actions_Endpoint_20260912100754.zip"
+    size_bytes: 7412
+    sha256: "75dbe6df72cb4a05e98fd68a68d5573ba2d2ee95ba82e1e5e03e75b341a59336"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00264
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_FETCH_ALL_BOOTSTRAP_20260917225904.zip"
+    size_bytes: 8640
+    sha256: "e2436c097c4c2811e42e366fd56beed1ca6133ca550993efe27b6cb85cd7d384"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00265
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_FETCH_ALL_BOOTSTRAP_20260924035751.zip"
+    size_bytes: 8606
+    sha256: "7c77d3bc19d021c10229f44641c0890f41d77605259b485ccfbf60864c327608"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00266
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_FETCH_ALL__EXTENDED_ENDPOINTFlow_20260911185117.zip"
+    size_bytes: 11896
+    sha256: "2c4f765c860b3b6c9fb4df2aafea9dabb64250d1159b734148e113b625724522"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00267
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_Get_Docs_Endpoint_20260912075831.zip"
+    size_bytes: 5833
+    sha256: "e28918670d7947cfcc8d258dbe84804720ed4b91e2a2ff17827fd645f9ed5f5d"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00268
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_Get_Docs_Endpoint_20260917114919.zip"
+    size_bytes: 5834
+    sha256: "867b93747bf298ecab0e12f6bac133f2b36b456b70d90efde84422395dd47aba"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00269
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_SCAN_INTAKE_20260904032347.zip"
+    size_bytes: 7436
+    sha256: "ac8544880734421247cc133c1204e42bfee9414108a6bc09ea62210c327f8de2"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00270
+    original_path: "docs/folio-Master-Flows-and-Endpoints/exports/IP_Subsidiary_Actions_Endpoint_20260905193834.zip"
+    size_bytes: 4662
+    sha256: "c881b9a4d066ab81c06630c894eee124e48437879424f2fd08fecce771629a19"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00271
+    original_path: "docs/folio-Master-Flows-and-Endpoints/surfaces/internal/import-package/DGO_SCHEDULED_SWEEP.zip"
+    size_bytes: 7305
+    sha256: "efa797209dfff670731ad4d11111ecad5f61e5826ae1a763c4d36bdf4043dcd2"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00272
+    original_path: "docs/reference/foundational/flows/response-samples/Compose_Standard_Respons_Fetch_Documents_Main_Data_Flow_HTTP_POST (1).txt"
+    size_bytes: 1164587
+    sha256: "bf2139facfe49f1eea7c16829c2bc9bd9d0c1db70a737b780e50966477012ef5"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00273
+    original_path: "docs/reference/foundational/flows/response-samples/DGO-Assign-Rebuild-flows-Segment-Structured.txt"
+    size_bytes: 2973
+    sha256: "b94e43bbd4e43a095ed24fb291c0a123d28cf300bfcaf2b50b4058f5a152d709"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00274
+    original_path: "docs/reference/foundational/flows/response-samples/Documents Data and Assignments Flows.txt"
+    size_bytes: 15709
+    sha256: "eeb688e881e635ee4f86e30a7f265d633129d0ea9f3d0f072443d50c36489367"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00275
+    original_path: "docs/reference/foundational/flows/response-samples/Dynamic_Global_Actions_Flow_Schema.txt"
+    size_bytes: 18113
+    sha256: "e7cb041cfd8f302b953a4cb75768df0825626dcb9bef665381f51b342f331142"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00276
+    original_path: "docs/reference/foundational/flows/response-samples/E02_Get_Docs_Flow_Detail.docx"
+    size_bytes: 51998
+    sha256: "53183dd9f71adf6dea7cfa8dfb3c4b709d8063cc0b3ecb4b508fd9ceeb9cb6b8"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00277
+    original_path: "docs/reference/foundational/flows/response-samples/E03_fetch_tasks_Flow_Detail.docx"
+    size_bytes: 41955
+    sha256: "1d294d9d25cb7ee5a7e7528d044251fc9a6fc01ab3b7010f80abfb19af8eeeee"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00278
+    original_path: "docs/reference/foundational/flows/response-samples/E04_get_emails_Flow_Detail.docx"
+    size_bytes: 44966
+    sha256: "5c17f742bcfe7e5a035f849cafc24ff14120d07a626ca9228a3e949c6c35af36"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00279
+    original_path: "docs/reference/foundational/flows/response-samples/Fech_Email Attachments_Flow_Schema.txt"
+    size_bytes: 164
+    sha256: "f8ba56df10c9cdeb4aadfef058d0ba5d3b33d38f6b338f0d314dee059e513e84"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00280
+    original_path: "docs/reference/foundational/flows/response-samples/Subsidiary_Actions_Flow_Schema.txt"
+    size_bytes: 11016
+    sha256: "c4915ec393cd05c13cf9c5860e1b4b1fc746b20f974249e5145c90e1a26639fd"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00281
+    original_path: "docs/reference/foundational/flows/response-samples/WEB Get All Data docs emails tasks flow response.txt"
+    size_bytes: 253294
+    sha256: "4be56baf0bc2d91474db3d5bce3d1b8d57f2ee375302fdaafc3bea4ecce91621"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00282
+    original_path: "docs/reference/foundational/flows/response-samples/WEB Get All Matrix Data & References POST Flow response.txt"
+    size_bytes: 2559068
+    sha256: "279ed737620191bc6ffff5ef0430b7e4258870bcf43084b0191dedea765438fa"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00283
+    original_path: "docs/reference/foundational/flows/response-samples/WEB Get All Reference Data POST flow response (2).txt"
+    size_bytes: 97082
+    sha256: "512ba6e1ab7f173b0aa1a11f217675e5f22b3121d2863df019ffda056fded3fd"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00284
+    original_path: "docs/reference/foundational/flows/response-samples/WEB Get All Reference Data POST flow response.txt"
+    size_bytes: 96996
+    sha256: "cc5fc60558aa6dacc71b4ecf1fe886bd4c0fd49a3228855fd861a227ba0a788e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00285
+    original_path: "docs/reference/foundational/flows/response-samples/WEB Get Docs  HTTP GET Response.txt"
+    size_bytes: 4651628
+    sha256: "7cd5960c908a3a28022f3e207093b8f9062575e4e620f825eb08f0b6ec79b3d1"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00286
+    original_path: "docs/reference/foundational/flows/response-samples/WEB Get Emails HTTP POST flow response (3).txt"
+    size_bytes: 39709
+    sha256: "ba521e453aed2987fe48ac95e93e6e3a4eb49ff5798b81334ad32e761d4e83ad"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00287
+    original_path: "docs/reference/foundational/flows/response-samples/WEB Get Emails HTTP POST flow response.txt"
+    size_bytes: 86426
+    sha256: "e555a0b8e0f422df80e46b799d1ab053183ba3cb958c5da79bfe94b6651a1bd3"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00288
+    original_path: "docs/reference/foundational/flows/response-samples/Web - Get Docs (HTTP POST) flow ressponse (1).txt"
+    size_bytes: 115816
+    sha256: "b8ae9e4cafa9ecba23538f1e971caeb5cb668b385ca3e290d64c6679f8a9adf7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00289
+    original_path: "docs/reference/foundational/flows/response-samples/Web - Get Emails Standard Flow POST HTTP Response.txt"
+    size_bytes: 89679
+    sha256: "6594a7c9aff618fe5df6bb2149391d333b44e594da04dc2b353becc65726cc59"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00290
+    original_path: "docs/reference/foundational/flows/response-samples/Web - Get Tasks POST Flow Response (1) (1).txt"
+    size_bytes: 118189
+    sha256: "503f195a876372f2a1e9212ecaf614926aaf1377aeb570477bc6d9fc067afd5e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00291
+    original_path: "docs/reference/foundational/flows/response-samples/Web - Get Tasks POST Flow Response (1).txt"
+    size_bytes: 1171372
+    sha256: "9df1f58efc45ba23ed6a9752f602fd513b81ee6bcdb873cdaedb6cbc29d65adc"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00292
+    original_path: "docs/reference/foundational/flows/response-samples/Web - OTP Generate__08584174902698877180098159145CU186__Compose_HTTP_Response.txt"
+    size_bytes: 140221
+    sha256: "12e97c2cddcd7938831c42129cf47bd6ce52e5439984c265539bebd4123be4b0"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00293
+    original_path: "docs/reference/foundational/flows/response-samples/Web - OTP Generate__08584181217179992514288253195CU184__varResponse.json"
+    size_bytes: 690
+    sha256: "c2d52267027d1a92351ce8da6ead6ae8ae11261869e8fb17ea6e9f13804d73d7"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00294
+    original_path: "docs/reference/foundational/flows/response-samples/Web - OTP Verify__08584181215974801830907317949CU172__varResponse.json"
+    size_bytes: 534
+    sha256: "a64a9f42562c837d9261210c4723b7af4e8f2fd4c932094af432758f0ecf022d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00295
+    original_path: "docs/reference/foundational/flows/response-samples/flow_b_acknowledge_task.http.json"
+    size_bytes: 5930
+    sha256: "120ea13e85957acb28ce675b4802e7e0899cb1027dca18a83b7d1699c8b06f73"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00296
+    original_path: "docs/reference/foundational/flows/run-records/README.md"
+    size_bytes: 5435
+    sha256: "29fd3af2d03360e56993590b7e3fe7bae87f40d215c7dde1a44403e2030ee47c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00297
+    original_path: "docs/reference/foundational/flows/run-records/deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64/definition.json"
+    size_bytes: 122210
+    sha256: "686471a42a8af417e2b00c3d8c972bf65d15ee3bce732faf3ba1585d94155753"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00298
+    original_path: "docs/reference/foundational/flows/run-records/deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64/response.json"
+    size_bytes: 563
+    sha256: "3041125896a5d6133842ba0db9e2d3ebcc45903507cb8de1be9f012b4df1889c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00299
+    original_path: "docs/reference/foundational/flows/run-records/deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64/trigger_schema.json"
+    size_bytes: 2730
+    sha256: "6b746e829863d07218845a54ad9021324c9463c08e04b018aa0913afa22773c9"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00300
+    original_path: "docs/reference/foundational/flows/run-records/deployed_create_task__08584160987852269791356030937CU197/definition.json"
+    size_bytes: 109122
+    sha256: "bdf3a9f8b3bd29617811b9b77cf4e20cda3f603f2eb8074b660de761d5f48471"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00301
+    original_path: "docs/reference/foundational/flows/run-records/deployed_create_task__08584160987852269791356030937CU197/response.json"
+    size_bytes: 585
+    sha256: "b86544e53400af90621a9714a3c3cc2e6aa2527ddf9c6c69b9df5ca1b498d03d"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00302
+    original_path: "docs/reference/foundational/flows/run-records/dgso_incoming_ai_processing_provisioning_report_2026-08-04_1/definition_raw.json"
+    size_bytes: 238852
+    sha256: "19fe081f5cc18e0b822f5653b5972a5236ea2b480ea92572d7b6012b57a4ffa2"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00303
+    original_path: "docs/reference/foundational/flows/run-records/dgso_incoming_ai_processing_provisioning_report_2026-08-04_1/standard.html"
+    size_bytes: 484230
+    sha256: "44564ea87d0fad4fb5e3454f7752684cc5ab59b9a29ce0b68e118c0199003c3c"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00304
+    original_path: "docs/reference/foundational/flows/run-records/fetch_emails_post__08584160938057055146646161713CU198/trigger_schema.json"
+    size_bytes: 1543
+    sha256: "51412164401d23ad70380e8525721aa540ea7d1a64eed379b760bb4e8dc58628"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00305
+    original_path: "docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/definition.json"
+    size_bytes: 146821
+    sha256: "54957af5981d7aa49a8ac8c26f9dcdf43c8d0c15457266011a6a3e41cd67782e"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00306
+    original_path: "docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/response.json"
+    size_bytes: 7983
+    sha256: "8d1f413fd396d3ced28051252622388edd50ea7696373f205fae5ef7a8724d46"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00307
+    original_path: "docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/trigger_schema.json"
+    size_bytes: 3163
+    sha256: "f5bfce48699fcd0cb0888996c01e7a1958cea03096db11b1028a48a2af9890be"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00308
+    original_path: "docs/reference/foundational/lineage/Obsidian_Pro_Active_v7.zip"
+    size_bytes: 1629946
+    sha256: "7da25cc6efe349691b0e4707d4eca9e120fb87618a5b8274a9db95dbfa411ad6"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00309
+    original_path: "docs/folio-Master-Flows-and-Endpoints/evidence/email-related-task-workflow-remediation.md"
+    size_bytes: 1744
+    sha256: "4cf149c30ec8d9626767e55630f3877212e3b2c2d99c2cd0daa1881304b0beff"
+    storage_status: external_migration_required
+    disposition_reason: "Historical/runtime evidence removed from active folio"
+  - evidence_id: EVD-00310
+    original_path: "mailer/flows/packages/DGO_MAIL_AUTH.zip"
+    size_bytes: 8428
+    sha256: "a89263a5c49ca882bf5fc1b6949b9f045f8920202832807cc1e85fef24a81210"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00311
+    original_path: "mailer/flows/packages/DGO_MAIL_DATA.zip"
+    size_bytes: 7731
+    sha256: "d430909117d8e3af6b5d5a4f45c5b3524379935337fc4c7e629371bea9bffea7"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00312
+    original_path: "mailer/flows/packages/DGO_MAIL_DIRECTORY.zip"
+    size_bytes: 6303
+    sha256: "61db264701320b47aded3a6fbdd065fac1ff60247e68cbf6522f6625c22ba4b9"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00313
+    original_path: "mailer/flows/packages/DGO_MAIL_LOG.zip"
+    size_bytes: 5892
+    sha256: "87b9dec48bca9663a55458fa54ec353415a840d2bd27054c04b321473cfec386"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00314
+    original_path: "mailer/flows/packages/DGO_MAIL_PROVISION.zip"
+    size_bytes: 7984
+    sha256: "ab46f7cadab7e2bcd7cc0ef9b3d28ea30931ab375b6f3e7a14b29db5b2355620"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00315
+    original_path: "mailer/flows/packages/DGO_MAIL_SEND.zip"
+    size_bytes: 7808
+    sha256: "3c014557cf7d56e9ad6bce73f6496632b98078c0bdd16c1bad0baedfc594a4bf"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00316
+    original_path: "mailer/flows/packages/DGO_MAIL_TEMPLATES.zip"
+    size_bytes: 6097
+    sha256: "0cc889be6cc2287d9370ffe48576f395d0bdcc040f9491be1675e84e483ffb6d"
+    storage_status: external_migration_required
+    disposition_reason: "Binary/generated distribution format excluded from authoritative folio"
+  - evidence_id: EVD-00317
+    original_path: "releases/dgo-correspondence-mailer-2.1.3.zip"
+    size_bytes: 670536
+    sha256: "8c66b2bc7a4a2fc301f27b4efd9ab364aaee6103b61c4e2153576f28540cc34a"
+    storage_status: external_migration_required
+    disposition_reason: "Release artifact belongs in release storage"
