@@ -457,3 +457,59 @@ nonregular/oversized/restricted paths, then read each blob with git cat-file.
 Call inspect_content(path, bytes, counts, budget) with shared Counter counts
 and budget={"bytes":0,"members":0}; print counters only, never raw data/matches.
 The integrity/source tests are reproducible through npm run test:gate.
+
+Named-commit verification and remaining work
+-------------------------------------------
+Source/test commit: ae0e468c64bbe2e7ccfada9255b0b479a2779e07.
+Environment: Node v22.23.3, Python 3.12.3. Working tree was clean after checks.
+Run from /home/runner/work/Workspace_DGO/Workspace_DGO, with npm lifecycle
+hooks disabled via npm_config_ignore_scripts=true:
+
+Command | exact result
+npm run test:gate | exit 0; 29/29 regressions pass, including six reconciliation tests
+npm run verify:offline | exit 1; 11 scripts pass, three fail
+npm run audit:tracked | exit 1; 5479 tracked, 61 flagged files (34 credential-pattern, 26 uninspected-container, one private-config-review)
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:hygiene | exit 1; four assertions pass, two fail (36 runtime entries and 20 large-file entries); governance presence passes
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:refs | exit 1; four assertions pass, one fails; 55 live broken occurrences across 31 targets; 1795 extracted references across 838 canonical files; archive pin zero passes
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:offline-browser | exit 127; playwright not installed; no browser cases executed
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s /home/runner/work/Workspace_DGO/Workspace_DGO/tests -v | exit 0; 8/8 guard regressions pass
+
+The three failing allowlist scripts are test:hygiene, test:refs and test:node;
+test:node stops at hygiene, while the allowlist independently runs later checks.
+The 61 whole-checkout heuristic flags are not 61 verified credentials, and
+are not the cleaned-upload scan result. No values were printed or probed.
+Secret-scanning tool: no secrets detected in changed files before commits.
+CodeQL tool: no analyzable changed code detected; no analysis performed. This
+is a tooling coverage limitation, not a static-analysis pass or clearance.
+No dependency installation, setup hook or remote-capable fallback was used.
+
+Remaining source blockers and targeted next decisions:
+- H2: all 36 runtime dispositions remain open. Governance can adopt or reject
+  the supplied exact-path exclusions for canonical retention; no fresh request
+  for the already supplied curation package is necessary.
+- H3: all 20 governance entries remain open. Review the 17 exact exclusions,
+  L03/L19 audience-specific identity metadata, and whether L04 is needed as a
+  historical reference. Do not assume a retained or historical-approved label
+  authenticates current approval; do not generate or recover the release ZIP.
+- R1: R06 is resolved by the genuine inventory recovery; 55 occurrences across
+  31 targets remain. Twenty-five exact retained candidates cover 46 of those
+  occurrences and need content/transitive-dependency review before further
+  narrow recovery. This is engineering review, not a demand for blanket owner
+  approval of ordinary nonsecret documentation.
+- For the six excluded targets (nine occurrences), documentation/governance
+  owners must decide canonical retention or link retirement: R01,R05,R13 audit
+  references; R34/R44/R46 FLOW_ADOPTION and R33/R56 HEALTH_CONTRACT intended
+  contract equivalence; R52 a nonsecret endpoint contract/locator or retirement.
+  No replacement document has been established as semantically equivalent.
+- H4 source presence is corrected. Any external inventory assertion actually
+  relied on for acceptance still needs the relevant evidence owner's review;
+  the file does not supply missing payloads or act as an approval attestation.
+- V1/V2: required source checks still fail, isolated browser cases are unrun,
+  whole-checkout flags remain to be reviewed in their own scope, and static
+  analysis was not performed. Existing external acceptance rows in the closure
+  register remain separate; this work neither grants nor withdraws approvals.
+
+Only one canonical file was recovered, unchanged. No ratchet, approved-large-file
+record, reference exclusion/threshold/archive pin, setup, deployment or release
+gate was weakened. This addendum reports source observations and limitations;
+it makes no independent release decision.
