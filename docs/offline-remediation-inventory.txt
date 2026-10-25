@@ -1,3 +1,7 @@
+UPLOAD RECONCILIATION: see the dated addendum at the end of this file.
+The original inventory below records the prior review's position and results,
+not a new release decision or a finding about the cleaned upload.
+
 SOURCE-ONLY INVENTORY — 2026-10-25 — RELEASE NO-GO
 
 Review baseline: repository commit 187fb20 (merged PR #4).
@@ -221,3 +225,455 @@ R53 | scripts/runbook-parts/60-minimal-pilot.md:157 | ../../docs/folio-Master-Fl
 R54 | scripts/runbook-parts/60-minimal-pilot.md:158 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/UPLOAD__CG_Upload_Endpoint__df82e331.paste.json
 R55 | tools/admin-centre/README.md:26 | ../../docs/admin-centre/README.md
 R56 | tools/flow-capsule/README.md:130 | ../../docs/folio-Master-Flows-and-Endpoints/reference/HEALTH_CONTRACT.md
+
+FOLIO UPLOAD RECONCILIATION — 2026-10-25
+
+Scope and authority
+-------------------
+Uploaded evidence: workspace-source commit
+b60f9e0e177d092279f87c6f79be2e2a78ef1a8b.
+Initial integrity-test commit: 66c84159994602ec543f4eefa5655bd21e057cb4.
+The inspected upload paths have no changes between these commits.
+The upload was supplied for this reconciliation; no repeat request for the same
+package is needed. Repo_root/ remains canonical. README.md's proposal to use the
+upload as the active baseline is a package position, not an adopted reset.
+APPROVED_AUTHORITY_REVIEW.md:19-29 permits screened provenance-checked recovery
+and reserves historical record disposition to governance/documentation owners.
+Its release wording is a document position, not this review's release decision.
+No conclusion about credential exposure follows from a classification label.
+
+Verified package integrity (not authentication of upstream assertions)
+--------------------------------------------------------------------
+MANIFEST.json: 1,421 unique retained paths; actual tracked repository/ path set
+matches exactly; all sizes and SHA-256 hashes match; total 71,437,610 bytes.
+SOURCE_CURATION_REGISTERS/RETAINED_MANIFEST.csv: same paths, sizes and hashes.
+FULL_DECISION_REGISTER.csv: 1,421 RETAIN and 617 EXCLUDE rows.
+EXCLUSION_REGISTER.csv: 617 EXCLUDE rows. These are supplied curation decisions,
+not independent findings about withheld bytes or canonical retirement approvals.
+SHA256SUMS.txt: all 1,441 listed package members match, including retained payload
+and supplied review/register metadata. The index excludes itself as documented.
+WITHDRAWAL_REGISTER.csv: 37 WITHDRAW/NO rows; none of those exact paths or hashes
+occurs among the 1,421 retained payload files. This alone does not prove absence
+of arbitrary embedded fragments or transformed copies.
+VALIDATION_REPORT.md's retained count/size/hash and withdrawal path/hash claims
+are reproduced to that extent. The two unavailable original exports and their
+complete histories were not independently reconstructed or authenticated.
+
+Before selective recovery: 837 canonical tracked files; 795 shared relative paths,
+788 byte-identical, 7 different, 626 uploaded-only, 42 canonical-only.
+The seven differences are README.md, package.json, tests/check-imports.mjs,
+tests/references.test.mjs, tests/repo-hygiene-baseline.json,
+tests/repo-hygiene.test.mjs, and the previously sanitised SCAN_INTAKE fixture
+at docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/
+SCAN_INTAKE__IP_SCAN_INTAKE__5504d7f9.paste.json (one path, wrapped here).
+Do not overwrite those fixes, reset the duplicate ratchet, or replace the
+sanitised fixture with its uploaded upstream bytes. LICENSE bytes match.
+
+H2 runtime dispositions (IDs map to the exact H01-H36 paths above)
+---------------------------------------------------------------
+All 36 remain absent/untracked in Repo_root/ AND absent from repository/.
+Every exact path has an EXCLUDE row in both supplied decision registers:
+H01,H02,H04-H36: excluded as raw harvest/presentation/legacy assessment (35).
+H03: excluded as security-sensitive (1); this is the curator's classification,
+not a fresh scan of an unavailable payload.
+This supplies previously missing disposition context, not the withheld records.
+Governance need only decide whether to adopt these exact exclusions as canonical
+retirement/retention dispositions, including overlaps L15-L18, or identify an
+authorised nonsecret recovery. Do not recreate operational records or run the
+baseline writer merely to pass. All 36 baseline entries remain unchanged.
+
+H3 large-file dispositions (IDs map to the exact L01-L20 paths above)
+-------------------------------------------------------------------
+L01,L02,L05,L13,L14: absent; exact EXCLUDE/security-sensitive curation rows.
+L06-L12: absent; exact EXCLUDE/raw evidence-capture-export-template corpus rows.
+L15-L18: absent; exact EXCLUDE/raw harvest rows; overlaps H01,H11,H14,H20.
+L20: absent; exact EXCLUDE/generated-release-archive row; no package recovery.
+L03,L04,L19: exact retained paths, but retained does not mean approved here:
+L03 | 9,082,986 bytes | 61c1f3aca3d1c58260496e34a8c437d19f88d4ed37c7312560e117a93a01798e
+L04 | 1,043,089 bytes | 2db1939ad083c0e1427880076affdd7905792bd36c893d40c093106b0661f49f
+L19 | 4,837,134 bytes | 6b822c107d28429395c7b2267fdd1b60fdfd13f69024072663b6c14172e3d1ba
+These are version-1-only according to MANIFEST.json; hashes and actual sizes
+match. L04 is below the check's 1,048,576-byte threshold, despite its historical
+large-file listing. No absent file's size was inferred from prose.
+Provenance: MANIFEST.json:5647,6447,7677; RETAINED_MANIFEST.csv:1118,1284,1368;
+SHA256SUMS.txt:585,665,788. Paths are prefixed repository/ in the checksum index.
+The canonical approved-large-files.json is byte-identical to the uploaded copy;
+it still carries historical approval strings, not authenticated current review.
+Owner action is per-entry adoption/recovery/retirement, not a new blanket list.
+No large-file record or baseline was changed.
+
+R1 exact-path reconciliation (all 56 occurrences / 32 targets)
+------------------------------------------------------------
+Paths below are relative to the canonical root. For RETAIN candidates the
+uploaded path is exactly repository/<target>, with matching MANIFEST.json,
+RETAINED_MANIFEST.csv and SHA256SUMS.txt bytes/hashes; not a similarly named
+substitute. All 26 are version-1-only in the supplied manifest. Their source
+assertions are not authenticated current acceptance. A retained candidate is
+not a resolved canonical link. None of these 32 targets is in the withdrawal
+register. Normalization preserves the checker's source-relative resolution.
+
+Disposition codes:
+D = retained documentation candidate; no automatic canonical adoption or
+    assumption that transitive references/operational claims are current.
+G = retained governance/readiness/adoption records; review historical scope,
+    referenced unavailable evidence and current authority before adoption.
+F = retained flow input; requires the same configuration/identity screening
+    and derivative provenance discipline as existing sanitised recovery inputs.
+A = absent; curator excluded historical audits/superseded snapshots. Review
+    canonical retention or explicit link retirement; no synthetic audit.
+C = absent; curator excluded raw capture/export/template corpus. Establish
+    intended contract equivalence or explicit link disposition, not name reuse.
+S = absent; curator excluded as security-sensitive. No raw recovery or probing;
+    use a reviewed nonsecret contract/locator or explicit link disposition.
+
+Occurrences | normalized target | disposition
+R10,R15 | docs/PLATFORM.md | D
+R28 | docs/README.md | D
+R24,R55 | docs/admin-centre/README.md | D
+R14,R29 | docs/architecture/AUTHENTICATION_CONTRACT.md | D
+R31 | docs/architecture/ESSENTIALS_MAP.md | D
+R32 | docs/architecture/LAYOUT_REVIEW.md | D
+R07 | docs/architecture/PLATFORM_ACCESS_SPEC.md | D
+R23 | docs/architecture/VAULT_ADOPTION.md | D
+R13 | docs/audits/CAPABILITY_ASSESSMENT_R11.6.md | A
+R05 | docs/audits/folio-cleanup-2026-09-30/ | A (four excluded descendants)
+R01 | docs/audits/remaining-refs-merge-2026-10-01.md | A
+R19 | docs/deployment/OUTSTANDING_SOURCES.json | G
+R11,R16,R43 | docs/deployment/PLAN.md | D
+R18 | docs/deployment/PRODUCTION_READINESS_REGISTER.json | G
+R03,R04,R12,R17,R21,R25,R26,R27,R30,R49 | docs/deployment/RUNBOOK.md | D
+R20 | docs/deployment/outstanding-rollup.json | G
+R02 | docs/folio-Master-Flows-and-Endpoints/README.md | D
+R51 | docs/folio-Master-Flows-and-Endpoints/deployment/governance/GOVERNANCE-STATUS.md | G
+R50 | docs/folio-Master-Flows-and-Endpoints/deployment/governance/WHAT-WAS-DONE.md | G
+R35,R38,R40 | docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/README.md | D
+R53 | docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json | F
+R54 | docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/UPLOAD__CG_Upload_Endpoint__df82e331.paste.json | F
+R36,R39,R41 | docs/folio-Master-Flows-and-Endpoints/packages/identification-phase4/README.md | D
+R34,R44,R46 | docs/folio-Master-Flows-and-Endpoints/reference/FLOW_ADOPTION.md | C
+R33,R56 | docs/folio-Master-Flows-and-Endpoints/reference/HEALTH_CONTRACT.md | C
+R52 | docs/folio-Master-Flows-and-Endpoints/registers/endpoint-register.json | S
+R47 | docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json | G
+R37,R42,R45,R48 | docs/folio-Master-Flows-and-Endpoints/registers/flow-retirement.json | G
+R06 | docs/governance/evidence-register.yaml | G (H4 inventory recovered unchanged; not approval)
+R22 | docs/reference/ADMIN_SUITE.md | D
+R08 | docs/reference/PLATFORM_NAMING.md | D
+R09 | docs/reference/PLATFORM_REGISTER.html | D
+
+Result: 26 exact retained candidates cover 47 occurrences; six absent targets
+cover nine occurrences. RUNBOOK accounts for ten occurrences, not ten targets.
+Uploaded claims that other retained contracts replace excluded material do not
+establish byte or semantic equivalence for these six missing intended targets.
+
+H4 screened recovery and content review
+---------------------------------------
+repository/docs/governance/evidence-register.yaml exists at the pinned upload:
+112,652 bytes; SHA-256
+24c275e6362a39f041a2570786e53bd73cd24e5ebc7f9671bb8ae7c6d59442c3.
+Provenance: MANIFEST.json:6037; FULL_DECISION_REGISTER.csv:1732;
+RETAINED_MANIFEST.csv:1244; SHA256SUMS.txt:624. It is RETAIN/version-1-only.
+The reviewed content is 317 external-storage inventory records with original
+paths, hashes and disposition metadata. No affirmative current approval was
+established; approval-related references are historical filenames, not sign-off.
+Value-free screening found no email-shaped, GUID-shaped, URL-literal or
+credential-field-name matches, complete signed-query or production-host matches.
+This is not exhaustive sensitivity clearance: filenames/narratives can still
+reveal organisational context. No listed external payload was recovered.
+
+The user's supplied remediation scope and this exact retained, screened source
+support narrow inventory recovery, not adoption of upstream approvals. The file
+was copied unchanged only to the previously absent canonical path.
+folio-recovery-manifest.json pins the single-file boundary and limitations;
+tests/folio-reconciliation.test.mjs checks source/final hashes and sizes.
+This corrects canonical H4's missing-file observation and R06, not external
+evidence acceptance. The upload's authority review's "absent" wording describes
+the earlier canonical state; it is not absence from the uploaded repository/.
+
+No other uploaded candidate was copied. L03 contains substantial tenant-site
+and identity metadata, including decoded payloads; L19 contains identity-shaped
+metadata and inherited validation labels. No usable credential was established
+in either, but credential-pattern absence is not audience-specific disclosure
+clearance. L04 has no screened credential/identity literals and could serve as
+a historical reference with caveats; its inherited implementation/approval prose
+was not promoted into a current canonical governance claim. Its restoration is
+not needed by a currently failing reference. D/G/F candidates above require
+content/dependency-specific review before a further focused recovery; they are
+not blanket-authorized by a passing scan.
+
+Independent bounded offline screening
+-------------------------------------
+Pinned Git blobs were read without running uploaded code, setup, devcontainers,
+postCreateCommand, wiring, packaging, deployment, tenant requests, remote smoke,
+or credential probes. Existing scripts/release_gate.py inspect_content API
+was inspected first and used in memory, not its whole-checkout audit command.
+
+Scope | original files | original bytes | visits incl decoding | inspected bytes
+retained repository/ | 1421 | 71437610 | 1612 | 75144930
+requested metadata/registers | 9 | 1751802 | 9 | 1751802
+total | 1430 | 73189412 | 1621 | 76896732
+
+Supported forms: 106 base64 data-URL payloads decoded, three ZIP/OOXML containers
+opened, 85 archive-member visits; no extraction to disk. No exact withdrawn-file
+hash was found among originals or successfully decoded/container items.
+Bounds: 32 MiB/item, 256 MiB cumulative, 20,000 visits, recursion depth four.
+One unscannable event was investigated: a short regex-source fragment in
+repository/mailer/js/sanitize.js:31, not an actual opaque encoded payload.
+
+Complete signed-query matches: zero using the existing case-insensitive
+word-boundary sig/equals rule with >=20 URL-safe characters and up to four
+percent/HTML decoding rounds. Local-config filename matches: zero.
+Supplemental private-key/GitHub-token/AWS-key patterns and quoted assignments
+to password/passwd/client_secret/api_key/access_token (>=8 characters): zero.
+These rules are not an exhaustive secret detector or the unavailable original
+package scanner definition.
+
+The SECURITY_REVIEW.md "one bearer-like match" points to the identification
+test. Five quoted occurrences at lines 490,510,516,518,522 are in-memory proof
+fixtures: four seeded cases and one rejection case. No usable credential was
+established; no value is reproduced here. A broader bearer-word rule (>=8
+token-alphabet characters) finds 126 occurrences across 79 retained files,
+largely prose/fixtures; >=20 yields three occurrences in estate-apply.test.mjs,
+also test fixtures. The package's exact "one" is not reproducible without its
+matcher definition, not a demonstrated additional credential exposure.
+
+A broader host-shaped-URL rule for the two Power Platform/Logic host families
+finds 14 occurrences across ten retained files, including templates, regexes
+and tests. Thus the package's unqualified zero-host-pattern assertion is not
+reproduced under that broader rule; none proves an authenticated live endpoint.
+Pattern flags, identity metadata, classification labels and verified credentials
+are distinct findings. No classification-label-based exposure claim is made.
+
+Limitations: no original-export authentication, comprehensive history review,
+credential validity/revocation testing, arbitrary base64/obfuscation, unsupported
+compression, encrypted-content analysis, or exhaustive sensitive-narrative review.
+No ignored/out-of-scope files are cleared. Absence of a match is not clearance.
+
+Reproduction of existing scanner counts (not the supplemental classifiers):
+Use python3 -B in the repository root, load the inspected scripts/release_gate.py
+module, enumerate pinned blobs via git ls-tree -rlz b60f9e0 -- repository
+MANIFEST.json SHA256SUMS.txt SOURCE_CURATION_REGISTERS WITHDRAWAL_REGISTER.csv
+SECURITY_REVIEW.md VALIDATION_REPORT.md APPROVED_AUTHORITY_REVIEW.md, reject
+nonregular/oversized/restricted paths, then read each blob with git cat-file.
+Call inspect_content(path, bytes, counts, budget) with shared Counter counts
+and budget={"bytes":0,"members":0}; print counters only, never raw data/matches.
+The integrity/source tests are reproducible through npm run test:gate.
+
+Named-commit verification and remaining work
+-------------------------------------------
+Source/test commit: ae0e468c64bbe2e7ccfada9255b0b479a2779e07.
+Environment: Node v22.23.3, Python 3.12.3. Working tree was clean after checks.
+Run from /home/runner/work/Workspace_DGO/Workspace_DGO, with npm lifecycle
+hooks disabled via npm_config_ignore_scripts=true:
+
+Command | exact result
+npm run test:gate | exit 0; 29/29 regressions pass, including six reconciliation tests
+npm run verify:offline | exit 1; 11 scripts pass, three fail
+npm run audit:tracked | exit 1; 5479 tracked, 61 flagged files (34 credential-pattern, 26 uninspected-container, one private-config-review)
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:hygiene | exit 1; four assertions pass, two fail (36 runtime entries and 20 large-file entries); governance presence passes
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:refs | exit 1; four assertions pass, one fails; 55 live broken occurrences across 31 targets; 1795 extracted references across 838 canonical files; archive pin zero passes
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:offline-browser | exit 127; playwright not installed; no browser cases executed
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s /home/runner/work/Workspace_DGO/Workspace_DGO/tests -v | exit 0; 8/8 guard regressions pass
+
+The three failing allowlist scripts are test:hygiene, test:refs and test:node;
+test:node stops at hygiene, while the allowlist independently runs later checks.
+The 61 whole-checkout heuristic flags are not 61 verified credentials, and
+are not the cleaned-upload scan result. No values were printed or probed.
+Secret-scanning tool: no secrets detected in changed files before commits.
+CodeQL tool: no analyzable changed code detected; no analysis performed. This
+is a tooling coverage limitation, not a static-analysis pass or clearance.
+No dependency installation, setup hook or remote-capable fallback was used.
+
+Remaining source blockers and targeted next decisions:
+- H2: all 36 runtime dispositions remain open. Governance can adopt or reject
+  the supplied exact-path exclusions for canonical retention; no fresh request
+  for the already supplied curation package is necessary.
+- H3: all 20 governance entries remain open. Review the 17 exact exclusions,
+  L03/L19 audience-specific identity metadata, and whether L04 is needed as a
+  historical reference. Do not assume a retained or historical-approved label
+  authenticates current approval; do not generate or recover the release ZIP.
+- R1: R06 is resolved by the genuine inventory recovery; 55 occurrences across
+  31 targets remain. Twenty-five exact retained candidates cover 46 of those
+  occurrences and need content/transitive-dependency review before further
+  narrow recovery. This is engineering review, not a demand for blanket owner
+  approval of ordinary nonsecret documentation.
+- For the six excluded targets (nine occurrences), documentation/governance
+  owners must decide canonical retention or link retirement: R01,R05,R13 audit
+  references; R34/R44/R46 FLOW_ADOPTION and R33/R56 HEALTH_CONTRACT intended
+  contract equivalence; R52 a nonsecret endpoint contract/locator or retirement.
+  No replacement document has been established as semantically equivalent.
+- H4 source presence is corrected. Any external inventory assertion actually
+  relied on for acceptance still needs the relevant evidence owner's review;
+  the file does not supply missing payloads or act as an approval attestation.
+- V1/V2: required source checks still fail, isolated browser cases are unrun,
+  whole-checkout flags remain to be reviewed in their own scope, and static
+  analysis was not performed. Existing external acceptance rows in the closure
+  register remain separate; this work neither grants nor withdraws approvals.
+
+Only one canonical file was recovered, unchanged. No ratchet, approved-large-file
+record, reference exclusion/threshold/archive pin, setup, deployment or release
+gate was weakened. This addendum reports source observations and limitations;
+it makes no independent release decision.
+
+IMPLEMENTATION FOLLOW-UP — 2026-10-25
+-------------------------------------
+This section supersedes the earlier verification status only where explicitly
+stated; earlier dated counts remain historical observations.
+
+The follow-up plan was implemented within the existing source-only boundary.
+All 25 remaining retained candidates were screened individually; results are
+docs/folio-followup-candidates.json. All original 61 whole-checkout flags have
+per-path hashes, bytes, original reasons and value-free content classifications
+in docs/folio-followup-audit.json. Neither record authenticates tenant actions,
+upstream assertions, credential validity, or current approvals.
+
+Reference recovery
+------------------
+Three additional intended targets were recovered:
+R08 docs/reference/PLATFORM_NAMING.md: exact upstream bytes.
+R09 docs/reference/PLATFORM_REGISTER.html: upstream content preserved; visible
+    historical-source notice added in the rendered body, not only a comment.
+R22 docs/reference/ADMIN_SUITE.md: upstream content preserved; historical-source
+    notice prepended, explicitly distinguishing source implementation claims
+    from current Workspace_DGO approval/acceptance.
+folio-recovery-manifest.json now lists four paths including the earlier genuine
+evidence inventory. It pins both original and final hashes/sizes for derivatives
+and the exact only allowed inserted notices. The original 42-file upstream
+recovery manifest is unchanged; no sanitized fixture was overwritten.
+
+The existing reference checker initially rejected a wider ten-document proposal:
+it introduced new source-relative missing targets. Those proposed copies were
+removed. No links were removed or redirected to uploaded paths to conceal this.
+The committed regression invokes the unchanged canonical checker and rejects
+every broken occurrence not in the original R01-R56 inventory, preserving the
+archive pin, extraction minimum, harvest exclusion and tracked-file boundary.
+The three-file recovery resolves three original occurrences, with no new ones.
+Together with R06: four of the original 56 occurrences are resolved.
+Remaining: 52 occurrences / 28 targets, not 55 / 31.
+
+All 25 candidate dispositions (screening and final engineering adoption differ):
+- Three recovered as above.
+- Ten eligible-by-content candidates remain dependency-held:
+  PLATFORM.md needs RUNBOOK/readiness/outstanding records; docs/README.md needs
+  excluded/absent closure, status and corpus paths; admin-centre/README.md needs
+  five absent guides, a directory reference not accepted by the tracked-target
+  rule, and retired-record documentation; AUTHENTICATION_CONTRACT.md needs the
+  unscreened OTP flow input and RUNBOOK; ESSENTIALS_MAP.md needs
+  MODULE_RATIONALISATION.md; LAYOUT_REVIEW.md needs ESSENTIALS_MAP.md;
+  PLATFORM_ACCESS_SPEC.md needs DEEPLINK_AUDIT and PLATFORM_ACCESS_RUNBOOK;
+  VAULT_ADOPTION.md needs PLATFORM.md; deployment/PLAN.md needs readiness,
+  RUNBOOK and identification-provisioning documentation; the flow-suite README
+  needs additional absent contract/corpus paths.
+- MODULE_RATIONALISATION.md was additionally screened as a possible closure
+  dependency: no supported credential match, but historical approval/completion
+  and validation claims remain unverified. It was not copied to make layout
+  dependencies pass.
+- Three metadata holds: RUNBOOK and both identification-phase README files.
+- Seven historical-claims holds: OUTSTANDING_SOURCES, readiness register,
+  outstanding-rollup, GOVERNANCE-STATUS, WHAT-WAS-DONE, flow-adoption and
+  flow-retirement records. Content existence does not authenticate acceptance.
+- Two derived-sanitization holds: SUBMISSION and UPLOAD flow inputs. They were
+  not previously sanitized fixtures and must not be called sanitized merely
+  because earlier recovery sanitized different inputs. Any derivative must
+  preserve action graphs and record reviewed configuration/identity removals.
+
+The remaining 22 retained target candidates account for 43 occurrences; their
+next work is content/dependency-specific review, not repeated requests for the
+supplied package or blanket owner approval of ordinary documentation.
+Six excluded targets still account for nine occurrences. Explicit requests,
+options and acceptance criteria for those targets, all 36 runtime IDs and all
+20 large-file IDs are docs/folio-source-dispositions.json. These requests were
+checked against actual curation rows; 17 large-file EXCLUDE and three RETAIN
+entries remain distinct. No owner response/decision was manufactured and no
+canonical baseline or large-file entry was changed.
+
+Whole-checkout classifications, separate from upload findings
+-----------------------------------------------------------
+Original 61 flags: 34 credential-pattern, 26 container and one config-filename
+heuristic. Actual bounded content classification:
+35 fixture/prose-pattern (including inspected policy prose),
+24 operational-metadata (including inspected archives and the empty local-config
+skeleton), two PDF content-inspection limitations.
+No credential-shaped operational capability was substantiated among those 61
+under the supported rules. This is NOT whole-checkout absence or clearance.
+Twenty-four ZIP/OOXML containers were opened in memory; PDF rendered/compressed
+content remains uninspected. Identity metadata is not automatically a credential.
+
+Separately, decoded content in the three historical mailer HTML files named
+in the JSON record contains seven shared complete signed endpoint capabilities.
+They are outside the 61 raw-heuristic flags, outside the cleaned upload, and
+were normalized before deduplication. Current validity/authority is untested.
+Each mailer produced one short invalid encoded-candidate event; the cause is
+not cleared here. No endpoint, signature value or other sensitive string was
+printed, copied to these reports, invoked, or tested. Owner/security assessment
+and any credential action remain separate; deleting source would not prove
+revocation. The source audit was not weakened to turn findings into a pass.
+
+The bounded rules cover supported data URLs and ZIP/OOXML only, with existing
+32 MiB/item, 256 MiB cumulative, 20,000-visit and depth-four limits. Supplemental
+metadata classifications are nonexhaustive. History, ignored files, arbitrary
+obfuscation, unsupported/encrypted content, PDF semantics and exhaustive narrative
+sensitivity remain outside clearance. These limits apply independently of labels.
+
+Browser tooling and external boundaries
+---------------------------------------
+The existing lockfile was installed using npm ci --ignore-scripts --no-audit
+--no-fund, with PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 and PUPPETEER_SKIP_DOWNLOAD=1.
+No package manifest, dependency versions or lockfile were changed. Direct pinned
+dependency advisory lookup reported no advisories; this was not a comprehensive
+transitive-dependency audit. Existing /usr/bin/chromium was selected through the
+isolated configuration's supported override.
+Four isolated browser cases pass, including the new rendered historical notice.
+Only the existing loopback configuration was used; external requests, writes,
+WebSockets and service workers remain blocked. No remote-capable smoke, setup,
+postCreateCommand, wiring, live tenant, packaging or deployment ran.
+
+docs/folio-source-dispositions.json also records explicit external dependencies
+for E1/E2, T1, S1, P1, B1 and O1. Source work cannot supply owner decisions,
+credential validity/revocation, tenant authorization, staging acceptance,
+artifact inspection, rollback rehearsal or final owner acceptance. No release
+decision is made in this follow-up.
+
+Follow-up named-commit results
+------------------------------
+Verified source/test commit: fbac29aaa0fe9b33eda22c1d0e8e2a389936d5b9.
+Node v22.23.3; Python 3.12.3; locked @playwright/test 1.62.0; existing
+/usr/bin/chromium. Working tree was clean at the start of verification.
+Commands below run with npm_config_ignore_scripts=true from the repository root
+/home/runner/work/Workspace_DGO/Workspace_DGO unless a prefix is stated.
+
+Command | result
+npm run test:gate | exit 0; 30/30 pass
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s /home/runner/work/Workspace_DGO/Workspace_DGO/tests -v | exit 0; 11/11 pass
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:offline-browser | exit 0; 4/4 pass
+npm run verify:offline | exit 1; 11 pass, three fail (test:hygiene, test:refs, test:node)
+npm run audit:tracked | exit 1; 5487 tracked files, 61 flagged (34 credential-pattern, 26 container-not-inspected, one private-config-review)
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:hygiene | exit 1; four assertions pass, two fail; 36 runtime and 20 large-file dispositions still pending; governance presence passes
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:refs | exit 1; four assertions pass, one fails; 52 live broken occurrences across 28 targets; 1798 extracted references across 841 canonical files
+
+All failures have identified causes; they have not been marked closed.
+test:node stops at hygiene; the offline allowlist separately executes refs,
+portal-outbox, portal-vault and the later allowed tests. No extraction threshold,
+archive pin, tracked-target boundary or governance ratchet was weakened.
+The new reference regression proves that none of the remaining occurrences
+was introduced by recovery. Recovery integrity tests prove preservation of
+every original byte except the exact added historical notes. The browser
+regression checks the note is in the visible content and unobscured using a
+viewport hit test; a review-discovered shell-occlusion bug was corrected.
+
+Changed-file secret scans: no secrets detected before commits.
+Read-only diff review after the notice fix: no significant issues found.
+CodeQL: Python analysis completed with zero alerts; JavaScript analysis skipped
+because its database is too large. Zero reported alerts does not mean JavaScript
+was analyzed. No substitute static-analysis pass or global security clearance
+is claimed. Content assessment records remain bounded, value-free review data.
+
+Outstanding implementation versus authority:
+22 retained targets (43 occurrences) need the recorded dependency, metadata,
+claims or reviewed-derivative work; six excluded targets (nine occurrences)
+need the explicit requested owner/documentation disposition. The 36 runtime
+and 20 large-file requests remain pending actual decisions. PDF semantics,
+full-history review, current capability validity/rotation, authorized tenant
+tests, staging, packaging, rollback and final acceptance are separate
+unperformed/dependent work, not silently closed items. No release decision
+was made, and the cleaned upload is not treated as a demonstrated credential
+exposure merely because it is classified or contains identity metadata.

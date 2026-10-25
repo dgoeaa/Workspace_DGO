@@ -58,3 +58,19 @@ test('recovered portal pages load local assets and run without configured endpoi
   expect(failures).toEqual([]);
   expect(pageErrors).toEqual([]);
 });
+
+test('recovered platform register displays its historical scope before source claims', async ({ page }) => {
+  const response = await page.goto('/docs/reference/PLATFORM_REGISTER.html', { waitUntil: 'networkidle' });
+  expect(response.status()).toBe(200);
+  const notice = page.locator('#bk-main > aside[role="note"]');
+  await expect(notice).toBeVisible();
+  await expect(notice).toContainText('not verified current Workspace_DGO approval or acceptance');
+  await expect.poll(() => notice.evaluate(element => {
+    const bounds = element.getBoundingClientRect();
+    const x = bounds.left + bounds.width / 2;
+    const y = bounds.top + bounds.height / 2;
+    return x >= 0 && y >= 0 && x < window.innerWidth && y < window.innerHeight
+      && element.contains(document.elementFromPoint(x, y));
+  })).toBe(true);
+  await expect(page).toHaveTitle('Folio Platform Register');
+});

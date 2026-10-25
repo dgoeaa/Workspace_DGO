@@ -1,0 +1,766 @@
+{
+  "sourceCommit": "a972273c7102503965c0a127e59f5f13c6ebe4f9",
+  "scope": "61 existing heuristic findings, plus three separately assessed mailer HTML files. Existing findings inspected from working-tree bytes; no credential validity tests.",
+  "validityTested": false,
+  "files": [
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/config/flow-shapes.data.js",
+      "bytes": 422575,
+      "sha256": "16a9753267f52836de414630ab1a8264e27372fe49ca398e895ec3edd88e64d2",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Schema/catalogue/example prose has short signature-shaped placeholders; not an established capability.",
+      "validityTested": false
+    },
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/tests/governance.test.mjs",
+      "bytes": 35004,
+      "sha256": "e353dc4d4c6ff31cb8e42fc152b4dfc6296ee37530c09226c1adcebd6ad91d59",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/tests/packaging.test.mjs",
+      "bytes": 42232,
+      "sha256": "9958da5542011833207a4690b604c20039214304e47aa692ca1ac02110a23120",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/tests/secret-exposure.test.mjs",
+      "bytes": 7324,
+      "sha256": "3d42aee172705a41ea091ae9318087a6153930e6cb2ebe3abb1ece3c0fa8dc2a",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/tools/flow-workbench/ALL_FLOW_REQUEST_SHAPES.json",
+      "bytes": 539296,
+      "sha256": "9138690bb994f58922f8cd44317b9a0824ac3b0e0db56c4f836070a619c7c391",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Schema/catalogue/example prose has short signature-shaped placeholders; not an established capability.",
+      "validityTested": false
+    },
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/tools/flow-workbench/catalog.json",
+      "bytes": 1554997,
+      "sha256": "720c63994b8a845fa67f3aa8764ab572e9f4f0ee02898a5cb4703008de729494",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Schema/catalogue/example prose has short signature-shaped placeholders; not an established capability.",
+      "validityTested": false
+    },
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/tools/flow-workbench/index.html",
+      "bytes": 1594542,
+      "sha256": "5377e68224327c5291156c6d52faf9487fa9fd488ca217861d47dd6c0c3afa17",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Schema/catalogue/example prose has short signature-shaped placeholders; not an established capability.",
+      "validityTested": false
+    },
+    {
+      "path": "Commissioning-claude-isolated-code-session-scope-bghduo/tools/flow-workbench/scripts/browser-test.mjs",
+      "bytes": 8689,
+      "sha256": "305bf2d6c2a9782bc60026473ee0c5e37a1d6cba0fbf20678226a79a417ef72c",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/mailer/flows/packages/DGO_MAIL_AUTH.zip",
+      "bytes": 11286,
+      "sha256": "29f925b49d00b4df6ad664cbe61f3763ff56368621b1d22d983f82706ce869c1",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/mailer/flows/packages/DGO_MAIL_DATA.zip",
+      "bytes": 7731,
+      "sha256": "55350896f628a71edff35ecb2eb14f764d957f1f6bd778608be787703662f4b2",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/mailer/flows/packages/DGO_MAIL_DIRECTORY.zip",
+      "bytes": 6302,
+      "sha256": "9237bd3b4e27e5a47ffb0ecb621182f2008e674139cf18a646965b2127f8c823",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/mailer/flows/packages/DGO_MAIL_LOG.zip",
+      "bytes": 5891,
+      "sha256": "d9f953d7302c43352a21ebfc75dd2707dcd676d8ab966466d3730c59b4214619",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/mailer/flows/packages/DGO_MAIL_PROVISION.zip",
+      "bytes": 7983,
+      "sha256": "992ea3f847b2b6dccef88f021b26ce4eb3b0dd6067eea8c0be89f3929dd9f93c",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/mailer/flows/packages/DGO_MAIL_SEND.zip",
+      "bytes": 7808,
+      "sha256": "e90cb4ca67723a7396c8d80fd8503effceda100a098cb2e8385ef9377e2d9ba1",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/mailer/flows/packages/DGO_MAIL_TEMPLATES.zip",
+      "bytes": 6097,
+      "sha256": "fd4e2121e4cc829f3d390387bb254d849739f91607a55f1dce08295cf8f8638c",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/tests/admin-centre.spec.js",
+      "bytes": 9622,
+      "sha256": "a71589b165e44f5c525eebe03642515ca47c5c004249b3951ac27576a1401f96",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/tests/admin-centre.test.mjs",
+      "bytes": 15137,
+      "sha256": "0e7d1f013865f681087c957a310538d77dd46544818871d3431534e2bf8bfc31",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/tests/estate-apply.test.mjs",
+      "bytes": 41477,
+      "sha256": "e807b680ea266774ebd45cfce1e5d37a11911891e1433e3273742065c8ca6428",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/tests/governance.test.mjs",
+      "bytes": 36966,
+      "sha256": "f1d9304e85da69b2020efcdbcd923e755169e8cf6f9f65fccf3625790f3573ab",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/tests/packaging.test.mjs",
+      "bytes": 43692,
+      "sha256": "c31133467278e34d20d1b0cde9862dc83b0ef431100fdea20c25512cfc183f70",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/tests/secret-exposure.test.mjs",
+      "bytes": 7351,
+      "sha256": "d0fa716d1bd570b99f37761de0e73eddb2466d75e297350abca566f471a706b4",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "ECM_DOCS_DEV-4e3efeaa211b97ee66d97af91ceac43519c0370e/tools/admin-centre/tests/test_admin_centre.py",
+      "bytes": 52527,
+      "sha256": "843fd5bb62fa74db60717abc98d4cce1aa002079bde159099fd8898767cce13c",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/mailer/flows/packages/DGO_MAIL_AUTH.zip",
+      "bytes": 8428,
+      "sha256": "68f85b89d14a16a9596982c8726baccd6da85919056d8597a0a06ca77092403e",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/mailer/flows/packages/DGO_MAIL_DATA.zip",
+      "bytes": 7731,
+      "sha256": "55350896f628a71edff35ecb2eb14f764d957f1f6bd778608be787703662f4b2",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/mailer/flows/packages/DGO_MAIL_DIRECTORY.zip",
+      "bytes": 6302,
+      "sha256": "9237bd3b4e27e5a47ffb0ecb621182f2008e674139cf18a646965b2127f8c823",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/mailer/flows/packages/DGO_MAIL_LOG.zip",
+      "bytes": 5891,
+      "sha256": "d9f953d7302c43352a21ebfc75dd2707dcd676d8ab966466d3730c59b4214619",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/mailer/flows/packages/DGO_MAIL_PROVISION.zip",
+      "bytes": 7983,
+      "sha256": "992ea3f847b2b6dccef88f021b26ce4eb3b0dd6067eea8c0be89f3929dd9f93c",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/mailer/flows/packages/DGO_MAIL_SEND.zip",
+      "bytes": 7808,
+      "sha256": "e90cb4ca67723a7396c8d80fd8503effceda100a098cb2e8385ef9377e2d9ba1",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/mailer/flows/packages/DGO_MAIL_TEMPLATES.zip",
+      "bytes": 6097,
+      "sha256": "fd4e2121e4cc829f3d390387bb254d849739f91607a55f1dce08295cf8f8638c",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tests/admin-centre.spec.js",
+      "bytes": 9622,
+      "sha256": "b722833ce78441853422c31e86bb72f1ad868d7def3d23b7b68687c49c4d4179",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tests/admin-centre.test.mjs",
+      "bytes": 14807,
+      "sha256": "e2589fbd91ed704310288e1769a15b51638add4230d7a5659bbe14f92680dab2",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tests/estate-apply.test.mjs",
+      "bytes": 41477,
+      "sha256": "e807b680ea266774ebd45cfce1e5d37a11911891e1433e3273742065c8ca6428",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tests/governance.test.mjs",
+      "bytes": 36534,
+      "sha256": "dbb7de8e74e5f0cedf1c7a62a4cf563c6eeb46114f43c368cb983a9f8e6f737f",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tests/packaging.test.mjs",
+      "bytes": 43692,
+      "sha256": "c31133467278e34d20d1b0cde9862dc83b0ef431100fdea20c25512cfc183f70",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tests/secret-exposure.test.mjs",
+      "bytes": 7351,
+      "sha256": "d0fa716d1bd570b99f37761de0e73eddb2466d75e297350abca566f471a706b4",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tools/admin-centre/tests/test_admin_centre.py",
+      "bytes": 51371,
+      "sha256": "101a921b1f8ff0a8ad708828e9b961a86e331946881cef4d33e8447c5d04b2ae",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tools/flow-workbench/ALL_FLOW_REQUEST_SHAPES.json",
+      "bytes": 540196,
+      "sha256": "bac9f0c17f5fc41f9c820629e1da2c7e2a0bcf2466e1de95af3c2f399670673e",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Schema/catalogue/example prose has short signature-shaped placeholders; not an established capability.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tools/flow-workbench/catalog.json",
+      "bytes": 1555897,
+      "sha256": "571e9c3932c4f24513affecf3030c1ffe1ec476919f3efb710907bd5dfbd7a9d",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Schema/catalogue/example prose has short signature-shaped placeholders; not an established capability.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tools/flow-workbench/index.html",
+      "bytes": 1827663,
+      "sha256": "785c4d24d795e4713b75c60edfceb29adbcf84a46d57e31efd034cc25616fdbe",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Schema/catalogue/example prose has short signature-shaped placeholders; not an established capability.",
+      "validityTested": false
+    },
+    {
+      "path": "NITDA-Folio-Source-31e80475/tools/flow-workbench/scripts/browser-test.mjs",
+      "bytes": 8689,
+      "sha256": "305bf2d6c2a9782bc60026473ee0c5e37a1d6cba0fbf20678226a79a417ef72c",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/mailer/flows/packages/DGO_MAIL_AUTH.zip",
+      "bytes": 11286,
+      "sha256": "29f925b49d00b4df6ad664cbe61f3763ff56368621b1d22d983f82706ce869c1",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/mailer/flows/packages/DGO_MAIL_DATA.zip",
+      "bytes": 7731,
+      "sha256": "55350896f628a71edff35ecb2eb14f764d957f1f6bd778608be787703662f4b2",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/mailer/flows/packages/DGO_MAIL_DIRECTORY.zip",
+      "bytes": 6302,
+      "sha256": "9237bd3b4e27e5a47ffb0ecb621182f2008e674139cf18a646965b2127f8c823",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/mailer/flows/packages/DGO_MAIL_LOG.zip",
+      "bytes": 5891,
+      "sha256": "d9f953d7302c43352a21ebfc75dd2707dcd676d8ab966466d3730c59b4214619",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/mailer/flows/packages/DGO_MAIL_PROVISION.zip",
+      "bytes": 7983,
+      "sha256": "992ea3f847b2b6dccef88f021b26ce4eb3b0dd6067eea8c0be89f3929dd9f93c",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/mailer/flows/packages/DGO_MAIL_SEND.zip",
+      "bytes": 7808,
+      "sha256": "e90cb4ca67723a7396c8d80fd8503effceda100a098cb2e8385ef9377e2d9ba1",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/mailer/flows/packages/DGO_MAIL_TEMPLATES.zip",
+      "bytes": 6097,
+      "sha256": "fd4e2121e4cc829f3d390387bb254d849739f91607a55f1dce08295cf8f8638c",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/tests/admin-centre.spec.js",
+      "bytes": 9622,
+      "sha256": "a71589b165e44f5c525eebe03642515ca47c5c004249b3951ac27576a1401f96",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/tests/admin-centre.test.mjs",
+      "bytes": 15137,
+      "sha256": "0e7d1f013865f681087c957a310538d77dd46544818871d3431534e2bf8bfc31",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/tests/estate-apply.test.mjs",
+      "bytes": 41477,
+      "sha256": "e807b680ea266774ebd45cfce1e5d37a11911891e1433e3273742065c8ca6428",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/tests/governance.test.mjs",
+      "bytes": 36966,
+      "sha256": "f1d9304e85da69b2020efcdbcd923e755169e8cf6f9f65fccf3625790f3573ab",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/tests/packaging.test.mjs",
+      "bytes": 43692,
+      "sha256": "c31133467278e34d20d1b0cde9862dc83b0ef431100fdea20c25512cfc183f70",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/tests/secret-exposure.test.mjs",
+      "bytes": 7351,
+      "sha256": "d0fa716d1bd570b99f37761de0e73eddb2466d75e297350abca566f471a706b4",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "Repo_root/tools/admin-centre/tests/test_admin_centre.py",
+      "bytes": 52527,
+      "sha256": "843fd5bb62fa74db60717abc98d4cce1aa002079bde159099fd8898767cce13c",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    },
+    {
+      "path": "config.local (1).js",
+      "bytes": 1838,
+      "sha256": "a533070fa7a7a6e948c10ffe6b9ade69be6148e5ef2db3dafb09a1b7b531d563",
+      "reasons": [
+        "private-config-review"
+      ],
+      "category": "operational-metadata",
+      "rationale": "Local configuration skeleton: 19 empty string assignments; no URLs, GUIDs or supported credential assignments.",
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/registers/dgo-endpoint-catalog.xlsx",
+      "bytes": 163817,
+      "sha256": "3ba4b6ad5a4fa64f7bc322f768e5698795f530b640531a9db7474cd203506a69",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/registers/http-flow-registry-workbook.xlsx",
+      "bytes": 56848,
+      "sha256": "8982f51196a936338b421cdb5e4af18d5735850a58b5eb9f30100081c1f63990",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "operational-metadata",
+      "rationale": "ZIP/OOXML members inspected in memory; operational endpoint/identifier metadata, no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/policies/universal-filename-policy/universal_filename_policy_one_page_memo.pdf",
+      "bytes": 2809,
+      "sha256": "574fdec0b14ee0cb971499bdd94d15897801354c3abcfac94253d7a6bd14291b",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "container-limitation",
+      "rationale": "PDF bytes inspected only; rendered/compressed document content not cleared.",
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/policies/universal-filename-policy/universal_filename_policy_team_handbook.pdf",
+      "bytes": 5683,
+      "sha256": "01a594601054e3560404ff5f97225586ffed151e488253f441e01d60dd1ecfa0",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "container-limitation",
+      "rationale": "PDF bytes inspected only; rendered/compressed document content not cleared.",
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/policies/universal-filename-policy/universal_filename_policy_word_version.docx",
+      "bytes": 38946,
+      "sha256": "f51c09eb1d83d6259f6ec91809c66d04e5752605647a5cd495ca750595c8bc83",
+      "reasons": [
+        "container-not-inspected by original Node heuristic"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "OOXML policy prose inspected; no supported credential match.",
+      "validityTested": false
+    },
+    {
+      "path": "repository/tests/estate-apply.test.mjs",
+      "bytes": 41477,
+      "sha256": "e807b680ea266774ebd45cfce1e5d37a11911891e1433e3273742065c8ca6428",
+      "reasons": [
+        "credential-pattern"
+      ],
+      "category": "fixture/prose-pattern",
+      "rationale": "Test/assertion fixture; matched signature-shaped text is not established as an operational credential.",
+      "validityTested": false
+    }
+  ],
+  "counts": {
+    "trackedEnumerated": 5481,
+    "existingFindings": 61,
+    "originalReasons": {
+      "credential-pattern": 34,
+      "container-not-inspected": 26,
+      "private-config-review": 1
+    },
+    "contentCategories": {
+      "fixture/prose-pattern": 35,
+      "operational-metadata": 24,
+      "container-limitation": 2,
+      "credential-shaped-capability(validityuntested)": 0
+    },
+    "inspection": {
+      "archivesOpened": 24,
+      "decodedPayloads": 3,
+      "signatureBearingItems": 0,
+      "localConfigFiles": 1,
+      "visitedItems": 254,
+      "visitedBytes": 12482862,
+      "scannerUnscannableEvents": 0,
+      "pdfContentLimitations": 2
+    }
+  },
+  "additionalMailerCapabilities": {
+    "category": "credential-shaped-capability(validityuntested)",
+    "files": [
+      {
+        "path": "01 Workspace and Mailer v2026.10.21-2 - upload to folio-platform.page.gd/mailer.html",
+        "bytes": 861600,
+        "sha256": "50da4372dc726649e4564b6949da0651021ace508466316b473f958e81e0cc3d",
+        "distinctSignedEndpoints": 7,
+        "decodedPayloads": 41,
+        "scannerUnscannableEvents": 1,
+        "validityTested": false
+      },
+      {
+        "path": "Gen/mailer.html",
+        "bytes": 1115730,
+        "sha256": "866503d560e1d78896be981b792d9e082824870d4ad026a3b7aff0b76132c174",
+        "distinctSignedEndpoints": 7,
+        "decodedPayloads": 42,
+        "scannerUnscannableEvents": 1,
+        "validityTested": false
+      },
+      {
+        "path": "NITDA-Folio-Redesign-Final (1)/mailer.html",
+        "bytes": 861600,
+        "sha256": "50da4372dc726649e4564b6949da0651021ace508466316b473f958e81e0cc3d",
+        "distinctSignedEndpoints": 7,
+        "decodedPayloads": 41,
+        "scannerUnscannableEvents": 1,
+        "validityTested": false
+      }
+    ],
+    "distinctAcrossFiles": 7,
+    "distinctCommonToAllThree": 7,
+    "distinctSignatureValuesPerFile": 7,
+    "originalNodeHeuristicMissedEmbeddedCapabilities": true,
+    "rationale": "Complete signed endpoint capabilities found in successfully decoded embedded content, unlike short signature-shaped fixtures in the 61 original findings. Validity and current authority untested."
+  },
+  "limits": {
+    "inspection": "Actual bounded offline inspection, not exhaustive clearance.",
+    "workingTreeClean": false,
+    "methods": [
+      "Existing workspace-check.mjs inspectFile invoked through Node over tracked regular files.",
+      "Existing release_gate.py inspect_content invoked for supported base64 data URLs and ZIP/OOXML; archive metadata also counted in memory.",
+      "Supplemental value-free URL, identity and credential-pattern assessment."
+    ],
+    "bounds": {
+      "maxItemBytes": 33554432,
+      "maxCumulativeBytes": 268435456,
+      "maxVisits": 20000,
+      "maxDepth": 4
+    },
+    "mailerDecodeLimitation": "Each mailer produced one invalid two-character base64-candidate event; that event remains unresolved. Seven complete signed endpoint capabilities were independently counted in successfully decoded content.",
+    "excluded": "Restricted agent paths, ignored files, comprehensive history, arbitrary encoding, unsupported/encrypted containers, PDF semantic extraction and exhaustive narrative review.",
+    "performed": {
+      "network": false,
+      "endpointProbes": false,
+      "uploadedCodeExecution": false,
+      "packageInstallation": false,
+      "sourceEdits": false
+    },
+    "interpretation": "Pattern absence does not prove absence of secrets. No capability values disclosed.",
+    "outputLocation": "docs/folio-followup-audit.json; value-free assessment results, not recovered payloads."
+  }
+}

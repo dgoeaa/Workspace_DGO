@@ -1,0 +1,50 @@
+{
+  "repository": "dgoeaa/Workspace_DGO",
+  "commit": "b60f9e0e177d092279f87c6f79be2e2a78ef1a8b",
+  "source": "repository",
+  "destination": "Repo_root",
+  "authorization": "User-supplied cleaned Folio package for screened, provenance-checked source reconciliation; retained by the supplied curation registers.",
+  "limitations": [
+    "Selective recovery of an external-storage provenance inventory and three screened reference documents, not current approval or acceptance evidence.",
+    "The 317 referenced external payloads are not recovered or verified by copying this inventory.",
+    "Only the four listed paths are recovered. No baseline reset, historical-record retirement, tenant action or release decision is authorized by this manifest.",
+    "Bounded offline screening is not exhaustive sensitivity clearance or verification of upstream assertions."
+  ],
+  "files": [
+    {
+      "path": "docs/governance/evidence-register.yaml",
+      "bytes": 112652,
+      "sha256": "24c275e6362a39f041a2570786e53bd73cd24e5ebc7f9671bb8ae7c6d59442c3",
+      "transformation": "none",
+      "purpose": "Restore the genuine external-storage inventory at its missing canonical path without promoting historical metadata into current approval."
+    },
+    {
+      "path": "docs/reference/ADMIN_SUITE.md",
+      "bytes": 12643,
+      "sha256": "936b02a92710f838eaf4aa8a3d7ec5cf7443d2858a90bbc83437fa819c4f5517",
+      "upstreamBytes": 12277,
+      "upstreamSha256": "fb99d53ac8daa32c9a505cb6b1b38e8c2823586b912576c4f9f1426db0edd075",
+      "transformation": "prepend-historical-note",
+      "note": "> Historical source reference recovered from the supplied Folio package.\n> Implementation and commissioning statements below describe that source, not\n> verified current Workspace_DGO approval or acceptance. Some named tools and\n> evidence may be unavailable here. See the repository-root\n> `folio-recovery-manifest.json` for pinned provenance and recovery limits.\n\n",
+      "purpose": "Recover the intended admin-suite reference with visible historical framing; preserve every upstream byte after the added note."
+    },
+    {
+      "path": "docs/reference/PLATFORM_NAMING.md",
+      "bytes": 3974,
+      "sha256": "0d061bcbe7c035ecb28a7fb085d1b8602a0f598de9a64f8068bfa8cd26aba122",
+      "transformation": "none",
+      "purpose": "Recover the intended nonsecret naming specification and its matching register dependency."
+    },
+    {
+      "path": "docs/reference/PLATFORM_REGISTER.html",
+      "bytes": 276704,
+      "sha256": "56894aa871e80672c3cc0ab725a6dececebd0f38aa9f7817fdddc0142a57e485",
+      "upstreamBytes": 276414,
+      "upstreamSha256": "813d20de1761241606a4ae0e2a574be8104fb28e382df159619b6c007d96d9b8",
+      "transformation": "insert-historical-note",
+      "after": "<main class=\"bk-main\" id=\"bk-main\" tabindex=\"-1\" data-bk-top>\n",
+      "note": "<aside role=\"note\">Historical Folio source reference, not verified current Workspace_DGO approval or acceptance. Source implementation statements and named artifacts may not reflect this checkout. Pinned provenance and recovery limits: repository-root folio-recovery-manifest.json.</aside>\n",
+      "purpose": "Recover the intended register as a historical source reference with a rendered notice, not current implementation or approval evidence."
+    }
+  ]
+}
