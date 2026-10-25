@@ -55,9 +55,10 @@ test('missing required HTML entry points fail even if another app resolves', () 
 });
 
 test('browser cache queries and fragments do not become filesystem paths', () => {
+  const modulePath = ['./leaf.mjs', '?v=2#cache'].join('');
   const { status, report } = check({
     'index.html': '<script type="module" src="./app.mjs?v=1"></script>',
-    'app.mjs': "export { leaf } from './leaf.mjs?v=2#cache';",
+    'app.mjs': `export { leaf } from '${modulePath}';`,
     'leaf.mjs': 'export const leaf = true;',
   });
   assert.equal(status, 0);

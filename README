@@ -144,7 +144,7 @@ or production-readiness evidence for Workspace_DGO. Their unresolved references
 remain visible rather than being removed or accepted into a new baseline.
 
 Recovery verification (Node v22.23.3, npm 10.9.9, /usr/bin/chromium):
-  npm run test:gate                 PASS: 16 tests (10 existing + 6 recovery)
+  npm run test:gate                 PASS: 17 tests (11 existing + 6 recovery)
   npm run verify:offline           FAIL: 11 scripts pass, 3 fail
   npm test                         FAIL: regression tests pass; existing gates fail
   Repo_root/test:offline-browser    PASS: 3 tests, including all six portal pages
@@ -161,13 +161,17 @@ and auth. Auth's inert and enforced unit postures pass; that does NOT enable aut
 in the application or prove any deployed tenant validates identities.
 
 Remaining failures:
-* test:hygiene: upstream baselines/approval records refer to absent reference
-  artifacts; duplicate groups differ in this partial tree, and governance records
-  remain missing. The historical approval list is not a local release approval.
-* test:refs: the partial reference/docs tree still has unresolved relative links.
-* test:node: stops at hygiene; later it also references undefined test:effectivity
-  and test:constraints. These definitions are absent upstream too; no passing
-  stubs, removed checks or acceptance-baseline regeneration were introduced.
+* test:hygiene: the large-file record exists, but inherited runtime/duplicate
+  baselines and 20 large-file entries refer to files not tracked in this snapshot;
+  `docs/governance/evidence-register.yaml` is absent. No approvals or ratchet
+  entries were fabricated or regenerated.
+* test:refs: 56 local references still point to unavailable documentation in this
+  partial source tree. Valid links to repository-level review files now resolve;
+  the missing targets remain visible rather than suppressed or guessed.
+* test:node: the chain now invokes only defined scripts. It reaches and stops at
+  the failing hygiene gate; `test:portaloutbox` and `test:portalvault` pass when
+  run independently. The referenced `test:effectivity` and `test:constraints`
+  scripts are absent from this snapshot and are not represented by stubs.
 
 Release remains NO-GO. Source recovery is not credential revocation, full-history
 remediation, tenant authorisation, commissioning, rollback approval or owner signoff.
