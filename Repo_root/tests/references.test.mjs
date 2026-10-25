@@ -241,9 +241,8 @@ const archiveBroken = broken.filter(b => b.file.startsWith(ARCHIVE));
 
 t(`every relative reference outside the archive resolves on disk (${checked} across ${files.length} tracked files)`, () => {
   if (liveBroken.length) {
-    const detail = liveBroken.slice(0, 20).map(b => `${b.file} → ${b.ref}`).join('\n       ');
-    throw new Error(`${liveBroken.length} broken:\n       ${detail}` +
-      (liveBroken.length > 20 ? `\n       … and ${liveBroken.length - 20} more` : ''));
+    const detail = liveBroken.map(b => `${b.file} → ${b.ref}`).join('\n       ');
+    throw new Error(`${liveBroken.length} broken:\n       ${detail}`);
   }
 });
 
