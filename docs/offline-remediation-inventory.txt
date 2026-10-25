@@ -2,6 +2,7 @@ SOURCE-ONLY INVENTORY — 2026-10-25 — RELEASE NO-GO
 
 Review baseline: repository commit 187fb20 (merged PR #4).
 Correction: a3632d0 (reviewed duplicate subsets and hygiene regressions).
+Verified source/test commit: 018de88 (adds complete reference diagnostics).
 Paths below are relative to Repo_root/ unless explicitly repository-root.
 No credential values, private evidence contents or approval evidence are included.
 Accountability, acceptance and next actions: docs/closure-register.md at repository root.
