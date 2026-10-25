@@ -38,13 +38,9 @@
     "docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/trigger_schema.json"
   ],
   "duplicates": [
-    "assets/fonts/CascadiaMono-Regular.woff2 | docs/reference/presentations/folio-journey/assets/CascadiaMono-Regular.woff2 | document-portal/ds/fonts/CascadiaMono-Regular.woff2",
-    "assets/nitda-lockup-white.png | docs/folio-Master-Flows-and-Endpoints/provisioning/brand/nitda-lockup-digital-white.png | docs/reference/presentations/folio-journey/assets/nitda-lockup-white.png | docs/visual/brand/nitda-lockup-digital-white.png | document-portal/ds/logo/nitda-lockup-white.png | document-portal/email-assets/nitda-lockup-white.png | mailer/brand/nitda-lockup-digital-white.png | styles/dgo-design-system/brand/nitda/nitda-lockup-digital-white.png | tools/admin-centre/static/brand/nitda-lockup-digital-white.png",
-    "assets/nitda-lockup.png | docs/folio-Master-Flows-and-Endpoints/provisioning/brand/nitda-lockup-digital-colour.png | docs/reference/presentations/folio-journey/assets/nitda-lockup.png | docs/visual/brand/nitda-lockup-digital-colour.png | document-portal/ds/logo/nitda-lockup.png | mailer/brand/nitda-lockup-digital-colour.png | styles/dgo-design-system/brand/nitda/nitda-lockup-digital-colour.png | tools/admin-centre/static/brand/nitda-lockup-digital-colour.png",
-    "docs/folio-Master-Flows-and-Endpoints/provisioning/brand/brand.css | docs/visual/brand/brand.css | mailer/brand/brand.css | tools/admin-centre/static/brand/brand.css",
-    "docs/folio-Master-Flows-and-Endpoints/provisioning/brand/brand.js | docs/visual/brand/brand.js | mailer/brand/brand.js | tools/admin-centre/static/brand/brand.js",
-    "docs/folio-Master-Flows-and-Endpoints/provisioning/brand/dgo-mark.svg | docs/visual/brand/dgo-mark.svg | mailer/brand/dgo-mark.svg | styles/dgo-design-system/brand/dgo/dgo-mark.svg | tools/admin-centre/static/brand/dgo-mark.svg",
-    "docs/folio-Master-Flows-and-Endpoints/provisioning/brand/nitda-symbol-infoweb.png | docs/visual/brand/nitda-symbol-infoweb.png | mailer/brand/nitda-symbol-infoweb.png | styles/dgo-design-system/brand/nitda/nitda-symbol-infoweb.png | tools/admin-centre/static/brand/nitda-symbol-infoweb.png",
+    "assets/fonts/CascadiaMono-Regular.woff2 | document-portal/ds/fonts/CascadiaMono-Regular.woff2",
+    "assets/nitda-lockup-white.png | document-portal/ds/logo/nitda-lockup-white.png | mailer/brand/nitda-lockup-digital-white.png | styles/dgo-design-system/brand/nitda/nitda-lockup-digital-white.png | tools/admin-centre/static/brand/nitda-lockup-digital-white.png",
+    "assets/nitda-lockup.png | mailer/brand/nitda-lockup-digital-colour.png | styles/dgo-design-system/brand/nitda/nitda-lockup-digital-colour.png | tools/admin-centre/static/brand/nitda-lockup-digital-colour.png",
     "document-portal/ds/tokens/tokens.breakpoint.css | styles/dgo-design-system/tokens/tokens.breakpoint.css",
     "document-portal/ds/tokens/tokens.component.css | styles/dgo-design-system/tokens/tokens.component.css",
     "document-portal/ds/tokens/tokens.density.css | styles/dgo-design-system/tokens/tokens.density.css",
@@ -53,6 +49,10 @@
     "document-portal/ds/tokens/tokens.semantic.css | styles/dgo-design-system/tokens/tokens.semantic.css",
     "document-portal/ds/tokens/tokens.theme-dark.css | styles/dgo-design-system/tokens/tokens.theme-dark.css",
     "document-portal/ds/tokens/tokens.theme-hc.css | styles/dgo-design-system/tokens/tokens.theme-hc.css",
-    "document-portal/ds/tokens/tokens.theme-light.css | styles/dgo-design-system/tokens/tokens.theme-light.css"
+    "document-portal/ds/tokens/tokens.theme-light.css | styles/dgo-design-system/tokens/tokens.theme-light.css",
+    "mailer/brand/brand.css | tools/admin-centre/static/brand/brand.css",
+    "mailer/brand/brand.js | tools/admin-centre/static/brand/brand.js",
+    "mailer/brand/dgo-mark.svg | styles/dgo-design-system/brand/dgo/dgo-mark.svg | tools/admin-centre/static/brand/dgo-mark.svg",
+    "mailer/brand/nitda-symbol-infoweb.png | styles/dgo-design-system/brand/nitda/nitda-symbol-infoweb.png | tools/admin-centre/static/brand/nitda-symbol-infoweb.png"
   ]
 }

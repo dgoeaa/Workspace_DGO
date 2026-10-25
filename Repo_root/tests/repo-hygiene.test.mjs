@@ -21,16 +21,22 @@
  * Run: node tests/repo-hygiene.test.mjs
  */
 
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { trackedFiles } from '../scripts/lib/tracked-files.mjs';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+process.chdir(ROOT);
 
 const BASELINE = 'tests/repo-hygiene-baseline.json';
 const LARGE_FILES = 'docs/governance/approved-large-files.json';
 const LIMIT = 1024 * 1024;
 
-const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
-  .split('\0').filter(f => f && existsSync(f));
+const tracked = trackedFiles({ root: ROOT, what: 'files to check repository hygiene' });
+const missing = tracked.filter(f => !existsSync(f));
+const files = tracked.filter(f => existsSync(f));
 
 const temporary = files.filter(f => /(\.bak|\.tmp|\.temp|\.old|\.orig|~)$/i.test(f));
 const runtime = files.filter(f => /(^|\/)(run-records|response-samples|endpoint-runs|runtime-output)\//.test(f)).sort();
@@ -45,6 +51,7 @@ for (const f of files) {
 const duplicates = [...byHash.values()].filter(g => g.length > 1).map(g => g.sort().join(' | ')).sort();
 
 if (process.argv.includes('--write-baseline')) {
+  if (missing.length) throw new Error('Refusing to rewrite the baseline while tracked files are missing.');
   writeFileSync(BASELINE, JSON.stringify({ runtime, duplicates }, null, 2) + '\n');
   console.log(`Wrote ${BASELINE}: ${runtime.length} runtime files, ${duplicates.length} duplicate groups.`);
   process.exit(0);
@@ -59,13 +66,14 @@ const t = (label, problems) => {
 };
 const ratchet = (current, recorded, what) => [
   ...current.filter(x => !recorded.includes(x)).map(x => `new ${what}: ${x}`),
-  ...recorded.filter(x => !current.includes(x)).map(x => `fixed, remove from ${BASELINE}: ${x}`),
+  ...recorded.filter(x => !current.includes(x)).map(x => `stale entry; review removal or recovery before editing ${BASELINE}: ${x}`),
 ];
 
 const baseline = JSON.parse(readFileSync(BASELINE, 'utf8'));
 const approved = JSON.parse(readFileSync(LARGE_FILES, 'utf8')).approved_large_files.map(e => e.path);
 
 console.log('Repository hygiene');
+t('tracked files present on disk', missing);
 t('no temporary or backup files', temporary);
 t('no new runtime output in the tree', ratchet(runtime, baseline.runtime, 'runtime file'));
 t('no new exact duplicates', ratchet(duplicates, baseline.duplicates, 'duplicate group'));
@@ -74,7 +82,8 @@ t(`files over 1 MB are listed in ${LARGE_FILES}`, [
   ...approved.filter(p => !files.includes(p)).map(p => `listed but not tracked: ${p}`),
 ]);
 t('governance records present',
-  ['OWNERS.yaml', 'docs/governance/evidence-register.yaml', LARGE_FILES].filter(f => !existsSync(f)).map(f => `missing: ${f}`));
+  ['OWNERS.yaml', 'docs/governance/evidence-register.yaml', LARGE_FILES]
+    .filter(f => !tracked.includes(f) || !existsSync(f)).map(f => `missing or not tracked: ${f}`));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
