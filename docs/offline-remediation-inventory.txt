@@ -632,3 +632,48 @@ for E1/E2, T1, S1, P1, B1 and O1. Source work cannot supply owner decisions,
 credential validity/revocation, tenant authorization, staging acceptance,
 artifact inspection, rollback rehearsal or final owner acceptance. No release
 decision is made in this follow-up.
+
+Follow-up named-commit results
+------------------------------
+Verified source/test commit: fbac29aaa0fe9b33eda22c1d0e8e2a389936d5b9.
+Node v22.23.3; Python 3.12.3; locked @playwright/test 1.62.0; existing
+/usr/bin/chromium. Working tree was clean at the start of verification.
+Commands below run with npm_config_ignore_scripts=true from the repository root
+/home/runner/work/Workspace_DGO/Workspace_DGO unless a prefix is stated.
+
+Command | result
+npm run test:gate | exit 0; 30/30 pass
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s /home/runner/work/Workspace_DGO/Workspace_DGO/tests -v | exit 0; 11/11 pass
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:offline-browser | exit 0; 4/4 pass
+npm run verify:offline | exit 1; 11 pass, three fail (test:hygiene, test:refs, test:node)
+npm run audit:tracked | exit 1; 5487 tracked files, 61 flagged (34 credential-pattern, 26 container-not-inspected, one private-config-review)
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:hygiene | exit 1; four assertions pass, two fail; 36 runtime and 20 large-file dispositions still pending; governance presence passes
+npm --prefix /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root run test:refs | exit 1; four assertions pass, one fails; 52 live broken occurrences across 28 targets; 1798 extracted references across 841 canonical files
+
+All failures have identified causes; they have not been marked closed.
+test:node stops at hygiene; the offline allowlist separately executes refs,
+portal-outbox, portal-vault and the later allowed tests. No extraction threshold,
+archive pin, tracked-target boundary or governance ratchet was weakened.
+The new reference regression proves that none of the remaining occurrences
+was introduced by recovery. Recovery integrity tests prove preservation of
+every original byte except the exact added historical notes. The browser
+regression checks the note is in the visible content and unobscured using a
+viewport hit test; a review-discovered shell-occlusion bug was corrected.
+
+Changed-file secret scans: no secrets detected before commits.
+Read-only diff review after the notice fix: no significant issues found.
+CodeQL: Python analysis completed with zero alerts; JavaScript analysis skipped
+because its database is too large. Zero reported alerts does not mean JavaScript
+was analyzed. No substitute static-analysis pass or global security clearance
+is claimed. Content assessment records remain bounded, value-free review data.
+
+Outstanding implementation versus authority:
+22 retained targets (43 occurrences) need the recorded dependency, metadata,
+claims or reviewed-derivative work; six excluded targets (nine occurrences)
+need the explicit requested owner/documentation disposition. The 36 runtime
+and 20 large-file requests remain pending actual decisions. PDF semantics,
+full-history review, current capability validity/rotation, authorized tenant
+tests, staging, packaging, rollback and final acceptance are separate
+unperformed/dependent work, not silently closed items. No release decision
+was made, and the cleaned upload is not treated as a demonstrated credential
+exposure merely because it is classified or contains identity metadata.
