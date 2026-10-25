@@ -1,0 +1,1063 @@
+{
+  "contractVersion": "1.0.0",
+  "status": "AUTHORITATIVE",
+  "purpose": "The data the portal sends, the data it reads back, and where each field must be persisted. This is the specification flows conform to — not a description of what any flow currently does. A flow that does not satisfy it is wrong; the contract is not adjusted to match a flow.",
+  "precedence": "Where this disagrees with a deployed flow, the flow is wrong. Where it disagrees with the functional documentation, the disagreement is a defect in one of them and is recorded rather than resolved silently.",
+  "derivedFrom": [
+    "document-portal/js/core.js — the request bodies actually sent and the response fields actually read",
+    "document-portal/js/submit.js — the submission record and the declared-attachment shape",
+    "document-portal/js/track.js — the status projection consumed by fromRegistry()",
+    "docs/folio-Master-Flows-and-Endpoints/contracts/DOCUMENT_PORTAL_FLOWS.html — live-tenant probe, 2026-08-08",
+    "NITDA_Document_Portal_Functional_Documentation v3.0 — INT-001..007",
+    "docs/folio-Master-Flows-and-Endpoints/deployment/sharepoint/portal-field-spec.json — the 97 provisioned columns"
+  ],
+  "conventions": {
+    "required": "Required means the portal always sends it, or the portal cannot function without reading it back. Not a SharePoint column constraint.",
+    "persistence": "list/column names a provisioned target. `null` means the contract requires the value but no provisioned column holds it — a gap, reported by scripts/verify-portal-data-contract.mjs.",
+    "timestamps": "Every *AtUtc column is ISO 8601 with a Z suffix. The portal sends ISO strings; flows must not reformat them.",
+    "reference": "referenceId is minted by the flow, never by the portal. The portal's localId is a client-generated correlation id and is not a reference."
+  },
+  "contracts": [
+    {
+      "key": "SUBMISSION",
+      "method": "POST",
+      "transport": "json",
+      "purpose": "Register a correspondence, mint its reference, issue one upload ticket per declared attachment.",
+      "request": [
+        {
+          "field": "localId",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/LocalId",
+          "note": "Client correlation id. Lets a retry be recognised as the same submission."
+        },
+        {
+          "field": "channel",
+          "type": "string",
+          "required": true,
+          "const": "Portal",
+          "persistence": "Portal Registry/Channel"
+        },
+        {
+          "field": "correspondenceType",
+          "type": "string",
+          "required": true,
+          "const": "Incoming",
+          "persistence": "Portal Registry/CorrespondenceType"
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/Subject"
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/Category",
+          "note": "One of the eight correspondence types. The flow must reject a value outside the set rather than store it."
+        },
+        {
+          "field": "sender.name",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/SenderName"
+        },
+        {
+          "field": "sender.organisation",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Registry/SenderOrganisation"
+        },
+        {
+          "field": "sender.organisationType",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Registry/SenderOrganisationType"
+        },
+        {
+          "field": "senderEmail",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/SenderEmail",
+          "note": "Stored lowercased and trimmed. STATUS matches on it, so a stored variant that differs in case makes the record unreachable."
+        },
+        {
+          "field": "senderPhone",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Registry/SenderPhone"
+        },
+        {
+          "field": "eventDate",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Registry/EventDate",
+          "note": "Empty string unless the correspondence type carries one."
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/Description"
+        },
+        {
+          "field": "submittedAt",
+          "type": "iso8601",
+          "required": true,
+          "persistence": "Portal Registry/SubmittedAtUtc"
+        },
+        {
+          "field": "attachments[]",
+          "type": "array",
+          "required": false,
+          "persistence": "Portal Registry/AttachmentCount",
+          "note": "Count only on the registry row; each element becomes a ticket."
+        },
+        {
+          "field": "attachments[].name",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Upload Tickets/DeclaredName"
+        },
+        {
+          "field": "attachments[].size",
+          "type": "number",
+          "required": true,
+          "persistence": "Portal Upload Tickets/DeclaredSizeBytes"
+        },
+        {
+          "field": "attachments[].sha256",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Upload Tickets/DeclaredSha256",
+          "note": "INT-002 requires UPLOAD to verify the received bytes against this. Declared here so it can be."
+        },
+        {
+          "field": "verification",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Verification Proofs/Consumed",
+          "note": "The single-use proof from VERIFY_CONFIRM, present only when the wizard holds one. It is not stored on the registry row — the flow redeems it by setting Consumed on the proof it matches, and records the outcome as Portal Registry/VerifiedSubmission. A proof that is already consumed, or expired, must be refused."
+        }
+      ],
+      "derived": [
+        {
+          "field": "referenceId",
+          "persistence": "Portal Registry/ReferenceId",
+          "note": "Minted by the flow from Portal Sequence Counters. Must be unique and monotonic within its year."
+        },
+        {
+          "field": "status",
+          "persistence": "Portal Registry/Status",
+          "note": "Always `received` at creation. No other value may be set by this endpoint."
+        },
+        {
+          "field": "verifiedSubmission",
+          "persistence": "Portal Registry/VerifiedSubmission",
+          "note": "True when a proof was presented and consumed."
+        },
+        {
+          "field": "sourceIp",
+          "persistence": "Portal Registry/SourceIp",
+          "note": "From X-Forwarded-For."
+        },
+        {
+          "field": "initial timeline event",
+          "persistence": "Portal Status Timeline/AtUtc",
+          "note": "One row at creation, status `received`, actor `Registry`."
+        },
+        {
+          "field": "ticket per attachment",
+          "required": true,
+          "persistence": "Portal Upload Tickets/Title",
+          "note": "Opaque single-use token. One row per declared attachment."
+        },
+        {
+          "field": "ticket.submissionRef",
+          "required": true,
+          "persistence": "Portal Upload Tickets/SubmissionRef"
+        },
+        {
+          "field": "ticket.storedName",
+          "required": true,
+          "persistence": "Portal Upload Tickets/StoredName",
+          "note": "Reserved at ticket creation, after the Universal Filename Policy."
+        },
+        {
+          "field": "ticket.expiresAtUtc",
+          "required": true,
+          "persistence": "Portal Upload Tickets/ExpiresAtUtc",
+          "note": "Short-lived. An expired ticket must be refused."
+        },
+        {
+          "field": "ticket.createdAtUtc",
+          "required": true,
+          "persistence": "Portal Upload Tickets/CreatedAtUtc"
+        },
+        {
+          "field": "ticket.redeemed",
+          "required": true,
+          "persistence": "Portal Upload Tickets/Redeemed",
+          "note": "false at creation; UPLOAD sets it true. Single use."
+        },
+        {
+          "field": "ticket.status",
+          "required": true,
+          "persistence": "Portal Upload Tickets/Status",
+          "note": "issued | redeemed | expired"
+        },
+        {
+          "field": "timeline.submissionRef",
+          "required": true,
+          "persistence": "Portal Status Timeline/SubmissionRef"
+        },
+        {
+          "field": "timeline.actor",
+          "required": true,
+          "persistence": "Portal Status Timeline/Actor",
+          "note": "`Registry` for anything the flow writes."
+        }
+      ],
+      "response": [
+        {
+          "field": "referenceId",
+          "type": "string",
+          "required": true,
+          "readBy": "core.js submit()",
+          "note": "Without it the citizen has no way to track the submission."
+        },
+        {
+          "field": "uploads[]",
+          "type": "array",
+          "required": "when attachments were declared",
+          "readBy": "submit.js uploadAll()",
+          "note": "One element per declared attachment. **An empty array when attachments were declared means the attachments are silently never sent.**"
+        },
+        {
+          "field": "uploads[].ticket",
+          "type": "string",
+          "required": true,
+          "readBy": "submit.js uploadAll()",
+          "persistence": "Portal Upload Tickets/Title"
+        },
+        {
+          "field": "uploads[].name",
+          "type": "string",
+          "required": true,
+          "readBy": "submit.js uploadAll()"
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "required": false,
+          "readBy": "core.js submit()",
+          "note": "`verification_required`, with HTTP 403, when the address has not been verified. Any other 4xx/5xx queues the submission."
+        }
+      ],
+      "statuses": {
+        "200": "accepted",
+        "403 + error=verification_required": "the wizard asks for a code",
+        "other 4xx/5xx": "queued for retry"
+      }
+    },
+    {
+      "key": "UPLOAD",
+      "method": "PUT",
+      "transport": "raw bytes",
+      "purpose": "Redeem one single-use ticket with the raw file.",
+      "request": [
+        {
+          "field": "Content-Type",
+          "type": "header",
+          "required": true,
+          "const": "application/octet-stream"
+        },
+        {
+          "field": "X-Upload-Ticket",
+          "type": "header",
+          "required": true,
+          "persistence": "Portal Upload Tickets/Title",
+          "note": "The ticket returned by SUBMISSION. Single use: the flow must set Redeemed and refuse a second presentation."
+        },
+        {
+          "field": "body",
+          "type": "bytes",
+          "required": true,
+          "persistence": "Portal Attachments/AttachmentLink",
+          "note": "Raw, never base64. INT-002 requires the flow to verify size and SHA-256 against the ticket before storing."
+        }
+      ],
+      "derived": [
+        {
+          "field": "submissionRef",
+          "persistence": "Portal Attachments/SubmissionRef"
+        },
+        {
+          "field": "declaredName",
+          "persistence": "Portal Attachments/DeclaredName"
+        },
+        {
+          "field": "storedName",
+          "persistence": "Portal Attachments/StoredName",
+          "note": "After the Universal Filename Policy is applied by the flow, not the client."
+        },
+        {
+          "field": "declaredSha256",
+          "persistence": "Portal Attachments/DeclaredSha256"
+        },
+        {
+          "field": "createdAtUtc",
+          "persistence": "Portal Attachments/CreatedAtUtc"
+        },
+        {
+          "field": "declaredSizeBytes",
+          "required": true,
+          "persistence": "Portal Attachments/DeclaredSizeBytes",
+          "note": "Compared to the received byte count before storing, per INT-002."
+        },
+        {
+          "field": "status",
+          "required": true,
+          "persistence": "Portal Attachments/Status",
+          "note": "stored | refused"
+        }
+      ],
+      "response": [
+        {
+          "field": "stored",
+          "type": "boolean",
+          "required": true,
+          "readBy": "core.js upload()",
+          "note": "**Must be truthful.** `200 {stored:false}` means the bytes were not filed."
+        },
+        {
+          "field": "attachmentLink",
+          "type": "string",
+          "required": "when stored",
+          "readBy": "core.js upload()"
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "required": "when not stored",
+          "readBy": "core.js upload()",
+          "note": "core.js upload() also accepts `error` as a fallback key for this value; a flow may send either, but `reason` is the name this contract specifies."
+        }
+      ],
+      "statuses": {
+        "200": "stored, or answered with stored:false",
+        "401/403": "ticket refused",
+        "4xx": "oversize or digest mismatch"
+      }
+    },
+    {
+      "key": "SUPPORT",
+      "method": "POST",
+      "transport": "json",
+      "purpose": "Raise a helpdesk case. Never enters the registry.",
+      "request": [
+        {
+          "field": "name",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Support Cases/Name"
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Support Cases/Email"
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Support Cases/Topic",
+          "note": "The topic's label, not an internal key."
+        },
+        {
+          "field": "aboutReference",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Support Cases/AboutReference",
+          "note": "A tracking id, unverified. Empty string when blank."
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Support Cases/Message"
+        }
+      ],
+      "derived": [
+        {
+          "field": "submittedAtUtc",
+          "persistence": "Portal Support Cases/SubmittedAtUtc"
+        },
+        {
+          "field": "status",
+          "persistence": "Portal Support Cases/Status",
+          "note": "`open` at creation."
+        },
+        {
+          "field": "sourceIp",
+          "persistence": "Portal Support Cases/SourceIp"
+        },
+        {
+          "field": "acknowledgement",
+          "persistence": "Portal Outbox Receipts/MessageType",
+          "note": "One receipt row per acknowledgement sent. Never the message body."
+        }
+      ],
+      "response": [
+        {
+          "field": "caseRef",
+          "type": "string",
+          "required": true,
+          "readBy": "support.js send()",
+          "note": "**The reference the citizen is given must be this one.** A locally generated reference exists in no system of record."
+        }
+      ],
+      "statuses": {
+        "200": "case created",
+        "4xx/5xx": "queued"
+      }
+    },
+    {
+      "key": "VERIFY",
+      "method": "POST",
+      "transport": "json",
+      "purpose": "Mail a one-time code to an address.",
+      "request": [
+        {
+          "field": "email",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal OTP Codes/Email",
+          "note": "Stored lowercased and trimmed. VERIFY_CONFIRM matches on it."
+        }
+      ],
+      "derived": [
+        {
+          "field": "code",
+          "persistence": "Portal OTP Codes/OTP_Code",
+          "note": "Plaintext, per SC-003 — WDL has no bitwise operators, so no digest can be computed. Protected by lifecycle, not by storage."
+        },
+        {
+          "field": "expiresAt",
+          "persistence": "Portal OTP Codes/Expires_At"
+        },
+        {
+          "field": "attempts",
+          "persistence": "Portal OTP Codes/Attempts",
+          "note": "0 at creation. The cap is enforced by VERIFY_CONFIRM."
+        },
+        {
+          "field": "consumed",
+          "persistence": "Portal OTP Codes/Consumed",
+          "note": "false at creation."
+        },
+        {
+          "field": "outbox receipt",
+          "persistence": "Portal Outbox Receipts/MessageType",
+          "note": "`verification-code`. Records that a code was sent, **never the code**."
+        },
+        {
+          "field": "sourceIp",
+          "required": true,
+          "persistence": "Portal OTP Codes/SourceIp"
+        },
+        {
+          "field": "createdAtUtc",
+          "required": true,
+          "persistence": "Portal OTP Codes/CreatedAtUtc"
+        }
+      ],
+      "response": [
+        {
+          "field": "sent",
+          "type": "boolean",
+          "required": true,
+          "readBy": "core.js verifyRequest()",
+          "note": "**Must be present and truthful.** The client tests `=== true`, so an absent field is read as failure and the citizen is told the code could not be sent."
+        },
+        {
+          "field": "expiresAt",
+          "type": "iso8601",
+          "required": true,
+          "readBy": "core.js verifyRequest()"
+        }
+      ],
+      "statuses": {
+        "200": "answered",
+        "429": "rate limited",
+        "other": "refused"
+      }
+    },
+    {
+      "key": "VERIFY_CONFIRM",
+      "method": "POST",
+      "transport": "json",
+      "purpose": "Exchange a code for a single-use proof.",
+      "request": [
+        {
+          "field": "email",
+          "type": "string",
+          "required": true,
+          "note": "Must match the address VERIFY was called with. The lookup is by email; the code is compared inside the flow."
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "required": true,
+          "note": "Six digits. **The flow must compare it to the stored code** — the lookup filter is not a comparison."
+        }
+      ],
+      "derived": [
+        {
+          "field": "proof",
+          "persistence": "Portal Verification Proofs/Title",
+          "note": "Opaque token. Two concatenated GUIDs with hyphens stripped."
+        },
+        {
+          "field": "email",
+          "persistence": "Portal Verification Proofs/Email"
+        },
+        {
+          "field": "purpose",
+          "persistence": "Portal Verification Proofs/Purpose",
+          "note": "`portal-verification`."
+        },
+        {
+          "field": "expiresAtUtc",
+          "persistence": "Portal Verification Proofs/ExpiresAtUtc",
+          "note": "15 minutes."
+        },
+        {
+          "field": "consumed",
+          "persistence": "Portal Verification Proofs/Consumed",
+          "note": "false at mint; set true when SUBMISSION or STATUS redeems it."
+        },
+        {
+          "field": "challenge consumed",
+          "persistence": "Portal OTP Codes/Consumed",
+          "note": "Set true on a match, and on the fifth failed attempt."
+        },
+        {
+          "field": "createdAtUtc",
+          "required": true,
+          "persistence": "Portal Verification Proofs/CreatedAtUtc"
+        }
+      ],
+      "response": [
+        {
+          "field": "verification",
+          "type": "string",
+          "required": true,
+          "readBy": "core.js verifyConfirm()",
+          "note": "**The proof. Absent means the citizen is told a correct code was refused.**"
+        },
+        {
+          "field": "expiresAt",
+          "type": "iso8601",
+          "required": true,
+          "readBy": "core.js verifyConfirm()"
+        }
+      ],
+      "statuses": {
+        "200": "verified, proof returned",
+        "4xx": "invalid or expired"
+      }
+    },
+    {
+      "key": "STATUS",
+      "method": "POST",
+      "transport": "json",
+      "purpose": "Read one submission back, in the public projection only.",
+      "request": [
+        {
+          "field": "referenceId",
+          "type": "string",
+          "required": true,
+          "note": "Trimmed and uppercased before matching."
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "required": "when no proof is held",
+          "note": "Structurally absent from the body when a proof is held — omitted, not blank."
+        },
+        {
+          "field": "verification",
+          "type": "string",
+          "required": "when a proof is held",
+          "note": "Redeemed and consumed by this call."
+        }
+      ],
+      "response": [
+        {
+          "field": "record",
+          "type": "object",
+          "required": "on a match",
+          "readBy": "track.js fromRegistry()",
+          "note": "**Null or absent must be answered 404, not 200.** A 200 with no record renders as a successful match."
+        },
+        {
+          "field": "record.referenceId",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/ReferenceId"
+        },
+        {
+          "field": "record.status",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Registry/Status"
+        },
+        {
+          "field": "record.statusLabel",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Registry/StatusLabel"
+        },
+        {
+          "field": "record.category",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Registry/Category"
+        },
+        {
+          "field": "record.subject",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Registry/Subject"
+        },
+        {
+          "field": "record.receivedAt",
+          "type": "iso8601",
+          "required": false,
+          "persistence": "Portal Registry/SubmittedAtUtc"
+        },
+        {
+          "field": "record.acknowledgedAt",
+          "type": "iso8601",
+          "required": false,
+          "persistence": "Portal Registry/AcknowledgedAtUtc"
+        },
+        {
+          "field": "record.updatedAt",
+          "type": "iso8601",
+          "required": false,
+          "persistence": "Portal Registry/UpdatedAtUtc"
+        },
+        {
+          "field": "record.closedAt",
+          "type": "iso8601",
+          "required": false,
+          "persistence": "Portal Registry/ClosedAtUtc"
+        },
+        {
+          "field": "record.actionRequired",
+          "type": "boolean",
+          "required": false,
+          "persistence": "Portal Registry/ActionRequired"
+        },
+        {
+          "field": "record.timeline[]",
+          "type": "array",
+          "required": false,
+          "persistence": "Portal Status Timeline/AtUtc"
+        },
+        {
+          "field": "record.timeline[].at",
+          "type": "iso8601",
+          "required": true,
+          "persistence": "Portal Status Timeline/AtUtc"
+        },
+        {
+          "field": "record.timeline[].status",
+          "type": "string",
+          "required": true,
+          "persistence": "Portal Status Timeline/Status"
+        },
+        {
+          "field": "record.timeline[].label",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Status Timeline/Label"
+        },
+        {
+          "field": "record.timeline[].note",
+          "type": "string",
+          "required": false,
+          "persistence": "Portal Status Timeline/Note"
+        }
+      ],
+      "excludedFromProjection": [
+        "description",
+        "attachments",
+        "assigned officer",
+        "handling unit",
+        "internal notes",
+        "SenderName, SenderPhone, SenderOrganisation and every other sender field",
+        "SourceIp",
+        "LocalId",
+        "VerifiedSubmission"
+      ],
+      "statuses": {
+        "200": "record returned",
+        "403 + error=verification_required": "the email check is demanded",
+        "404": "**byte-identical denial** — the same response whether the reference does not exist or is not yours",
+        "429": "rate limited"
+      }
+    },
+    {
+      "key": "WRITEBACK",
+      "specifiedBy": "NITDA_Document_Portal_Functional_Documentation v3.0, INT-007",
+      "implementedBy": "document-portal/ — PF.intake.writeback() in core.js, called from track.js's respond/note/withdraw actions on a registry-sourced record. Per D12 the closure package, the build that used to carry submitWb/writeback, is discarded and is not what this was ported from — it is a clean implementation against this contract.",
+      "configuredBy": "config.example.js declares the WRITEBACK key as an empty slot, same as every other endpoint. No deployment has a live URL in it yet — the flow exists, but its trigger URL is a credential and is not recorded in this repository, so a deployment has to be given one by hand.",
+      "method": "POST",
+      "transport": "json",
+      "purpose": "A verified citizen responds, adds a note, or withdraws. Appends to the timeline; only withdrawal changes status.",
+      "status": "IN SCOPE — specified, client built, flow deployed",
+      "statusEvidence": "CG_Writeback_Endpoint, workflow 21d4bfd3-f595-46fa-81bb-c29dabc12e7a, exported from the tenant 2026-08-31 to docs/folio-Master-Flows-and-Endpoints/contracts/deployed/. Trigger POST, triggerAuthenticationType All. npm run wiring reports 10/10 required operations in place against it, and the paste-state evidence of 2026-09-01 records the Portal_WRITEBACK_ECM_DOCS package pasted into it. This field previously read 'no flow', which was already false when it was written and was carried into the independent review brief as a disclosed defect; npm run test:keyimpl re-derives it from the definitions.",
+      "request": [
+        {
+          "field": "referenceId",
+          "type": "string",
+          "required": true
+        },
+        {
+          "field": "verification",
+          "type": "string",
+          "required": true,
+          "note": "A proof identifies the submitter. There is no other authentication."
+        },
+        {
+          "field": "action",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "respond",
+            "note",
+            "withdraw"
+          ]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "derived": [
+        {
+          "field": "timeline event",
+          "persistence": "Portal Status Timeline/AtUtc",
+          "note": "Actor `Submitter`, not `Registry`."
+        },
+        {
+          "field": "status change",
+          "persistence": "Portal Registry/Status",
+          "note": "Only when action is `withdraw`."
+        },
+        {
+          "field": "audit row",
+          "persistence": "Portal Audit Events/EventType",
+          "note": "One row per call, unconditionally — see D13. Not a public-endpoint append D2 reserved against: WRITEBACK requires a consumed verification proof, so no anonymous caller reaches this write."
+        },
+        {
+          "field": "audit.flow",
+          "required": true,
+          "persistence": "Portal Audit Events/Flow"
+        },
+        {
+          "field": "audit.atUtc",
+          "required": true,
+          "persistence": "Portal Audit Events/AtUtc"
+        },
+        {
+          "field": "audit.reference",
+          "required": true,
+          "persistence": "Portal Audit Events/Reference"
+        },
+        {
+          "field": "audit.sourceIp",
+          "required": true,
+          "persistence": "Portal Audit Events/SourceIp"
+        },
+        {
+          "field": "audit.detail",
+          "required": true,
+          "persistence": "Portal Audit Events/Detail",
+          "note": "The action taken and the body's length — never the body."
+        },
+        {
+          "field": "timeline.submissionRef",
+          "required": true,
+          "persistence": "Portal Status Timeline/SubmissionRef"
+        },
+        {
+          "field": "timeline.actor",
+          "required": true,
+          "persistence": "Portal Status Timeline/Actor",
+          "note": "`Submitter`."
+        },
+        {
+          "field": "timeline.label",
+          "required": true,
+          "persistence": "Portal Status Timeline/Label"
+        },
+        {
+          "field": "timeline.note",
+          "required": true,
+          "persistence": "Portal Status Timeline/Note"
+        }
+      ],
+      "response": [
+        {
+          "field": "ok",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "field": "queued",
+          "type": "boolean",
+          "required": false,
+          "note": "The flow's own signal that it accepted the write but has not finished applying it — not a client-side retry queue. WRITEBACK is never queued in document-portal/'s outbox the way SUBMISSION and SUPPORT are: the proof is single-use, so a queued retry would carry one already spent or expired. A failed call is reported to the citizen immediately instead, and a fresh attempt mints a fresh proof."
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "required": "when not ok",
+          "readBy": "track.js writeback UI"
+        }
+      ],
+      "statuses": {
+        "200": "accepted",
+        "401/403": "the proof is missing, invalid, expired, or already consumed",
+        "404": "byte-identical denial, matching STATUS's INT-006 — the reference is unknown or the proof does not own it",
+        "429": "rate limited",
+        "other 4xx/5xx": "refused"
+      },
+      "scopeDecision": "D11. Sponsor decision: citizen write-back is part of the pilot.",
+      "blockedBy": [
+        "a provisioned endpoint key — config.example.js declares the slot; no deployment has a live URL in it"
+      ],
+      "noLongerBlockedBy": "a flow (ten operations). CG_Writeback_Endpoint performs all ten; see statusEvidence."
+    },
+    {
+      "key": "_RATE_LIMIT",
+      "appliesTo": "every endpoint",
+      "specifiedBy": "D8",
+      "purpose": "A fixed 60-minute window counter per endpoint per source. Read, then update or create, before the work.",
+      "derived": [
+        {
+          "field": "bucket key",
+          "required": true,
+          "persistence": "Portal Rate Limits/Title",
+          "note": "`<ENDPOINT>_IP:<X-Forwarded-For>`. A caller with no X-Forwarded-For buckets as `unknown`, which throttles harder, never softer."
+        },
+        {
+          "field": "windowStartUtc",
+          "required": true,
+          "persistence": "Portal Rate Limits/WindowStartUtc",
+          "note": "Reset in place when the window has expired. Never create a second row for one bucket."
+        },
+        {
+          "field": "requestCount",
+          "required": true,
+          "persistence": "Portal Rate Limits/RequestCount",
+          "note": "Incremented within the window, reset to 1 on rollover."
+        },
+        {
+          "field": "updatedAtUtc",
+          "required": true,
+          "persistence": "Portal Rate Limits/UpdatedAtUtc"
+        }
+      ],
+      "limits": {
+        "VERIFY": 5,
+        "VERIFY_CONFIRM": 10,
+        "SUBMISSION": "per D8",
+        "UPLOAD": "per D8",
+        "SUPPORT": "per D8",
+        "STATUS": "per D8",
+        "WRITEBACK": "per D8"
+      },
+      "response": [
+        {
+          "field": "429",
+          "type": "status",
+          "required": true,
+          "note": "Returned through the standard envelope, not by an early terminate — the refusal must still be recorded in telemetry."
+        }
+      ]
+    },
+    {
+      "key": "_TELEMETRY",
+      "appliesTo": "every endpoint",
+      "specifiedBy": "the house build standard",
+      "purpose": "One row per run, written inside the capture scope and never on the request path.",
+      "derived": [
+        {
+          "field": "flow",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/Flow"
+        },
+        {
+          "field": "title",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/Title",
+          "note": "The flow's display name."
+        },
+        {
+          "field": "runId",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/RunId"
+        },
+        {
+          "field": "startedAtUtc",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/StartedAtUtc"
+        },
+        {
+          "field": "completedAtUtc",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/CompletedAtUtc"
+        },
+        {
+          "field": "outcome",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/Outcome",
+          "note": "Succeeded | Failed, from the final status code."
+        },
+        {
+          "field": "durationMs",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/DurationMs"
+        },
+        {
+          "field": "errorMessage",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/ErrorMessage",
+          "note": "The error array, stringified. Headers and query string are redacted before capture."
+        },
+        {
+          "field": "runRecord",
+          "required": true,
+          "persistence": "Portal Flow Telemetry/RunRecordJson",
+          "note": "The whole Compose_Flow_Run_Record composition, stringified — the run's own record kept beside the summary fields, so a failure can be read back without the other seven being reverse-engineered into an explanation. Provisioned 2026-08-31; until then the generator stripped this write, because the designer refuses at SAVE time to store a flow naming a column the list lacks."
+        }
+      ]
+    },
+    {
+      "key": "_SEQUENCE",
+      "appliesTo": "SUBMISSION",
+      "specifiedBy": "D6",
+      "purpose": "Mint a unique, monotonic reference per year. Replaces the last-three-digits-of-ticks scheme, which yields 1000 values a year and collides.",
+      "derived": [
+        {
+          "field": "year",
+          "required": true,
+          "persistence": "Portal Sequence Counters/Year",
+          "note": "One row per year per prefix."
+        },
+        {
+          "field": "prefix",
+          "required": true,
+          "persistence": "Portal Sequence Counters/Prefix",
+          "note": "`NITDA`."
+        },
+        {
+          "field": "currentSequence",
+          "required": true,
+          "persistence": "Portal Sequence Counters/CurrentSequence",
+          "note": "Incremented under the lock token."
+        },
+        {
+          "field": "lockToken",
+          "required": true,
+          "persistence": "Portal Sequence Counters/LockToken",
+          "note": "Written, then re-read to confirm ownership before incrementing. Two flows racing must not both mint."
+        },
+        {
+          "field": "modifiedByFlowRun",
+          "required": true,
+          "persistence": "Portal Sequence Counters/ModifiedByFlowRun",
+          "note": "The run id that last held the lock."
+        },
+        {
+          "field": "lastIssuedAt",
+          "required": true,
+          "persistence": "Portal Sequence Counters/LastIssuedAt"
+        },
+        {
+          "field": "lastReferenceId",
+          "required": true,
+          "persistence": "Portal Sequence Counters/LastReferenceId",
+          "note": "The reference actually issued, for reconciliation."
+        }
+      ]
+    },
+    {
+      "key": "_OUTBOX",
+      "appliesTo": "VERIFY, SUPPORT",
+      "specifiedBy": "D2",
+      "purpose": "A receipt that a message was sent. Never the message body, and never a one-time code.",
+      "derived": [
+        {
+          "field": "title",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/Title"
+        },
+        {
+          "field": "messageType",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/MessageType",
+          "note": "`verification-code` | `support-acknowledgement`"
+        },
+        {
+          "field": "recipientEmail",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/RecipientEmail"
+        },
+        {
+          "field": "reference",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/Reference",
+          "note": "Empty for a verification code, which has none."
+        },
+        {
+          "field": "sentAtUtc",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/SentAtUtc"
+        },
+        {
+          "field": "status",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/Status",
+          "note": "sent | failed"
+        },
+        {
+          "field": "attempts",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/Attempts"
+        },
+        {
+          "field": "lastError",
+          "required": true,
+          "persistence": "Portal Outbox Receipts/LastError"
+        }
+      ]
+    }
+  ],
+  "crossCutting": {
+    "rateLimit": "Every endpoint reads, updates and creates a bucket in Portal Rate Limits keyed `<ENDPOINT>_IP:<X-Forwarded-For>`. 60-minute fixed window. See D8 for the per-endpoint limits.",
+    "telemetry": "Every endpoint writes one row to Portal Flow Telemetry inside its capture scope, never on the request path.",
+    "envelope": "Every response is the standard envelope, and the HTTP status is the envelope's own status code. A branch that sets a failure code must have that code survive to the response.",
+    "cors": "Access-Control-Allow-Origin must name the real portal origin. It is currently the literal `https://your-host` on every endpoint.",
+    "filenamePolicy": "The Universal Filename Policy is applied by the UPLOAD flow, not the client. document-portal/ performs no filename normalisation."
+  }
+}

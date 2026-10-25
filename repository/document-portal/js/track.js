@@ -1,0 +1,616 @@
+/* Track — verified lookup, lifecycle timeline and citizen-side actions. */
+PF.page = function () {
+  var out = PF.$('#trackOut');
+  var form = PF.$('#lookup');
+  /* Run only on the Track page: these elements exist nowhere else. A bundle that loads every portal script (the
+     design-system project's _ds_bundle.js) otherwise ran this on every page and failed on the missing #quickPicks. */
+  if (!out || !form || !PF.$('#quickPicks')) return;
+
+  /* ---------- quick picks ---------- */
+  function chip(label, id, email, tone) {
+    return '<button type="button" class="dgo-chip" data-fill="' + PF.esc(id) + '" data-email="' + PF.esc(email) + '" style="cursor:pointer;border:0' + (tone ? ';background:var(--dgo-color-surface-sunken);color:var(--dgo-color-fg-default)' : '') + '">' +
+      '<svg class="icon-sm" aria-hidden="true"><use href="#i-id"></use></svg>' + PF.esc(label) + '</button>';
+  }
+  /* Quick picks are the visitor's own requests and nothing else.
+     There was a second block here — "Or open a sample record" — built from
+     PF.store.all().filter(seeded) and rendered through the same chip(), so each chip carried
+     data-email: another submitter's address. The handler below fills both fields from the chip
+     and calls lookup(). The gate in lookup() is deliberate work — it requires the ID and the
+     email together, and refuses to say which of the two was wrong so the register cannot be
+     enumerated — and these chips handed a visitor the pair, on the page that enforces it.
+
+     A convenience for reviewing the demo end to end is not worth teaching the portal that
+     publishing ID-plus-email is acceptable. Reviewers can read a seed from PF.SEEDS. */
+  function renderQuick() {
+    var mine = PF.store.mine();
+    if (!mine.length) {
+      PF.$('#quickPicks').innerHTML =
+        '<p class="pf-note">Enter the tracking ID from your confirmation email, and the email address you ' +
+        'submitted with. Requests you track on this device will appear here for one-tap access.</p>';
+      return;
+    }
+    PF.$('#quickPicks').innerHTML =
+      '<div class="dgo-stack dgo-stack--2"><span class="dgo-field__label">Your requests from this device</span><div class="dgo-cluster dgo-cluster--2">' +
+      mine.slice(0, 4).map(function (m) { var k = m.referenceId || m.id; return chip(k, k, m.email); }).join('') + '</div></div>';
+  }
+  renderQuick();
+
+  PF.$('#quickPicks').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-fill]');
+    if (!b) return;
+    PF.$('#trackId').value = b.getAttribute('data-fill');
+    PF.$('#trackEmail').value = b.getAttribute('data-email');
+    lookup();
+  });
+
+  /* ---------- device history ---------- */
+  function renderMine() {
+    var mine = PF.store.mine();
+    PF.$('#minePanel').hidden = !mine.length;
+    if (!mine.length) return;
+    PF.$('#mineList').innerHTML = mine.map(function (m) {
+      var rec = PF.store.get(m.id);
+      return '<li><button class="pf-rec" data-open="' + PF.esc(m.id) + '" data-email="' + PF.esc(m.email) + '">' +
+        '<span class="pf-rec__top"><span class="pf-rec__id">' + PF.esc(m.referenceId || m.id) + '</span>' + (rec ? PF.pill(rec.status) : '<span class="dgo-pill">Not on this device</span>') + '</span>' +
+        '<span class="pf-rec__meta"><span>' + PF.esc(m.title || 'Submission') + '</span><span>·</span><span>' + PF.rel(m.at) + '</span></span></button></li>';
+    }).join('');
+  }
+  renderMine();
+  PF.$('#mineList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-open]');
+    if (!b) return;
+    PF.$('#trackId').value = b.getAttribute('data-open');
+    PF.$('#trackEmail').value = b.getAttribute('data-email');
+    lookup();
+  });
+  PF.$('#forgetBtn').addEventListener('click', function () {
+    PF.dialog({ title: 'Forget this device history?', okLabel: 'Forget', tone: 'danger', body: '<p class="pf-note">The list of tracking IDs kept in this browser is cleared. The requests themselves are unaffected and can still be found with the ID and email.</p>' })
+      .then(function (ok) { if (!ok) return; PF.store.forgetMine(); renderMine(); renderQuick(); PF.toast('info', 'Device history cleared', ''); });
+  });
+
+  /* ---------- validation + lookup ---------- */
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+  function err(id, msg) {
+    var p = PF.$('#' + id + '-err'), f = PF.$('#' + id);
+    if (msg) { p.textContent = msg; p.hidden = false; f.setAttribute('aria-invalid', 'true'); }
+    else { p.hidden = true; f.removeAttribute('aria-invalid'); }
+  }
+
+  form.addEventListener('submit', function (e) { e.preventDefault(); lookup(); });
+  PF.$('#resetBtn').addEventListener('click', function () {
+    form.reset(); err('trackId', ''); err('trackEmail', ''); out.innerHTML = '';
+    history.replaceState(null, '', location.pathname);
+    PF.$('#trackId').focus();
+  });
+
+  function lookup() {
+    var id = PF.$('#trackId').value.trim().toUpperCase();
+    var email = PF.$('#trackEmail').value.trim();
+    err('trackId', ''); err('trackEmail', '');
+    var bad = false;
+    if (!id || id.length < 6) { err('trackId', 'Enter the full tracking ID from your receipt.'); bad = true; }
+    if (!EMAIL.test(email)) { err('trackEmail', 'Enter the email address used at submission.'); bad = true; }
+    if (bad) { PF.toast('error', 'Cannot look that up yet', 'Both the tracking ID and the email are required.'); return; }
+
+    lookupEmail = email;
+    PF.$('#trackId').value = id;
+    var btn = PF.$('#lookupBtn');
+    btn.setAttribute('data-loading', 'true'); btn.disabled = true;
+    out.innerHTML = '<div class="pf-panel"><div class="pf-panel__body dgo-stack dgo-stack--3">' +
+      '<span class="dgo-skeleton" style="height:20px;width:40%"></span>' +
+      '<span class="dgo-skeleton" style="height:14px;width:80%"></span>' +
+      '<span class="dgo-skeleton" style="height:14px;width:65%"></span></div></div>';
+
+    /* Ask the registry first. Until step 6 this function read localStorage and nothing
+       else, so it could not report a decision the registry had actually taken and a
+       submission made on a phone did not exist on a laptop. The device store is now a
+       fallback, and when it is used the page says so — presenting device data as though it
+       came from the registry is the failure this replaces. */
+    // A portal tracking ID this device holds a registry reference for is looked up by that reference.
+    var key = PF.store.referenceFor(id);
+    PF.intake.status(key, email, { verification: proof }).then(function (res) {
+      btn.removeAttribute('data-loading'); btn.disabled = false;
+      PF.store.log('lookup', id, 'Status lookup for ' + id);
+
+      if (res.resolution === 'found') {
+        /* A verified lookup must not leave the address in the URL bar, the browser history
+           or the Referer header — that moves the disclosure rather than closing it, which is
+           README.md's explicit warning on this contract. */
+        keepUrl(id, proof ? null : email);
+        proof = null;               // single use — the flow burns it, so the page must too
+        /* The registry answered a portal tracking ID with its own reference: keep the pair, so
+           this device offers the reference from now on. Device entries made before the receipt
+           learned the reference (or by a submit page served from cache) heal on first lookup. */
+        var issued = res.record && res.record.referenceId;
+        if (issued && issued !== id) { PF.store.setReference(id, issued); renderQuick(); renderMine(); }
+        return render(fromRegistry(res.record, id), 'registry');
+      }
+      if (res.resolution === 'verification-required') return requireVerification(id, email);
+      if (res.resolution === 'denied') return denied(id);
+
+      // Unavailable: no read-back configured, offline, or the registry could not be
+      // reached. That is not a statement that the request does not exist, so it must not
+      // be reported as one.
+      var rec = PF.store.get(id);
+      if (!rec || String(rec.email || '').toLowerCase() !== email.toLowerCase()) {
+        return unavailable(id, res.reason);
+      }
+      keepUrl(id, email);
+      render(rec, 'device');
+    });
+  }
+
+  function keepUrl(id, email) {
+    var q = '?id=' + encodeURIComponent(id);
+    if (email) q += '&email=' + encodeURIComponent(email);
+    history.replaceState(null, '', location.pathname + q);
+  }
+
+  /* ---------- verified lookup (dormant until the flow asks) ---------- */
+
+  /* The single-use proof, held only for the retry that follows. Never persisted: writing it
+     to localStorage would turn a one-shot proof into a durable credential sitting on a
+     shared machine, which is the opposite of what it is for. */
+  var proof = null;
+
+  /* The address the current record was found with. WRITEBACK needs it to run its own
+     verify round-trip — the registry projection never carries the submitter's email back
+     (PORTAL_DATA_CONTRACT.md's STATUS "Never in the projection" list), so this is the only
+     place left holding it. Set on every successful lookup; never persisted, same as proof. */
+  var lookupEmail = null;
+
+  /**
+   * The STATUS flow refused the pair without proof that this caller reads that mailbox.
+   *
+   * This is NOT a denial. The reference and the email may both be exactly right — a
+   * forwarded receipt is the ordinary way a correct pair reaches someone it does not
+   * belong to, and that is the case this exists to catch. Saying "no match" here would
+   * tell a legitimate submitter their own reference does not exist.
+   */
+  function requireVerification(id, email) {
+    if (!PF.intake.verificationAvailable()) {
+      /* Refusing to start a round-trip that cannot finish. A code with nowhere to redeem it
+         leaves the submitter waiting for an outcome that will never arrive. */
+      out.innerHTML = '<div class="dgo-alert dgo-alert--warning"><span class="dgo-alert__icon"><svg class="icon" aria-hidden="true"><use href="#i-warning"></use></svg></span>' +
+        '<div class="dgo-alert__body"><div class="dgo-alert__title">This lookup needs email verification</div>' +
+        '<p style="margin:0 0 10px">The registry requires proof that you read ' + PF.esc(email) +
+        ' before it will show this request, and this site is not configured to send that code. ' +
+        'This does <strong>not</strong> mean ' + PF.esc(id) + ' was not received.</p>' +
+        '<a class="dgo-btn dgo-btn--secondary dgo-btn--sm" href="support.html">Ask the helpdesk</a></div></div>';
+      PF.toast('warning', 'Verification required', 'This site cannot send the code needed for this lookup.');
+      return;
+    }
+
+    out.innerHTML = '<div class="pf-panel"><div class="pf-panel__body dgo-stack dgo-stack--3">' +
+      '<h3 style="margin:0">Confirm your email address</h3>' +
+      '<p style="margin:0">To protect the request, the registry needs to know you read <strong>' +
+      PF.esc(email) + '</strong>. We will send a one-time code to that address.</p>' +
+      '<div id="verifyStep"><button class="dgo-btn dgo-btn--primary" id="sendCode" type="button">Send the code</button></div>' +
+      '</div></div>';
+
+    PF.$('#sendCode').addEventListener('click', function () {
+      var b = PF.$('#sendCode');
+      b.setAttribute('data-loading', 'true'); b.disabled = true;
+      PF.intake.verifyRequest(email).then(function (r) {
+        if (!r.ok || !r.sent) {
+          b.removeAttribute('data-loading'); b.disabled = false;
+          /* `sent:false` means the flow issued a challenge it could not deliver. Telling
+             the submitter to check their inbox would be a lie — the same rule the
+             submission wizard applies. */
+          PF.toast('error', 'Could not send the code',
+            r.reason === 'too-many-requests'
+              ? 'Too many requests from this connection. Wait a minute and try again.'
+              : 'The code could not be sent to that address just now.');
+          return;
+        }
+        PF.$('#verifyStep').innerHTML =
+          '<label class="dgo-field"><span class="dgo-field__label">Six-digit code</span>' +
+          '<input class="dgo-input" id="verifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>' +
+          '<button class="dgo-btn dgo-btn--primary" id="confirmCode" type="button" style="margin-top:8px">Confirm and look up</button>';
+        PF.$('#confirmCode').addEventListener('click', function () {
+          var code = PF.$('#verifyCode').value.trim();
+          if (!/^\d{6}$/.test(code)) { PF.toast('error', 'Check the code', 'Enter the six digits from the email.'); return; }
+          var c = PF.$('#confirmCode');
+          c.setAttribute('data-loading', 'true'); c.disabled = true;
+          PF.intake.verifyConfirm(email, code).then(function (v) {
+            c.removeAttribute('data-loading'); c.disabled = false;
+            if (!v.ok || !v.verification) {
+              PF.toast('error', 'That code was not accepted', 'Check the digits, or send a new code.');
+              return;
+            }
+            proof = v.verification;   // consumed by the retry below, then discarded
+            lookup();
+          });
+        });
+        PF.$('#verifyCode').focus();
+      });
+    });
+  }
+
+  /* One denial for both cases. The registry deliberately does not distinguish "no such
+     reference" from "wrong email" — telling an anonymous caller which it was answers
+     "does NITDA-2026-000318 exist?" for anybody who asks. Saying it differently here
+     would put that oracle straight back. */
+  function denied(id) {
+    out.innerHTML = '<div class="dgo-alert dgo-alert--danger"><span class="dgo-alert__icon"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg></span>' +
+      '<div class="dgo-alert__body"><div class="dgo-alert__title">No request matches that tracking ID and email</div>' +
+      '<p style="margin:0 0 10px">Both must match the request exactly. Check for transposed characters in the ID, and use the email address the confirmation was sent to — not a colleague’s.</p>' +
+      '<a class="dgo-btn dgo-btn--secondary dgo-btn--sm" href="support.html">Ask the helpdesk to find it</a></div></div>';
+    PF.toast('error', 'No match', 'Nothing matches that tracking ID and email together.');
+  }
+
+  function unavailable(id, reason) {
+    var why = reason === 'offline'
+      ? 'This device is offline, so the registry could not be reached.'
+      : reason === 'rate-limited'
+        ? 'Too many lookups from this connection in a short time. Wait a minute and try again.'
+        : 'The registry could not be reached just now.';
+    out.innerHTML = '<div class="dgo-alert dgo-alert--warning"><span class="dgo-alert__icon"><svg class="icon" aria-hidden="true"><use href="#i-warning"></use></svg></span>' +
+      '<div class="dgo-alert__body"><div class="dgo-alert__title">Status is unavailable right now</div>' +
+      '<p style="margin:0 0 10px">' + why + ' This does <strong>not</strong> mean ' + PF.esc(id) + ' was not received — it means the status could not be read. Try again shortly.</p>' +
+      '<a class="dgo-btn dgo-btn--secondary dgo-btn--sm" href="support.html">Contact the helpdesk</a></div></div>';
+    PF.toast('warning', 'Status unavailable', 'The registry could not be reached.');
+  }
+
+  /* ---------- record view ---------- */
+  function stageOf(rec) { return PF.status(rec.status).stage; }
+
+  /* Map the registry's projected view onto the shape this page renders.
+     The projection is deliberately narrow — no officer, no handling unit, no attachment
+     list, no description — so the fields it does not carry are left undefined and the
+     renderer omits their rows rather than printing empty ones. */
+  function fromRegistry(p, id) {
+    p = p || {};
+    var tl = (p.timeline || []).map(function (e) {
+      return { at: e.at, status: e.status, label: e.label || '', note: e.note || '', actor: 'Registry' };
+    });
+    return {
+      id: p.referenceId || id,
+      status: p.status || 'received',
+      statusLabel: p.statusLabel || '',
+      category: p.category || '',
+      title: p.subject || '',
+      submittedAt: p.receivedAt || '',
+      acknowledgedAt: p.acknowledgedAt || '',
+      updatedAt: p.updatedAt || p.receivedAt || '',
+      closedAt: p.closedAt || '',
+      actionRequired: p.actionRequired === true,
+      events: tl
+    };
+  }
+
+  /* Acknowledgement of receipt, NOT a decision deadline.
+     This block used to be titled "Service-level target" and measured elapsed days against
+     a per-service SLA — the service-desk model step 2 retired. On a closed record it read
+     "Closed after 14 of 3 working days", which is meaningless: the 3 days are the window
+     to acknowledge receipt, and the outcome follows its own workflow. It now reports the
+     one commitment the registry actually makes. */
+  function ackBlock(rec) {
+    var total = PF.ACK_TARGET_DAYS;
+    if (!rec.submittedAt) return '';
+    /* Acknowledged means the registry acted on the record: AcknowledgedAtUtc, or the first
+       event after 'received'. The 'received' event itself is not an acknowledgement — reading
+       events[0] reported every new submission as "Acknowledged within 1 working day"
+       (NITDA-2026-00011, 2026-09-29). */
+    var moved = rec.events.filter(function (e) { return e.status && e.status !== 'received'; })[0];
+    var ackAt = rec.acknowledgedAt || (moved ? moved.at : '');
+    var used = 0, d = new Date(rec.submittedAt), end = new Date(ackAt || Date.now());
+    while (d < end) { d.setDate(d.getDate() + 1); var w = d.getDay(); if (w !== 0 && w !== 6) used++; }
+
+    var pct = Math.min(100, Math.round((used / total) * 100));
+    var over = used > total, label;
+    if (ackAt) label = 'Acknowledged ' + (used <= total ? 'within' : 'after') + ' ' + used + (used === 1 ? ' working day' : ' working days');
+    else if (over) label = 'Acknowledgement overdue by ' + (used - total) + (used - total === 1 ? ' working day' : ' working days');
+    else label = (total - used) + (total - used === 1 ? ' working day left' : ' working days left') + ' of ' + total;
+
+    var late = over && !ackAt;
+    return '<div class="dgo-stack dgo-stack--2">' +
+      '<div class="dgo-row dgo-row--between" style="font-size:12.5px"><span style="color:var(--dgo-color-fg-muted)">Acknowledgement of receipt</span>' +
+      '<span style="font-weight:600;color:' + (late ? 'var(--dgo-color-danger-subtle-fg)' : 'var(--dgo-color-fg-strong)') + '">' + label + '</span></div>' +
+      '<div class="pf-meter" data-over="' + late + '"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="dgo-row dgo-row--between" style="font-size:11.5px;color:var(--dgo-color-fg-muted)"><span>Received ' + PF.date(rec.submittedAt) + '</span>' +
+      '<span>' + (ackAt ? 'Acknowledged ' + PF.date(ackAt) : 'Target ' + PF.date(rec.ackDueAt || PF.addWorkingDays(rec.submittedAt, total))) + '</span></div>' +
+      '<p class="pf-note" style="margin:0">The registry commits to acknowledging receipt. The outcome follows its own workflow and is reported on this timeline.</p>' +
+      '</div>';
+  }
+
+  function stageBar(rec) {
+    var cur = stageOf(rec), decided = ['approved', 'declined', 'withdrawn'].indexOf(rec.status) > -1;
+    return '<div class="pf-steps"><ol class="dgo-stepper">' + PF.STAGES.map(function (s, i) {
+      var n = i + 1;
+      var state = n < cur ? 'done' : (n === cur ? (decided ? 'done' : 'current') : 'todo');
+      var label = (n === 4 && decided) ? PF.status(rec.status).label : s;
+      return '<li class="dgo-stepper__step" data-state="' + state + '"><span class="dgo-stepper__bullet">' + (state === 'done' ? '✓' : n) + '</span><span>' + label + '</span></li>' +
+        (n < 4 ? '<li class="dgo-stepper__line"></li>' : '');
+    }).join('') + '</ol></div>';
+  }
+
+  /* A row is emitted only when there is something to put in it. The registry projection
+     carries fewer fields than a device record, and a blank <dd> — or worse, the literal
+     string "undefined" — is not an acceptable way to render an absent one. */
+  function row(label, value) {
+    return value ? '<dt>' + label + '</dt><dd>' + value + '</dd>' : '';
+  }
+
+  function sourceNote(source) {
+    if (source === 'registry') {
+      return '<p class="pf-note" style="margin:0">Read from the NITDA registry just now.</p>';
+    }
+    // Device data is shown only when the registry could not be reached, and it must be
+    // labelled. The whole point of step 6 is that this page stops passing off one browser's
+    // localStorage as the registry's answer.
+    return '<div class="dgo-alert dgo-alert--warning" style="margin:0"><span class="dgo-alert__icon"><svg class="icon-sm" aria-hidden="true"><use href="#i-warning"></use></svg></span>' +
+      '<div class="dgo-alert__body"><div class="dgo-alert__title">Shown from this device</div>' +
+      '<p style="margin:0">The registry could not be reached, so this is the copy saved in this browser when the request was submitted. It will not show anything the registry has done since.</p></div></div>';
+  }
+
+  function render(rec, source) {
+    source = source || 'device';
+    var st = PF.status(rec.status);
+    var typeLabel = rec.typeLabel || (rec.type ? PF.correspondenceType(rec.type).label : '');
+    var events = rec.events.slice().reverse();
+    out.innerHTML =
+      '<div class="pf-print-head" style="margin-bottom:18px"><img src="ds/logo/nitda-lockup.png" alt="National Information Technology Development Agency" style="height:56px"><p style="margin:10px 0 0;font-size:12px">Request record ' + rec.id + ' · printed ' + PF.dateTime(new Date().toISOString()) + '</p></div>' +
+      '<div class="dgo-stack dgo-stack--5">' +
+        '<div class="pf-panel">' +
+          '<div class="pf-panel__head" style="flex-wrap:wrap">' +
+            '<span class="pf-rec__id" style="font-size:15px">' + rec.id + '</span>' + PF.pill(rec.status) +
+            (PF.isOverdue(rec) ? '<span class="dgo-pill dgo-pill--danger">Overdue</span>' : '') +
+            (rec.priority === 'expedited' ? '<span class="dgo-pill dgo-pill--escalated">Expedited</span>' : '') +
+            '<span class="dgo-cluster dgo-cluster--2 pf-no-print" style="margin-left:auto">' +
+              '<button class="dgo-btn dgo-btn--ghost dgo-btn--sm" id="copyBtn"><svg class="icon-sm" aria-hidden="true"><use href="#i-id"></use></svg>Copy ID</button>' +
+              '<button class="dgo-btn dgo-btn--secondary dgo-btn--sm" id="printBtn"><svg class="icon-sm" aria-hidden="true"><use href="#i-download"></use></svg>Save as PDF</button>' +
+            '</span>' +
+          '</div>' +
+          '<div class="pf-panel__body dgo-stack dgo-stack--5">' +
+            '<div class="dgo-stack dgo-stack--2"><h2 style="margin:0;font-family:var(--dgo-family-display);font-size:22px;line-height:1.2;letter-spacing:-.012em">' + PF.esc(rec.title) + '</h2>' +
+            '<p class="pf-note">' + PF.esc(rec.statusLabel || st.blurb) + '</p></div>' +
+            stageBar(rec) +
+            ackBlock(rec) +
+            sourceNote(source) +
+            '<dl class="pf-kv">' +
+              row('Correspondence type', PF.esc(typeLabel)) +
+              row('Registry category', PF.esc(rec.category)) +
+              row('Handling unit', PF.esc(rec.unit)) +
+              row('Submitted by', rec.name ? PF.esc(rec.name) + (rec.org ? ' · ' + PF.esc(rec.org) : '') : '') +
+              row('Received', rec.submittedAt ? PF.dateTime(rec.submittedAt) + ' · ' + PF.rel(rec.submittedAt) : '') +
+              row('Last update', rec.updatedAt ? PF.dateTime(rec.updatedAt) + ' · ' + PF.rel(rec.updatedAt) : '') +
+              row('Attachments', (rec.files || []).map(function (f) { return PF.esc(f.name) + ' <span class="pf-mono" style="color:var(--dgo-color-fg-muted)">' + PF.bytes(f.size) + '</span>'; }).join('<br>')) +
+            '</dl>' +
+            actions(rec, source) +
+            '<div id="wbPanel" class="pf-no-print" style="display:none"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pf-panel">' +
+          '<div class="pf-panel__head"><svg class="icon-sm" aria-hidden="true" style="color:var(--dgo-color-fg-brand)"><use href="#i-clock"></use></svg><h2 class="pf-panel__title">Timeline</h2><span class="pf-note" style="margin-left:auto">' + events.length + (events.length === 1 ? ' entry' : ' entries') + '</span></div>' +
+          '<div class="pf-panel__body"><ol class="pf-tl">' + events.map(function (e) {
+            return '<li><div class="pf-tl__a">' + PF.esc(e.label) + '</div>' +
+              '<div class="pf-tl__m"><span>' + PF.dateTime(e.at) + '</span><span>·</span><span>' + PF.esc(e.actor || 'Registry') + '</span><span>·</span>' + PF.pill(e.status || rec.status) + '</div>' +
+              (e.note ? '<p class="pf-tl__note">' + PF.esc(e.note) + '</p>' : '') + '</li>';
+          }).join('') + '</ol></div>' +
+        '</div>' +
+      '</div>';
+
+    PF.$('#copyBtn').addEventListener('click', function () { PF.copy(rec.id, 'Tracking ID copied.'); });
+    PF.$('#printBtn').addEventListener('click', function () { window.print(); });
+    var respond = PF.$('#respondBtn');
+    if (respond) respond.addEventListener('click', function () { source === 'device' ? doRespond(rec) : wbRespond(rec); });
+    var withdraw = PF.$('#withdrawBtn');
+    if (withdraw) withdraw.addEventListener('click', function () { source === 'device' ? doWithdraw(rec) : wbWithdraw(rec); });
+    var note = PF.$('#noteBtn');
+    if (note) note.addEventListener('click', function () { source === 'device' ? doNote(rec) : wbNote(rec); });
+    PF.toast('success', 'Request located', rec.id + ' · ' + st.label);
+  }
+
+  /* Respond / note / withdraw on a device-only record write to this browser's store and
+     nothing else. On a registry-sourced record they now call WRITEBACK (D13, INT-007) when a
+     deployment has it configured; the helpdesk route (POST /intake/support) remains the
+     fallback everywhere else, because a button that quietly does nothing is worse than not
+     offering one. */
+  function actions(rec, source) {
+    var btns = [];
+    if (source === 'device') {
+      if (rec.status === 'action-required') btns.push('<button class="dgo-btn dgo-btn--primary" id="respondBtn"><svg class="icon-sm" aria-hidden="true"><use href="#i-send"></use></svg>Respond to the request</button>');
+      if (PF.isOpen(rec)) btns.push('<button class="dgo-btn dgo-btn--secondary" id="noteBtn"><svg class="icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Add a note</button>');
+      if (PF.isOpen(rec)) btns.push('<button class="dgo-btn dgo-btn--ghost" id="withdrawBtn" style="color:var(--dgo-color-action-danger)">Withdraw request</button>');
+    } else if (PF.intake.writebackAvailable()) {
+      if (rec.actionRequired) btns.push('<button class="dgo-btn dgo-btn--primary" id="respondBtn"><svg class="icon-sm" aria-hidden="true"><use href="#i-send"></use></svg>Respond to the registry</button>');
+      if (PF.isOpen(rec)) btns.push('<button class="dgo-btn dgo-btn--secondary" id="noteBtn"><svg class="icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Add a note</button>');
+      if (PF.isOpen(rec)) btns.push('<button class="dgo-btn dgo-btn--ghost" id="withdrawBtn" style="color:var(--dgo-color-action-danger)">Withdraw request</button>');
+    } else if (rec.actionRequired) {
+      btns.push('<a class="dgo-btn dgo-btn--primary" href="support.html?ref=' + encodeURIComponent(rec.id) + '&topic=submission"><svg class="icon-sm" aria-hidden="true"><use href="#i-send"></use></svg>Respond to the registry</a>');
+    }
+    if (!PF.isOpen(rec)) btns.push('<a class="dgo-btn dgo-btn--secondary" href="support.html?ref=' + encodeURIComponent(rec.id) + '&topic=other&feedback=1">Rate this service</a>'); btns.push('<a class="dgo-btn dgo-btn--ghost" href="support.html?ref=' + encodeURIComponent(rec.id) + '">Contact the helpdesk</a>');
+    return '<div class="dgo-cluster dgo-cluster--2 pf-no-print" style="padding-top:4px">' + btns.join('') + '</div>';
+  }
+
+  function textareaField(label, placeholder) {
+    return '<div class="dgo-field"><label class="dgo-field__label" for="dlgText">' + label + '</label>' +
+      '<textarea class="dgo-textarea" id="dlgText" data-field="text" rows="5" placeholder="' + placeholder + '"></textarea></div>';
+  }
+
+  function doRespond(rec) {
+    var ask = rec.events.slice().reverse().filter(function (e) { return e.status === 'action-required'; })[0];
+    PF.dialog({
+      title: 'Respond to the reviewer',
+      sub: rec.id,
+      okLabel: 'Send response',
+      body: (ask && ask.note ? '<div class="dgo-alert dgo-alert--warning" style="margin-bottom:14px"><span class="dgo-alert__icon"><svg class="icon-sm" aria-hidden="true"><use href="#i-warning"></use></svg></span><div class="dgo-alert__body"><div class="dgo-alert__title">What was asked for</div>' + PF.esc(ask.note) + '</div></div>' : '') +
+        textareaField('Your response', 'Explain what you are providing, and quote any document names you have emailed to the registry.') +
+        '<p class="pf-note" style="margin-top:10px">Attachments cannot be added here — email them to portal@nitda.gov.ng quoting ' + rec.id + '. Your response returns the request to the review queue.</p>'
+    }).then(function (ok) {
+      if (!ok) return;
+      var text = (PF.dialog.values.text || '').trim();
+      if (text.length < 10) { PF.toast('error', 'Response too short', 'Give the reviewer enough detail to act on.'); return doRespond(rec); }
+      PF.store.update(rec.id, { status: 'review' }, { status: 'review', label: 'Requester responded to the request for information.', note: text, actor: rec.name });
+      PF.store.log('response', rec.id, 'Requester response recorded');
+      render(PF.store.get(rec.id));
+      PF.toast('success', 'Response sent', 'The request is back with ' + rec.officer + '.');
+    });
+  }
+
+  function doNote(rec) {
+    PF.dialog({
+      title: 'Add a note to this request',
+      sub: rec.id,
+      okLabel: 'Add note',
+      body: textareaField('Note', 'Anything the reviewing officer should know — a correction, a deadline, a change of contact.')
+    }).then(function (ok) {
+      if (!ok) return;
+      var text = (PF.dialog.values.text || '').trim();
+      if (text.length < 5) { PF.toast('error', 'Note too short', ''); return; }
+      PF.store.update(rec.id, {}, { status: rec.status, label: 'Note added by the requester.', note: text, actor: rec.name });
+      render(PF.store.get(rec.id));
+      PF.toast('success', 'Note added', 'It is now on the reviewer’s timeline.');
+    });
+  }
+
+  function doWithdraw(rec) {
+    PF.dialog({
+      title: 'Withdraw this request?',
+      sub: rec.id,
+      okLabel: 'Withdraw it',
+      tone: 'danger',
+      body: '<p class="pf-note" style="margin-bottom:12px">The request is closed and removed from the review queue. You can submit a fresh request at any time, but this tracking ID cannot be reopened.</p>' +
+        textareaField('Reason (optional)', 'Superseded by a corrected submission.')
+    }).then(function (ok) {
+      if (!ok) return;
+      PF.store.update(rec.id, { status: 'withdrawn' }, { status: 'withdrawn', label: 'Withdrawn at the request of the submitter.', note: (PF.dialog.values.text || '').trim(), actor: rec.name });
+      PF.store.log('withdraw', rec.id, 'Request withdrawn by submitter');
+      render(PF.store.get(rec.id));
+      PF.toast('info', 'Request withdrawn', rec.id + ' is now closed.');
+    });
+  }
+
+  /* ---------- write-back (verified citizen actions on a registry-sourced record) ----------
+     D13 / INT-007. Unlike the device-only actions above, these call WRITEBACK for real. Every
+     call needs its own proof — WRITEBACK has no account and no session, so the same single-use
+     round-trip requireVerification runs for STATUS runs again here, fresh, per action. */
+
+  /* Renders into #wbPanel rather than replacing `out`: a record is already on screen and an
+     action in progress should not blow it away. Mirrors requireVerification's send-code /
+     enter-code sequence and submit.js's requireVerification — this is the third copy of that
+     round-trip in the portal, each fresh because each lives in a different flow's UI. */
+  function obtainWritebackProof(onProof) {
+    var panel = PF.$('#wbPanel');
+    panel.style.display = '';
+    panel.innerHTML = '<div class="pf-panel"><div class="pf-panel__body dgo-stack dgo-stack--3">' +
+      '<h3 style="margin:0">Confirm your email address</h3>' +
+      '<p style="margin:0">Before the registry accepts this, it needs to know you read <strong>' + PF.esc(lookupEmail) + '</strong>. We will send a one-time code to that address.</p>' +
+      '<div id="wbVerifyStep"><button class="dgo-btn dgo-btn--primary" id="wbSendCode" type="button">Send the code</button></div>' +
+      '</div></div>';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    PF.$('#wbSendCode').addEventListener('click', function () {
+      var b = PF.$('#wbSendCode');
+      b.setAttribute('data-loading', 'true'); b.disabled = true;
+      PF.intake.verifyRequest(lookupEmail).then(function (r) {
+        if (!r.ok || !r.sent) {
+          b.removeAttribute('data-loading'); b.disabled = false;
+          PF.toast('error', 'Could not send the code',
+            r.reason === 'too-many-requests'
+              ? 'Too many requests from this connection. Wait a minute and try again.'
+              : 'The code could not be sent to that address just now.');
+          return;
+        }
+        PF.$('#wbVerifyStep').innerHTML =
+          '<label class="dgo-field"><span class="dgo-field__label">Six-digit code</span>' +
+          '<input class="dgo-input" id="wbVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>' +
+          '<button class="dgo-btn dgo-btn--primary" id="wbConfirmCode" type="button" style="margin-top:8px">Confirm</button>';
+        PF.$('#wbConfirmCode').addEventListener('click', function () {
+          var code = PF.$('#wbVerifyCode').value.trim();
+          if (!/^\d{6}$/.test(code)) { PF.toast('error', 'Check the code', 'Enter the six digits from the email.'); return; }
+          var c = PF.$('#wbConfirmCode');
+          c.setAttribute('data-loading', 'true'); c.disabled = true;
+          PF.intake.verifyConfirm(lookupEmail, code).then(function (v) {
+            c.removeAttribute('data-loading'); c.disabled = false;
+            if (!v.ok || !v.verification) {
+              PF.toast('error', 'That code was not accepted', 'Check the digits, or send a new code.');
+              return;
+            }
+            panel.style.display = 'none';
+            panel.innerHTML = '';
+            onProof(v.verification);   // single use — spent by the call below, then discarded
+          });
+        });
+        PF.$('#wbVerifyCode').focus();
+      });
+    });
+  }
+
+  /* Never queued on failure (PORTAL_DATA_CONTRACT.md's WRITEBACK `queued` note): the proof is
+     spent or expired by the time any retry would run, so a failed call is reported now, and
+     the citizen re-does the action — which mints a fresh proof — rather than waiting on a
+     retry that cannot succeed. On success the record is re-fetched from the registry rather
+     than patched locally, so the timeline shown is the one the flow actually wrote. */
+  function runWriteback(rec, action, body, copy) {
+    obtainWritebackProof(function (proof) {
+      PF.intake.writeback(rec.id, proof, action, body).then(function (res) {
+        if (!res.ok) {
+          PF.toast('error', copy.failTitle, 'It did not go through. Nothing was recorded — try again.');
+          return;
+        }
+        PF.toast('success', copy.successTitle, res.queued ? copy.successNote + ' The registry is still processing it.' : copy.successNote);
+        lookup();
+      });
+    });
+  }
+
+  function wbRespond(rec) {
+    var ask = rec.events.slice().reverse().filter(function (e) { return e.status === 'action-required'; })[0];
+    PF.dialog({
+      title: 'Respond to the registry',
+      sub: rec.id,
+      okLabel: 'Send response',
+      body: (ask && ask.note ? '<div class="dgo-alert dgo-alert--warning" style="margin-bottom:14px"><span class="dgo-alert__icon"><svg class="icon-sm" aria-hidden="true"><use href="#i-warning"></use></svg></span><div class="dgo-alert__body"><div class="dgo-alert__title">What was asked for</div>' + PF.esc(ask.note) + '</div></div>' : '') +
+        textareaField('Your response', 'Explain what you are providing, and quote any document names you have emailed to the registry.') +
+        '<p class="pf-note" style="margin-top:10px">Attachments cannot be added here — email them to portal@nitda.gov.ng quoting ' + rec.id + '. Confirming will ask you to verify your email before it is sent.</p>'
+    }).then(function (ok) {
+      if (!ok) return;
+      var text = (PF.dialog.values.text || '').trim();
+      if (text.length < 10) { PF.toast('error', 'Response too short', 'Give the reviewer enough detail to act on.'); return wbRespond(rec); }
+      runWriteback(rec, 'respond', text, { failTitle: 'Response not sent', successTitle: 'Response sent', successNote: 'The registry has your response.' });
+    });
+  }
+
+  function wbNote(rec) {
+    PF.dialog({
+      title: 'Add a note to this request',
+      sub: rec.id,
+      okLabel: 'Add note',
+      body: textareaField('Note', 'Anything the reviewing officer should know — a correction, a deadline, a change of contact.') +
+        '<p class="pf-note" style="margin-top:10px">Confirming will ask you to verify your email before it is added.</p>'
+    }).then(function (ok) {
+      if (!ok) return;
+      var text = (PF.dialog.values.text || '').trim();
+      if (text.length < 5) { PF.toast('error', 'Note too short', ''); return; }
+      runWriteback(rec, 'note', text, { failTitle: 'Note not added', successTitle: 'Note added', successNote: 'It is now on the registry timeline.' });
+    });
+  }
+
+  function wbWithdraw(rec) {
+    PF.dialog({
+      title: 'Withdraw this request?',
+      sub: rec.id,
+      okLabel: 'Withdraw it',
+      tone: 'danger',
+      body: '<p class="pf-note" style="margin-bottom:12px">The request is closed and removed from the review queue. You can submit a fresh request at any time, but this tracking ID cannot be reopened.</p>' +
+        textareaField('Reason (optional)', 'Superseded by a corrected submission.') +
+        '<p class="pf-note" style="margin-top:10px">Confirming will ask you to verify your email before the withdrawal is recorded.</p>'
+    }).then(function (ok) {
+      if (!ok) return;
+      var text = (PF.dialog.values.text || '').trim();
+      runWriteback(rec, 'withdraw', text, { failTitle: 'Withdrawal not recorded', successTitle: 'Request withdrawn', successNote: rec.id + ' is now closed.' });
+    });
+  }
+
+  /* ---------- deep link ---------- */
+  var q = new URLSearchParams(location.search);
+  var qid = q.get('id'), qemail = q.get('email');
+  if (qid) {
+    PF.$('#trackId').value = qid.toUpperCase();
+    if (qemail) PF.$('#trackEmail').value = qemail;
+    if (qid && qemail) lookup();
+    else PF.$('#trackEmail').focus();
+  }
+};

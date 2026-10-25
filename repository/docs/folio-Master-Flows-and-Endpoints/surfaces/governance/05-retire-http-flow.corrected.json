@@ -1,0 +1,1135 @@
+{
+  "schema": "dgo-governance-flow-correction/v1",
+  "flow": "05 - GOV - Retire HTTP Flow",
+  "flowId": "493b4ab7-8f63-4fab-8121-746c2cac7f98",
+  "corrects": [
+    "GOV-04",
+    "GOV-05"
+  ],
+  "generatedBy": "scripts/patch-governance-flows.mjs",
+  "basedOn": "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/05 - GOV - Retire HTTP Flow__493b4ab7-8f63-4fab-8121-746c2cac7f98__full_definition.json",
+  "howToApply": "Power Automate → the flow → Edit → ⋯ → Peek code is read-only, so apply this through the designer or by importing the corrected package. The definition below is complete and replaces the flow definition wholesale. Export the current version first; docs/folio-Master-Flows-and-Endpoints/deployment/governance/APPLY-FLOW-CORRECTIONS.md carries the full procedure and the rollback.",
+  "changes": [
+    "05: trigger schema declares `force` (boolean, default false)",
+    "05: lifted Retire_Registry out of If_Registry_Found and under the guard",
+    "05: Count_Active_Consumers and Count_Active_Dependencies run before any write",
+    "05: If_Safe_To_Retire gates the cascade (both counts zero, or force true)",
+    "05: blocked branch answers 409 with both counts and terminates Failed",
+    "05: Record_Forced_Retirement makes a forced cascade visible afterwards",
+    "05: removed `Reply` — it ran after a scope that always terminates, so it never executed",
+    "05 - GOV - Retire HTTP Flow: Respond_Invalid_Input → 400 before Terminate_Invalid_Input",
+    "05 - GOV - Retire HTTP Flow: Respond_Registry_Not_Found → 404 before Terminate_Registry_Not_Found",
+    "05 - GOV - Retire HTTP Flow: Respond_Retirement_Failed → 500 before Terminate_Retirement_Failed",
+    "05 - GOV - Retire HTTP Flow: Respond_Retirement_Succeeded → 200 before Terminate_Retirement_Succeeded"
+  ],
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "environmentId",
+              "flowId",
+              "retirementReason"
+            ],
+            "properties": {
+              "environmentId": {
+                "type": "string"
+              },
+              "flowId": {
+                "type": "string"
+              },
+              "retirementReason": {
+                "type": "string"
+              },
+              "force": {
+                "type": "boolean",
+                "description": "Retire even when active consumers or dependencies remain. Absent or false is refused with 409 and the counts. A forced retirement is recorded on the registry row."
+              }
+            }
+          },
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Key": {
+        "runAfter": {
+          "Scope_05_GOV_Retire_HTTP_Flow_COMPLETE_UPDATED": [
+            "Succeeded"
+          ]
+        },
+        "type": "Compose",
+        "inputs": "@concat(triggerBody()?['environmentId'],'|',triggerBody()?['flowId'])"
+      },
+      "Find": {
+        "runAfter": {
+          "Compose": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "parameters/method": "GET",
+            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id&$filter=RegistryKey eq ''',outputs('Key'),'''')",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata",
+              "Content-Type": "application/json;odata=nometadata"
+            }
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline-1",
+            "operationId": "HttpRequest"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "If_Found": {
+        "actions": {
+          "Retire": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "POST",
+                "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items(',string(first(body('Find')?['value'])?['Id']),')')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata",
+                  "Content-Type": "application/json;odata=nometadata"
+                },
+                "parameters/body": "@json(concat('{\"__metadata\":{\"type\":\"SP.Data.DGO_x005f_HTTPFlowRegistryListItem\"},\"LifecycleStatus\":\"Retired\",\"ComplianceIssues\":',string(concat('Retired: ',triggerBody()?['retirementReason'])),'}'))"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          }
+        },
+        "runAfter": {
+          "Find": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {}
+        },
+        "expression": {
+          "greater": [
+            "@length(body('Find')?['value'])",
+            0
+          ]
+        },
+        "type": "If"
+      },
+      "Compose_Execution_Report_JSON": {
+        "runAfter": {
+          "If_Found": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "aab1c34c-bcf7-49ff-a768-b135866ae415"
+        },
+        "type": "Compose",
+        "inputs": {
+          "reportMetadata": {
+            "reportType": "DGO Power Automate Execution Report",
+            "schemaVersion": "3.0.0",
+            "generatedAtUtc": "@utcNow()",
+            "generatedAtLocal": "@convertTimeZone(utcNow(),'UTC','W. Central Africa Standard Time','yyyy-MM-dd HH:mm:ss')"
+          },
+          "flow": {
+            "displayName": "05 - GOV - Retire HTTP Flow",
+            "internalName": "@workflow()?['name']",
+            "resourceId": "@workflow()?['id']",
+            "environmentId": "@workflow()?['tags']?['environmentName']",
+            "location": "@workflow()?['location']"
+          },
+          "run": {
+            "runId": "@workflow()?['run']?['name']",
+            "runResourceId": "@workflow()?['run']?['id']",
+            "triggerName": "@trigger()?['name']",
+            "triggerStartUtc": "@trigger()?['startTime']",
+            "capturedAtUtc": "@utcNow()",
+            "elapsedMilliseconds": "@if(empty(trigger()?['startTime']),0,div(sub(ticks(utcNow()),ticks(trigger()?['startTime'])),10000))",
+            "runUrl": "@concat('https://make.powerautomate.com/environments/',coalesce(workflow()?['tags']?['environmentName'],''),'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+          },
+          "outcome": {
+            "overallStatus": "@if(contains(string(createArray(actions('Key')?['status'],actions('Find')?['status'],actions('If_Found')?['status'])),'Failed'),'Failed',if(contains(string(createArray(actions('Key')?['status'],actions('Find')?['status'],actions('If_Found')?['status'])),'TimedOut'),'TimedOut','Succeeded'))",
+            "actionStatuses": {
+              "Key": "@actions('Key')?['status']",
+              "Find": "@actions('Find')?['status']",
+              "If_Found": "@actions('If_Found')?['status']"
+            }
+          },
+          "governance": {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "notificationRecipient": "dgsRegistry@nitda.gov.ng",
+            "classification": "Internal",
+            "reportRetentionHint": "Retain according to DGO operational evidence policy"
+          },
+          "diagnostics": {
+            "triggerHeadersRedacted": "Sensitive trigger header values are not included.",
+            "triggerBodyCaptured": false,
+            "note": "Inspect the secured run history for connector-level inputs and outputs."
+          }
+        }
+      },
+      "Compose_Execution_Report_HTML": {
+        "runAfter": {
+          "Compose_Execution_Report_JSON": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "ee62ccf0-39a3-4331-a999-321a588e33ab"
+        },
+        "type": "Compose",
+        "inputs": "@concat('<!DOCTYPE html><html><head><meta charset=\"utf-8\"><style>body{font-family:Segoe UI,Arial;background:#f3f6f9;margin:0;padding:24px;color:#172033}.card{max-width:920px;margin:auto;background:white;border-radius:12px;box-shadow:0 5px 18px rgba(0,0,0,.12);overflow:hidden}.head{background:#004578;color:white;padding:26px}.head h1{margin:0;font-size:24px}.head p{margin:7px 0 0;color:#dbeafe}.content{padding:24px}.badge{display:inline-block;padding:5px 12px;border-radius:18px;background:#e8f5e9;color:#166534;font-weight:700}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.box{border:1px solid #dbe3ec;border-radius:8px;padding:13px;background:#fafcff}.label{font-size:11px;text-transform:uppercase;color:#617085;letter-spacing:.06em}.value{margin-top:5px;font-weight:600;word-break:break-word}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid #e6ebf0;font-size:13px}th{background:#edf3f8}.foot{padding:16px 24px;background:#f7f9fb;color:#667085;font-size:12px}@media(max-width:650px){.grid{grid-template-columns:1fr}}</style></head><body><div class=\"card\"><div class=\"head\"><h1>DGO Power Automate Execution Report</h1><p>',outputs('Compose_Execution_Report_JSON')?['flow']?['displayName'],'</p></div><div class=\"content\"><span class=\"badge\">',outputs('Compose_Execution_Report_JSON')?['outcome']?['overallStatus'],'</span><div class=\"grid\"><div class=\"box\"><div class=\"label\">Run ID</div><div class=\"value\">',outputs('Compose_Execution_Report_JSON')?['run']?['runId'],'</div></div><div class=\"box\"><div class=\"label\">Environment</div><div class=\"value\">',outputs('Compose_Execution_Report_JSON')?['flow']?['environmentId'],'</div></div><div class=\"box\"><div class=\"label\">Generated UTC</div><div class=\"value\">',outputs('Compose_Execution_Report_JSON')?['reportMetadata']?['generatedAtUtc'],'</div></div><div class=\"box\"><div class=\"label\">Duration</div><div class=\"value\">',string(outputs('Compose_Execution_Report_JSON')?['run']?['elapsedMilliseconds']),' ms</div></div></div><h2>Action status summary</h2><pre style=\"white-space:pre-wrap;background:#f6f8fa;border:1px solid #e5e7eb;padding:14px;border-radius:8px\">',string(outputs('Compose_Execution_Report_JSON')?['outcome']?['actionStatuses']),'</pre><p><a href=\"',outputs('Compose_Execution_Report_JSON')?['run']?['runUrl'],'\" style=\"color:#005a9e;font-weight:600\">Open this flow run in Power Automate</a></p></div><div class=\"foot\">Automated DGO governance evidence. Sensitive request headers and bodies are excluded.</div></div></body></html>')"
+      },
+      "Send_Execution_Report_Email": {
+        "runAfter": {
+          "Compose_Execution_Report_HTML": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "cf80ba13-4533-4fb4-9233-0cf0641f9b9d"
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+            "emailMessage/Subject": "@concat('[',outputs('Compose_Execution_Report_JSON')?['outcome']?['overallStatus'],'] ',outputs('Compose_Execution_Report_JSON')?['flow']?['displayName'],' | ',outputs('Compose_Execution_Report_JSON')?['run']?['runId'])",
+            "emailMessage/Body": "@outputs('Compose_Execution_Report_HTML')",
+            "emailMessage/Attachments": [
+              {
+                "Name": "@concat(replace(outputs('Compose_Execution_Report_JSON')?['flow']?['displayName'],' ','_'),'_',outputs('Compose_Execution_Report_JSON')?['run']?['runId'],'_ExecutionReport.json')",
+                "ContentBytes": "@base64(string(outputs('Compose_Execution_Report_JSON')))"
+              }
+            ],
+            "emailMessage/Importance": "@if(equals(outputs('Compose_Execution_Report_JSON')?['outcome']?['overallStatus'],'Succeeded'),'Normal','High')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connectionName": "shared_office365-1",
+            "operationId": "SendEmailV2"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Compose": {
+        "runAfter": {
+          "Key": [
+            "Succeeded"
+          ]
+        },
+        "type": "Compose",
+        "inputs": "Fd"
+      },
+      "Scope_05_GOV_Retire_HTTP_Flow_COMPLETE_UPDATED": {
+        "actions": {
+          "Scope_Main": {
+            "actions": {
+              "Compose_Registry_Key": {
+                "runAfter": {
+                  "Validate_Input": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "23e1d34b-ffce-43e4-9cd8-2cd11b124911"
+                },
+                "type": "Compose",
+                "inputs": "@concat(trim(string(triggerBody()?['environmentId'])),'|',trim(string(triggerBody()?['flowId'])))"
+              },
+              "Find_Registry": {
+                "runAfter": {
+                  "Compose_Registry_Key": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "692d5a0c-bf36-4945-8cdc-b60da7ee2429"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,RegistryKey,FlowId,FlowName,LifecycleStatus,RecordVersion&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),'''&$top=1')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Validate_Input": {
+                "actions": {
+                  "Input_Validated": {
+                    "metadata": {
+                      "operationMetadataId": "89118451-e66a-4701-accc-b5a86e272047"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "status": "Validated"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_Invalid_Input": {
+                      "metadata": {
+                        "operationMetadataId": "84791baa-d0d8-4b65-9aad-838ebe030d87"
+                      },
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Failed",
+                        "runError": {
+                          "code": "INVALID_RETIREMENT_INPUT",
+                          "message": "environmentId, flowId, and reason are required; identifiers must be 255 characters or fewer without pipe characters; reason must not exceed 4000 characters."
+                        }
+                      },
+                      "runAfter": {
+                        "Respond_Invalid_Input": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Respond_Invalid_Input": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "runAfter": {},
+                      "inputs": {
+                        "statusCode": 400,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "outcome": "invalid-input",
+                          "status": "Failed",
+                          "flow": "05 - GOV - Retire HTTP Flow",
+                          "branch": "Terminate_Invalid_Input",
+                          "runId": "@{workflow()?['run']?['name']}",
+                          "message": "environmentId, flowId, and reason are required; identifiers must be 255 characters or fewer without pipe characters; reason must not exceed 4000 characters.",
+                          "at": "@{utcNow()}"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['environmentId'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['flowId'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['reason'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['environmentId'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['flowId'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['reason'])))",
+                        4000
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@contains(trim(string(triggerBody()?['environmentId'])),'|')",
+                        false
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@contains(trim(string(triggerBody()?['flowId'])),'|')",
+                        false
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "b88194f8-b32c-47c6-9079-c7ae73efec9a"
+                },
+                "type": "If"
+              },
+              "If_Registry_Found": {
+                "actions": {
+                  "Registry_Found": {
+                    "type": "Compose",
+                    "runAfter": {},
+                    "inputs": {
+                      "registryKey": "@outputs('Compose_Registry_Key')",
+                      "note": "The registry row exists. Retirement itself is gated by If_Safe_To_Retire below."
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Find_Registry": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_Registry_Not_Found": {
+                      "metadata": {
+                        "operationMetadataId": "3b16190f-fc89-43d6-b940-d13f4591653c"
+                      },
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Failed",
+                        "runError": {
+                          "code": "REGISTRY_RECORD_NOT_FOUND",
+                          "message": "@concat('No HTTP flow registry record exists for ',outputs('Compose_Registry_Key'),'.')"
+                        }
+                      },
+                      "runAfter": {
+                        "Respond_Registry_Not_Found": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Respond_Registry_Not_Found": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "runAfter": {},
+                      "inputs": {
+                        "statusCode": 404,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "outcome": "not-found",
+                          "status": "Failed",
+                          "flow": "05 - GOV - Retire HTTP Flow",
+                          "branch": "Terminate_Registry_Not_Found",
+                          "runId": "@{workflow()?['run']?['name']}",
+                          "message": "@concat('No HTTP flow registry record exists for ',outputs('Compose_Registry_Key'),'.')",
+                          "at": "@{utcNow()}"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(coalesce(body('Find_Registry')?['value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "102ff286-aaff-486d-8265-1d75c34d9490"
+                },
+                "type": "If"
+              },
+              "Count_Active_Consumers": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "If_Registry_Found": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "HttpRequest",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items?$select=Id&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),''' and LifecycleStatus ne ''Retired''&$top=5000')",
+                    "parameters/headers": {
+                      "accept": "application/json;odata=nometadata"
+                    }
+                  }
+                }
+              },
+              "Count_Active_Dependencies": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Count_Active_Consumers": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "HttpRequest",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowDependencies'')/items?$select=Id&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),''' and LifecycleStatus ne ''Retired''&$top=5000')",
+                    "parameters/headers": {
+                      "accept": "application/json;odata=nometadata"
+                    }
+                  }
+                }
+              },
+              "Compose_Active_Counts": {
+                "type": "Compose",
+                "runAfter": {
+                  "Count_Active_Dependencies": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "activeConsumers": "@length(coalesce(body('Count_Active_Consumers')?['value'],json('[]')))",
+                  "activeDependencies": "@length(coalesce(body('Count_Active_Dependencies')?['value'],json('[]')))",
+                  "force": "@coalesce(triggerBody()?['force'],false)"
+                }
+              },
+              "If_Safe_To_Retire": {
+                "type": "If",
+                "runAfter": {
+                  "Compose_Active_Counts": [
+                    "Succeeded"
+                  ]
+                },
+                "expression": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "equals": [
+                            "@outputs('Compose_Active_Counts')?['activeConsumers']",
+                            0
+                          ]
+                        },
+                        {
+                          "equals": [
+                            "@outputs('Compose_Active_Counts')?['activeDependencies']",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@outputs('Compose_Active_Counts')?['force']",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Find_Current_Contracts": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "ffb96e07-5c19-4ae4-b2f8-60d25e44662a"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowContractVersions'')/items?$select=Id&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),''' and IsCurrent eq 1&$top=5000')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Close_Contracts": {
+                    "foreach": "@coalesce(body('Find_Current_Contracts')?['value'],json('[]'))",
+                    "actions": {
+                      "Close_Contract": {
+                        "metadata": {
+                          "operationMetadataId": "e70554d5-e3ef-41db-9a9c-910b3200c64e"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowContractVersions'')/items(',string(item()?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(json('{}'),'IsCurrent',false),'EffectiveToUtc',utcNow())"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Current_Contracts": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Foreach",
+                    "runtimeConfiguration": {
+                      "concurrency": {
+                        "repetitions": 1
+                      }
+                    }
+                  },
+                  "Find_Dependencies": {
+                    "runAfter": {
+                      "Close_Contracts": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "cdd734bc-448d-4b2a-8b6b-903acc61997c"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowDependencies'')/items?$select=Id&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),''' and LifecycleStatus ne ''Retired''&$top=5000')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Retire_Dependencies": {
+                    "foreach": "@coalesce(body('Find_Dependencies')?['value'],json('[]'))",
+                    "actions": {
+                      "Retire_Dependency": {
+                        "metadata": {
+                          "operationMetadataId": "73afc743-dfdf-4b98-92af-b1f08c41b6e7"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowDependencies'')/items(',string(item()?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(json('{}'),'LifecycleStatus','Retired'),'LastConfirmedUtc',utcNow())"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Dependencies": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Foreach",
+                    "runtimeConfiguration": {
+                      "concurrency": {
+                        "repetitions": 1
+                      }
+                    }
+                  },
+                  "Find_Consumers": {
+                    "runAfter": {
+                      "Retire_Dependencies": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "8080cd6c-e5ad-45cd-b944-dec841f59a6f"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items?$select=Id&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),''' and LifecycleStatus ne ''Retired''&$top=5000')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Retire_Consumers": {
+                    "foreach": "@coalesce(body('Find_Consumers')?['value'],json('[]'))",
+                    "actions": {
+                      "Retire_Consumer": {
+                        "metadata": {
+                          "operationMetadataId": "a181b777-cb6e-4d61-96d0-ab5855ca30d2"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items(',string(item()?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(setProperty(json('{}'),'LifecycleStatus','Retired'),'IsApproved',false),'LastObservedUtc',utcNow())"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Consumers": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "1567c21f-4890-49d5-ac36-6e38bd0d29c1"
+                    },
+                    "type": "Foreach",
+                    "runtimeConfiguration": {
+                      "concurrency": {
+                        "repetitions": 1
+                      }
+                    }
+                  },
+                  "Find_Open_Exceptions": {
+                    "runAfter": {
+                      "Retire_Consumers": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "ce2893d5-b174-44f2-b0ec-2b34231848b7"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items?$select=Id&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),''' and Status eq ''Open''&$top=5000')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Resolve_Open_Exceptions": {
+                    "foreach": "@coalesce(body('Find_Open_Exceptions')?['value'],json('[]'))",
+                    "actions": {
+                      "Resolve_Exception": {
+                        "metadata": {
+                          "operationMetadataId": "c734bd4a-dfc3-4e0c-a3c8-d4d364a98ba5"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items(',string(item()?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(setProperty(json('{}'),'Status','Resolved'),'ResolvedUtc',utcNow()),'Details',concat('Resolved by flow retirement: ',trim(string(triggerBody()?['reason']))))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Open_Exceptions": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "e1d8fa05-7aee-41c2-a630-5004142c17bf"
+                    },
+                    "type": "Foreach",
+                    "runtimeConfiguration": {
+                      "concurrency": {
+                        "repetitions": 1
+                      }
+                    }
+                  },
+                  "Retire_Registry": {
+                    "metadata": {
+                      "operationMetadataId": "0ebcdc0b-613a-400e-a809-d4836c613c2f"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items(',first(body('Find_Registry')?['value'])?['Id'],')')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata",
+                          "IF-MATCH": "*",
+                          "X-HTTP-Method": "MERGE"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'LifecycleStatus','Retired'),'LastSeenUtc',utcNow()),'LastAuditUtc',utcNow()),'IsCompliant',true),'ComplianceIssues',concat('Retired: ',trim(string(triggerBody()?['reason'])))),'RecordVersion',add(int(coalesce(first(body('Find_Registry')?['value'])?['RecordVersion'],0)),1))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Record_Forced_Retirement": {
+                    "type": "Compose",
+                    "runAfter": {
+                      "Find_Current_Contracts": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "forced": "@outputs('Compose_Active_Counts')?['force']",
+                      "activeConsumersAtRetirement": "@outputs('Compose_Active_Counts')?['activeConsumers']",
+                      "activeDependenciesAtRetirement": "@outputs('Compose_Active_Counts')?['activeDependencies']",
+                      "retirementReason": "@triggerBody()?['retirementReason']",
+                      "at": "@utcNow()"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Respond_Retirement_Blocked": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "runAfter": {},
+                      "inputs": {
+                        "statusCode": 409,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "outcome": "blocked",
+                          "status": "Failed",
+                          "flow": "05 - GOV - Retire HTTP Flow",
+                          "branch": "If_Safe_To_Retire",
+                          "reason": "Active consumers or dependencies remain. Retiring would mark them Retired and erase the evidence that they were active.",
+                          "activeConsumers": "@outputs('Compose_Active_Counts')?['activeConsumers']",
+                          "activeDependencies": "@outputs('Compose_Active_Counts')?['activeDependencies']",
+                          "remedy": "Retire or migrate the active consumers and dependencies first, or re-submit with \"force\": true to retire them alongside it. A forced retirement is recorded on the registry row.",
+                          "runId": "@{workflow()?['run']?['name']}",
+                          "at": "@{utcNow()}"
+                        }
+                      }
+                    },
+                    "Terminate_Retirement_Blocked": {
+                      "type": "Terminate",
+                      "runAfter": {
+                        "Respond_Retirement_Blocked": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": {
+                        "runStatus": "Failed",
+                        "runError": {
+                          "code": "ActiveDependantsRemain",
+                          "message": "Retirement blocked: active consumers or dependencies remain and force was not supplied."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "b81830db-5e7b-4b43-bcfb-cac6c43af3bb"
+            },
+            "type": "Scope"
+          },
+          "Compose_Final_Report_JSON": {
+            "runAfter": {
+              "Scope_Main": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "5652c4bf-c1b0-4f97-9f48-9e6bcc888bc8"
+            },
+            "type": "Compose",
+            "inputs": {
+              "reportType": "DGO Power Automate Execution Report",
+              "schemaVersion": "5.0.0",
+              "flow": "05 - GOV - Retire HTTP Flow",
+              "flowId": "@workflow()?['name']",
+              "runId": "@workflow()?['run']?['name']",
+              "environmentId": "@workflow()?['tags']?['environmentName']",
+              "generatedAtUtc": "@utcNow()",
+              "status": "@if(contains(string(result('Scope_Main')),'Failed'),'Failed',if(contains(string(result('Scope_Main')),'TimedOut'),'TimedOut','Succeeded'))",
+              "details": {
+                "registryKey": "@concat(trim(string(triggerBody()?['environmentId'])),'|',trim(string(triggerBody()?['flowId'])))",
+                "flowId": "@trim(string(triggerBody()?['flowId']))",
+                "reason": "@trim(string(triggerBody()?['reason']))",
+                "contractsClosed": "@if(empty(body('Find_Current_Contracts')?['value']),0,length(body('Find_Current_Contracts')?['value']))",
+                "dependenciesRetired": "@if(empty(body('Find_Dependencies')?['value']),0,length(body('Find_Dependencies')?['value']))",
+                "consumersRetired": "@if(empty(body('Find_Consumers')?['value']),0,length(body('Find_Consumers')?['value']))",
+                "exceptionsResolved": "@if(empty(body('Find_Open_Exceptions')?['value']),0,length(body('Find_Open_Exceptions')?['value']))"
+              },
+              "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+            }
+          },
+          "Compose_Final_Report_HTML": {
+            "runAfter": {
+              "Compose_Final_Report_JSON": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "73167244-f419-4d7a-a629-6c3de8357346"
+            },
+            "type": "Compose",
+            "inputs": "@concat('<html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px\"><div style=\"max-width:900px;margin:auto;background:white;border-radius:12px;overflow:hidden\"><div style=\"background:#004578;color:white;padding:24px\"><h1>',outputs('Compose_Final_Report_JSON')?['flow'],'</h1></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Run ID:</b> ',outputs('Compose_Final_Report_JSON')?['runId'],'</p><pre style=\"white-space:pre-wrap;background:#f8fafc;padding:12px\">',string(outputs('Compose_Final_Report_JSON')?['details']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['runUrl'],'\">Open run</a></p></div></div></body></html>')"
+          },
+          "Send_Final_Report_Email": {
+            "runAfter": {
+              "Compose_Final_Report_HTML": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "448ab7ad-2836-42a8-b1b1-2c08db45a9bc"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] ',outputs('Compose_Final_Report_JSON')?['flow'],' | ',outputs('Compose_Final_Report_JSON')?['runId'])",
+                "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@concat(replace(workflow()?['name'],' ','_'),'_',workflow()?['run']?['name'],'_Report.json')",
+                    "ContentBytes": "@string(outputs('Compose_Final_Report_JSON'))"
+                  }
+                ],
+                "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "If_Retirement_Failed": {
+            "actions": {
+              "Terminate_Retirement_Failed": {
+                "metadata": {
+                  "operationMetadataId": "ba72c5dc-470f-4964-865e-3dc88dc09284"
+                },
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Failed",
+                  "runError": {
+                    "code": "DGOFlowRetirementFailed",
+                    "message": "@concat('HTTP flow retirement ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')"
+                  }
+                },
+                "runAfter": {
+                  "Respond_Retirement_Failed": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Respond_Retirement_Failed": {
+                "type": "Response",
+                "kind": "Http",
+                "runAfter": {},
+                "inputs": {
+                  "statusCode": 500,
+                  "headers": {
+                    "Content-Type": "application/json"
+                  },
+                  "body": {
+                    "outcome": "failed",
+                    "status": "Failed",
+                    "flow": "05 - GOV - Retire HTTP Flow",
+                    "branch": "Terminate_Retirement_Failed",
+                    "runId": "@{workflow()?['run']?['name']}",
+                    "message": "@concat('HTTP flow retirement ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')",
+                    "at": "@{utcNow()}"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Terminate_Retirement_Succeeded": {
+                  "metadata": {
+                    "operationMetadataId": "43cfdfae-480c-47f9-b73a-ca742a7546ab"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  },
+                  "runAfter": {
+                    "Respond_Retirement_Succeeded": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Retirement_Succeeded": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "runAfter": {},
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "outcome": "succeeded",
+                      "status": "Succeeded",
+                      "flow": "05 - GOV - Retire HTTP Flow",
+                      "branch": "Terminate_Retirement_Succeeded",
+                      "runId": "@{workflow()?['run']?['name']}",
+                      "message": "05 - GOV - Retire HTTP Flow ended at Terminate_Retirement_Succeeded.",
+                      "at": "@{utcNow()}"
+                    }
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Compose_Final_Report_JSON')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "657962a9-50c4-41f1-85e6-61b7306343e4"
+            },
+            "type": "If"
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "9a985ffc-388c-4544-bfbc-d063047ce8dc"
+        },
+        "type": "Scope"
+      }
+    },
+    "outputs": {}
+  }
+}

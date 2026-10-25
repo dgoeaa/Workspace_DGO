@@ -1,0 +1,315 @@
+{
+  "schema": "dgo-identification-release/v1",
+  "rule": "The identification packages are frozen at this release. A package whose fingerprint differs from it fails npm run test:idrelease. A new release is cut (npm run idrelease -- --reason \"…\") only for a defect found in the tenant or an owner decision that Flow Configuration cannot meet; changes wait and are released together.",
+  "release": 44,
+  "date": "2026-10-22",
+  "reason": "Tenant defect: e-mail proportions in Outlook web and Outlook mobile (live tests 2026-10-21). E-mail template package revision 2026-10-21: PT-Ack-Overdue redesigned (letter structure, 24 px headline, stacked facts) and the NITDA lockup at 140 px on the seven internal catalogue messages with the DGO masthead. E-mail HTML only; no step, trigger or connection changes.",
+  "changed": [
+    "identification-phase3/NOKEY__CG_Portal_Daily_Sweep__f12aec6d.paste.json",
+    "identification-phase4/BULK_ASSIGNMENT__BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61.paste.json",
+    "identification-phase4/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555.paste.json",
+    "identification-phase4/NOKEY__AUTO_SCHEDULED_SWEEP__8c19b45c.paste.json",
+    "identification-phase4/NOKEY__Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8.paste.json",
+    "identification-phase4/OTP_GENERATE__IP_OTP_GENERATE__e5632336.paste.json",
+    "identification-phase4/SINGLE_ASSIGNMENT__Single_Task_Assignment__3caf9458.paste.json"
+  ],
+  "packages": {
+    "identification-phase3/NOKEY__CG_Portal_Daily_Sweep__f12aec6d.paste.json": "0c5dc0571cf14704",
+    "identification-phase3/NOKEY__CG_Registry_Status_Notifier__8ebf6001.paste.json": "01c3862f3e093d0f",
+    "identification-phase3/SCAN_INTAKE__IP_SCAN_INTAKE__5504d7f9.paste.json": "18a45281eccc8809",
+    "identification-phase3/STATUS__CG_Portal_Status_Check_Endpoint__60042a2e.paste.json": "0ba3769c4e1c0e0e",
+    "identification-phase3/SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json": "03f40cf476c41514",
+    "identification-phase3/SUPPORT__CG_Portal_Support_Endpoint__4873c936.paste.json": "19bd6079c1824a01",
+    "identification-phase3/UPLOAD__CG_Upload_Endpoint__df82e331.paste.json": "03185bfbd7c73e1b",
+    "identification-phase3/VERIFY_CONFIRM__CG_Portal_Verification_Confirmation_Endpoint__f96e3448.paste.json": "04fbe6443076bb11",
+    "identification-phase3/VERIFY__CG_Portal_Verification_Endpoint__ba47f79b.paste.json": "17563b6f606b9309",
+    "identification-phase3/WRITEBACK__CG_Portal_Writeback_Endpoint__bde13d27.paste.json": "0e930e0542302708",
+    "identification-phase4/ACTIVITY_LIFECYCLE__IP_Activity_Lifecycle_Endpoint__b4db02d8.paste.json": "0d2de979ee3e0b15",
+    "identification-phase4/AI_DOC_ANALYSIS__AI_Document_Processing__fefa43c6.paste.json": "196182c15102a70c",
+    "identification-phase4/BULK_ASSIGNMENT__BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61.paste.json": "09d0a24052ba9814",
+    "identification-phase4/DYNAMIC_ACTIONS__IP_Dynamic_Global_Actions_Endpoint__31c0aaf0.paste.json": "12b4e01076a45306",
+    "identification-phase4/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555.paste.json": "14a350e305e01705",
+    "identification-phase4/EMAIL__IP_SEND_EMAIL__df59a69f.paste.json": "06cd604661d1921c",
+    "identification-phase4/FETCH_ALL__IP_FETCH_ALL_BOOTSTRAP__b79e6707.paste.json": "01c2a838617f7903",
+    "identification-phase4/FETCH_EMAIL_ATTACHMENTS__IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3.paste.json": "1446a2b78727dc03",
+    "identification-phase4/GET_DOCS__IP_Get_Docs_Endpoint__28f6e62a.paste.json": "1a4ba31f5953e610",
+    "identification-phase4/NOKEY__AUTO_SCHEDULED_SWEEP__8c19b45c.paste.json": "15fe577f07aed414",
+    "identification-phase4/NOKEY__Folio_Failure_Watch__c38bfeaa.paste.json": "1342cf76e91fb70d",
+    "identification-phase4/NOKEY__Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8.paste.json": "19a978696dcfeb08",
+    "identification-phase4/OTP_GENERATE__IP_OTP_GENERATE__e5632336.paste.json": "07c6727ff971c701",
+    "identification-phase4/OTP_VERIFY__IP_OTP_VERIFY__4dbe6dde.paste.json": "1c6655ae8be15503",
+    "identification-phase4/REFERENCE_DATA__IP_Reference_Data_Endpoint__9a4dea8e.paste.json": "178eac8c90727b19",
+    "identification-phase4/SINGLE_ASSIGNMENT__Single_Task_Assignment__3caf9458.paste.json": "1f2bfe10c2818109",
+    "identification-phase4/USER_ADMIN__IP_User_Admin_Endpoint__e3e5c825.paste.json": "1e9cbb576cfeb11f"
+  },
+  "history": [
+    {
+      "release": 1,
+      "date": "2026-10-06",
+      "reason": "Release 1: the packages as built after the owner's package release rule (2026-10-06): Set variable values held in Compose steps (defect found in the tenant export of IP_Create__Task__for_received_Email_Endpoint), configurable administrative recipients back on Flow Configuration.",
+      "changed": 23
+    },
+    {
+      "release": 2,
+      "date": "2026-10-07",
+      "reason": "Release 2 (2026-10-07). ITEM-64 (owner decision): the internal proof ledger is the new list DGO_SessionProofs (444102d6); the mint (OTP_VERIFY) and every verifying package name it. ITEM-79 (defect found in the tenant): DYNAMIC_ACTIONS was refused at 551 actions; its two claims use the lean claim (same 10 attempts) and the flow is 491. Q1 (owner): DYNAMIC_ACTIONS replaces Scope_Dynamic_Flow_Production_Hardened.",
+      "changed": 11
+    },
+    {
+      "release": 3,
+      "date": "2026-10-07",
+      "reason": "Release 3 (2026-10-07). DYNAMIC_ACTIONS only: release 2 was refused for an expression over 8192 characters (the lean claim's number repeated in its summary); the number is now computed once in Compose_Claim_<tag>_Number. 493 actions, longest expression 4721.",
+      "changed": 1
+    },
+    {
+      "release": 4,
+      "date": "2026-10-07",
+      "reason": "Owner decision and approval, 2026-10-07 (ITEM-82): OTP generation on its own flow; adds the IP_OTP_GENERATE package, created in the tenant from IP_OTP_VERIFY with Case_Verify removed. No other package changes.",
+      "changed": 1
+    },
+    {
+      "release": 5,
+      "date": "2026-10-08",
+      "reason": "Owner directions, 2026-10-08: ITEM-81 DYNAMIC_ACTIONS harmonised with the hardened scope (409 IDEMPOTENCY_CONFLICT, 503 OUTCOME_UNKNOWN, length limits; no new actions); ITEM-80 SCAN_PROCESSING added, the legacy library intake rebuilt in Folio_Incoming_Correspondence_Scan_Processing_Flow. No other package changes.",
+      "changed": 2
+    },
+    {
+      "release": 6,
+      "date": "2026-10-08",
+      "reason": "Defect: the scan-processing rebuild (197527c8, not yet live) carried the legacy flow's broken deep links — the retired Power Apps player host in APP_FAST_TRACK_LINK and a stray 'veggie ' suffix in Set_variable_Deeplink/_2. Fixed from patches/deeplinks; only SCAN_PROCESSING changes. Written by API, no owner paste.",
+      "changed": 1
+    },
+    {
+      "release": 7,
+      "date": "2026-10-08",
+      "reason": "Owner decisions 2026-10-08. SCAN_INTAKE: the trigger is opened to anyone like the other endpoints, so the caller is taken from Folio's sign-in proof instead of the tenant header any caller could send. OTP_VERIFY: Case_Generate removed (ITEM-82) after a Folio sign-in ran generation in IP_OTP_GENERATE and verification in IP_OTP_VERIFY. Both written by API; no owner paste.",
+      "changed": 2
+    },
+    {
+      "release": 8,
+      "date": "2026-10-08",
+      "reason": "Owner direction 2026-10-08 (proceed as recommended): D1 staff status write-back as a second branch on the intake flow IP_SCAN_INTAKE (X-DGO-Action writeback; officer from the sign-in proof; correspondence route; Portal Registry status and a timeline row). Also a tenant defect: X-DGO-Size was converted with int() in both arms of if(), so a request without it failed the scope. Only SCAN_INTAKE changes; written by API, no owner paste.",
+      "changed": 1
+    },
+    {
+      "release": 9,
+      "date": "2026-10-08",
+      "reason": "Tenant defect found live 2026-10-08: on a signed (sig=) trigger Power Automate reads an Authorization header as an Entra token and refuses the call (401 MISE unauthorized) before the flow runs, so every signed-in Folio call failed and Folio loaded no data. The 11 gated packages read the sign-in proof from X-DGO-Proof first (Authorization kept as a fallback); Folio sends X-DGO-Proof. Written by API, no owner paste.",
+      "changed": 11
+    },
+    {
+      "release": 10,
+      "date": "2026-10-08",
+      "reason": "Tenant defect: FETCH_ALL read Global Tracking Queue (16,071 rows, 20 indexes, none on Modified) ordered by Modified, which exceeds the list view threshold; every read after it was skipped and the Workspace loaded empty. Tasks are now read by ID.",
+      "changed": 1
+    },
+    {
+      "release": 11,
+      "date": "2026-10-08",
+      "reason": "Tenant defect, first live write-back: substring() of an empty string fails in the service, so SCAN_INTAKE failed every request without X-DGO-Filename (all write-backs) and DYNAMIC_ACTIONS failed upsert-record for a titled row without text. Both now pad before cutting; the simulator now refuses substring('',0,0) as the service does.",
+      "changed": 2
+    },
+    {
+      "release": 12,
+      "date": "2026-10-08",
+      "reason": "Tenant defect, first live write-back: SCAN_INTAKE read the directory Role choice as text, so the RoleId lookup never matched and every caller was refused (403 on write-back; no officer could deposit). It now reads the role as FETCH_ALL does (ROLE_OF, now shared).",
+      "changed": 1
+    },
+    {
+      "release": 13,
+      "date": "2026-10-08",
+      "reason": "Write-back timeline rows carry their own Entity Key and name the submission by Qualified Key (RootKey, SubjectKey), as the RECEIVED row does (§10.2); found on the first live write-back.",
+      "changed": 1
+    },
+    {
+      "release": 14,
+      "date": "2026-10-08",
+      "reason": "Owner decision 2026-10-08: folio-gateway.rf.gd is the Workspace's primary host. The scan-processing flow's View Document link (APP_FAST_TRACK_LINK) now starts there, read from config/deeplink.config.js productionBase instead of a literal.",
+      "changed": 1
+    },
+    {
+      "release": 15,
+      "date": "2026-10-08",
+      "reason": "Owner decision 2026-10-08 (folio-gateway.rf.gd primary): task e-mail links in SINGLE_ASSIGNMENT, BULK_ASSIGNMENT and EMAIL_RELATED_TASK start at the primary host, not taskack.page.gd; and the single and bulk task e-mail's Acknowledge Receipt and Support Access buttons, which linked nowhere (href empty), now carry their links.",
+      "changed": 3
+    },
+    {
+      "release": 16,
+      "date": "2026-10-08",
+      "reason": "Tenant defect (ITEM-43 live test): IP_OTP_VERIFY answered 500 to a verify for an address with no code issued (Update_item_Attempts had no row). The count is written only when an unverified code exists; otherwise the flow answers as a wrong code does.",
+      "changed": 1
+    },
+    {
+      "release": 17,
+      "date": "2026-10-08",
+      "reason": "Security defect found in the tenant (ITEM-30 live read): the run-record header redaction masked Authorization but not X-DGO-Proof, where the sign-in proof travels since release 9, so every telemetry row since 2026-10-08 15:54Z stored a usable session token. Every flow that records headers now masks it under both spellings.",
+      "changed": 15
+    },
+    {
+      "release": 18,
+      "date": "2026-10-08",
+      "reason": "Owner decision 2026-10-08 (ITEM-25, on the needs assessment): dispatch, dispatchoutbound and archivereference are served by transitionstatus instead of answering 501: dispatch records the document Treated (the letter goes through the Mailer); archive records it Treated and sets IdState ARCHIVED. Routes dispatch and archive.",
+      "changed": 1
+    },
+    {
+      "release": 19,
+      "date": "2026-10-08",
+      "reason": "ITEM-25 needs assessment: update-status and delete-record have no caller anywhere, so DYNAMIC_ACTIONS refuses them as unknown (400) rather than recognised-but-unserved (501).",
+      "changed": 1
+    },
+    {
+      "release": 20,
+      "date": "2026-10-08",
+      "reason": "ITEM-25 needs assessment: Folio's User Administration screen (user-admin:create-user, update-user, assign-role, disable-user) answered 501, so its changes never reached DGO_UserDirectory. DYNAMIC_ACTIONS now serves them, with the directory's own choices validated and systemAdmin granted only by a systemAdmin.",
+      "changed": 1
+    },
+    {
+      "release": 21,
+      "date": "2026-10-08",
+      "reason": "Revert of release 20: the service refused the DYNAMIC_ACTIONS write (TemplateValidationError: 524 actions, limit 500), so nothing changed in the tenant. user-admin needs its own flow (owner approval pending: no new flow before commissioning); DYNAMIC_ACTIONS is back to release 19 as it runs live.",
+      "changed": 1
+    },
+    {
+      "release": 22,
+      "date": "2026-10-08",
+      "reason": "ITEM-90 (owner approval 2026-10-08): FETCH_ALL admits every active directory user and scopes the reply by role: all tier (systemAdmin, userAdmin, executive, operator, admin/executive/registry persona) unchanged; everyone else their own tasks (by indexed AssignedTo), those tasks' documents and comments; directors also approvals; addresses only for the all tier and the caller's own row.",
+      "changed": 1
+    },
+    {
+      "release": 23,
+      "date": "2026-10-08",
+      "reason": "ITEM-25 (owner approval 2026-10-08): user-admin on its own flow, IP_User_Admin_Endpoint (USER_ADMIN, e3e5c825), created as a stopped copy of IP_Dynamic_Global_Actions_Endpoint; its package carries only user-admin on the same gate. DYNAMIC_ACTIONS refuses user-admin as unknown.",
+      "changed": 2
+    },
+    {
+      "release": 24,
+      "date": "2026-10-08",
+      "reason": "USER_ADMIN: the service refused release 23's scope (an expression of 10,391 characters, limit 8,192): in IP_User_Admin_Endpoint the validation expression holds only the user-admin rules. flows:update now blocks an expression over the limit before writing.",
+      "changed": 1
+    },
+    {
+      "release": 25,
+      "date": "2026-10-08",
+      "reason": "USER_ADMIN failure alert e-mail takes the brand palette: its template was the captured page (#F6F8F6, #F0EFEF, outside the palette); it now shares the DYNAMIC_ACTIONS alert template, which differed only in those colours. Fixes test:brand, failing since 3f7012cd.",
+      "changed": 1
+    },
+    {
+      "release": 26,
+      "date": "2026-10-10",
+      "reason": "Tenant defects found 2026-10-10 and owner directions of 2026-10-10. SINGLE_ASSIGNMENT and BULK_ASSIGNMENT: the task e-mail greeting falls through empty names (no 'Dear ,'), Response Priority no longer repeats Handling Status, and the Support Access link carries the Task Reference (TASK-2026-00002 e-mail). FETCH_ALL, GET_DOCS, REFERENCE_DATA: no 'Flow Run Record' e-mail of the reply payload, the run record keeps the reply's size only (ITEM-52, observed in the registry Sent folder). FETCH_ALL: comment author name and e-mail. DYNAMIC_ACTIONS: a task's own assignee may update it whatever their role, others 403; activity lifecycle steps refused as unknown (400), not 501 (ITEM-25; they move to their own flow, DYNAMIC_ACTIONS being at the 500-action limit). OTP_GENERATE: a code is created and mailed only to an active DGO_UserDirectory member, with the same reply for any address (owner direction 2026-10-10).",
+      "changed": 7
+    },
+    {
+      "release": 27,
+      "date": "2026-10-10",
+      "reason": "Owner decision 2026-10-10 (ITEM-25, build them): ACTIVITY_LIFECYCLE, the new package for IP_Activity_Lifecycle_Endpoint (b4db02d8, created 2026-10-10 as a stopped copy of IP_Dynamic_Global_Actions_Endpoint), carrying only activity-archive, activity-siwes and activity-nysc in Folio's three steps, with only their own input rules (the service refuses one expression over 8,192 characters); DYNAMIC_ACTIONS has no room under the 500-action limit.",
+      "changed": 1
+    },
+    {
+      "release": 28,
+      "date": "2026-10-10",
+      "reason": "Owner decisions 2026-10-10. FETCH_ALL (ITEM-74, build an e-mail source): the registry tier receives the registry inbox's newest 50 messages (Get emails (V3), summary fields only) so Lookup can raise a task from an e-mail. AUTO_SCHEDULED_SWEEP (new package): one digest per person listing all their overdue or unacknowledged tasks, at most once a day, and every sweep e-mail goes to the registry until Flow Configuration NOTIFY_SWEEP_RECIPIENTS is staff (no staff e-mail before commissioning).",
+      "changed": 2
+    },
+    {
+      "release": 29,
+      "date": "2026-10-12",
+      "reason": "Tenant defect found 2026-10-12 (run 08584097726339433081123807376CU29): a task raised from an e-mail sent its assignee two near-identical notices; EMAIL_RELATED_TASK now sends one (Scope_3 removed).",
+      "changed": 1
+    },
+    {
+      "release": 30,
+      "date": "2026-10-12",
+      "reason": "Brand palette (2026-10-12): ACTIVITY_LIFECYCLE takes the shared failed-run alert template and AUTO_SCHEDULED_SWEEP's e-mails take palette colours only; the brand authority check found the colours extracted from the older captures.",
+      "changed": 2
+    },
+    {
+      "release": 31,
+      "date": "2026-10-18",
+      "reason": "Failure register and hourly watch (owner, 2026-10-18); legacy LIBRARY_INTAKE entries removed; fixes tenant defect AUTO_SCHEDULED_SWEEP run 08584093115454153780858604181CU30 (date-only list values refused by convertFromUtc, null digest recipients)",
+      "changed": 5,
+      "retired": [
+        "NOKEY__DGSO_INCOMING_AI_PROCESSING__b6d92bae__Scope_References.paste.json",
+        "NOKEY__DGSO_INCOMING_AI_PROCESSING__b6d92bae__Scope_Library_Identity.paste.json"
+      ]
+    },
+    {
+      "release": 32,
+      "date": "2026-10-18",
+      "reason": "Folio_Failure_Watch created in the tenant (flow c38bfeaa, 2026-10-18): its package takes the flow's id; the tenant refused an Hour recurrence with set hours, so the watch runs on a Week recurrence, Monday-Friday 07:00-18:00 WAT at :05 (hourly in working hours). Package content unchanged.",
+      "changed": 1
+    },
+    {
+      "release": 33,
+      "date": "2026-10-18",
+      "reason": "Tenant defects in Folio_Failure_Watch found on its first live run (run 08584092775455011877820853803CU24, 2026-10-18): Select_Open_Failures refused substring() of an empty LastError; the run ended Succeeded although it could not classify. Fixed: empty-error guard, the run ends Failed when the watch cannot do its job, and the cursor does not move past a window whose report failed.",
+      "changed": 1
+    },
+    {
+      "release": 34,
+      "date": "2026-10-18",
+      "reason": "Tenant defect in Folio_Failure_Watch found on its proof run (run 08584092772023323576656283964CU24, 2026-10-18): the list returned the stored cursor reformatted ('10/18/2026 13:19:08'), so the new-failure window matched nothing. The cursor is now stored as utc:<ISO>; an unprefixed value is still parsed.",
+      "changed": 1
+    },
+    {
+      "release": 35,
+      "date": "2026-10-18",
+      "reason": "Tenant defect found by a commissioning support case (CG_Portal_Support_Endpoint run 08584092765524672908188781689CU23, 2026-10-18): the registry helpdesk alert used the citizen's address as Reply-To, and a malformed address made Outlook refuse the alert. Support and writeback registry alerts now use the citizen's address as Reply-To only when it is well formed.",
+      "changed": 2
+    },
+    {
+      "release": 36,
+      "date": "2026-10-18",
+      "reason": "ITEM-68 closure (owner, 2026-10-18): the owner-supplied brand template set (Comprehensive Portfolio Brand System Package) replaces all 43 catalogue templates: green masthead with the white NITDA lockup on every message, the DGO Digital Ops logo on internal mail, a greeting in every body, colour by purpose, logos served only from https://correspondence-gateway.rf.gd/email-assets/. Three off-palette colours mapped to the nearest brand tokens; two over-long expressions split with identical output; the failure-watch email given the same masthead.",
+      "changed": 21
+    },
+    {
+      "release": 37,
+      "date": "2026-10-18",
+      "reason": "Owner decision 2026-10-18: the scan intake's New E-Scan notice goes to the registry mailbox (dgsregistry@nitda.gov.ng), not dgs@nitda.gov.ng; the administrative-recipient rule now covers a plain fixed value.",
+      "changed": 1
+    },
+    {
+      "release": 38,
+      "date": "2026-10-19",
+      "reason": "Owner decision 2026-10-18 (build, not defer): RN-025 run-record e-mail in UPLOAD and WRITEBACK; RN-035 task reminders (DYNAMIC_ACTIONS upsert-record RMD to DGO_TaskReminders, AUTO_SCHEDULED_SWEEP sends them when due; the shared engine carries the RMD type into USER_ADMIN and ACTIVITY_LIFECYCLE); ITEM-91 directorate tasks in FETCH_ALL by the newly indexed GDSUROUT and DIRECTORATE_UNIT_MAP",
+      "changed": 8
+    },
+    {
+      "release": 39,
+      "date": "2026-10-19",
+      "reason": "Owner, 2026-10-19: the Workspace moved to folio-platform.page.gd and the Portal to folio-portal.page.gd (the rf.gd hosts are suspended). Every e-mail image and link, and every deep link, now points at the new hosts.",
+      "changed": 21
+    },
+    {
+      "release": 40,
+      "date": "2026-10-19",
+      "reason": "New E-Scan notice to dgs@nitda.gov.ng: the owner set Send_an_email_(V2) To in the designer on 2026-10-19 (read back by the Flow API the same day); the package adopts it, with its delivery receipt",
+      "changed": 1
+    },
+    {
+      "release": 41,
+      "date": "2026-10-19",
+      "reason": "Defect found on the deployment (2026-10-19): the host's browser check redirects without the #fragment, so a first visit through the digest, reminder or bulk-failure link to /#/acknowledgment opened the Command Center; the links now go to /acknowledge.html, which the Workspace routes to the acknowledgment queue (config/deeplink.config.js pathRoutes)",
+      "changed": 2
+    },
+    {
+      "release": 42,
+      "date": "2026-10-20",
+      "reason": "Owner decision (2026-10-20): staff e-mails link to a Folio platform, not a SharePoint list or list item. The Registry alert, writeback alert and daily digest open the Workspace's Portal submissions (?portal=); the helpdesk alert, the digest's upload-ticket link and the undeliverable alert open the Admin Suite (?notice=), which offers the list itself. Flow Configuration cannot meet it: the links are written in the e-mail bodies. See deployment/NOTICE_LINKS.md",
+      "changed": 5
+    },
+    {
+      "release": 43,
+      "date": "2026-10-21",
+      "reason": "E-mail template package 2026-10-20 (ITEM-92, owner decisions 2026-10-21): IP_SEND_EMAIL hero by purpose and footer note (F1); citizen acknowledgement-overdue notice in CG_Portal_Daily_Sweep (F5, TR-108); DGO masthead and footer on the eight internal catalogue messages (B2); unread third-party image steps removed (B5); Folio_Failure_Watch places citizen-ack-overdue as a citizen outcome",
+      "changed": 9
+    },
+    {
+      "release": 44,
+      "date": "2026-10-22",
+      "reason": "Tenant defect: e-mail proportions in Outlook web and Outlook mobile (live tests 2026-10-21). E-mail template package revision 2026-10-21: PT-Ack-Overdue redesigned (letter structure, 24 px headline, stacked facts) and the NITDA lockup at 140 px on the seven internal catalogue messages with the DGO masthead. E-mail HTML only; no step, trigger or connection changes.",
+      "changed": 7
+    }
+  ]
+}

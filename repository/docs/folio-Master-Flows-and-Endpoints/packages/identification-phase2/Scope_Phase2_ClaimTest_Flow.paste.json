@@ -1,0 +1,2054 @@
+{
+  "nodeId": "Scope_Phase2_ClaimTest_Flow",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Get_Dataset_Bindings": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getbytitle('Flow%20Configuration')/items?$select=Title,ConfigValue&$top=500&$filter=Title%20eq%20'ENVIRONMENT_CODE'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_SITE_URL'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_LIST_ID'%20or%20Title%20eq%20'DATASET_ATTACHMENTS_SITE_URL'%20or%20Title%20eq%20'DATASET_ATTACHMENTS_LIST_ID'%20or%20Title%20eq%20'DATASET_SCAN_LIBRARY_SITE_URL'%20or%20Title%20eq%20'DATASET_SCAN_LIBRARY_LIST_ID'%20or%20Title%20eq%20'DATASET_STATUS_TIMELINE_SITE_URL'%20or%20Title%20eq%20'DATASET_STATUS_TIMELINE_LIST_ID'%20or%20Title%20eq%20'DATASET_SUPPORT_CASES_SITE_URL'%20or%20Title%20eq%20'DATASET_SUPPORT_CASES_LIST_ID'%20or%20Title%20eq%20'DATASET_SEQUENCE_COUNTERS_SITE_URL'%20or%20Title%20eq%20'DATASET_SEQUENCE_COUNTERS_LIST_ID'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_SITE_URL'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_LIST_ID'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_MIRROR_SITE_URL'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_MIRROR_LIST_ID'%20or%20Title%20eq%20'DATASET_OPS_WORKING_REGISTER_SITE_URL'%20or%20Title%20eq%20'DATASET_OPS_WORKING_REGISTER_LIST_ID'%20or%20Title%20eq%20'DATASET_MINUTES_SITE_URL'%20or%20Title%20eq%20'DATASET_MINUTES_LIST_ID'%20or%20Title%20eq%20'DATASET_AI_TEXT_LOG_SITE_URL'%20or%20Title%20eq%20'DATASET_AI_TEXT_LOG_LIST_ID'%20or%20Title%20eq%20'DATASET_AUDIT_LOG_SITE_URL'%20or%20Title%20eq%20'DATASET_AUDIT_LOG_LIST_ID'%20or%20Title%20eq%20'DATASET_USER_DIRECTORY_SITE_URL'%20or%20Title%20eq%20'DATASET_USER_DIRECTORY_LIST_ID'%20or%20Title%20eq%20'DATASET_ORG_DIRECTORY_SITE_URL'%20or%20Title%20eq%20'DATASET_ORG_DIRECTORY_LIST_ID'%20or%20Title%20eq%20'DATASET_RECORD_LINKS_SITE_URL'%20or%20Title%20eq%20'DATASET_RECORD_LINKS_LIST_ID'%20or%20Title%20eq%20'DATASET_IDENTITY_MAP_SITE_URL'%20or%20Title%20eq%20'DATASET_IDENTITY_MAP_LIST_ID'%20or%20Title%20eq%20'DATASET_BRIEFS_SITE_URL'%20or%20Title%20eq%20'DATASET_BRIEFS_LIST_ID'%20or%20Title%20eq%20'DATASET_MEETINGS_SITE_URL'%20or%20Title%20eq%20'DATASET_MEETINGS_LIST_ID'%20or%20Title%20eq%20'DATASET_PROJECTS_SITE_URL'%20or%20Title%20eq%20'DATASET_PROJECTS_LIST_ID'%20or%20Title%20eq%20'DATASET_APPROVALS_SITE_URL'%20or%20Title%20eq%20'DATASET_APPROVALS_LIST_ID'%20or%20Title%20eq%20'DATASET_REGISTRY_FILES_SITE_URL'%20or%20Title%20eq%20'DATASET_REGISTRY_FILES_LIST_ID'%20or%20Title%20eq%20'DATASET_FILE_MOVEMENTS_SITE_URL'%20or%20Title%20eq%20'DATASET_FILE_MOVEMENTS_LIST_ID'",
+            "parameters/headers": {
+              "Accept": "application/json;odata=minimalmetadata"
+            }
+          }
+        },
+        "runAfter": {}
+      },
+      "Select_Dataset_Bindings": {
+        "type": "Select",
+        "inputs": {
+          "from": "@coalesce(body('Get_Dataset_Bindings')?['value'], json('[]'))",
+          "select": "@concat('\"', trim(string(item()?['Title'])), '\":\"', replace(trim(string(coalesce(item()?['ConfigValue'], ''))), '\"', ''), '\"')"
+        },
+        "runAfter": {
+          "Get_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Dataset_Bindings": {
+        "type": "Compose",
+        "inputs": "@json(concat('{', join(body('Select_Dataset_Bindings'), ','), '}'))",
+        "runAfter": {
+          "Select_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Environment_Prefix": {
+        "type": "Compose",
+        "inputs": "@if(equals(toLower(string(coalesce(outputs('Compose_Dataset_Bindings')?['ENVIRONMENT_CODE'], ''))), 'prd'), '', 'Z')",
+        "runAfter": {
+          "Compose_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Request_Context": {
+        "type": "Compose",
+        "inputs": {
+          "requestId": "@guid()",
+          "clientCorrelationId": "@substring(concat(replace(replace(trim(string(coalesce(triggerOutputs()?['headers']?['X-Correlation-ID'], triggerBody()?['requestId'], ''))), '<', ''), '>', ''), '                                                                '), 0, 64)",
+          "runName": "@workflow()?['run']?['name']",
+          "receivedAtUtc": "@utcNow()"
+        },
+        "runAfter": {
+          "Compose_Environment_Prefix": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Foreach_Parallel_Claim": {
+        "type": "Foreach",
+        "foreach": "@range(1, 20)",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 20
+          }
+        },
+        "runAfter": {
+          "Compose_Request_Context": [
+            "Succeeded"
+          ]
+        },
+        "actions": {
+          "Compose_Claim_Test_Year": {
+            "type": "Compose",
+            "inputs": "@formatDateTime(convertFromUtc(utcNow(), 'W. Central Africa Standard Time'), 'yyyy')",
+            "runAfter": {}
+          },
+          "Compose_Claim_Test_Count": {
+            "type": "Compose",
+            "inputs": "@int(1)",
+            "runAfter": {
+              "Compose_Claim_Test_Year": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Scope_Claim_Test_1": {
+            "type": "Scope",
+            "actions": {
+              "Get_Counter_Test_1": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Condition_Counter_Test_1_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_1')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_1": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_1')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_1": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_1')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_1')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_1')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_1'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_1": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_1": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_1')",
+                    "runAfter": {
+                      "Claim_Counter_Test_1": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_1": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_1": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_1": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_1": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Claim_Test_Count": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Scope_Claim_Test_2": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_2": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_2": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_2": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_2_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_2')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_2": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_2')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_2": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_2')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_2')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_2')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_2'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_2": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_2": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_2')",
+                    "runAfter": {
+                      "Claim_Counter_Test_2": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_2": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_2": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_2": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_2": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_1": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_3": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_3": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_3": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_3": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_3_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_3')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_3": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_3')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_3": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_3')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_3')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_3')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_3'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_3": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_3": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_3')",
+                    "runAfter": {
+                      "Claim_Counter_Test_3": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_3": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_3": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_3": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_3": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_2": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_4": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_4": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_4": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_4": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_4_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_4')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_4": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_4')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_4": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_4')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_4')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_4')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_4'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_4": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_4": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_4')",
+                    "runAfter": {
+                      "Claim_Counter_Test_4": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_4": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_4": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_4": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_4": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_3": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_5": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_5": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_5": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_5": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_5_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_5')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_5": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_5')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_5": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_5')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_5')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_5')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_5'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_5": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_5": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_5')",
+                    "runAfter": {
+                      "Claim_Counter_Test_5": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_5": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_5": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_5": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_5": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_4": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_6": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_6": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_6": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_6": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_6_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_6')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_6": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_6')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_6": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_6')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_6')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_6')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_6'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_6": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_6": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_6')",
+                    "runAfter": {
+                      "Claim_Counter_Test_6": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_6": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_6": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_6": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_6": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_5": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_7": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_7": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_7": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_7": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_7_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_7')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_7": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_7')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_7": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_7')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_7')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_7')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_7'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_7": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_7": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_7')",
+                    "runAfter": {
+                      "Claim_Counter_Test_7": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_7": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_7": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_7": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_7": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_6": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_8": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_8": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_8": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_8": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_8_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_8')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_8": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_8')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_8": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_8')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_8')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_8')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_8'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_8": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_8": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_8')",
+                    "runAfter": {
+                      "Claim_Counter_Test_8": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_8": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_8": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_8": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_8": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_7": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_9": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_9": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_9": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_9": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_9_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_9')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_9": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_9')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_9": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_9')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_9')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_9')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_9'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_9": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_9": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_9')",
+                    "runAfter": {
+                      "Claim_Counter_Test_9": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_9": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_9": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_9": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_9": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_8": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Scope_Claim_Test_10": {
+            "type": "Scope",
+            "actions": {
+              "Delay_Claim_Test_10": {
+                "type": "Wait",
+                "inputs": {
+                  "interval": {
+                    "count": "@rand(1, 6)",
+                    "unit": "Second"
+                  }
+                },
+                "runAfter": {}
+              },
+              "Get_Counter_Test_10": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'ZTST'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Test_Year')}'",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata"
+                    }
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Delay_Claim_Test_10": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Counter_Test_10_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(body('Get_Counter_Test_10')?['value'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compose_Next_Test_10": {
+                    "type": "Compose",
+                    "inputs": "@add(int(coalesce(first(body('Get_Counter_Test_10')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Test_Count'))",
+                    "runAfter": {}
+                  },
+                  "Claim_Counter_Test_10": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Test_10')?['value'])?['ID']})",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata",
+                          "X-HTTP-Method": "MERGE",
+                          "IF-MATCH": "@{first(body('Get_Counter_Test_10')?['value'])?['odata.etag']}",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Test_10')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Next_Test_10'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Next_Test_10": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Claimed_Test_10": {
+                    "type": "Compose",
+                    "inputs": "@outputs('Compose_Next_Test_10')",
+                    "runAfter": {
+                      "Claim_Counter_Test_10": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Counter_Test_10": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        },
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=minimalmetadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('ZTST-', string(outputs('Compose_Claim_Test_Year')))), 'Prefix', 'ZTST'), 'Year', string(outputs('Compose_Claim_Test_Year'))), 'CurrentSequence', outputs('Compose_Claim_Test_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(outputs('Compose_Claim_Test_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                        },
+                        "retryPolicy": {
+                          "type": "none"
+                        }
+                      },
+                      "runAfter": {}
+                    },
+                    "Compose_Created_Test_10": {
+                      "type": "Compose",
+                      "inputs": "@outputs('Compose_Claim_Test_Count')",
+                      "runAfter": {
+                        "Create_Counter_Test_10": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Counter_Test_10": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Claim_Test_9": [
+                "Failed",
+                "TimedOut"
+              ]
+            }
+          },
+          "Compose_Claim_Test": {
+            "type": "Compose",
+            "inputs": {
+              "ok": "@not(equals(coalesce(actions('Compose_Claimed_Test_1')?['outputs'], actions('Compose_Created_Test_1')?['outputs'], actions('Compose_Claimed_Test_2')?['outputs'], actions('Compose_Created_Test_2')?['outputs'], actions('Compose_Claimed_Test_3')?['outputs'], actions('Compose_Created_Test_3')?['outputs'], actions('Compose_Claimed_Test_4')?['outputs'], actions('Compose_Created_Test_4')?['outputs'], actions('Compose_Claimed_Test_5')?['outputs'], actions('Compose_Created_Test_5')?['outputs'], actions('Compose_Claimed_Test_6')?['outputs'], actions('Compose_Created_Test_6')?['outputs'], actions('Compose_Claimed_Test_7')?['outputs'], actions('Compose_Created_Test_7')?['outputs'], actions('Compose_Claimed_Test_8')?['outputs'], actions('Compose_Created_Test_8')?['outputs'], actions('Compose_Claimed_Test_9')?['outputs'], actions('Compose_Created_Test_9')?['outputs'], actions('Compose_Claimed_Test_10')?['outputs'], actions('Compose_Created_Test_10')?['outputs']), null))",
+              "prefix": "ZTST",
+              "year": "@outputs('Compose_Claim_Test_Year')",
+              "last": "@coalesce(actions('Compose_Claimed_Test_1')?['outputs'], actions('Compose_Created_Test_1')?['outputs'], actions('Compose_Claimed_Test_2')?['outputs'], actions('Compose_Created_Test_2')?['outputs'], actions('Compose_Claimed_Test_3')?['outputs'], actions('Compose_Created_Test_3')?['outputs'], actions('Compose_Claimed_Test_4')?['outputs'], actions('Compose_Created_Test_4')?['outputs'], actions('Compose_Claimed_Test_5')?['outputs'], actions('Compose_Created_Test_5')?['outputs'], actions('Compose_Claimed_Test_6')?['outputs'], actions('Compose_Created_Test_6')?['outputs'], actions('Compose_Claimed_Test_7')?['outputs'], actions('Compose_Created_Test_7')?['outputs'], actions('Compose_Claimed_Test_8')?['outputs'], actions('Compose_Created_Test_8')?['outputs'], actions('Compose_Claimed_Test_9')?['outputs'], actions('Compose_Created_Test_9')?['outputs'], actions('Compose_Claimed_Test_10')?['outputs'], actions('Compose_Created_Test_10')?['outputs'])",
+              "first": "@if(equals(coalesce(actions('Compose_Claimed_Test_1')?['outputs'], actions('Compose_Created_Test_1')?['outputs'], actions('Compose_Claimed_Test_2')?['outputs'], actions('Compose_Created_Test_2')?['outputs'], actions('Compose_Claimed_Test_3')?['outputs'], actions('Compose_Created_Test_3')?['outputs'], actions('Compose_Claimed_Test_4')?['outputs'], actions('Compose_Created_Test_4')?['outputs'], actions('Compose_Claimed_Test_5')?['outputs'], actions('Compose_Created_Test_5')?['outputs'], actions('Compose_Claimed_Test_6')?['outputs'], actions('Compose_Created_Test_6')?['outputs'], actions('Compose_Claimed_Test_7')?['outputs'], actions('Compose_Created_Test_7')?['outputs'], actions('Compose_Claimed_Test_8')?['outputs'], actions('Compose_Created_Test_8')?['outputs'], actions('Compose_Claimed_Test_9')?['outputs'], actions('Compose_Created_Test_9')?['outputs'], actions('Compose_Claimed_Test_10')?['outputs'], actions('Compose_Created_Test_10')?['outputs']), null), null, sub(int(coalesce(actions('Compose_Claimed_Test_1')?['outputs'], actions('Compose_Created_Test_1')?['outputs'], actions('Compose_Claimed_Test_2')?['outputs'], actions('Compose_Created_Test_2')?['outputs'], actions('Compose_Claimed_Test_3')?['outputs'], actions('Compose_Created_Test_3')?['outputs'], actions('Compose_Claimed_Test_4')?['outputs'], actions('Compose_Created_Test_4')?['outputs'], actions('Compose_Claimed_Test_5')?['outputs'], actions('Compose_Created_Test_5')?['outputs'], actions('Compose_Claimed_Test_6')?['outputs'], actions('Compose_Created_Test_6')?['outputs'], actions('Compose_Claimed_Test_7')?['outputs'], actions('Compose_Created_Test_7')?['outputs'], actions('Compose_Claimed_Test_8')?['outputs'], actions('Compose_Created_Test_8')?['outputs'], actions('Compose_Claimed_Test_9')?['outputs'], actions('Compose_Created_Test_9')?['outputs'], actions('Compose_Claimed_Test_10')?['outputs'], actions('Compose_Created_Test_10')?['outputs'])), sub(outputs('Compose_Claim_Test_Count'), 1)))",
+              "references": "@if(equals(coalesce(actions('Compose_Claimed_Test_1')?['outputs'], actions('Compose_Created_Test_1')?['outputs'], actions('Compose_Claimed_Test_2')?['outputs'], actions('Compose_Created_Test_2')?['outputs'], actions('Compose_Claimed_Test_3')?['outputs'], actions('Compose_Created_Test_3')?['outputs'], actions('Compose_Claimed_Test_4')?['outputs'], actions('Compose_Created_Test_4')?['outputs'], actions('Compose_Claimed_Test_5')?['outputs'], actions('Compose_Created_Test_5')?['outputs'], actions('Compose_Claimed_Test_6')?['outputs'], actions('Compose_Created_Test_6')?['outputs'], actions('Compose_Claimed_Test_7')?['outputs'], actions('Compose_Created_Test_7')?['outputs'], actions('Compose_Claimed_Test_8')?['outputs'], actions('Compose_Created_Test_8')?['outputs'], actions('Compose_Claimed_Test_9')?['outputs'], actions('Compose_Created_Test_9')?['outputs'], actions('Compose_Claimed_Test_10')?['outputs'], actions('Compose_Created_Test_10')?['outputs']), null), json('[]'), body('Select_Claim_Test_References'))"
+            },
+            "runAfter": {
+              "Select_Claim_Test_References": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          },
+          "Select_Claim_Test_References": {
+            "type": "Select",
+            "inputs": {
+              "from": "@if(equals(coalesce(actions('Compose_Claimed_Test_1')?['outputs'], actions('Compose_Created_Test_1')?['outputs'], actions('Compose_Claimed_Test_2')?['outputs'], actions('Compose_Created_Test_2')?['outputs'], actions('Compose_Claimed_Test_3')?['outputs'], actions('Compose_Created_Test_3')?['outputs'], actions('Compose_Claimed_Test_4')?['outputs'], actions('Compose_Created_Test_4')?['outputs'], actions('Compose_Claimed_Test_5')?['outputs'], actions('Compose_Created_Test_5')?['outputs'], actions('Compose_Claimed_Test_6')?['outputs'], actions('Compose_Created_Test_6')?['outputs'], actions('Compose_Claimed_Test_7')?['outputs'], actions('Compose_Created_Test_7')?['outputs'], actions('Compose_Claimed_Test_8')?['outputs'], actions('Compose_Created_Test_8')?['outputs'], actions('Compose_Claimed_Test_9')?['outputs'], actions('Compose_Created_Test_9')?['outputs'], actions('Compose_Claimed_Test_10')?['outputs'], actions('Compose_Created_Test_10')?['outputs']), null), json('[]'), range(sub(int(coalesce(actions('Compose_Claimed_Test_1')?['outputs'], actions('Compose_Created_Test_1')?['outputs'], actions('Compose_Claimed_Test_2')?['outputs'], actions('Compose_Created_Test_2')?['outputs'], actions('Compose_Claimed_Test_3')?['outputs'], actions('Compose_Created_Test_3')?['outputs'], actions('Compose_Claimed_Test_4')?['outputs'], actions('Compose_Created_Test_4')?['outputs'], actions('Compose_Claimed_Test_5')?['outputs'], actions('Compose_Created_Test_5')?['outputs'], actions('Compose_Claimed_Test_6')?['outputs'], actions('Compose_Created_Test_6')?['outputs'], actions('Compose_Claimed_Test_7')?['outputs'], actions('Compose_Created_Test_7')?['outputs'], actions('Compose_Claimed_Test_8')?['outputs'], actions('Compose_Created_Test_8')?['outputs'], actions('Compose_Claimed_Test_9')?['outputs'], actions('Compose_Created_Test_9')?['outputs'], actions('Compose_Claimed_Test_10')?['outputs'], actions('Compose_Created_Test_10')?['outputs'])), sub(outputs('Compose_Claim_Test_Count'), 1)), outputs('Compose_Claim_Test_Count')))",
+              "select": "@concat(string(outputs('Compose_Environment_Prefix')), 'ZTST-', string(outputs('Compose_Claim_Test_Year')), '-', string(formatNumber(item(), '00000')))"
+            },
+            "runAfter": {
+              "Scope_Claim_Test_10": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        }
+      },
+      "Compose_Claim_Test_Report": {
+        "type": "Compose",
+        "runAfter": {
+          "Foreach_Parallel_Claim": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "inputs": {
+          "test": "Phase 2 exit: 20 parallel claims on the ZTST counter",
+          "runName": "@workflow()?['run']?['name']",
+          "completedAtUtc": "@utcNow()",
+          "claims": "@result('Foreach_Parallel_Claim')"
+        }
+      },
+      "Send_Claim_Test_Report": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_Claim_Test_Report": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connection": "shared_office365",
+            "operationId": "SendEmailV2"
+          },
+          "parameters": {
+            "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+            "emailMessage/Subject": "@concat('NITDA Folio | Phase 2 claim test | ',workflow()?['run']?['name'])",
+            "emailMessage/Body": "<p>Phase 2 exit test: 20 parallel claims on the ZTST counter. The full record is attached.</p>",
+            "emailMessage/Attachments": [
+              {
+                "Name": "@concat('phase2-claim-test-',workflow()?['run']?['name'],'.json')",
+                "ContentBytes": "@string(outputs('Compose_Claim_Test_Report'))"
+              }
+            ],
+            "emailMessage/Importance": "Normal"
+          }
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Dataset_Bindings": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Test_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Test_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Test_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Claim_Test_Report": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

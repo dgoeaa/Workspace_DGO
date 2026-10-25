@@ -1,0 +1,110 @@
+{
+  "source": "phase1-gtq-indexes-08584104704691006016038196723CU26.json, the report ID_Phase1_GTQ_Indexes e-mailed on 4 October 2026 (18:53 WAT); supplied by the operator on 5 October 2026. Summarised here: the request headers and response headers of each step are left out.",
+  "context": {
+    "requestId": "593700c7-6830-4779-a47b-2963760d238d",
+    "startedAtUtc": "2026-10-04T17:53:36.5171287Z",
+    "runName": "08584104704691006016038196723CU26",
+    "planned": 6
+  },
+  "completedAtUtc": "2026-10-04T17:53:45.4726345Z",
+  "views": 24,
+  "legacyIndexUsedByAView": {
+    "_x0033_rdAssigned": false,
+    "Reference_ID": false
+  },
+  "freedIndex": "_x0033_rdAssigned",
+  "fieldsBefore": [
+    {
+      "Id": "5b69ca70-c3d6-4905-8c81-099a673fb63b",
+      "Indexed": false,
+      "InternalName": "CorrelationId",
+      "TypeAsString": "Text"
+    },
+    {
+      "Id": "7407dafd-7250-4f92-832c-ed355cf10322",
+      "Indexed": false,
+      "InternalName": "RootRef",
+      "TypeAsString": "Text"
+    },
+    {
+      "Id": "52f3bcf3-ab09-41f7-af90-d8b32fce63f1",
+      "Indexed": false,
+      "InternalName": "AssigneeKey",
+      "TypeAsString": "Text"
+    },
+    {
+      "Id": "89c5ead3-d42b-4736-b350-dc1ae7ee6db2",
+      "Indexed": false,
+      "InternalName": "RoutedOrgKey",
+      "TypeAsString": "Text"
+    },
+    {
+      "Id": "dcd77d28-ba79-4e82-b0f9-089561ef2d79",
+      "Indexed": true,
+      "InternalName": "_x0033_rdAssigned",
+      "TypeAsString": "Text"
+    },
+    {
+      "Id": "c6cdbb69-76f8-4355-931a-387334baa2e6",
+      "Indexed": false,
+      "InternalName": "ClientRequestHash",
+      "TypeAsString": "Text"
+    }
+  ],
+  "results": [
+    {
+      "list": "Global Tracking Queue",
+      "column": "CorrelationId",
+      "existed": true,
+      "create": "Skipped",
+      "index": "Succeeded",
+      "error": "",
+      "unindex": "Skipped"
+    },
+    {
+      "list": "Global Tracking Queue",
+      "column": "RootRef",
+      "existed": true,
+      "create": "Skipped",
+      "index": "Succeeded",
+      "error": "",
+      "unindex": "Skipped"
+    },
+    {
+      "list": "Global Tracking Queue",
+      "column": "AssigneeKey",
+      "existed": true,
+      "create": "Skipped",
+      "index": "Succeeded",
+      "error": "",
+      "unindex": "Skipped"
+    },
+    {
+      "list": "Global Tracking Queue",
+      "column": "RoutedOrgKey",
+      "existed": true,
+      "create": "Skipped",
+      "index": "Succeeded",
+      "error": "",
+      "unindex": "Skipped"
+    },
+    {
+      "list": "Global Tracking Queue",
+      "column": "_x0033_rdAssigned",
+      "existed": true,
+      "create": "Skipped",
+      "index": "Skipped",
+      "error": "",
+      "unindex": "Succeeded"
+    },
+    {
+      "list": "Global Tracking Queue",
+      "column": "ClientRequestHash",
+      "existed": true,
+      "create": "Skipped",
+      "index": "Succeeded",
+      "error": "",
+      "unindex": "Skipped"
+    }
+  ]
+}

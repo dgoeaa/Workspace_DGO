@@ -1,0 +1,227 @@
+{
+  "schema": "dgo-identification-status/v1",
+  "generatedBy": "scripts/build-identification-phase3.mjs",
+  "phase": 3,
+  "packages": [
+    {
+      "flow": "CG_Submission_Endpoint",
+      "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "key": "SUBMISSION",
+      "file": "SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json",
+      "root": "Scope_Submission_Flow",
+      "steps": 217,
+      "edits": 10,
+      "sends": 4,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "03f40cf476c41514",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Submission_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Portal_Support_Endpoint",
+      "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "key": "SUPPORT",
+      "file": "SUPPORT__CG_Portal_Support_Endpoint__4873c936.paste.json",
+      "root": "Scope_Support_Flow",
+      "steps": 100,
+      "edits": 9,
+      "sends": 4,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "19bd6079c1824a01",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Support_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Portal_Status_Check_Endpoint",
+      "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "key": "STATUS",
+      "file": "STATUS__CG_Portal_Status_Check_Endpoint__60042a2e.paste.json",
+      "root": "Scope_Status_Flow",
+      "steps": 72,
+      "edits": 6,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "0ba3769c4e1c0e0e",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Status_Check_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Portal_Writeback_Endpoint",
+      "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "key": "WRITEBACK",
+      "file": "WRITEBACK__CG_Portal_Writeback_Endpoint__bde13d27.paste.json",
+      "root": "Scope_Writeback_Flow",
+      "steps": 125,
+      "edits": 10,
+      "sends": 6,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "0e930e0542302708",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Writeback_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Upload_Endpoint",
+      "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "key": "UPLOAD",
+      "file": "UPLOAD__CG_Upload_Endpoint__df82e331.paste.json",
+      "root": "Scope_Upload_Flow",
+      "steps": 68,
+      "edits": 7,
+      "sends": 2,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "03185bfbd7c73e1b",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Upload_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Registry_Status_Notifier",
+      "flowId": "8ebf6001-89cd-49c9-a9b6-4dedb9a5768b",
+      "key": "NOKEY",
+      "file": "NOKEY__CG_Registry_Status_Notifier__8ebf6001.paste.json",
+      "root": "Scope_StatusNotify_Flow",
+      "steps": 87,
+      "edits": 4,
+      "sends": 7,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "01c3862f3e093d0f",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Registry_Status_Notifier read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Portal_Daily_Sweep",
+      "flowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "key": "NOKEY",
+      "file": "NOKEY__CG_Portal_Daily_Sweep__f12aec6d.paste.json",
+      "root": "Scope_Sweep_Flow",
+      "steps": 77,
+      "edits": 5,
+      "sends": 4,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "0c5dc0571cf14704",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Daily_Sweep read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Portal_Verification_Endpoint",
+      "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "key": "VERIFY",
+      "file": "VERIFY__CG_Portal_Verification_Endpoint__ba47f79b.paste.json",
+      "root": "Scope_Verify_Flow",
+      "steps": 79,
+      "edits": 2,
+      "sends": 3,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "17563b6f606b9309",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Verification_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "CG_Portal_Verification_Confirmation_Endpoint",
+      "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "key": "VERIFY_CONFIRM",
+      "file": "VERIFY_CONFIRM__CG_Portal_Verification_Confirmation_Endpoint__f96e3448.paste.json",
+      "root": "Scope_VerifyConfirm_Flow",
+      "steps": 69,
+      "edits": 2,
+      "sends": 2,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "04fbe6443076bb11",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Verification_Confirmation_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "IP_SCAN_INTAKE",
+      "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "key": "SCAN_INTAKE",
+      "file": "SCAN_INTAKE__IP_SCAN_INTAKE__5504d7f9.paste.json",
+      "root": "Scope_Scan_Flow",
+      "steps": 270,
+      "edits": 17,
+      "sends": 2,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "18a45281eccc8809",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_SCAN_INTAKE read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_to_array_variable_varErrors_Scan_Lock",
+        "Append_to_array_variable_varErrors_Scan_Writeback_400",
+        "Append_to_array_variable_varErrors_Scan_Writeback_401",
+        "Append_to_array_variable_varErrors_Scan_Writeback_403",
+        "Append_to_array_variable_varErrors_Scan_Writeback_404",
+        "Append_to_array_variable_varErrors_Scan_Writeback_500",
+        "Set_variable_varData_Scan_AuditFailed",
+        "Set_variable_varData_Scan_BadRequest",
+        "Set_variable_varData_Scan_Catch",
+        "Set_variable_varData_Scan_Denied_401",
+        "Set_variable_varData_Scan_Denied_403",
+        "Set_variable_varData_Scan_Deposited",
+        "Set_variable_varData_Scan_Duplicate",
+        "Set_variable_varData_Scan_Lock",
+        "Set_variable_varData_Scan_Oversize",
+        "Set_variable_varData_Scan_RateLimited",
+        "Set_variable_varData_Scan_Writeback_200",
+        "Set_variable_varData_Scan_Writeback_400",
+        "Set_variable_varData_Scan_Writeback_401",
+        "Set_variable_varData_Scan_Writeback_403",
+        "Set_variable_varData_Scan_Writeback_404",
+        "Set_variable_varData_Scan_Writeback_500",
+        "Set_variable_varStatusCode_Scan_409",
+        "Set_variable_varStatusCode_Scan_Writeback_200",
+        "Set_variable_varStatusCode_Scan_Writeback_400",
+        "Set_variable_varStatusCode_Scan_Writeback_401",
+        "Set_variable_varStatusCode_Scan_Writeback_403",
+        "Set_variable_varStatusCode_Scan_Writeback_404",
+        "Set_variable_varStatusCode_Scan_Writeback_500"
+      ]
+    }
+  ]
+}

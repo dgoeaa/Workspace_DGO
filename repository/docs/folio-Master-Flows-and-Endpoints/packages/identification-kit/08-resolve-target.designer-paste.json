@@ -1,0 +1,32 @@
+{
+  "nodeId": "Scope_Resolve_Target",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Target_Raw_Request": {
+        "type": "Compose",
+        "inputs": "@trim(string(coalesce(triggerBody()?['target'], triggerBody()?['entityKey'], '')))",
+        "runAfter": {}
+      },
+      "Compose_Target_Request": {
+        "type": "Compose",
+        "inputs": {
+          "kind": "@if(and(equals(length(outputs('Compose_Target_Raw_Request')), 36), equals(length(split(outputs('Compose_Target_Raw_Request'), '-')), 5)), 'entityKey', if(and(and(startsWith(outputs('Compose_Target_Raw_Request'), 'spo:'), equals(length(split(substring(outputs('Compose_Target_Raw_Request'), 4), '/')), 2)), contains(createArray(toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_ATTACHMENTS_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_SCAN_LIBRARY_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_MIRROR_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_MINUTES_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_USER_DIRECTORY_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_ORG_DIRECTORY_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_RECORD_LINKS_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_IDENTITY_MAP_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_BRIEFS_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_MEETINGS_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_PROJECTS_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_APPROVALS_LIST_ID'])), toLower(string(outputs('Compose_Dataset_Bindings')?['DATASET_REGISTRY_FILES_LIST_ID']))), if(and(startsWith(outputs('Compose_Target_Raw_Request'), 'spo:'), equals(length(split(substring(outputs('Compose_Target_Raw_Request'), 4), '/')), 2)), toLower(first(split(substring(outputs('Compose_Target_Raw_Request'), 4), '/'))), ''))), 'locator', 'unresolved'))",
+          "entityKey": "@if(and(equals(length(outputs('Compose_Target_Raw_Request')), 36), equals(length(split(outputs('Compose_Target_Raw_Request'), '-')), 5)), toLower(outputs('Compose_Target_Raw_Request')), null)",
+          "targetList": "@if(and(startsWith(outputs('Compose_Target_Raw_Request'), 'spo:'), equals(length(split(substring(outputs('Compose_Target_Raw_Request'), 4), '/')), 2)), toLower(first(split(substring(outputs('Compose_Target_Raw_Request'), 4), '/'))), null)",
+          "itemId": "@if(and(startsWith(outputs('Compose_Target_Raw_Request'), 'spo:'), equals(length(split(substring(outputs('Compose_Target_Raw_Request'), 4), '/')), 2)), int(last(split(outputs('Compose_Target_Raw_Request'), '/'))), null)"
+        },
+        "runAfter": {
+          "Compose_Target_Raw_Request": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

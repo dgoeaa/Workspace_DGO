@@ -1,0 +1,3433 @@
+{
+  "schema": "nitda-tenant-inventory/v1",
+  "environment": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1",
+  "capturedAtUtc": "2026-10-16T22:21:57.941Z",
+  "capturedBy": "registry account session, Flow API (read-only); scratch script inventory71.mjs",
+  "authoritativeCommit": "f313184d40c7dab5fdac8f8c367bf781d3f4e2e9",
+  "flows": [
+    {
+      "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "displayName": "CG_Submission_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:47:12.4425105Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:44:19.1911704Z",
+      "lastFailedRunUtc": "2026-09-28T18:42:31.2909695Z",
+      "sourceHash": "3e62a988b575be0f",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "SUBMISSION"
+      ],
+      "function": "Portal submission"
+    },
+    {
+      "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "displayName": "CG_Upload_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:47:56.4994222Z",
+      "lastSuccessfulRunUtc": "2026-10-02T12:45:40.758076Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "71f56e2a1304a603",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "UPLOAD"
+      ],
+      "function": "Portal upload"
+    },
+    {
+      "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "displayName": "CG_Portal_Status_Check_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:47:36.7316517Z",
+      "lastSuccessfulRunUtc": "2026-10-08T17:33:30.2037038Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "53b15ed894725541",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "STATUS"
+      ],
+      "function": "Portal status"
+    },
+    {
+      "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "displayName": "CG_Portal_Support_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:47:26.2182327Z",
+      "lastSuccessfulRunUtc": "2026-10-08T04:44:46.6197233Z",
+      "lastFailedRunUtc": "2026-09-15T17:36:38.4185416Z",
+      "sourceHash": "a77817f23c671b38",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "SUPPORT"
+      ],
+      "function": "Portal support"
+    },
+    {
+      "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "displayName": "CG_Portal_Writeback_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:47:45.834115Z",
+      "lastSuccessfulRunUtc": "2026-10-02T12:45:31.3755348Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "743212f3837a0e8b",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "WRITEBACK"
+      ],
+      "function": "Portal write-back"
+    },
+    {
+      "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "displayName": "CG_Portal_Verification_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:48:06.3723741Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:40:16.7913264Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "91fb20bb971a1eb1",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "VERIFY"
+      ],
+      "function": "Portal verification"
+    },
+    {
+      "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "displayName": "CG_Portal_Verification_Confirmation_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:48:15.9393882Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:43:23.9528004Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "fb95fe1b1772c541",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "VERIFY_CONFIRM"
+      ],
+      "function": "Portal verification confirmation"
+    },
+    {
+      "flowId": "8ebf6001-89cd-49c9-a9b6-4dedb9a5768b",
+      "displayName": "CG_Registry_Status_Notifier",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "OpenApiConnection",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-06T23:58:50.6461091Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:45:44.37957Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "3ea8846b7076466b",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Registry status notifier (Portal Registry item change)"
+    },
+    {
+      "flowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "displayName": "CG_Portal_Daily_Sweep",
+      "solution": "",
+      "enabled": false,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Recurrence",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T00:32:16.7274891Z",
+      "lastSuccessfulRunUtc": "2026-10-07T08:00:00.6522354Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "ddf571f81ca82ea5",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Portal daily sweep (schedule)"
+    },
+    {
+      "flowId": "8c19b45c-4174-4d2f-9429-ffd08dd1a5ae",
+      "displayName": "AUTO_SCHEDULED_SWEEP",
+      "solution": "",
+      "enabled": false,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Recurrence",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-16T21:04:17.6291139Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:03:42.63456Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "693cdd1a246f0e2f",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Task reminder sweep (schedule)"
+    },
+    {
+      "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "displayName": "IP_FETCH_ALL_BOOTSTRAP",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_flowmanagement",
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:35:17.9735659Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:42:23.5732182Z",
+      "lastFailedRunUtc": "2026-10-16T21:13:14.2568958Z",
+      "sourceHash": "8dece613ccbd2254",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "FETCH_ALL"
+      ],
+      "function": "Workspace bootstrap"
+    },
+    {
+      "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "displayName": "IP_Get_Docs_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_flowmanagement",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:22:45.851801Z",
+      "lastSuccessfulRunUtc": "2026-10-09T23:07:37.9607929Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "ba5a816bc8a724cf",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "GET_DOCS",
+        "FETCH_ACTIVITIES"
+      ],
+      "function": "Documents and activities"
+    },
+    {
+      "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "displayName": "IP_Reference_Data_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_flowmanagement",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:22:38.3808587Z",
+      "lastSuccessfulRunUtc": "2026-10-10T02:09:28.9161389Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "c772b7a4a4d4628d",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "REFERENCE_DATA"
+      ],
+      "function": "Reference data"
+    },
+    {
+      "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "displayName": "IP_Retrieve_Email_Attachment_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T15:54:07.1018083Z",
+      "lastSuccessfulRunUtc": "2026-10-09T23:07:42.6256003Z",
+      "lastFailedRunUtc": "2026-09-17T22:29:33.9720824Z",
+      "sourceHash": "184df866db7380a4",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "FETCH_EMAIL_ATTACHMENTS"
+      ],
+      "function": "E-mail attachments"
+    },
+    {
+      "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "displayName": "IP_Dynamic_Global_Actions_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:22:02.6205056Z",
+      "lastSuccessfulRunUtc": "2026-10-12T19:50:22.0610983Z",
+      "lastFailedRunUtc": "2026-09-22T04:13:22.2187467Z",
+      "sourceHash": "1688f218ac2c8d9c",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "DYNAMIC_ACTIONS",
+        "SUBSIDIARY_ACTIONS"
+      ],
+      "function": "Dynamic and subsidiary actions"
+    },
+    {
+      "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "displayName": "Single_Task_Assignment",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:21:30.0945999Z",
+      "lastSuccessfulRunUtc": "2026-10-08T23:08:33.6045859Z",
+      "lastFailedRunUtc": "2026-10-10T01:30:42.1184465Z",
+      "sourceHash": "8c5e272d48e7c38c",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ],
+      "function": "Single assignment"
+    },
+    {
+      "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+      "displayName": "BULK OPS DATA RETRIEVAL HTTP",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_flowmanagement",
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:21:40.8378071Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:36:20.9608294Z",
+      "lastFailedRunUtc": "2026-10-02T12:44:15.2517898Z",
+      "sourceHash": "077c57914219b2f8",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "BULK_ASSIGNMENT"
+      ],
+      "function": "Bulk assignment"
+    },
+    {
+      "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+      "displayName": "IP_Create__Task__for_received_Email_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-12T19:48:11.2332987Z",
+      "lastSuccessfulRunUtc": "2026-10-12T19:49:41.314648Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "1897f3e7c6332016",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "EMAIL_RELATED_TASK"
+      ],
+      "function": "Task from e-mail"
+    },
+    {
+      "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "displayName": "AI_Document_Processing",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_adobepdftools",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:31:14.4086229Z",
+      "lastSuccessfulRunUtc": null,
+      "lastFailedRunUtc": "2026-10-08T17:12:30.133781Z",
+      "sourceHash": "970ddfd9113b9f3b",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "AI_CHAT",
+        "AI_DOC_ANALYSIS",
+        "AI_EMAIL_ANALYSIS"
+      ],
+      "function": "AI document, e-mail and chat"
+    },
+    {
+      "flowId": "197527c8-e76c-4f7d-81b8-3cb5c88b1c6c",
+      "displayName": "Folio_Incoming_Correspondence_Scan_Processing_Flow",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "OpenApiConnection",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_onedriveforbusiness",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-16T08:13:59.0251661Z",
+      "lastSuccessfulRunUtc": "2026-10-16T09:04:24.265467Z",
+      "lastFailedRunUtc": "2026-10-16T07:56:01.0860378Z",
+      "sourceHash": "3d3bbca372ceaf05",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Library and scan intake (rebuild)"
+    },
+    {
+      "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "displayName": "IP_OTP_VERIFY",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:49:10.0160181Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:02:19.269963Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "580ff527f7024c2a",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "OTP_VERIFY"
+      ],
+      "function": "One-time code verification"
+    },
+    {
+      "flowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+      "displayName": "IP_OTP_GENERATE",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:22:30.6922279Z",
+      "lastSuccessfulRunUtc": "2026-10-16T20:59:26.4561866Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "3f91d1bc6c210e5e",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "OTP_GENERATE"
+      ],
+      "function": "One-time code generation"
+    },
+    {
+      "flowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+      "displayName": "IP_User_Admin_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-10T16:22:20.5602408Z",
+      "lastSuccessfulRunUtc": "2026-10-08T20:28:35.4102081Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "1b75d8d4793e3a30",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "USER_ADMIN"
+      ],
+      "function": "User administration"
+    },
+    {
+      "flowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+      "displayName": "IP_Activity_Lifecycle_Endpoint",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-12T19:54:43.8759151Z",
+      "lastSuccessfulRunUtc": "2026-10-12T19:43:50.3937604Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "d2982cec768052f5",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "ACTIVITY_LIFECYCLE"
+      ],
+      "function": "Activities lifecycle"
+    },
+    {
+      "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "displayName": "IP_SCAN_INTAKE",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_flowmanagement",
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:48:25.6744501Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:45:06.8585786Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "bed4f5edd84b25f2",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "SCAN_INTAKE"
+      ],
+      "function": "Scan intake"
+    },
+    {
+      "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "displayName": "IP_SEND_EMAIL",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T17:49:43.3976049Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:34:25.7912749Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "9fcc62dc03bbcebb",
+      "classification": "ADOPTED",
+      "contractKeys": [
+        "EMAIL"
+      ],
+      "function": "Send e-mail"
+    },
+    {
+      "flowId": "b6d92bae-591e-fa1e-52eb-b350cad988a7",
+      "displayName": "DGSO INCOMING AI PROCESSING",
+      "solution": "",
+      "enabled": false,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "OpenApiConnection",
+      "connectionReferences": [
+        "shared_flowmanagement",
+        "shared_office365",
+        "shared_onedriveforbusiness",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-16T08:13:25Z",
+      "lastSuccessfulRunUtc": "2026-10-09T14:43:02.6842759Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "bd9e5070629c2bac",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Library intake (document library)"
+    },
+    {
+      "flowId": "17a85efb-1ed2-45c9-a602-2ad6f8bb7ead",
+      "displayName": "01 - GOV - Provision HTTP Flow Registry",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Button",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:04:48.9667065Z",
+      "lastSuccessfulRunUtc": null,
+      "lastFailedRunUtc": null,
+      "sourceHash": "7bc65ad69c76e086",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "651ae389-eeed-4bf0-9799-67bd964ebe71",
+      "displayName": "02 - GOV - Register HTTP Flow Truth",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:04:59.4498082Z",
+      "lastSuccessfulRunUtc": "2026-10-02T05:02:49.8521036Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "859e3e1433d62ab5",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "0545e19a-c34a-45db-bd11-27b87a34973e",
+      "displayName": "03 - GOV - Record HTTP Flow Execution",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:05:09.2199753Z",
+      "lastSuccessfulRunUtc": null,
+      "lastFailedRunUtc": null,
+      "sourceHash": "291e27f8e76e7708",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b",
+      "displayName": "04 - GOV - Audit HTTP Flow Registry",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Recurrence",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:05:18.9824776Z",
+      "lastSuccessfulRunUtc": "2026-10-16T01:19:43.0495258Z",
+      "lastFailedRunUtc": "2026-10-02T04:33:44.8716619Z",
+      "sourceHash": "300f73bd218da9e3",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "493b4ab7-8f63-4fab-8121-746c2cac7f98",
+      "displayName": "05 - GOV - Retire HTTP Flow",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:06:07.9873606Z",
+      "lastSuccessfulRunUtc": null,
+      "lastFailedRunUtc": null,
+      "sourceHash": "b8d2a6e59dd91352",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "87a74d7e-7435-4e34-baa1-7e759ebf5565",
+      "displayName": "06 - GOV - Registry Exception Notification",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Recurrence",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:06:17.7055609Z",
+      "lastSuccessfulRunUtc": "2026-10-16T21:33:06.5995465Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "8d0182de6ef33b73",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "c6a011c5-7b11-4241-82ae-a45b88ebf276",
+      "displayName": "07 - GOV - Consumer HTTP Self-Registration Template",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:06:26.2854441Z",
+      "lastSuccessfulRunUtc": null,
+      "lastFailedRunUtc": null,
+      "sourceHash": "4c5e3e1177c2db92",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "f5e7679f-ca1b-4216-8a6e-bb6c044ed06f",
+      "displayName": "08 - GOV - Discover and Register HTTP Consumers",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Recurrence",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-10-08T01:06:36.2129268Z",
+      "lastSuccessfulRunUtc": "2026-10-16T03:19:53.3295266Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "6fd261e6c7a15d48",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Governance flow registry"
+    },
+    {
+      "flowId": "7d90f8f0-fa91-4aed-899c-b2bce5b70694",
+      "displayName": "DGO_MAIL_AUTH",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-09-27T02:42:46.6071421Z",
+      "lastSuccessfulRunUtc": "2026-09-28T23:28:05.8938284Z",
+      "lastFailedRunUtc": "2026-09-26T19:10:55.3270349Z",
+      "sourceHash": "c45a7aee653674f9",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Correspondence Mailer"
+    },
+    {
+      "flowId": "d44a67e3-c55a-415a-afe9-ef50a4702117",
+      "displayName": "DGO_MAIL_DATA",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-09-27T02:42:53.5759307Z",
+      "lastSuccessfulRunUtc": "2026-09-28T23:25:05.1839801Z",
+      "lastFailedRunUtc": null,
+      "sourceHash": "12dd9b6998e1a64d",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Correspondence Mailer"
+    },
+    {
+      "flowId": "0cb4c4a8-578a-4017-90dc-b8f2ffb21cb8",
+      "displayName": "DGO_MAIL_DIRECTORY",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-09-27T02:42:28.8617652Z",
+      "lastSuccessfulRunUtc": "2026-09-28T23:22:04.8550587Z",
+      "lastFailedRunUtc": "2026-09-26T19:10:40.8315318Z",
+      "sourceHash": "9b8946e13e25c552",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Correspondence Mailer"
+    },
+    {
+      "flowId": "98ce8b40-d386-4ec5-a277-1a35688fef4f",
+      "displayName": "DGO_MAIL_LOG",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-09-27T02:42:23.0805497Z",
+      "lastSuccessfulRunUtc": "2026-09-28T23:25:03.1372768Z",
+      "lastFailedRunUtc": "2026-09-26T19:10:36.9247707Z",
+      "sourceHash": "f61833aaff0d6acb",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Correspondence Mailer"
+    },
+    {
+      "flowId": "c5a0f936-40a5-4044-a383-2530468f8413",
+      "displayName": "DGO_MAIL_PROVISION",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-09-27T02:42:40.8015796Z",
+      "lastSuccessfulRunUtc": "2026-09-27T02:58:13.0539097Z",
+      "lastFailedRunUtc": "2026-09-26T19:10:51.1549515Z",
+      "sourceHash": "65162f6af84b4ffc",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Correspondence Mailer"
+    },
+    {
+      "flowId": "0fb53e16-fa57-41a9-9880-752c3a4d4749",
+      "displayName": "DGO_MAIL_SEND",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_office365",
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-09-27T02:42:16.9048103Z",
+      "lastSuccessfulRunUtc": "2026-09-28T23:23:49.2705009Z",
+      "lastFailedRunUtc": "2026-09-26T19:10:33.5847651Z",
+      "sourceHash": "684bfbcb40f9195f",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Correspondence Mailer"
+    },
+    {
+      "flowId": "176f7af5-7ffc-41d0-910b-e17b5587ebbd",
+      "displayName": "DGO_MAIL_TEMPLATES",
+      "solution": "",
+      "enabled": true,
+      "owner": "dgsregistry@nitda.gov.ng (owner or co-owner; read as that account)",
+      "triggerType": "Request/Http",
+      "connectionReferences": [
+        "shared_sharepointonline"
+      ],
+      "lastModifiedUtc": "2026-09-27T02:42:34.963885Z",
+      "lastSuccessfulRunUtc": "2026-09-28T23:18:50.9886389Z",
+      "lastFailedRunUtc": "2026-09-28T23:18:34.4261361Z",
+      "sourceHash": "ce26b76ecba85b56",
+      "classification": "ADOPTED",
+      "contractKeys": [],
+      "function": "Correspondence Mailer"
+    }
+  ],
+  "endpoints": [
+    {
+      "contractKey": "SUBMISSION",
+      "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "flow": "CG_Submission_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "UPLOAD",
+      "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "flow": "CG_Upload_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "STATUS",
+      "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "flow": "CG_Portal_Status_Check_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "SUPPORT",
+      "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "flow": "CG_Portal_Support_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "WRITEBACK",
+      "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "flow": "CG_Portal_Writeback_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "VERIFY",
+      "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "flow": "CG_Portal_Verification_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "VERIFY_CONFIRM",
+      "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "flow": "CG_Portal_Verification_Confirmation_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "FETCH_ALL",
+      "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "flow": "IP_FETCH_ALL_BOOTSTRAP",
+      "state": "Started"
+    },
+    {
+      "contractKey": "GET_DOCS",
+      "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "flow": "IP_Get_Docs_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "FETCH_ACTIVITIES",
+      "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "flow": "IP_Get_Docs_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "REFERENCE_DATA",
+      "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "flow": "IP_Reference_Data_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "FETCH_EMAIL_ATTACHMENTS",
+      "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "flow": "IP_Retrieve_Email_Attachment_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "DYNAMIC_ACTIONS",
+      "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "flow": "IP_Dynamic_Global_Actions_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "SUBSIDIARY_ACTIONS",
+      "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "flow": "IP_Dynamic_Global_Actions_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "SINGLE_ASSIGNMENT",
+      "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "flow": "Single_Task_Assignment",
+      "state": "Started"
+    },
+    {
+      "contractKey": "BULK_ASSIGNMENT",
+      "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+      "flow": "BULK OPS DATA RETRIEVAL HTTP",
+      "state": "Started"
+    },
+    {
+      "contractKey": "EMAIL_RELATED_TASK",
+      "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+      "flow": "IP_Create__Task__for_received_Email_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "AI_CHAT",
+      "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "flow": "AI_Document_Processing",
+      "state": "Started"
+    },
+    {
+      "contractKey": "AI_DOC_ANALYSIS",
+      "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "flow": "AI_Document_Processing",
+      "state": "Started"
+    },
+    {
+      "contractKey": "AI_EMAIL_ANALYSIS",
+      "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "flow": "AI_Document_Processing",
+      "state": "Started"
+    },
+    {
+      "contractKey": "OTP_VERIFY",
+      "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "flow": "IP_OTP_VERIFY",
+      "state": "Started"
+    },
+    {
+      "contractKey": "OTP_GENERATE",
+      "flowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+      "flow": "IP_OTP_GENERATE",
+      "state": "Started"
+    },
+    {
+      "contractKey": "USER_ADMIN",
+      "flowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+      "flow": "IP_User_Admin_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "ACTIVITY_LIFECYCLE",
+      "flowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+      "flow": "IP_Activity_Lifecycle_Endpoint",
+      "state": "Started"
+    },
+    {
+      "contractKey": "SCAN_INTAKE",
+      "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "flow": "IP_SCAN_INTAKE",
+      "state": "Started"
+    },
+    {
+      "contractKey": "EMAIL",
+      "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "flow": "IP_SEND_EMAIL",
+      "state": "Started"
+    }
+  ],
+  "connections": [
+    {
+      "connector": "shared_office365",
+      "connection": "c0b9e7a5b0854c39a435fd8ce92f48ad",
+      "account": "dgsregistry@nitda.gov.ng",
+      "record": "evidence/connection-verification.json"
+    }
+  ],
+  "duplicateOrOrphanFlows": [
+    {
+      "flowId": "781a74e6-f853-47d1-8d60-49f77a6129ac",
+      "displayName": "ID_Phase5_Survey",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-05T23:35:12.9904334Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "571c871e-15f4-457a-a5a5-d6fe625e8b91",
+      "displayName": "ID_Phase5_Keys",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-05T23:19:51.2921019Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "adb9a939-3583-44c0-82f0-75b723e54e17",
+      "displayName": "ID_Phase1_GTQ_Indexes",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-04T17:29:50.5682314Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "77aee896-de98-431c-b309-8c7dea1f5072",
+      "displayName": "ID_Phase2_Claim_Test",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-04T16:25:03.2381683Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "1b5f8505-f8ea-49dd-8fbd-cbba3fc9b6ad",
+      "displayName": "Folio_Delta_Admin_Gateway_Endpoint",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-04T05:39:28.1244979Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d0595c91-93a7-40d8-8ca8-f4417bb5953d",
+      "displayName": "ID_Phase1_Add_Columns",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-04T04:06:35.7916455Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e2bafa34-5805-4376-808d-4549573d9a5b",
+      "displayName": "ID_Phase1_List_Check",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-03T01:18:31.6712297Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "73f0aa0e-8742-4883-b357-1c2a25a54012",
+      "displayName": "Folio_Flows_and_Sharepoint_Governance_Records_Update",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-02T03:33:02.7920968Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3d815448-17a4-463a-a5a9-2120cde5b46c",
+      "displayName": "Folio_Flows_Governance_Registry",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-01T16:13:05.402074Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bd6bcec8-6bb5-439e-bcca-a993cfb6bdce",
+      "displayName": "Folio Flow Estate — Live Report (Power Automate)",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-01T15:23:56.0343569Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "01a9a767-620c-4bba-9d3d-a176b371f670",
+      "displayName": "Users_Directory_Sync",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-01T04:26:56.5426101Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "8c963f52-4c63-47aa-ae47-9e5754d277f8",
+      "displayName": "Folio-Flows-in-Use",
+      "state": "Started",
+      "lastModifiedUtc": "2026-10-01T03:45:20.7330356Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "51a75c76-ccce-4782-b1ce-b63ae8a2145e",
+      "displayName": "IP_SCHEDULED_SWEEP",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-30T06:04:59.185709Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5e3b6e59-121e-44b0-bcf3-a3dd78147126",
+      "displayName": "Folio_Flows_Master_Audit",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-29T15:51:47.4124772Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b56ce201-87bf-4c49-9d7d-7a5503cdcf3e",
+      "displayName": "ECM_ARCHIVE",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-29T03:18:13.7990725Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "51e6af9e-006a-422e-82a2-d8115693b7b9",
+      "displayName": "UserDirectory_Synchronization",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-27T20:15:16.621993Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "913bd078-5411-404f-85ac-507c10fe1a09",
+      "displayName": "IP_OTP_Endpoint",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-27T02:53:12.149264Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "53fa07c5-e021-47cb-b36b-ffc57d5ced03",
+      "displayName": "TEMP-DGO-Endpoint-Harvester",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-24T08:56:11.9546882Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "89058481-2cbb-49d7-9db2-e9c02ba165cb",
+      "displayName": "Endpoiints_Definitions_Export",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-24T04:24:14.9021244Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9189d97c-21b5-49d2-b20d-239bb39dcbd7",
+      "displayName": "Endpoints_Master_Datqbase",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-21T00:50:24.5573105Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c66a43cb-2d4a-4ec2-8078-09b0d6a3264d",
+      "displayName": "Automate the IT support ticketing system. Generate a ticket upon user request, categorize it based on the issue type, and assign it to the appropriate support team for resolution",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-14T08:11:31.0565223Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9a1520fc-52d7-4de6-868c-07019d45da66",
+      "displayName": "Fetch_Single_Flow_Definitions_using_internal_flow_name",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-14T04:03:52.3386341Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9d2084a8-fc98-4f5c-8cfa-241913e117ae",
+      "displayName": "Single_Endpoint_Metadata",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-13T06:04:23.6970736Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b9d07010-1d98-417c-ad97-a305af770772",
+      "displayName": "IP_Create_Task",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-13T05:27:57.0088429Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ce2cbed8-d180-4160-a0c7-f552101bc412",
+      "displayName": "IP_FETCH_ALL__EXTENDED_ENDPOINT",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-11T00:05:08.4151461Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "cbb2efbc-7d02-2003-422c-25779a69cdfb",
+      "displayName": "IP_Retrieve_Email_Attachment",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-06T04:48:51Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0d1e8df5-30b3-4069-8903-665b87c197eb",
+      "displayName": "IP_Bulk_Assign_Endpoint",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-06T04:32:41.4449949Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "08da1783-927f-4662-a429-45e1249a989f",
+      "displayName": "IP_Subsidiary_Actions_Endpoint",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-05T19:36:57.0100116Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "05825db0-c806-4974-807c-c062f386cc41",
+      "displayName": "IP_Single_Assignment_Endpoint",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-04T06:06:13.9466906Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "8726fb6f-6c5c-2140-447d-f97cc5a01c38",
+      "displayName": "IP_Fetch_Email_Attachment",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-04T04:03:55Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "af43ab6f-7ff2-441d-aaaf-d1960fcb3ea1",
+      "displayName": "Fetch_Users_Categories_Departments_Data_Sync",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-04T01:30:50.722735Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "94c70652-dbc5-46ab-b042-253ccdf7d02f",
+      "displayName": "HtTP_Create_New_Document_metadata_and_watermark",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-03T22:58:09.4068504Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4d23df31-f6ff-4bd5-970c-9ee1eb39249e",
+      "displayName": "DOC INFO UPDATE",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-03T22:29:37Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "defdb5f8-e01f-4119-92ab-7c9893cd8a43",
+      "displayName": "Active Updated Activity Notification Flow",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-03T22:13:09.8476246Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3f2f649b-55af-48e0-9a1e-43135e11a4b0",
+      "displayName": "IP_Create_Email_Assignment",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-03T21:09:16.3091189Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0d76a7f8-f0b7-4226-b937-1d51578a3a55",
+      "displayName": "Copy of - Update Activity Notification Flow",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-03T20:43:37.1743186Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "faceec58-fa79-4de5-87b6-6376faff8a1a",
+      "displayName": "IP_DGO_SEND_EXTERNAL_CORRESPONDENCE",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-02T05:43:50.1521626Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0cf54dc8-f74e-4f2d-93e2-5779186f410b",
+      "displayName": "DGO Activity Extract",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-02T01:37:31.3362849Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f96399c6-31d9-493a-a304-3fa8efda6ef8",
+      "displayName": "IP_Bulk_Assignment_Endpoint",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-01T02:29:58.2995868Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bbfd667f-36a9-4338-b787-7700b95bb03e",
+      "displayName": "Endpoiints_Designer_Paste",
+      "state": "Started",
+      "lastModifiedUtc": "2026-09-01T00:16:34.5164908Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "672e6085-f68d-7074-120a-b1e6d648197f",
+      "displayName": "03 - Fetch_All_Data_&_References_Matrix-POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-31T01:02:03Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3eec824c-c1ae-28d6-cc1f-a2d5c4314a04",
+      "displayName": "01 - Fetch_All_Data_&_References_Matrix-POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-23T22:09:05Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a03d0ae8-a106-4aee-9985-d73ea7997653",
+      "displayName": "Web - OTP Generate",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-23T08:10:44.4836408Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "52ae6787-26e3-4508-9578-1b0ac5059f3c",
+      "displayName": "Dynamic",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-23T07:40:02.4225741Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "617f8beb-d9a7-4f10-b252-91071955f121",
+      "displayName": "NITDA_SharePoint_Remediation_Evidence_EndToEnd_AI_Optimized",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-19T02:22:39.4146687Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3f96478b-117f-4d70-aa09-668c121e084d",
+      "displayName": "Global_Gap_Remediation_Provisioning",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-18T04:18:49.1706559Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e9e57acf-5805-490d-8eb7-c685477414a0",
+      "displayName": "Copy of - Dynamic_SharePoint_Site Metadata_Inventory",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-16T01:28:31.5470112Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b340affe-8322-4f18-a108-89eec84c7f12",
+      "displayName": "Portal_Datta_Architecture_Provisioning",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-13T05:43:09.4995271Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2d3d2adc-475b-4fe2-a6c8-e002547719aa",
+      "displayName": "DGO_PROVISIONING_SHAREPOINT_SCHEMA_",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-12T23:33:02.7172835Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "78912843-16d7-4ec5-8185-fc62c9bdaa69",
+      "displayName": "SETUP_Sharepoint_Create_Lists",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-12T22:21:14.5550245Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c43d6947-66ac-403c-8f3f-9664565783a6",
+      "displayName": "EDTMS NITDA_Read_API (NITDA_Central_Registry Dashboard Sync)",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-12T04:28:14.1543539Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3e201620-f1e8-4c17-a90a-4d95b94a24c2",
+      "displayName": "Web - OTP Verify",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-11T01:33:25.6619514Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a82e7cd7-36a7-43b4-bd8b-5a8466622c3d",
+      "displayName": "AUTH_LOGIN_START",
+      "state": "Started",
+      "lastModifiedUtc": "2026-08-05T22:36:04.3341612Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2919a83e-0d33-46dc-9a7a-f7d92529a19c",
+      "displayName": "DGO_PROVISION_SHAREPOINT_SCHEMA",
+      "state": "Started",
+      "lastModifiedUtc": "2026-07-31T18:54:27.8619438Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "10f0d76b-4b29-00d0-6482-2c7897e0cdad",
+      "displayName": "02- Fetch_All_Data_&_References_Matrix-POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-07-12T06:46:48Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "1abbe547-9d7e-430e-bc2d-3ed59bc738b9",
+      "displayName": "Universal Dynamic_Multi-Actions_Executor",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T06:30:36.3775352Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e83e7462-7e8d-c780-ab04-9c4b48e5f15e",
+      "displayName": "02-Fetch_Docs_POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T05:26:56Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e663a119-b4d6-750b-6fd2-67ba2af37b0d",
+      "displayName": "01-Fetch_Docs_POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T05:22:40Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e1a827d5-9e2b-dd03-9510-c24ace9c3999",
+      "displayName": "02 - Fetch_References_and_Lookups_Data - POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T03:15:00Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3dc47349-f67f-e04f-27f9-9f38bb9e174a",
+      "displayName": "01 - Fetch_References_and_Lookups_Data - POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T03:13:48Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d477fe23-3865-ce72-6837-1d166abf6802",
+      "displayName": "Fetch_Tasks_POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T02:55:34Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "34a6d00d-8c25-62f7-50ae-f1f564f64945",
+      "displayName": "FETCH_DOCS_V2_POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T02:24:16Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "122bb363-ddea-40c7-8578-d0d613a17bf7",
+      "displayName": "Deployed Bulk Task Assignment_Create Task",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T02:17:00.198099Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dcea0424-54b9-4ac1-b571-266fedfd0e9c",
+      "displayName": "RE-ALIGNMENT-DOCUMENT_INCOMING_CORRESPONDENCE_PROCESSING",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-17T02:16:38.393922Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6d819704-0e1d-4557-9886-f1afe80155e4",
+      "displayName": "Web - Subsidiary Doc Actions",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-16T17:14:52.5964997Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "067d4aae-5fc2-d32f-593c-3bffcad3ba52",
+      "displayName": "FETCH_ONEDRIVE_FILES_POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-10T22:18:55Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a2b43ce3-3dd4-57bd-ced3-673b708b26e6",
+      "displayName": "Fetch_Emails_POST",
+      "state": "Started",
+      "lastModifiedUtc": "2026-06-06T07:22:15Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7efe368f-518b-797f-6752-517a066d13ca",
+      "displayName": "DAA_TASK_ITEM_DIRECT_RETRIEVAL",
+      "state": "Started",
+      "lastModifiedUtc": "2026-05-29T06:45:39Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ab697837-ae9d-713e-6107-ad1f3e30f841",
+      "displayName": "DAA_DOCUMENT_ITEM_DIRECT_RETRIEVAL",
+      "state": "Started",
+      "lastModifiedUtc": "2026-05-29T06:41:34Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9e098918-9ef7-013f-321a-f2604316ea6f",
+      "displayName": "optimized Bulk Assign Direct",
+      "state": "Started",
+      "lastModifiedUtc": "2026-04-14T05:22:11Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "467d280b-d63d-1078-9c42-06fe9e194b7e",
+      "displayName": "Web - Event Processing",
+      "state": "Started",
+      "lastModifiedUtc": "2026-02-11T03:04:52Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b767a431-5f04-4756-ba68-074bb8723d09",
+      "displayName": "Get Items Body Samples",
+      "state": "Started",
+      "lastModifiedUtc": "2026-02-01T05:25:55.7387577Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "34761736-eb9a-30f7-c43b-c9b2ea6ad297",
+      "displayName": "Digital Hub Email AI Assist",
+      "state": "Started",
+      "lastModifiedUtc": "2026-01-07T20:57:42Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "baa299c3-2555-4f6f-8458-808a2643a419",
+      "displayName": "NITDA_Create_Task",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-26T02:41:18.2383566Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0a996f54-0055-4b7f-b5f4-2241458d2e8c",
+      "displayName": "Web - Get Letters POST",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-21T11:37:58.0795065Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "811af8bf-daaa-452c-ba71-9676fe037c0b",
+      "displayName": "Web - Task Update",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-21T11:36:45.4003888Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "50df9d6e-cb6d-49cf-99b1-9386da47885b",
+      "displayName": "Web Task Escalation",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-15T03:36:41.3483494Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fdd3f24e-285e-46e4-a9fd-be068a80287f",
+      "displayName": "Web - Preprocess user message",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-13T11:46:41.3238047Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4d1c9a59-1d81-47ed-9c7c-38172edd5584",
+      "displayName": "Get Correspondences",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-12T17:18:12.1431922Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b14b1399-3514-4eba-af8f-7122ad92b221",
+      "displayName": "Retrieve All Sharepoint List Column  Internal Names",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-08T12:51:02.165844Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f19d256c-23bc-4db0-9364-389402b6344b",
+      "displayName": "EDTMS NITDA_Update_Task (Resolution)",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-04T03:35:55.8109825Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bd74e4f2-0378-4308-895d-3e8b3c1070c7",
+      "displayName": "EDTMS NITDA_Write_API (Ingestion)",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-04T03:35:01.92871Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "32cb5bc8-8d67-45cc-84c8-dd6085e5d311",
+      "displayName": "EDTMS NITDA_Create_Task (The Minute)",
+      "state": "Started",
+      "lastModifiedUtc": "2025-12-04T03:08:25.9000685Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2b146c0c-a7d2-c676-5447-76807c98e6b9",
+      "displayName": "Get Tasks HTTP",
+      "state": "Started",
+      "lastModifiedUtc": "2025-11-29T14:32:40Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6693107b-e65f-47cd-b642-a6e8e247463b",
+      "displayName": "Get Tags",
+      "state": "Started",
+      "lastModifiedUtc": "2025-11-13T01:44:22.0470047Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "aba02e28-f6f0-9bb4-f242-5fca942383b1",
+      "displayName": "Email To Task Processing",
+      "state": "Started",
+      "lastModifiedUtc": "2025-11-10T01:17:30Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a88dbeeb-ad8b-4b80-8ba2-9d000c502299",
+      "displayName": "Digital OPS Hub- Documents Processing",
+      "state": "Started",
+      "lastModifiedUtc": "2025-11-09T03:49:56.2119886Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "89925df0-276f-da78-1cba-5847cf24c7d9",
+      "displayName": "DGO_AI_Assist",
+      "state": "Started",
+      "lastModifiedUtc": "2025-11-08T07:03:33Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fca69b3d-8c5d-44ee-85fa-a7ddaf80c2b7",
+      "displayName": "Bulk All Staff",
+      "state": "Started",
+      "lastModifiedUtc": "2025-11-08T06:58:37.7270571Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0b00076f-25b6-91c5-8c26-2a5832b539d1",
+      "displayName": "PowerAppV2 -> Compose API Key,HTTP Body,HTTP Request to AI API,Scop...",
+      "state": "Started",
+      "lastModifiedUtc": "2025-11-06T23:36:44Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d82e0ac1-3253-4fa0-b3af-8f9e577b3c7b",
+      "displayName": "Get_User_Emails",
+      "state": "Started",
+      "lastModifiedUtc": "2025-10-24T16:18:13Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e209e8a5-6f31-5664-f40d-85c58c43efbd",
+      "displayName": "Get Emails HTTP",
+      "state": "Started",
+      "lastModifiedUtc": "2025-10-24T01:45:12Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a9439b39-ed2f-6bca-58d7-ebbbc891d998",
+      "displayName": "Get Docs HTTP",
+      "state": "Started",
+      "lastModifiedUtc": "2025-10-20T18:54:45Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "afb9df30-250d-b0be-ba53-cd3fad540363",
+      "displayName": "Power_App_DGOActitivities_GET_ITEMS",
+      "state": "Started",
+      "lastModifiedUtc": "2025-10-14T02:00:37Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "094a24f0-2854-4c9d-8893-378943572b42",
+      "displayName": "Get_User_Actvities",
+      "state": "Started",
+      "lastModifiedUtc": "2025-10-13T19:51:45Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "433132b5-a3cc-4540-9fc8-e5f345523470",
+      "displayName": "Get_User_Tasks",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-30T20:52:02Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "50a73612-4a9a-6f67-86dd-1a804619601a",
+      "displayName": "Info@nitda.gov.ng AI  Emails Processing",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-29T20:33:20Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "19756ad8-a4f7-fee1-9ea0-6093255413b8",
+      "displayName": "Template Signature App Lists",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-22T23:58:58Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "167e65ac-df98-1a5d-0b8c-d17d17d6f022",
+      "displayName": "Generate Signature PDF",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-22T19:07:16Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "1f802ca6-0a6d-41bf-a7df-27d2293b006a",
+      "displayName": "Report with Charts",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-13T01:32:00.9047401Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "340190e6-0041-5673-8f42-d04d40ffe719",
+      "displayName": "Get Email Attachments",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-12T00:34:36Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "707856b5-ec81-b2d0-2d57-a300f2c4c5a0",
+      "displayName": "Event Processing",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-11T01:21:25Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "28aeca22-640d-4b44-b5d5-a6e09acfad28",
+      "displayName": "Copy of - Manual Event Processing",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-11T00:30:52.1297243Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ef6413dd-3d25-42d7-aa50-e912958527f1",
+      "displayName": "Events Document",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-08T21:41:31.0190742Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "57b1e487-aa2e-4bc2-a4c2-20470d2b2a1e",
+      "displayName": "SVG Charts Report",
+      "state": "Started",
+      "lastModifiedUtc": "2025-09-03T20:17:16.0357344Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "98fb5275-474b-4926-a60e-1657098abf0d",
+      "displayName": "Instant OpenRouter AI Chat",
+      "state": "Started",
+      "lastModifiedUtc": "2025-08-21T02:41:01.8477926Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2655c4e1-0def-494c-b4e7-edac4e9aa5ea",
+      "displayName": "DeepAI",
+      "state": "Started",
+      "lastModifiedUtc": "2025-08-18T20:55:28.1968975Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "033e5d70-ea07-4632-8e9a-f32590913637",
+      "displayName": "Persistent GPT AI Chat in App",
+      "state": "Started",
+      "lastModifiedUtc": "2025-08-11T17:43:56.231613Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c0a7ec12-fff9-4935-bd88-f817ebc0418f",
+      "displayName": "Optimized Report",
+      "state": "Started",
+      "lastModifiedUtc": "2025-08-10T06:22:39.7799129Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ecf6eb33-902a-4c56-801d-018629366681",
+      "displayName": "Tasks Assigned To Report",
+      "state": "Started",
+      "lastModifiedUtc": "2025-08-03T00:34:35.1928456Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f6d4add3-4260-4225-b9e2-6d359927495e",
+      "displayName": "Daily Assignment Activity Report",
+      "state": "Started",
+      "lastModifiedUtc": "2025-08-02T00:53:46.4366975Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e6527391-cca8-4bf5-a2d4-8448a03d94a1",
+      "displayName": "Generate Consolidated Report",
+      "state": "Started",
+      "lastModifiedUtc": "2025-07-22T13:03:13.6509923Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4788d157-c3ea-4fbc-9b93-0f607092f2a7",
+      "displayName": "DGO ASSIGNEE INDIVIDUAL REPORTS",
+      "state": "Started",
+      "lastModifiedUtc": "2025-07-20T23:57:44.2416312Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3f7e6620-8259-404e-b48c-f8b10ac14121",
+      "displayName": "Assignees Report",
+      "state": "Started",
+      "lastModifiedUtc": "2025-07-16T20:40:27.0937136Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "81cacabd-66c8-438e-b162-68e2ccb6754f",
+      "displayName": "GetDocsPaginatedData",
+      "state": "Started",
+      "lastModifiedUtc": "2025-07-11T15:37:22.0576022Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6b82e5fd-b273-4a39-80b0-742c31ac60bb",
+      "displayName": "DGO Items HTTP Request",
+      "state": "Started",
+      "lastModifiedUtc": "2025-05-23T15:48:33.213526Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "09912e0b-3131-4734-93f7-3bba014c9d62",
+      "displayName": "Fetch Activities",
+      "state": "Started",
+      "lastModifiedUtc": "2025-05-19T17:09:25.2439468Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "912f4b9f-d1e3-4d1e-a789-8128eb581045",
+      "displayName": "Get Selected Activities and Tasks",
+      "state": "Started",
+      "lastModifiedUtc": "2025-05-19T16:18:38.0285869Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "83fb2250-4d00-4421-847e-412240ba395f",
+      "displayName": "draft letter processing",
+      "state": "Started",
+      "lastModifiedUtc": "2025-05-06T21:31:48.0136319Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9bf7ba08-d9e1-4be0-bdea-175a61c41c4b",
+      "displayName": "file adobe pdf extract",
+      "state": "Started",
+      "lastModifiedUtc": "2025-02-14T17:33:45.7979471Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d19dd61b-75e5-06bb-1e5e-bb1b8365095c",
+      "displayName": "FST Data Fectch UserSession",
+      "state": "Started",
+      "lastModifiedUtc": "2025-01-17T02:53:28Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "131f4029-6361-41d1-abf7-b2ef0ea78497",
+      "displayName": "Add Attachment to GTQ from DGOOPS",
+      "state": "Started",
+      "lastModifiedUtc": "2024-10-19T20:40:12.7113485Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d2ba7758-6d11-4633-afd0-e93e0e2eaf00",
+      "displayName": "DGO Main Review",
+      "state": "Started",
+      "lastModifiedUtc": "2024-10-19T15:39:42Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f4261b5a-e106-411f-b918-eaf137884cc3",
+      "displayName": "AI PowerApp HTML",
+      "state": "Started",
+      "lastModifiedUtc": "2024-10-19T15:39:41Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bdcfb61c-ad6c-4838-8be1-15d980bdb7ce",
+      "displayName": "Reports",
+      "state": "Started",
+      "lastModifiedUtc": "2024-10-19T15:39:41Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a5fec1b6-9fa3-4b75-b04f-ea7b204cb683",
+      "displayName": "PAChangesHTMLTableGTQ Track Changes with HTML Table",
+      "state": "Started",
+      "lastModifiedUtc": "2024-08-07T13:51:29.705935Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5da0dfd3-c6f3-4183-a023-a8f96cc5e48d",
+      "displayName": "PowerAppSPDGOOPSGetAttachment",
+      "state": "Started",
+      "lastModifiedUtc": "2024-08-07T13:50:44.5708812Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6e7ad46b-4b43-478d-ab9c-06139277ccce",
+      "displayName": "Generate document from HTTP request data and Word template, and E-mail",
+      "state": "Started",
+      "lastModifiedUtc": "2024-08-07T00:08:27.8827528Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ab095a59-be17-445a-8e56-dfab5c720e18",
+      "displayName": "Button -> List rows present in a table,Initialize variable varProce...",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-23T16:35:24.3311967Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4bbc932b-a69b-48c7-b791-8bd23e6674aa",
+      "displayName": "Button -> Get changes for an item or a file (properties only),Compo...",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-23T00:02:11.5494828Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7eed92e3-644a-44ba-8330-1047b5f3cf38",
+      "displayName": "Button -> Extract information from documents,Predict,Send an email ...",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-21T16:43:42.3411276Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fa441026-287b-489a-b9b8-3e4fdbca6c37",
+      "displayName": "SharePoint files categorize by Customer and send email",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-18T02:55:01.2395641Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9c93be40-9e74-4351-940d-c174f0382fc1",
+      "displayName": "Copy of - Copy of - DG Watch-List Filter Activities - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-14T00:56:11.4629182Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "65a65e2c-dfff-4291-bb0a-e6c13c2d15d7",
+      "displayName": "Copy of - Click a button for a tutorial to send an HTML Email for Planner Reporting - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-13T23:50:09.5612477Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "adec987c-9f82-42bd-bba4-620e9d24d84d",
+      "displayName": "User Reports",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-10T12:06:53.8819386Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5c82f854-5216-4f18-90b8-1c5d22487f53",
+      "displayName": "Button -> T2varArraySrting 7,Scope 2,T2varArraySrting,Get items,App...",
+      "state": "Started",
+      "lastModifiedUtc": "2024-06-05T02:00:35.8590878Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7bb5ef04-b2d6-4ced-8f4d-80864f31e9d0",
+      "displayName": "Parsing text table from email - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2024-05-13T07:47:15.3920907Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c3833577-bbf1-45de-b56a-d363993c2f44",
+      "displayName": "Button -> Get item,Compose,Send an email (V2)",
+      "state": "Started",
+      "lastModifiedUtc": "2024-05-08T11:22:32.8896922Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b1e78730-5994-422e-8f74-2dabe9dd478f",
+      "displayName": "create reminder flow for a sharepoint list",
+      "state": "Started",
+      "lastModifiedUtc": "2024-04-22T00:27:39.702078Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fbf3260b-dbeb-4bff-a356-a6f321fbb67f",
+      "displayName": "Create SharePoint Reports in OneDrive(Business) on a recurring basis",
+      "state": "Started",
+      "lastModifiedUtc": "2024-04-19T13:44:29.4157141Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "385e3809-f2ea-4d48-be3a-5c4a9ebdcad8",
+      "displayName": "Copy of - Button -> Initialize variable,Get items,Compose 7,Append to string ...",
+      "state": "Started",
+      "lastModifiedUtc": "2024-04-14T19:42:37.7698151Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "432e0864-fca4-4159-80fc-bede2ff61d1a",
+      "displayName": "Copy of - Daily Log HTML",
+      "state": "Started",
+      "lastModifiedUtc": "2024-04-10T04:34:43.0185412Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a6d0a384-abb7-4f6d-b13f-bea212c614f5",
+      "displayName": "GES DGO Activity Extract",
+      "state": "Started",
+      "lastModifiedUtc": "2024-04-10T02:58:03.7858492Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f3785432-f324-4c37-bffb-f0cde6bb790a",
+      "displayName": "DGOOPS selected  IV rxtract",
+      "state": "Started",
+      "lastModifiedUtc": "2024-03-05T10:11:35.5238453Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "19a8c0e3-4c1f-4718-a2e1-faae563f85ca",
+      "displayName": "One drive Direct Cloud Mersive Add a Text Watermark",
+      "state": "Started",
+      "lastModifiedUtc": "2024-02-14T14:21:01.4887474Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "68fc30ed-3bcc-4d86-a804-7f99e3cc7a07",
+      "displayName": "Read information from invoices - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2024-02-01T11:42:15.5895796Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b9b692af-f796-4d0c-8b6c-50d111fb0c15",
+      "displayName": "Copy of - Send PDF",
+      "state": "Started",
+      "lastModifiedUtc": "2023-11-14T04:45:38.5226726Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "06734cac-263c-4601-9f3f-4a35de1c0540",
+      "displayName": "Get updates from the Power Automate blog",
+      "state": "Started",
+      "lastModifiedUtc": "2023-11-12T09:54:56.9990183Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dbc97cc4-d599-4d8a-b7a0-2b958b5077e0",
+      "displayName": "Get a push notification when a new file is added in OneDrive for Business",
+      "state": "Started",
+      "lastModifiedUtc": "2023-11-07T18:17:31.7450466Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fcae2144-cb15-49fa-9c0a-d3702efcbb4c",
+      "displayName": "PowerAppV2 -> Initialize variable,Parse JSON,Create HTML table,Send...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-11-03T15:52:59.5348391Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "aca54189-1ad4-4a5a-aa15-7b6a85efb4d1",
+      "displayName": "Get HTML tag value",
+      "state": "Started",
+      "lastModifiedUtc": "2023-11-03T12:52:52.8859218Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4eea8b31-5dc3-461d-95da-13a1a5e0e53a",
+      "displayName": "Button -> Get items,TitleColumnselect,Union AssignedTo,Apply to eac...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-11-01T14:34:58.0222086Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a768ff26-d097-46c5-a01a-53317a3722c1",
+      "displayName": "TMP Generate an ICS file",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-30T18:54:11.6412498Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fecceebe-b8c4-4d8c-a667-7e7f2826052c",
+      "displayName": "Pattern: Always reply to HTTP request - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-30T18:54:10.4777599Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e4563c20-31cc-4b60-9689-0b14a8bc5545",
+      "displayName": "convert doc to pdf",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-30T18:45:27.1621498Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b359d2d7-f88d-4a2b-89ca-79ce0ca28555",
+      "displayName": "Filter sharepoint list items created yesterday create table send email",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-26T22:04:29.7795719Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a585f7bc-9fad-430b-b14e-ff88e8f91476",
+      "displayName": "PowerApp -> Initialize variable,Initialize variable 2,Compose 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-25T01:35:32.3559753Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ec422ed0-e76e-4686-a3a5-67ddc7e86c3e",
+      "displayName": "Projects conditional create",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-24T16:01:05.8604352Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "07547cf9-3781-411b-bbba-aa27ec814d18",
+      "displayName": "Button -> Get items,Apply to each,Compose 2,Compose,Create file,Con...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-24T05:31:52.4469247Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b5982e6f-10dc-487d-b03a-70b4cdedc966",
+      "displayName": "Button -> Scope,Get items,Select,Populate a Microsoft Word template...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-23T01:21:05.2892741Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "852b690b-c45b-4627-9c5a-b3374a8dd2e2",
+      "displayName": "Instant Report",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-22T21:59:44.4909598Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "72ba57ab-8d61-4a9a-b34f-859f62f75a1c",
+      "displayName": "ApiConnection -> Get file content using path,Add a watermark to PDF...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-20T02:16:52.5955771Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d5db47f3-6598-4b85-a952-09ec460d04ba",
+      "displayName": "Content merge test when an item is modifed in a sharepoint get attachment and create file in onedrive folder",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-18T23:04:14.377188Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4c29131a-5335-4567-b055-42647a94657e",
+      "displayName": "Button -> List rows present in a table,Apply to each,Create item",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-09T06:06:31.9768294Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7cfe2d35-df82-49cd-b592-802aefabd06d",
+      "displayName": "Copy of - Copy of - V1 Filter Activities - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-09T05:27:33.7952557Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6e5c6fb6-740c-45e3-af47-b36d1df6c886",
+      "displayName": "Copy of - Get Items Created Today - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-09T04:57:46.4932206Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2b5090fb-dc93-4cee-a41a-d7cd46d71415",
+      "displayName": "Button -> Get items,Get items 2,Apply to each,Filter array",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-09T02:41:17.9578205Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a1bcd260-40c6-4896-a7cf-72c7e3488891",
+      "displayName": "Button -> Get items,Get items 2,Apply to each,Filter array - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-08T20:18:08.5312763Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "298106b9-49e7-4380-ad14-0f2974651faa",
+      "displayName": "Button -> Get items,Get items 2,Apply to each,Condition",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-08T18:05:30.1569041Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "082fa4b3-afc5-4ea1-a03e-d8e79f082066",
+      "displayName": "Copy every item in my SharePoint list to another SharePoint list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-06T15:52:14.692973Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "195c31ba-29ec-47ff-ad02-f3d408853781",
+      "displayName": "Convert Any SharePoint File to PDF and Add a Text Watermark - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-05T00:52:19.9009375Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "61d26c2e-f1fa-40e4-ba18-b12c8e6f7828",
+      "displayName": "projects",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-03T00:23:37.4813126Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0c5b310a-71d0-430c-b83e-cf5b3305058a",
+      "displayName": "Button -> Get items,Select,Compose,Filter array,Create HTML table",
+      "state": "Started",
+      "lastModifiedUtc": "2023-10-01T05:54:38.6559379Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "52287129-1c05-4876-b23e-d5a88e53ce71",
+      "displayName": "Create SharePoint list items when emails are flagged in Office 365 Outlook",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-30T16:44:00.005868Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "1a8bbecc-8499-468c-b69b-deca31f7709d",
+      "displayName": "Button -> Get items,Apply to each,Apply to each 2,Condition,Get ite...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-18T22:57:40.4547605Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "451e2c72-ce64-4a3f-a6e2-dc7de27c3369",
+      "displayName": "Get items from a SharePoint list at 9:00 am pst every day",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-15T19:53:01.6785002Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c3beff25-17cf-6bce-cc5a-7e0fc3398e69",
+      "displayName": "Due date reminder",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-15T14:35:02Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "06da5383-ea44-4891-b979-81363d2210f4",
+      "displayName": "Get title of items from a sharepoint list and get items from another list with sub strings  aof the tulitlw",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-12T21:09:39.2002592Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3ff51a30-6890-41f3-967c-3467f0c2424d",
+      "displayName": "Send Push",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-09T00:48:11.62453Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "178df1d5-1f81-488a-a3bc-e84e5f35040d",
+      "displayName": "Click a button for a tutorial to send an HTML Email for Planner Reporting",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-08T20:59:59.3260691Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "28f4a0e8-3dfb-4d50-ad64-8f2718e605d0",
+      "displayName": "Copy of - Copy of - FLAGGED DGREG EMAIL TO SHAREPOINT",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-07T01:33:15.6201546Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "907641e7-4db2-40ea-97cb-bce35edb2af6",
+      "displayName": "Update sharepoint data source from Microsoft Dataverse",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-04T15:11:59.4984889Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "067b575b-153e-4bd1-8883-b64e04700933",
+      "displayName": "Track emails in an Excel Online (Business) spreadsheet",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-04T15:01:40.0798386Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f16d0b95-58b4-45c3-aa7d-e958fd251e37",
+      "displayName": "Create SharePoint list items when emails are flagged in Office 365 Outlook - 4",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-04T00:47:39.684067Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ffa52930-0662-4d64-a4aa-cd6dca25768b",
+      "displayName": "BARCreateRequests",
+      "state": "Started",
+      "lastModifiedUtc": "2023-09-02T02:36:31.3494013Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6115b0e6-c125-428e-8252-905e2851d689",
+      "displayName": "Get an email report of approvals waiting for my response",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-26T11:07:37.10235Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3dc399c2-6520-4fc6-bbc3-db175ecbd16a",
+      "displayName": "SVG To JPG Converter",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-26T10:47:03.5261211Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5e22a121-4838-4586-b913-f636c93fd675",
+      "displayName": "Create CoE TemplateLibary Doc Library in SP",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-26T10:29:27.1791723Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dd6140ba-fe41-4087-b5e5-c734079a619f",
+      "displayName": "Training App Provisioner create list and columns",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-26T10:05:14.4283961Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e9d88912-0a2c-48ce-a5e3-4e22cc919e05",
+      "displayName": "Button -> Get items,Initialize variable,Apply to each,Compose 2,Do ...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-26T02:28:06.4840832Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fa42f1e7-36f2-41cd-a7a1-7ecdf6a699b6",
+      "displayName": "LIST FILES IN ONEDRIVE FOLDER CONVERT TO HTML AND CREATE ITEM IN SHAREPOINT WITH FILE ATTACHMENT",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-24T20:15:58.0230202Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "1bfb8787-3b70-4bd2-8a1d-2f2ac2525897",
+      "displayName": "Button -> Compose,Create file,Convert file,Create file 2,Send an em...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-23T04:09:10.4741015Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "18fcb3f4-fc5b-45ba-8d4c-ece73a219f26",
+      "displayName": "Button -> Get items,Apply to each 4,Get items 2,Apply to each,Get a...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-23T01:05:39.3933602Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6c82a134-20aa-4b96-a325-1cff0dd60358",
+      "displayName": "Export SharePoint list items to File System in CSV format and send an email",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-22T16:34:12.9166635Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7321e8d4-ef3a-94f5-6276-5ae86c84677f",
+      "displayName": "42bf0688-390c-4992-aec3-1aaef3d77ae7 - Due date reminder",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-22T16:30:44Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "062e9d41-eebf-4122-b5f1-c159a6d4073d",
+      "displayName": "Suggest a day for day-off based on calendar and set OOF for approval",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-16T09:05:33.3452133Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b1cf9214-a182-4127-a6a6-5157d5214bc1",
+      "displayName": "Delete attachments",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-08T08:25:43.1615438Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9d130c2b-f5db-4616-8832-7c8b9519464b",
+      "displayName": "Copy of - when an item is created in sharepin tlist get attachment create file",
+      "state": "Started",
+      "lastModifiedUtc": "2023-08-08T08:15:42.151424Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3666740a-3b0f-4daa-bf5c-48d2b88231a9",
+      "displayName": "Hide or Show a SharePoint List",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-30T09:04:57.3442119Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dc1308fa-262a-4f0c-bfd7-27596d7ea5e0",
+      "displayName": "Parsing text table from email",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-28T01:15:43.3782316Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "45f18f33-01a1-4ffd-8eef-2720d96db9e9",
+      "displayName": "Copy of - Button -> Get emails (V3),Apply to each,Create item - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-26T04:46:05.8318325Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a34479f4-bdd4-4f56-b8dc-d8f81c0f2f97",
+      "displayName": "Button -> Get emails (V3),Apply to each,Create item",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-26T04:44:04.138361Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "be6da628-30ce-49a3-bc7c-9536eca76bed",
+      "displayName": "Button -> Get items,Initialize variable,Set variable,Apply to each,...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-25T17:14:56.9288013Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "efd20f1f-d8f9-4712-89ee-b82cc987c278",
+      "displayName": "SERVICOM TO DGO EMAILS SYNC",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-23T10:56:04.0552869Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b350e88e-1980-4451-b6e7-6975b9f52f23",
+      "displayName": "Button -> List files in folder,Apply to each,Get file content,Conve...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-23T03:17:35.7487385Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9e0c1f01-3a29-424e-b060-fa13efff6c25",
+      "displayName": "Sync DGODOPS & GTTQ",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-21T22:59:56.1162455Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a4cc5821-8aaf-4bfe-bcf5-14b3bc744eec",
+      "displayName": "Get items from sharepoint list and if files from a one mdrive folder contain title add attachment",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-20T07:42:22.9031684Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fdbc0fa2-b083-41ae-9f9c-a11b0bf3aa71",
+      "displayName": "Send a daily email of incomplete Planner tasks in CSV and HTML table format",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-19T23:57:16.9395416Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c31415e9-6944-48d4-9bb5-96060777bec7",
+      "displayName": "Send PDF",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-09T07:42:20.8183236Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "026db285-7689-454f-aeba-86102c156fe9",
+      "displayName": "GTTQ FILTER ITEMS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-05T23:14:01.1016691Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e7f3e85e-1f3c-41c2-8e3c-3e3cf12c4253",
+      "displayName": "DGODOPS FILTER ITEMS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-05T22:52:19.2370134Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e12ce768-27a4-4288-a630-01abf1f0e1c9",
+      "displayName": "GET ITEMS FROM SHAREPOINT LIST AND GET ITEMS FROM ANOTHE SHAREPOINT LIST IF ID IS SAME GET ATTACHMENT AND UPDATE LIST ITEM WITH ATTACHMENT",
+      "state": "Started",
+      "lastModifiedUtc": "2023-07-03T19:26:55.9934999Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e9ad91d1-6c59-4386-be17-d75266bca727",
+      "displayName": "GET ALL FILES FROM ONEDRIVE FOLDER CREATE SHARELINK AND ADD SHAREPOINT LIST WITH FILE ATTACHMENTS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-30T16:05:05.0854253Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "8ffefcf7-a43f-49b7-9f85-fd655b7f8e69",
+      "displayName": "Copy of - Original Copy of - Leave Request Approval Process flow",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-29T20:05:50.9895341Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "17bc3af4-0b68-4102-aa9f-f5f0a42c75ef",
+      "displayName": "BULK FOLDER CREATION",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-27T04:20:44.8617089Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ce4ee5d1-b143-46ae-9fcf-811cf3688347",
+      "displayName": "One Note Scrubbing Planner Task",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-26T01:07:49.2629912Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a79a0965-a6b4-46ec-9657-91495c78dfd6",
+      "displayName": "SERVICOM LIST ITEM CREATION",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-22T19:40:23.0048373Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "1ff041fd-b427-45e8-acf1-98eaf80d7ea3",
+      "displayName": "Button -> Send an email (V2)",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-16T14:15:45.2952498Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "43f212b5-07ac-4d4d-a696-5561d866d1c6",
+      "displayName": "copy all google calendar event and add all in planner calendar",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-13T20:19:44.0818447Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "06b70be5-e346-0e6c-2458-be7659766ad8",
+      "displayName": "7c69ea74-5729-4039-a446-1ee7b8b3c1a3 - Due date reminder",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-12T23:32:58Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "82742e3d-d8b3-155e-fec6-abcafefde83d",
+      "displayName": "82bca73e-42e8-4a86-b56c-bd3e0cc60eb3 - Due date reminder",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-12T19:21:01Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4725acd5-0038-4613-b589-35b72543c4e0",
+      "displayName": "move files from onedrive to sharepoint",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-01T12:20:00.6133354Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ae9597c6-7ab1-409b-9732-eab505f99c3d",
+      "displayName": "send email from approval action",
+      "state": "Started",
+      "lastModifiedUtc": "2023-06-01T11:15:37.765807Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4928e898-ed6b-40cf-87da-f45ab070a1ea",
+      "displayName": "get sharepoint list and attachments and create a Microsoft to-do",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-30T19:32:01.2460594Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a0dce1ce-953e-48a1-ad9a-ee2b101be1bc",
+      "displayName": "Button -> Get items,Apply to each,Get items 2,Apply to each 2,Updat...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-30T17:01:22.7941973Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9d15bf5a-fa62-4dc4-88fe-5e27016410e6",
+      "displayName": "POWER APPS GET ITEM CHANGES ON BUTTON PRESS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-19T16:01:30.7492632Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d72f5052-2a74-4e67-beec-d81eebb12c63",
+      "displayName": "Click Power Apps button to send an email from Mail and a push notification",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-19T09:10:15.5561061Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "45aad677-c9cf-429b-ab55-7c0bcf16493c",
+      "displayName": "Button -> Send an email notification (V3)",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-05T21:13:04.6631705Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "478023e3-6d16-49d3-b8b3-75106a1b80e2",
+      "displayName": "MOVE ALL FILES FROM ONEDRIVE TO ONEDRIVE FOR BUSINESS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-03T23:37:40.955063Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "168f7cf1-0f7b-4db1-94ee-46bf0f86e905",
+      "displayName": "Focus Expressions - Calculate Working Days based on a given date range",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-03T19:09:33.3606262Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "efd61b16-db38-44c8-b153-196a41d30ecf",
+      "displayName": "New Leave Item",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-02T22:58:45.213017Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "46c174ae-2815-4c74-94ef-9fda5d9c6180",
+      "displayName": "Leave Request Approval Process flow",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-02T22:47:26.4656556Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5ebd8224-0dbd-4a92-a6c2-fc85d4251357",
+      "displayName": "CancelFocusTimeCalendarEvent",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-02T22:43:39.2039074Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5be958e4-bab5-4994-b16b-f4195239d873",
+      "displayName": "Get Items Created Today",
+      "state": "Started",
+      "lastModifiedUtc": "2023-05-02T19:57:00.0479662Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "86ac7762-8839-461c-8829-d2cf361c73a2",
+      "displayName": "Get files from sharepoint document library and create attachment in a Sharepoint list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-29T04:43:33.717128Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0341ac45-e7c9-4886-87fd-71c633cad8b4",
+      "displayName": "PowerAppV2 -> Create file,Compose,Respond to a PowerApp or flow",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-28T00:40:04.9645778Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3bfe3733-1dbd-479a-829f-0f52e1d326ee",
+      "displayName": "get all files from a OneDrive folder to another OneDrive folder and create a list item with attachment",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-26T22:04:30.2836599Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "64f2d082-3a25-4feb-9a5d-b7107b7d9fd5",
+      "displayName": "notify",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-26T17:20:24.5390305Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d39fd58f-f8f8-44a3-a6c8-1a7db503ddd7",
+      "displayName": "Copy of - Button -> Get items,Get items 2,Apply to each,Apply to each 2,Condi...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-18T06:09:35.6850181Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "85d7e7ac-5b90-428a-9730-0f57381ce194",
+      "displayName": "Button -> Get items,Get items 2,Apply to each,Apply to each 2,Condi...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-18T06:07:23.1373272Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6144b376-09f8-4710-b54c-8d7c0bfa32d5",
+      "displayName": "create item",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-17T08:17:23.0858955Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "096f9d78-a049-42d0-879f-d5b246d955ce",
+      "displayName": "delete list items added yesterday and create list items from excel",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-14T19:11:47.9070854Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d6f3773c-51f1-4d01-9bfd-46cc0db28de8",
+      "displayName": "Copy of - V3 Item level access",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-14T14:03:42.7487993Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4e986aae-7e2b-4ade-ae8f-4e1bf07e2ee1",
+      "displayName": "reminder staff leave roaster data reference",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-11T02:36:35.1676899Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ed1febb2-6756-4868-998e-fe22135e4b42",
+      "displayName": "Button -> List rows present in a table,Apply to each,Add member to ...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-11T02:09:01.8019883Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "09472fe4-3317-4dd5-aa91-873a9bd476d9",
+      "displayName": "Copy of - ISP Item Level Acess - 4",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-06T08:18:57.8492538Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "eaa08541-c74b-4bc4-ba2e-5663aa106def",
+      "displayName": "Copy of - Copy of - V3 Item level access",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-06T08:15:54.3127716Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "084dc4fa-436e-4507-980d-f177311337ca",
+      "displayName": "Copy of - V3 Item level access - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-06T08:14:31.8809295Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "8f02b96b-e5d0-44b2-a156-a783f3a63561",
+      "displayName": "Button -> Get items,Apply to each,Grant access to an item or a fold...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-06T08:01:29.3520235Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a6c06e57-5173-430b-a545-6b620ff6ce3a",
+      "displayName": "emails",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-05T22:59:46.8644379Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e544c38b-81c0-4ea8-94e6-25fb7d26739b",
+      "displayName": "2ND Item level access",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-05T06:41:38.8052791Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2b9e35fd-0486-48fe-986c-09187fd2d208",
+      "displayName": "extra Copy of - ISP Item Level Acess - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-05T06:10:06.5206881Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e7715ff1-30dd-4d5a-a27a-95ff0a753072",
+      "displayName": "Copy of - ISP Item Level Acess - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-05T03:24:17.8550945Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f273ac7f-d45a-47c3-8639-b05da54ce062",
+      "displayName": "Copy of - ISP Item Level Acess - 6",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-03T16:50:53.348468Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b00b53ac-3bfb-4eae-9a6b-2cc9ae16fd85",
+      "displayName": "Copy of - ISP Item Level Acess - 5",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-03T06:44:37.9893663Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a4b642bc-599c-4a5b-83c9-eaf7e220840b",
+      "displayName": "Copy of - Copy of - Copy of - V3 Item level access",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-03T06:41:11.3044123Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "8f7e9cf5-5dea-4c8a-b1cc-06998209e62b",
+      "displayName": "Copy of - V3 Item level access - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-03T06:38:44.39397Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ebcf1885-3287-4b61-9637-65baf35aafee",
+      "displayName": "V3 Item level access",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-03T06:37:02.9133243Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "457c5beb-a753-41e6-9f66-ef69400531fe",
+      "displayName": "ISP Item Level Acess",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-03T06:18:36.6132955Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5f964cf7-97d3-4b33-aa3e-1c570b20fe0c",
+      "displayName": "Excel to contacts",
+      "state": "Started",
+      "lastModifiedUtc": "2023-04-03T05:17:33.6831023Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c44bcb69-70ba-4a85-90c3-0c5be6cd05f4",
+      "displayName": "Copy Contacts from a SharePoint List to the Office 365 Contact List",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-31T23:28:47.8555551Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f3d28ce5-954d-4dba-b291-c396516c8f28",
+      "displayName": "Item level access",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-31T14:18:06.8915827Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6763c1a0-a1ed-4557-9a99-a891432b1258",
+      "displayName": "Button -> Get items,Apply to each,Create item 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-27T22:08:09.4966543Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "54b37943-3830-40ce-8a66-95a7190a4ffa",
+      "displayName": "Create SharePoint item for Excel Online(Business) worksheets on daily basis",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-25T01:54:57.2013797Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5abbb86b-4226-492a-8156-faee3e78042f",
+      "displayName": "Contacts from outlook to DP List - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-24T03:54:28.9814837Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7b60f9d4-3e83-4e59-9f08-0a9c03a71e5f",
+      "displayName": "Button -> Get items,Apply to each 2,Get items 2,Apply to each,Get i...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-22T18:49:38.156415Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "30560325-e673-44e6-9637-8c70a16440ef",
+      "displayName": "Button -> List rows present in a table,Apply to each,Update a row",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-22T16:52:28.6210248Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "cfdbf7a7-ac34-4e8b-a666-56ead80607d8",
+      "displayName": "Contacts from outlook to DP List",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-21T23:15:07.3463278Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d78cd824-6c30-415e-9beb-63349e43e771",
+      "displayName": "Button -> List groups,Apply to each,Add a row into a table",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-21T17:26:04.3380089Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "3747cc9a-bec5-4892-b9bf-ccc8e65f4606",
+      "displayName": "Button -> Get all lists and libraries,Apply to each,Add a row into ...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-20T15:06:42.1827113Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "f8588e4f-cf69-49de-8d56-404f4ea22c71",
+      "displayName": "RANGE SP ITEMS FLOW",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-20T14:52:10.3955691Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5986020b-e38a-4c7f-8b35-7cea9dc0450b",
+      "displayName": "Get a daily report in PDF format for the status of SharePoint list items",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-20T14:44:45.2661831Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "04e676dd-2462-400a-a04c-f2f8e0bb204f",
+      "displayName": "Copy of - ISP Item Level Acess",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-20T04:37:07.3969401Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "9fa02f12-9b1b-4682-9c53-f58b1ab68046",
+      "displayName": "Leave Roaster App",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-20T04:11:42.4937373Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dc5fbbf8-a819-4dc4-b59e-6ceaab0ebb61",
+      "displayName": "Complete a custom action for the selected item - 4",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-18T00:31:56.9878312Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fb1683b8-8e9f-44d0-878a-b6fa930debd9",
+      "displayName": "Gogo",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-17T20:53:11.2840011Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4150c30e-d5ba-4c83-9635-94f0f2447c2f",
+      "displayName": "Records List",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-16T14:07:58.3640295Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "80323972-96c3-42db-88bf-c9ee9658a616",
+      "displayName": "STAFF LEAVE ROASTER APPROVAL",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-16T14:04:52.723035Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b3d37aa4-32a8-409e-be3c-7f646cf2a170",
+      "displayName": "NITDA 2023 STAFF LEAVE ROASTER  PLANNING",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-15T02:13:40.7497771Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a0e828b0-cf33-4c06-9f82-9a3afab6d1ec",
+      "displayName": "When a new file is added in SharePoint, complete a custom action",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-12T02:18:37.1908392Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2eae7bca-f21a-44d1-b1ba-2953add07e2b",
+      "displayName": "Click a button in Power Apps to send an email",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-10T16:18:14.2566662Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5976561a-4919-4ee4-ad50-8751eb632956",
+      "displayName": "Copy of - 222",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-09T23:01:39.9406635Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bd351e2e-bf92-467a-bdcc-10b8ee0267a8",
+      "displayName": "Send approval and follow up via email",
+      "state": "Started",
+      "lastModifiedUtc": "2023-03-06T02:43:28.1592425Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dd603659-8c9d-4611-b719-6304b98bd494",
+      "displayName": "Copy SharePoint list items into a CSV each week",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-24T15:56:16.9233804Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "2315aa40-470a-4f61-bd13-4092538cb5e7",
+      "displayName": "Llist folder global filter items 7days send email",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-24T15:16:34.1065559Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "50f54191-d084-4bb9-9507-3d842b64013c",
+      "displayName": "TEMP",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-24T02:45:03.3000061Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7fb812fc-d210-479c-8c67-ed115c370a28",
+      "displayName": "Click Power Apps button to send email for SharePoint items of selected list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-22T15:01:15.0268381Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "cacb5cef-3e6f-4854-acb0-1cd339baa0b3",
+      "displayName": "Click Power Apps button to send email for SharePoint items of selected list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-22T15:01:14.4191319Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c56cf720-8396-4e5e-8e23-8a559c049267",
+      "displayName": "Click Power Apps button to send email for SharePoint items of selected list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-22T15:01:14.1543233Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "083d6037-2bdd-41c5-a7c7-6140e075ed2f",
+      "displayName": "Click Power Apps button to send email for SharePoint items of selected list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-22T15:01:14.4177719Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "012ce9de-2bcf-4515-977c-90089c00c1e2",
+      "displayName": "Click Power Apps button to send email for SharePoint items of selected list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-22T15:01:14.3932294Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5d64a418-4926-4bb5-87bb-37c48fab63c5",
+      "displayName": "Click Power Apps button to send email for SharePoint items of selected list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-22T15:01:13.9646475Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "1333cecf-fbc4-4470-827d-532afe7687ac",
+      "displayName": "Click Power Apps button to send email for SharePoint items of selected list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-22T15:01:13.9488829Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e6c0ccd8-6ccf-4e55-bff3-21f49f0b322c",
+      "displayName": "list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-19T21:32:44.7151232Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d323287a-7808-47b6-b089-9d83dc89254f",
+      "displayName": "REPPEATING ROWS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-19T15:42:33.243555Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "8ae2ec84-873d-4122-a95d-6703bc990b9f",
+      "displayName": "Button -> Get file metadata,Create item",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-13T01:29:54.8202026Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "73514e06-83d4-4da1-a575-df87640a37a9",
+      "displayName": "Button -> List rows present in a table,Apply to each,Populate a Mic...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-12T23:03:45.5258857Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "290f4668-0ae2-4cd2-a42c-60e34008bcda",
+      "displayName": "ODATE GET ITEMS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-11T02:28:07.1277Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "6876eb29-d3f1-46c2-b148-6ebbce06c47e",
+      "displayName": "Button -> Get file metadata,Get file content,Get file content using...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-09T07:47:15.4419383Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "219974f1-987a-4d9c-bfff-bf5e8c5ecb21",
+      "displayName": "Filter routing confirmation list",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-06T08:36:52.3376358Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "e04cbd38-c5f2-49e7-8910-bbf04c313710",
+      "displayName": "Button -> Send an email from a shared mailbox (V2) 2,Send an email ...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-05T23:55:06.132707Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a6c8fd7a-e7b6-4e5a-8e42-595e5e0f21af",
+      "displayName": "Copy of - Button -> Get emails (V3),Apply to each,Export email (V2),Html to t...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-04T16:39:04.1289432Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "db6b5d8d-bab7-436e-8daf-3f9a37e6caf4",
+      "displayName": "Button -> Get emails (V3),Apply to each,Export email (V2),Html to t...",
+      "state": "Started",
+      "lastModifiedUtc": "2023-02-04T16:27:42.2541044Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d05e4a74-64ba-45de-8d64-af04d51e1bde",
+      "displayName": "Create a daily summary of Planner Tasks by Bucket v300123",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-29T21:00:43.6949498Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a8f95f60-c8e6-4cac-808d-f019cd972a7c",
+      "displayName": "Email today's filtered items from SharePoint v 10",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-28T17:33:26.5175823Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d99eb71a-d487-4d21-a6df-7a578cdd2bb9",
+      "displayName": "Email today's filtered items from SharePoint at determined intervals - 6",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-28T14:18:45.0302314Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "37f647ed-ffbd-4456-b28d-6303abe445ef",
+      "displayName": "Create CSV table from SharePoint list and store in OneDrive (Business)",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-27T21:50:34.7978775Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "246189e1-ed18-4ca7-b524-af6fa7d39454",
+      "displayName": "Send a digest email of all outstanding Planner tasks - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-27T17:42:49.2217916Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fda7c764-d256-4589-aaf3-f10e9eab76cf",
+      "displayName": "ADD COLUMNS TO EXCEL TABLES",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-27T01:09:10.2612513Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "44743545-dc3a-4ea2-b153-7695c1ce89e0",
+      "displayName": "PLUMSAIL GET ITEMS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-24T00:05:57.1877976Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5d50d600-8d39-4fd3-a4ba-0107652da4ff",
+      "displayName": "ODATE GET ITEMS - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-23T23:16:08.4514151Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "a51e13fa-ec6b-477b-9278-ae1b4601fd0f",
+      "displayName": "Get a weekly digest of the new Power Automate blog posts",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-22T04:41:29.6763057Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "eb31216e-4018-4f91-9117-953c8ef12a53",
+      "displayName": "week",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-22T04:25:37.1358988Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fb6a0a43-1338-4cde-8e76-61c896a42626",
+      "displayName": "Get an email reminder",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-20T19:27:38.5506568Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d5a2802f-2ff0-47c9-bc8e-f8d27ad2cceb",
+      "displayName": "COPY PLANNER TASKS",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-20T00:49:03.4422044Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b13b0f8e-924e-4a9e-856e-f45e859a2d50",
+      "displayName": "Email today's filtered items from SharePoint at determined intervals - 5",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-14T03:01:19.7113297Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c54408a8-7458-4350-b3f8-4ba677641f82",
+      "displayName": "Email today's filtered items from SharePoint at determined intervals - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-13T20:36:22.6502657Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dda50b4b-53a8-44e5-85d6-25089609ca44",
+      "displayName": "Email today's filtered items from SharePoint at determined intervals - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-11T14:35:39.7262149Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c5ea21b1-a72a-4f62-aee3-d64fd86a59a5",
+      "displayName": "Create a daily summary of Planner Tasks by Bucket",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-10T17:38:04.5770313Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "fc22db0d-3512-4143-a8ec-11fb2d807b2a",
+      "displayName": "Copy of EAA digest email of all outstanding Planner tasks - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-09T15:28:00.5129339Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bca09167-4a14-472d-99c8-39fe8de200da",
+      "displayName": "Send a digest email of all outstanding Planner tasks - 5",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-09T10:47:35.345459Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "d459bbfb-8e2d-4288-a95b-e02cf0cc597f",
+      "displayName": "GRAPH HTTP",
+      "state": "Started",
+      "lastModifiedUtc": "2023-01-02T22:53:21.448743Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "ed9f8230-960c-4aa6-a3d5-07ca20216964",
+      "displayName": "Send a digest email of all outstanding Planner tasks - 4",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-24T16:40:28.9580418Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "59520218-2dcf-4f57-8c99-2f4e00ece3f2",
+      "displayName": "Send a digest email of all outstanding Planner tasks - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-24T16:40:14.2005486Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bc8aff0d-e0a9-48dd-9c4d-197776ae6434",
+      "displayName": "Send a digest email of all outstanding Planner tasks",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-24T16:32:13.2818296Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dd58a287-3d96-44b7-9614-4633af6a1fe0",
+      "displayName": "When a record is updated in Microsoft Dataverse, send an email - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-22T20:18:51.1207191Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "c4af924c-50a1-4fb6-9c0e-3e2b14f53753",
+      "displayName": "When a new item is added in SharePoint, complete a custom action - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-17T19:42:24.8056692Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "df736047-ea73-4e46-bf49-a221ab7e6bf4",
+      "displayName": "html",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-16T19:18:18.8254421Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "571b79a7-7f06-46be-8171-a7bce01e3a6d",
+      "displayName": "Copy of 222",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-16T17:59:55.8870985Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b070ca15-e227-4a47-a82f-1221592da344",
+      "displayName": "Copy of - BULK FOLDER CREATION",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-12T23:45:45.2363743Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "310b46c8-d6ac-4b10-a1c0-39d676e3996c",
+      "displayName": "EXCEL PROCESS TIMELINES MERGE",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-11T02:07:21.6250373Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "526434a5-03ae-4be0-9cf5-2701f124e230",
+      "displayName": "Complete a custom action for the selected item - 3",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-08T00:33:24.5705976Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "0a9e3883-d3e1-4c5a-921a-b3a012b429d9",
+      "displayName": "Button -> Get items,Apply to each,Compose 2,Get attachments,Compose...",
+      "state": "Started",
+      "lastModifiedUtc": "2022-12-05T22:41:04.9429079Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "37a017bf-3540-4749-9c37-07045307dd09",
+      "displayName": "email extract",
+      "state": "Started",
+      "lastModifiedUtc": "2022-11-26T16:37:32.2618743Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "886fdee7-e152-4386-bca1-d0d8a2abd0b0",
+      "displayName": "Email today's filtered items from SharePoint at determined intervals",
+      "state": "Started",
+      "lastModifiedUtc": "2022-11-23T17:58:54.3174129Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "4536066d-1af4-46e7-9ef6-ea2c21f32391",
+      "displayName": "Run a custom action when a Power Automate mobile button is selected",
+      "state": "Started",
+      "lastModifiedUtc": "2022-11-20T22:30:21.8500532Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "374e2683-69dd-488b-9e09-b2e74dcba99c",
+      "displayName": "Create an event in Outlook on new Planner tasks",
+      "state": "Started",
+      "lastModifiedUtc": "2022-11-19T17:57:22.546396Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "7ca25662-5f5d-456f-8338-1d12a3634d61",
+      "displayName": "Event approval button",
+      "state": "Started",
+      "lastModifiedUtc": "2022-11-12T22:38:39.3936203Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "bb5647bf-d662-4355-a9fa-e60a8ea47d29",
+      "displayName": "Complete a custom action for the selected item",
+      "state": "Started",
+      "lastModifiedUtc": "2022-11-06T04:13:34.8928735Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "dbf098ce-4a05-45da-899b-3d2fe36579d3",
+      "displayName": "SA DT DOCS WITH AI FLOW",
+      "state": "Started",
+      "lastModifiedUtc": "2022-11-02T00:56:09.7202101Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "824133cb-9faa-4092-a7bd-2bc2aaba80f1",
+      "displayName": "Add an item to SharePoint and send an email",
+      "state": "Started",
+      "lastModifiedUtc": "2022-10-24T17:04:01.5873492Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "b5d9d272-f722-4e8c-acae-c4f3e00fcb89",
+      "displayName": "Add an Outlook task for a selected file",
+      "state": "Started",
+      "lastModifiedUtc": "2022-10-18T02:15:31.1246547Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "25d59fa0-1e94-4bd3-940f-42bce606d49f",
+      "displayName": "RETRIEVE EMAILS",
+      "state": "Started",
+      "lastModifiedUtc": "2022-10-14T02:09:09.4213697Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    },
+    {
+      "flowId": "5f4c1638-73b7-424b-96aa-7d2911bfa6c9",
+      "displayName": "Microsoft Dataverse button - 2",
+      "state": "Started",
+      "lastModifiedUtc": "2022-10-11T03:00:12.5527533Z",
+      "classification": "STARTED_NOT_ADOPTED"
+    }
+  ],
+  "environmentFlowCount": 649,
+  "evidenceStatus": "CAPTURED"
+}

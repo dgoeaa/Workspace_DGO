@@ -1,0 +1,410 @@
+{
+  "schema": "dgo-document-portal-flows/v1",
+  "title": "Document Portal — complete flow reference (machine-readable)",
+  "authority": "superseded",
+  "supersededNote": "Generated 2026-08-09 against harvested/live-probe evidence for a different flow estate. The six real flow definitions now in docs/folio-Master-Flows-and-Endpoints/packages/codeview/ supersede several conclusions here, notably about SUBMISSION's request-shape match and UPLOAD's ticket validation. docs/folio-Master-Flows-and-Endpoints/contracts/DOCUMENT_PORTAL_FLOWS.md was rewritten 2026-08-15 against those real definitions and is authoritative; this file was not regenerated to match and should not be relied on until it is.",
+  "generatedAt": "2026-08-09",
+  "scope": "document-portal",
+  "companionDocuments": {
+    "narrative": "docs/folio-Master-Flows-and-Endpoints/contracts/DOCUMENT_PORTAL_FLOWS.md",
+    "html": "docs/folio-Master-Flows-and-Endpoints/contracts/DOCUMENT_PORTAL_FLOWS.html",
+    "internalPlatformEquivalent": "docs/folio-Master-Flows-and-Endpoints/contracts/INTERNAL_PLATFORM_FLOWS.md",
+    "alignmentEvidence": "docs/folio-Master-Flows-and-Endpoints/contracts/ALIGNMENT_REPORT.json"
+  },
+  "sources": {
+    "clientCode": ["document-portal/js/core.js", "document-portal/js/submit.js", "document-portal/js/track.js", "document-portal/js/support.js", "document-portal/config.example.js"],
+    "documentedContract": "document-portal/README.md",
+    "harvestedTriggerSchemas": ["docs/reference/foundational/flows/DOCUMENT SUBMISSION PORTAL POWER AU.txt"],
+    "liveProbeTranscript": "docs/folio-Master-Flows-and-Endpoints/contracts/transcripts/DOCUMENTS_PORTAL_transcript_endpoint-check-portal-probe-mskul63e.json"
+  },
+  "commonMechanics": {
+    "requestEnvelope": null,
+    "note": "No portal request carries an action/operation wrapper, requestId, or timestamp field. Every body is the flat JSON object listed per endpoint below.",
+    "defaultHeaders": { "Content-Type": "application/json" },
+    "uploadHeaders": { "Content-Type": "application/octet-stream", "X-Upload-Ticket": "<ticket>" },
+    "responseParsing": {
+      "function": "readJson(r)",
+      "sourceFile": "document-portal/js/core.js",
+      "sourceLine": 320,
+      "behavior": "r.text() then JSON.parse in a try/catch; a non-JSON or empty body resolves to {} silently, never throws."
+    },
+    "unconfiguredKeyBehavior": {
+      "SUBMISSION": { "result": "{ delivered: false, reason: 'not-configured' }", "sideEffect": "PF.backendConfigured() becomes false; entire portal enters demo mode" },
+      "UPLOAD": { "result": "{ ok: false, stored: false, reason: 'not-configured' }" },
+      "SUPPORT": { "result": "{ delivered: false, reason: 'not-configured' }" },
+      "VERIFY": { "result": "{ ok: false, reason: 'not-configured' }", "sideEffect": "PF.intake.verificationAvailable() becomes false" },
+      "VERIFY_CONFIRM": { "result": "{ ok: false, reason: 'not-configured' }", "sideEffect": "PF.intake.verificationAvailable() becomes false" },
+      "STATUS": { "result": "{ resolution: 'unavailable', reason: 'not-configured' }" }
+    },
+    "offlineBehavior": {
+      "SUBMISSION": { "queued": true, "result": "{ delivered: false, reason: 'offline' }" },
+      "SUPPORT": { "queued": true, "result": "{ delivered: false, reason: 'offline' }" },
+      "STATUS": { "queued": false, "result": "{ resolution: 'unavailable', reason: 'offline' }" },
+      "UPLOAD": { "queued": false, "result": "no offline short-circuit in code; proceeds to fetch() and fails at the network layer" },
+      "VERIFY": { "queued": false, "result": "no offline short-circuit in code; proceeds to fetch() and fails at the network layer" },
+      "VERIFY_CONFIRM": { "queued": false, "result": "no offline short-circuit in code; proceeds to fetch() and fails at the network layer" }
+    },
+    "outboxRetry": {
+      "queuedKinds": ["submission", "support"],
+      "capacity": 50,
+      "maxAttempts": 5,
+      "trigger": "PF.outbox.flush(), called whenever navigator.onLine is true",
+      "neverQueued": ["UPLOAD", "VERIFY", "VERIFY_CONFIRM", "STATUS"]
+    }
+  },
+  "endpoints": [
+    {
+      "key": "SUBMISSION",
+      "httpMethod": "POST",
+      "clientFunction": "PF.intake.submit(record, opts)",
+      "sourceFile": "document-portal/js/core.js",
+      "sourceLine": 331,
+      "callSite": { "file": "document-portal/js/submit.js", "function": "dispatchToWorkflow", "line": 369 },
+      "request": {
+        "contentType": "application/json",
+        "bodyFields": [
+          { "name": "localId", "type": "string", "source": "PF.uid() — client-generated local record id", "required": true },
+          { "name": "channel", "type": "string", "literalValue": "Portal", "required": true },
+          { "name": "correspondenceType", "type": "string", "literalValue": "Incoming", "required": true },
+          { "name": "subject", "type": "string", "source": "wizard step 3, Subject field", "required": true },
+          { "name": "category", "type": "string", "source": "PF.correspondenceType(service).category", "required": true },
+          { "name": "sender", "type": "object", "fields": ["name", "organisation", "organisationType"], "source": "wizard step 2", "required": true },
+          { "name": "senderEmail", "type": "string", "source": "wizard step 2, Email field", "required": true },
+          { "name": "senderPhone", "type": "string", "source": "wizard step 2, Phone field", "required": false, "emptyStringIfAbsent": true },
+          { "name": "eventDate", "type": "string", "source": "correspondence-type-dependent field", "required": false, "emptyStringIfAbsent": true },
+          { "name": "description", "type": "string", "source": "wizard step 3, Purpose field", "required": true },
+          { "name": "attachments", "type": "array", "itemFields": [
+              { "name": "name", "type": "string" },
+              { "name": "size", "type": "integer", "unit": "bytes" },
+              { "name": "sha256", "type": "string", "source": "crypto.subtle SHA-256 digest, client-computed; empty string if digestOf() failed" }
+            ], "note": "one entry per file the wizard holds bytes for; a draft-restored file with no bytes is excluded from this array entirely" },
+          { "name": "submittedAt", "type": "string", "format": "ISO 8601", "required": true },
+          { "name": "verification", "type": "string", "required": false, "condition": "present only when opts.verification is truthy", "currentlyReachable": false, "reason": "submit.js calls PF.intake.submit(record) with one argument only; opts is always {} in the current UI" }
+        ]
+      },
+      "triggerSchema": {
+        "known": true,
+        "sourceType": "harvested, live-corroborated",
+        "source": "docs/reference/foundational/flows/DOCUMENT SUBMISSION PORTAL POWER AU.txt",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "UserId": { "type": "string" },
+            "SubmitterName": { "type": "string" },
+            "EmailAddress": { "type": "string" },
+            "CompanyName": { "type": "string" },
+            "DocumentType": { "type": "string" },
+            "FileName": { "type": "string" },
+            "FileContentBase64": { "type": "string" }
+          }
+        },
+        "mismatchWithClientRequest": true,
+        "mismatchNote": "Harvested trigger expects a single inline base64 file with UserId/SubmitterName/EmailAddress/CompanyName/DocumentType/FileName. Client sends localId/sender.name/senderEmail and an attachments[] array of up to five declared files with no bytes (bytes go to UPLOAD separately). Field names and cardinality do not match; this is the root cause of the uploads-array being absent from the live response."
+      },
+      "response": {
+        "liveObserved": {
+          "http": 200,
+          "body": {
+            "trackingId": "NITDA-2026-217",
+            "status": "success",
+            "createdAt": "2026-07-28T18:52:18.2006842Z",
+            "message": "Submission received successfully",
+            "submittedBy": "",
+            "submittedAt": "2026-07-28T18:52:18.7971508Z",
+            "attachmentsCount": "0",
+            "referenceId": "NITDA-2026-217"
+          },
+          "note": "trackingId/status/createdAt/message/submittedBy/submittedAt/attachmentsCount/referenceId values above are the literal harvested sample; the live probe transcript confirmed the same top-level key set without re-capturing literal values."
+        },
+        "documentedTarget": { "referenceId": "string, format NITDA-YYYY-<unpadded sequence>", "uploads": [{ "ticket": "string", "name": "string" }] },
+        "fieldsActuallyReadByClient": ["referenceId", "uploads"],
+        "fieldsPresentButUnused": ["trackingId", "status", "createdAt", "message", "submittedBy", "submittedAt", "attachmentsCount"]
+      },
+      "handlingBranches": [
+        { "condition": "r.status === 403 && data.error === 'verification_required'", "queued": false, "result": "{ delivered: false, status: 403, reason: 'verification-required' }", "note": "handed back to the caller to resolve — but submit.js has no code path that resolves it; see findings" },
+        { "condition": "!r.ok (any other non-2xx)", "queued": true, "result": "{ delivered: false, status: r.status, reason: data.reason || 'rejected' }" },
+        { "condition": "r.ok (2xx)", "queued": false, "result": "{ delivered: true, referenceId: data.referenceId, uploads: data.uploads || [] }" },
+        { "condition": "fetch() throws", "queued": true, "result": "{ delivered: false, reason: 'unreachable' }" },
+        { "condition": "no SUBMISSION URL configured", "queued": false, "result": "{ delivered: false, reason: 'not-configured' }" },
+        { "condition": "device offline", "queued": true, "result": "{ delivered: false, reason: 'offline' }" }
+      ],
+      "citizenOutcomeStates": [
+        { "state": "delivered", "trigger": "res.delivered === true", "title": "Submission received", "note": "<type> has been delivered to the registry. A confirmation is on its way to <email>." },
+        { "state": "queued", "trigger": "any reason other than not-configured, INCLUDING verification-required", "title": "Saved — not yet delivered", "note": "We could not reach the registry. Your submission is saved and will be sent automatically — do not submit it again. If no confirmation reaches <email> within one working day, contact the helpdesk quoting this tracking ID and the time above." },
+        { "state": "held", "trigger": "PF.backendConfigured() === false", "title": "Saved on this device only", "note": "This portal is not connected to the registry, so your submission has not been sent. It is saved in this browser only." }
+      ],
+      "responseVariants": [
+        { "variant": "Accepted", "http": "200-299", "body": "{referenceId, uploads:[...]}  or the legacy shape shown in response.liveObserved", "clientOutcome": "delivered (attachments then depend on uploads[] being non-empty)" },
+        { "variant": "Verification required", "http": 403, "body": "{\"error\":\"verification_required\"}", "clientOutcome": "queued — no automatic retry with a proof exists in the current UI" },
+        { "variant": "Other refusal", "http": "4xx/5xx (not 403)", "body": "any", "clientOutcome": "queued, reason rejected or data.reason" },
+        { "variant": "Unreachable", "http": null, "body": null, "clientOutcome": "queued, reason unreachable" },
+        { "variant": "Not configured", "http": null, "body": null, "clientOutcome": "held (demo mode)" },
+        { "variant": "Offline", "http": null, "body": null, "clientOutcome": "queued, reason offline" }
+      ],
+      "findings": [
+        "verification-required is classified identically to every other queued failure; submit.js has no branch that re-runs VERIFY/VERIFY_CONFIRM the way track.js does for STATUS.",
+        "uploadAll() runs zero iterations when res.uploads is empty (the live-observed case) — attachments are silently never transmitted while the submission itself still reports delivered.",
+        "Attachments excluded from the request for lacking bytes (draft-restored files) are logged locally but never reported to the flow in any way."
+      ]
+    },
+    {
+      "key": "UPLOAD",
+      "httpMethod": "PUT",
+      "clientFunction": "PF.intake.upload(ticket, file)",
+      "sourceFile": "document-portal/js/core.js",
+      "sourceLine": 370,
+      "callSite": { "file": "document-portal/js/submit.js", "function": "uploadAll", "line": 426, "concurrency": "sequential, one ticket at a time" },
+      "request": {
+        "contentType": "application/octet-stream",
+        "headers": { "X-Upload-Ticket": "<ticket string, exactly as returned in SUBMISSION response uploads[].ticket>" },
+        "body": "raw file bytes, unencoded, no JSON wrapper"
+      },
+      "triggerSchema": {
+        "known": true,
+        "sourceType": "flow definition, provided directly (not harvested, not probed)",
+        "providedAt": "2026-08-09",
+        "httpMethod": "PUT",
+        "bodySchema": null,
+        "note": "No JSON Schema is declared on the trigger; the raw PUT body is accepted as-is."
+      },
+      "flowDefinition": {
+        "actions": [
+          { "name": "Compose_Upload_Ticket", "type": "Compose", "expression": "@trim(string(coalesce(triggerOutputs()?['headers']?['x-upload-ticket'], triggerOutputs()?['headers']?['X-Upload-Ticket'], '')))" },
+          { "name": "Condition_Upload_Ticket_Missing", "type": "If", "expression": "empty(<ticket>) == true", "note": "the ONLY check performed before a file is written — see securityFindings" },
+          { "name": "Response_Upload_Ticket_Missing", "type": "Response", "branch": "ticket missing", "http": 403, "body": { "stored": false, "reason": "missing-upload-ticket" } },
+          { "name": "Compose_Upload_FileName", "type": "Compose", "branch": "ticket present", "expression": "@concat(formatDateTime(utcNow(), 'yyyyMMdd-HHmmss-'), replace(replace(outputs('Compose_Upload_Ticket'), '/', '-'), ':', '-'), '.bin')", "note": "extension is always .bin; no original filename is ever read from the request" },
+          { "name": "Create_file_Upload", "type": "OpenApiConnection", "operationId": "CreateFile", "connector": "shared_sharepointonline", "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS", "folder": "/NITDA_Central_Registry", "body": "@triggerBody()", "transferMode": "Chunked" },
+          { "name": "Compose_Upload_Response_Body", "type": "Compose", "expression": { "stored": true, "attachmentLink": "coalesce(body/Path, body/Id, body/Name)", "ticket": "<the ticket>", "fileName": "<the composed .bin filename>" } },
+          { "name": "Response_Upload_Success", "type": "Response", "branch": "ticket present, file written", "http": 200 },
+          { "name": "Scope_Upload_Catch / Response_Upload_Failed", "type": "Response", "branch": "Condition_Upload_Ticket_Missing ends Failed/TimedOut — in practice Create_file_Upload failing", "http": 500, "body": { "stored": false, "reason": "upload-processing-failed", "details": "<failed action's result object>" } }
+        ],
+        "responseHeaders": { "Content-Type": "application/json", "Access-Control-Allow-Methods": "PUT, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, X-Upload-Ticket, X-Correlation-ID", "Access-Control-Allow-Origin": "not set by this flow definition — CORS behavior for a cross-origin browser fetch() depends on platform-level handling not visible in this definition" }
+      },
+      "response": {
+        "liveObserved": null,
+        "documentedTarget": { "stored": "boolean", "attachmentLink": "string, present when stored is true", "reason": "string, present when stored is false" },
+        "actualImplementation": { "stored:true": "http 200, on any non-empty ticket", "stored:false": "never returned on a 200 in this implementation — only on 403 (missing-upload-ticket) or 500 (upload-processing-failed)" },
+        "fieldsActuallyReadByClient": ["stored", "attachmentLink", "reason", "error"]
+      },
+      "handlingBranches": [
+        { "condition": "2xx and data.stored === true", "result": "{ok: true, stored: true}" },
+        { "condition": "non-2xx", "result": "{ok: false, stored: false, reason: data.reason || data.error}" },
+        { "condition": "fetch() throws", "result": "{ok: false, stored: false, reason: 'unreachable'}" },
+        { "condition": "no UPLOAD URL configured", "result": "{ok: false, stored: false, reason: 'not-configured'}" }
+      ],
+      "responseVariants": [
+        { "variant": "Ticket header absent or empty", "http": 403, "body": "{stored:false, reason:'missing-upload-ticket'}", "clientOutcome": "failure — name pushed to failed[]" },
+        { "variant": "Accepted", "http": 200, "body": "{stored:true, attachmentLink, ticket, fileName}", "clientOutcome": "success — no ticket-validity check of any kind is the gate" },
+        { "variant": "File-write failure", "http": 500, "body": "{stored:false, reason:'upload-processing-failed', details}", "clientOutcome": "failure — name pushed to failed[]" },
+        { "variant": "Unreachable", "http": null, "body": null, "clientOutcome": "failure — includes the possibility of a missing Access-Control-Allow-Origin blocking an otherwise-successful response from being read" },
+        { "variant": "Not configured", "http": null, "body": null, "clientOutcome": "failure" }
+      ],
+      "securityFindings": [
+        "CRITICAL: the ticket is never validated against anything SUBMISSION issued — no lookup, no expiry check, no single-use enforcement. Any non-empty string in X-Upload-Ticket is accepted. Combined with the endpoint URL being delivered to every visitor's browser, this is an unauthenticated write path into the agency's SharePoint registry.",
+        "No file size limit is enforced.",
+        "No integrity check (SHA-256 or otherwise) against any declared digest — triggerBody() is written to SharePoint unexamined.",
+        "No association is recorded between the stored file and the correspondence record it belongs to — the ticket is sanitized into a filename fragment, never decoded or looked up. Combined with the forced .bin extension and the absent original filename, a stored file has no machine- or human-readable link back to its submission, name, or real content type."
+      ]
+    },
+    {
+      "key": "SUPPORT",
+      "httpMethod": "POST",
+      "clientFunction": "PF.intake.support(payload)",
+      "sourceFile": "document-portal/js/core.js",
+      "sourceLine": 387,
+      "callSite": { "file": "document-portal/js/support.js", "function": "send", "line": 206, "promiseConsumed": false },
+      "request": {
+        "contentType": "application/json",
+        "bodyFields": [
+          { "name": "name", "type": "string", "source": "case form, Name field" },
+          { "name": "email", "type": "string", "source": "case form, Email field" },
+          { "name": "topic", "type": "string", "source": "the topic's human-readable LABEL (t.label), not its internal key" },
+          { "name": "aboutReference", "type": "string", "source": "tracking-ID field, uppercased; empty string if blank" },
+          { "name": "message", "type": "string", "source": "case form, Message field" }
+        ],
+        "note": "This exact shape supersedes any generic {email, subject, message} summary — the real field names are name/email/topic/aboutReference/message."
+      },
+      "triggerSchema": { "known": false, "sourceType": "none", "note": "Not harvested. The request shape above is the sole specification." },
+      "response": {
+        "liveObserved": { "http": 200, "topLevelKeys": ["ok", "status", "request", "timing", "data", "errors", "meta"], "dataKeyCaseRef": "absent" },
+        "documentedTarget": { "caseRef": "string, CASE- prefixed" },
+        "fieldsActuallyReadByClient": ["caseRef"],
+        "consumedByCurrentCallSite": false,
+        "consumptionNote": "support.js's send() calls PF.intake.support({...}) with no .then(), no assignment, no use of the returned promise. The reference shown to the citizen (ticket.ref) is generated by the local sref() function BEFORE PF.intake.support is even called, and is never reconciled with data.caseRef. Whatever the flow returns has zero effect on what the citizen sees."
+      },
+      "handlingBranches": [
+        { "condition": "!r.ok", "queued": true, "result": "{ delivered: false, status: r.status }" },
+        { "condition": "r.ok (2xx)", "queued": false, "result": "{ delivered: true, caseRef: data.caseRef }" },
+        { "condition": "fetch() throws", "queued": true, "result": "{ delivered: false, reason: 'unreachable' }" },
+        { "condition": "no SUPPORT URL configured", "queued": false, "result": "{ delivered: false, reason: 'not-configured' }" },
+        { "condition": "device offline", "queued": true, "result": "{ delivered: false, reason: 'offline' }" }
+      ],
+      "responseVariants": [
+        { "variant": "Any 2xx", "http": "200-299", "body": "{caseRef}", "clientOutcome": "none — not read by the calling code" },
+        { "variant": "Any non-2xx", "http": "4xx/5xx", "body": "any", "clientOutcome": "none — not read; queued for retry" },
+        { "variant": "Unreachable", "http": null, "body": null, "clientOutcome": "none — not read; queued for retry" },
+        { "variant": "Not configured", "http": null, "body": null, "clientOutcome": "none — no network call made" }
+      ],
+      "findings": [
+        "PF.intake.support's resolved value is discarded at its only call site — every response variant is presently indistinguishable to the citizen.",
+        "PF.outbox.flush() still retries a queued support entry up to 5 times regardless of whether the UI ever reports the outcome."
+      ]
+    },
+    {
+      "key": "VERIFY",
+      "httpMethod": "POST",
+      "clientFunction": "PF.intake.verifyRequest(email)",
+      "sourceFile": "document-portal/js/core.js",
+      "sourceLine": 417,
+      "callSite": { "file": "document-portal/js/track.js", "function": "requireVerification", "line": 174, "trigger": "STATUS resolved verification-required" },
+      "sharedPhysicalFlow": "OTP_GENERATE (internal platform)",
+      "request": {
+        "contentType": "application/json",
+        "bodyFields": [{ "name": "email", "type": "string", "source": "tracking form email field" }],
+        "note": "No action, operation, or purpose field — this is the entire body."
+      },
+      "triggerSchema": {
+        "known": true,
+        "sourceType": "harvested, shared with OTP_GENERATE, live-corroboration inconclusive",
+        "source": "docs/reference/foundational/flows/definitions/OTP_FLOWS/OTP_GENERATE/Web - OTP Generate__08584202058736633188274709906CU174__full_definition.json",
+        "acceptedTopLevelProperties": ["action", "operation", "mode", "source", "userEmail", "method", "id", "device", "otp_code"],
+        "additionalPropertiesAllowed": true,
+        "mismatchNote": "email is not a named property of the harvested schema; the flow's Switch/field references key on action='generate'|'verify' and identifier, neither of which this request sends."
+      },
+      "response": {
+        "liveObserved": { "http": 200, "topLevelKeys": ["ok", "status", "confidence", "request", "timing", "data", "results", "errors", "meta"], "dataKeySent": "absent", "undocumentedFields": ["confidence", "results"] },
+        "documentedTarget": { "sent": "boolean", "expiresAt": "ISO 8601 or epoch ms" },
+        "fieldsActuallyReadByClient": ["sent", "expiresAt"]
+      },
+      "handlingBranches": [
+        { "condition": "r.status === 429", "result": "{ ok: false, reason: 'too-many-requests' }" },
+        { "condition": "!r.ok (other non-2xx)", "result": "{ ok: false, reason: data.error || 'refused' }" },
+        { "condition": "r.ok (2xx)", "result": "{ ok: true, sent: data.sent === true, expiresAt: data.expiresAt }", "note": "sent uses strict equality to literal true; the live-observed absence normalises to false" },
+        { "condition": "fetch() throws", "result": "{ ok: false, reason: 'unreachable' }" },
+        { "condition": "no VERIFY URL configured", "result": "{ ok: false, reason: 'not-configured' }" }
+      ],
+      "callerBranch": { "file": "document-portal/js/track.js", "condition": "!r.ok || !r.sent", "onLiveObservedResponse": "takes the failure path — citizen sees 'Could not send the code' despite HTTP 200" },
+      "responseVariants": [
+        { "variant": "Sent", "http": "200-299", "body": "{sent:true, expiresAt}", "clientOutcome": "proceeds to code-entry step" },
+        { "variant": "Answered but not sent (live-observed case)", "http": "200-299", "body": "sent absent or not literally true", "clientOutcome": "'Could not send the code' toast" },
+        { "variant": "Rate-limited", "http": 429, "body": "any", "clientOutcome": "'Too many requests... wait a minute' toast" },
+        { "variant": "Other refusal", "http": "4xx/5xx, not 429", "body": "any", "clientOutcome": "'The code could not be sent to that address just now.' toast" },
+        { "variant": "Unreachable", "http": null, "body": null, "clientOutcome": "same generic toast as other refusal" },
+        { "variant": "Not configured", "http": null, "body": null, "clientOutcome": "never called — verificationAvailable() gates entry; a different UI message is shown before this endpoint would be reached" }
+      ],
+      "findings": [
+        "Live-observed response takes the identical failure path as a genuine send failure, because sent is strictly compared to true and is currently absent."
+      ]
+    },
+    {
+      "key": "VERIFY_CONFIRM",
+      "httpMethod": "POST",
+      "clientFunction": "PF.intake.verifyConfirm(email, code)",
+      "sourceFile": "document-portal/js/core.js",
+      "sourceLine": 434,
+      "callSite": { "file": "document-portal/js/track.js", "function": "confirmCode click handler", "line": 193, "precondition": "VERIFY must have reported sent: true first" },
+      "sharedPhysicalFlow": "OTP_VERIFY (internal platform)",
+      "request": {
+        "contentType": "application/json",
+        "bodyFields": [
+          { "name": "email", "type": "string", "source": "the same address VERIFY was called with" },
+          { "name": "code", "type": "string", "source": "citizen-entered six digits, validated client-side against /^\\d{6}$/ before this call" }
+        ]
+      },
+      "triggerSchema": {
+        "known": true,
+        "sourceType": "harvested, shared with OTP_VERIFY",
+        "source": "docs/reference/foundational/flows/definitions/OTP_FLOWS/OTP_VERIFY/Web - OTP Verify__08584202058708887835754078979CU170__full_definition.json",
+        "mismatchNote": "the harvested schema's otp_code property is what the flow actually reads for the code; the client sends code."
+      },
+      "response": {
+        "liveObserved": { "http": 200, "topLevelKeys": ["ok", "status", "confidence", "request", "timing", "data", "results", "errors", "meta"], "dataKeyVerification": "absent" },
+        "documentedTarget": { "verification": "string, opaque single-use proof", "expiresAt": "timestamp" },
+        "fieldsActuallyReadByClient": ["verification", "expiresAt"]
+      },
+      "handlingBranches": [
+        { "condition": "!r.ok (any non-2xx)", "result": "{ ok: false, reason: 'verification-failed' }", "note": "the only reason value ever produced on a non-2xx; r.status is not further inspected" },
+        { "condition": "r.ok (2xx)", "result": "{ ok: true, verification: data.verification, expiresAt: data.expiresAt }" },
+        { "condition": "fetch() throws", "result": "{ ok: false, reason: 'unreachable' }" },
+        { "condition": "no VERIFY_CONFIRM URL configured", "result": "{ ok: false, reason: 'not-configured' }" }
+      ],
+      "callerBranch": { "file": "document-portal/js/track.js", "condition": "!v.ok || !v.verification", "onLiveObservedResponse": "takes the failure path — citizen sees 'That code was not accepted', indistinguishable from a genuinely wrong code" },
+      "proofLifecycle": { "storage": "a page-scoped JavaScript variable only, never persisted", "consumedBy": "exactly one immediately-following STATUS call, then reset to null", "survivesReload": false },
+      "responseVariants": [
+        { "variant": "Verified", "http": "200-299", "body": "{verification, expiresAt}", "clientOutcome": "proof held; STATUS retried immediately with it" },
+        { "variant": "Answered but no proof (live-observed case)", "http": "200-299", "body": "verification absent", "clientOutcome": "'That code was not accepted' toast" },
+        { "variant": "Rejected", "http": "4xx/5xx", "body": "any", "clientOutcome": "'That code was not accepted' toast — identical presentation regardless of status code" },
+        { "variant": "Unreachable", "http": null, "body": null, "clientOutcome": "'That code was not accepted' toast" },
+        { "variant": "Not configured", "http": null, "body": null, "clientOutcome": "unreachable in practice — gated by verificationAvailable()" }
+      ],
+      "findings": [
+        "A rejected code and an unreachable flow render the identical toast to the citizen — reason is normalised away before display."
+      ]
+    },
+    {
+      "key": "STATUS",
+      "httpMethod": "POST",
+      "clientFunction": "PF.intake.status(referenceId, email, opts)",
+      "sourceFile": "document-portal/js/core.js",
+      "sourceLine": 481,
+      "callSite": { "file": "document-portal/js/track.js", "function": "lookup", "line": 105 },
+      "request": {
+        "contentType": "application/json",
+        "variants": [
+          { "name": "unverified", "condition": "no proof held", "body": { "referenceId": "string, trimmed and upper-cased", "email": "string, trimmed" } },
+          { "name": "verified", "condition": "a proof from a prior VERIFY_CONFIRM is held", "body": { "referenceId": "string, trimmed and upper-cased", "verification": "the proof" }, "note": "email is structurally absent from the body in this case, not blanked — omitted from the JSON object entirely" }
+        ],
+        "mutuallyExclusive": true
+      },
+      "triggerSchema": { "known": false, "sourceType": "none", "note": "No harvested definition exists. The two request shapes above are the sole specification." },
+      "response": {
+        "liveObserved": { "http": 200, "topLevelKeys": ["ok", "status", "request", "timing", "data", "errors", "meta"], "dataKeyRecord": "absent", "probedWith": "a reference unknown by construction" },
+        "documentedTargetDenied": { "http": 404, "body": null, "note": "byte-identical regardless of which half of the pair was wrong, and identical again for an expired or replayed verification proof; no body content specified" },
+        "documentedTargetFound": {
+          "http": 200,
+          "body": { "record": {
+            "referenceId": "string", "status": "string", "statusLabel": "string", "category": "string", "subject": "string",
+            "receivedAt": "ISO 8601", "acknowledgedAt": "ISO 8601", "updatedAt": "ISO 8601", "closedAt": "ISO 8601",
+            "actionRequired": "boolean", "timeline": [{ "at": "ISO 8601", "status": "string", "label": "string", "note": "string" }]
+          } },
+          "explicitlyExcludedFields": ["description", "attachments", "assigned officer", "handling unit"]
+        },
+        "fieldsActuallyReadByClient": ["record", "record.referenceId", "record.status", "record.statusLabel", "record.category", "record.subject", "record.receivedAt", "record.acknowledgedAt", "record.updatedAt", "record.closedAt", "record.actionRequired", "record.timeline"]
+      },
+      "handlingBranches": [
+        { "condition": "r.ok (2xx)", "resolution": "found", "result": "{ resolution: 'found', record: data.record || null }" },
+        { "condition": "r.status === 403 && data.error === 'verification_required'", "resolution": "verification-required", "result": "{ resolution: 'verification-required' }" },
+        { "condition": "r.status === 404 || r.status === 400", "resolution": "denied", "result": "{ resolution: 'denied' }", "note": "live-observed response was HTTP 200, not 404 — this branch is not currently reachable against the probed tenant's actual behaviour" },
+        { "condition": "r.status === 429", "resolution": "unavailable", "result": "{ resolution: 'unavailable', reason: 'rate-limited' }" },
+        { "condition": "any other status", "resolution": "unavailable", "result": "{ resolution: 'unavailable', reason: 'registry-error', status: r.status }" },
+        { "condition": "fetch() throws", "resolution": "unavailable", "result": "{ resolution: 'unavailable', reason: 'unreachable' }" },
+        { "condition": "no STATUS URL configured", "resolution": "unavailable", "result": "{ resolution: 'unavailable', reason: 'not-configured' }" },
+        { "condition": "device offline", "resolution": "unavailable", "result": "{ resolution: 'unavailable', reason: 'offline' }" }
+      ],
+      "liveObservedConsequence": "Since the probed response was 200 with data.record absent, res.record resolves to null, and resolution is 'found' — not 'denied' and not 'unavailable'. track.js renders a near-empty but successfully-found record via fromRegistry(null, id), which defaults every field, indistinguishable in the UI from a genuine minimal-data match.",
+      "responseVariants": [
+        { "variant": "Genuine match", "http": 200, "body": "{record:{...}}", "resolution": "found", "citizenSees": "the full record, sourced 'registry'" },
+        { "variant": "Answered, no record (live-observed case)", "http": 200, "body": "data.record absent", "resolution": "found, record: null", "citizenSees": "a near-empty but 'found' record" },
+        { "variant": "Verification demanded", "http": 403, "body": "{error:'verification_required'}", "resolution": "verification-required", "citizenSees": "the email-verification step" },
+        { "variant": "Uniform denial (documented, not yet observed live)", "http": "404 or 400", "body": null, "resolution": "denied", "citizenSees": "'No request matches that tracking ID and email'" },
+        { "variant": "Rate-limited", "http": 429, "body": "any", "resolution": "unavailable, reason rate-limited", "citizenSees": "'Too many lookups... wait a minute'" },
+        { "variant": "Other registry error", "http": "other non-2xx", "body": "any", "resolution": "unavailable, reason registry-error", "citizenSees": "'The registry could not be reached just now' (falls back to matching device data if present)" },
+        { "variant": "Unreachable", "http": null, "body": null, "resolution": "unavailable, reason unreachable", "citizenSees": "same as registry error" },
+        { "variant": "Not configured", "http": null, "body": null, "resolution": "unavailable, reason not-configured", "citizenSees": "same as registry error" },
+        { "variant": "Offline", "http": null, "body": null, "resolution": "unavailable, reason offline", "citizenSees": "'This device is offline'" }
+      ],
+      "findings": [
+        "The anti-oracle 404 contract document-portal/README.md specifies as security-critical is not observed live — an unknown-by-construction reference returned 200, which the client's own resolution logic classifies as found."
+      ]
+    }
+  ],
+  "crossCutting": {
+    "demoMode": { "gate": "PF.backendConfigured() === !!endpointUrl('SUBMISSION')", "note": "SUBMISSION alone determines whether the whole portal is considered live, independent of the other five endpoints' configuration state" },
+    "draftAutosave": { "storage": "localStorage via PF.store.draft", "flowInvolved": false, "attachmentBytesSaved": false, "attachmentMetadataSaved": true },
+    "referenceMinting": {
+      "trackingId": { "generatedBy": "PF.uid()", "generatedWhen": "before the registry is contacted at all", "overwrittenBy": "SUBMISSION response referenceId, if and when one arrives" },
+      "caseRef": { "generatedBy": "sref()", "format": "NITDA-S-XXXXXX, six characters from a fixed unambiguous alphabet", "reconciledWithFlowResponse": false }
+    },
+    "filenamePolicy": { "appliedClientSide": false, "appliedBy": "the SUBMISSION flow, per document-portal/README.md" }
+  }
+}

@@ -1,0 +1,536 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/AI_Document_Processing__fefa43c6-fb9d-4337-8b65-7fd19fa09b6d.json",
+  "workflow_identity": {
+    "internal_name": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+    "tags": {
+      "flowDisplayName": "AI_Document_Processing"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "undefined",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Get_item": {
+        "runAfter": {
+          "Initialize_variable_2": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "0abccb06-49f5-46ca-a2be-9d62102da61a"
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "table": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+            "id": "@variables('AaitemId')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItem"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Get_attachments": {
+        "runAfter": {
+          "Get_item": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "1f371354-31d6-43f2-89e6-22da3f7afb76"
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "table": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+            "itemId": "@outputs('Get_item')?['body/ID']"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItemAttachments"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "For_each": {
+        "foreach": "@outputs('Get_attachments')?['body']",
+        "actions": {
+          "Get_attachment_content": {
+            "metadata": {
+              "operationMetadataId": "dda64aa8-5afc-4843-bf9c-111d104c2de3"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+                "itemId": "@outputs('Get_item')?['body/ID']",
+                "attachmentId": "@items('For_each')?['Id']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "GetAttachmentContent"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Set_variable": {
+            "runAfter": {
+              "Get_attachment_content": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "bf844a6f-f47a-404c-8506-e979ce951bd3"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "varAttachmentContent",
+              "value": "@body('Get_attachment_content')"
+            }
+          },
+          "Set_variable_2": {
+            "runAfter": {
+              "Set_variable": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b9d468e9-7792-4243-bb66-c1f7f91b868b"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "varAttachmentName",
+              "value": "@items('For_each')?['DisplayName']"
+            }
+          }
+        },
+        "runAfter": {
+          "Get_attachments": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "f3129603-41d3-4843-a301-e3be3951230d"
+        },
+        "type": "Foreach"
+      },
+      "Initialize_variable": {
+        "runAfter": {
+          "Initialize_variable_1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "dfd3bc87-8ce2-4cb5-959f-1ebf24a184e9"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varAttachmentContent",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "Extract_PDF_Structure,_Tables_and_Images_from_a_PDF": {
+        "runAfter": {
+          "Compose_Attachment_Content": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b798ecfb-2095-4629-a0c2-16b892150859"
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "addTables": true,
+            "addFigures": true,
+            "pdfStructureOutputFormat": "JSON OBJECT",
+            "inputFileName": "@variables('varAttachmentName')",
+            "InputFile0/body": "@variables('varAttachmentContent')",
+            "addCharInfo": true,
+            "getStylingInfo": true,
+            "x-region-value": "-ue1"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_adobepdftools",
+            "connectionName": "shared_adobepdftools",
+            "operationId": "ExtractJSONAndImagesAndTablesFromPDF"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Parse_JSON_Extract_PDF_Structure": {
+        "runAfter": {
+          "Extract_PDF_Structure,_Tables_and_Images_from_a_PDF": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "493e7a71-2328-4d7b-a02f-ea321e883f7f"
+        },
+        "type": "ParseJson",
+        "inputs": {
+          "content": "@outputs('Extract_PDF_Structure,_Tables_and_Images_from_a_PDF')?['body/structuredJsonObject']",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "statusCode": {
+                "type": "integer"
+              },
+              "headers": {
+                "type": "object",
+                "properties": {
+                  "Cache-Control": {
+                    "type": "string"
+                  },
+                  "Transfer-Encoding": {
+                    "type": "string"
+                  },
+                  "X-Request-ID": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "Pragma": {
+                    "type": "string"
+                  },
+                  "X-Content-Type-Options": {
+                    "type": "string"
+                  },
+                  "Strict-Transport-Security": {
+                    "type": "string"
+                  },
+                  "x-robots-tag": {
+                    "type": "string"
+                  },
+                  "Vary": {
+                    "type": "string"
+                  },
+                  "x-ms-environment-id": {
+                    "type": "string"
+                  },
+                  "x-ms-tenant-id": {
+                    "type": "string"
+                  },
+                  "x-ms-dlp-re": {
+                    "type": "string"
+                  },
+                  "x-ms-dlp-gu": {
+                    "type": "string"
+                  },
+                  "x-ms-dlp-ef": {
+                    "type": "string"
+                  },
+                  "Timing-Allow-Origin": {
+                    "type": "string"
+                  },
+                  "x-ms-apihub-cached-response": {
+                    "type": "string"
+                  },
+                  "x-ms-apihub-obo": {
+                    "type": "string"
+                  },
+                  "Date": {
+                    "type": "string"
+                  },
+                  "Content-Type": {
+                    "type": "string"
+                  },
+                  "Expires": {
+                    "type": "string"
+                  },
+                  "Content-Length": {
+                    "type": "string"
+                  }
+                }
+              },
+              "body": {
+                "type": "object",
+                "properties": {
+                  "jsonFileName": {
+                    "type": "string"
+                  },
+                  "jsonFileContentType": {
+                    "type": "string"
+                  },
+                  "jsonFileContent": {
+                    "type": "string"
+                  },
+                  "structuredJsonObject": {
+                    "type": "string"
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fileName": {
+                          "type": "string"
+                        },
+                        "fileContentType": {
+                          "type": "string"
+                        },
+                        "fileContent": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "fileName",
+                        "fileContentType",
+                        "fileContent"
+                      ]
+                    }
+                  },
+                  "tables": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fileName": {
+                          "type": "string"
+                        },
+                        "fileContentType": {
+                          "type": "string"
+                        },
+                        "fileContent": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "fileName",
+                        "fileContentType",
+                        "fileContent"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Select_ParseJSON_PDF_Elements": {
+        "runAfter": {
+          "Parse_JSON_Extract_PDF_Structure": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "981f05dc-9446-4af6-83f7-4ecc776aada1"
+        },
+        "type": "Select",
+        "inputs": {
+          "from": "@body('Parse_JSON_Extract_PDF_Structure')?['elements']",
+          "select": "@item()?['Text']"
+        }
+      },
+      "Join_Select_ParseJSON_PDF_Elements_Text": {
+        "runAfter": {
+          "Select_ParseJSON_PDF_Elements": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "0e7305f5-376e-432e-b1ba-441d26b5dc82"
+        },
+        "type": "Join",
+        "inputs": {
+          "from": "@body('Select_ParseJSON_PDF_Elements')",
+          "joinWith": " "
+        }
+      },
+      "Compose_Extracted_Text": {
+        "runAfter": {
+          "Join_Select_ParseJSON_PDF_Elements_Text": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "7777f1b0-ff7b-46df-9f90-badd1124b734"
+        },
+        "type": "Compose",
+        "inputs": "@body('Join_Select_ParseJSON_PDF_Elements_Text')"
+      },
+      "Compose_Prompt": {
+        "runAfter": {
+          "Compose_Extracted_Text": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "7777f1b0-ff7b-46df-9f90-badd1124b734"
+        },
+        "type": "Compose",
+        "inputs": ":\n\n@{body('Join_Select_ParseJSON_PDF_Elements_Text')}"
+      },
+      "HTTP": {
+        "runAfter": {
+          "Compose_Model_ID": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "5224e2dd-c00e-4d0d-aa80-73e26afeecfe"
+        },
+        "type": "Http",
+        "inputs": {
+          "uri": "https://openrouter.ai/api/v1/chat/completions",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer REDACTED",
+            "HTTP-Referer": "https://make.powerautomate.com",
+            "X-Title": "Power Automate OpenRouter"
+          },
+          "body": {
+            "model": "@{outputs('Compose_Model_ID')}",
+            "messages": [
+              {
+                "role": "system",
+                "content": "You are a helpful assistant."
+              },
+              {
+                "role": "user",
+                "content": "@{outputs('Compose_Prompt')}"
+              }
+            ],
+            "temperature": 0.7
+          }
+        },
+        "runtimeConfiguration": {
+          "contentTransfer": {
+            "transferMode": "Chunked"
+          }
+        }
+      },
+      "Compose_HTTP_AI_Response": {
+        "runAfter": {
+          "HTTP": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "7777f1b0-ff7b-46df-9f90-badd1124b734"
+        },
+        "type": "Compose",
+        "inputs": "@outputs('HTTP')?['body']?['choices']?[0]?['message']?['content']"
+      },
+      "Initialize_variable_2": {
+        "runAfter": {
+          "Initialize_variable": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c8d37f6b-f7fb-448c-9955-0fdd5e4349e0"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varAttachmentName",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "Compose_Model_ID": {
+        "runAfter": {
+          "Compose_Prompt": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "7777f1b0-ff7b-46df-9f90-badd1124b734"
+        },
+        "type": "Compose",
+        "inputs": "@{coalesce(triggerBody()?['text_1'], 'deepseek/deepseek-r1:free')}\n"
+      },
+      "Compose_HTML_Response_Template": {
+        "runAfter": {
+          "Compose_HTTP_AI_Response": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "bc6169c4-a3fe-4346-af1d-0d8fae3418cb"
+        },
+        "type": "Compose",
+        "inputs": "i'm <div style=\"font-family:Arial, sans-serif; padding:15px; background-color:#f9f9f9; border:1px solid #ddd; border-radius:8px; max-width:600px; margin:auto;\">\n  <h2 style=\"color:#333; border-bottom:2px solid #4CAF50; padding-bottom:5px; word-wrap:break-word;\">🤖 Hugging Face AI Response</h2>\n  @{outputs('HTTP')?['body']?['choices']?[0]?['message']?['content']}\n  <p style=\"margin-top:15px; font-size:16px;\"><strong style=\"color:#4CAF50;\">Prompt:</strong></p>\n  <div style=\"background-color:#fff; border:1px solid #ccc; padding:10px; border-radius:5px; margin-bottom:15px; font-size:15px; line-height:1.5; word-wrap:break-word;\">\n    \n  </div>\n  \n  <p style=\"margin-top:15px; font-size:16px;\"><strong style=\"color:#4CAF50;\">AI Response:</strong></p>\n  <div style=\"background-color:#fff; border:1px solid #ccc; padding:10px; border-radius:5px; font-size:15px; line-height:1.5; word-wrap:break-word;\">\n    \n  </div>\n  \n  <hr style=\"margin:20px 0;\"/>\n  <p style=\"font-size:12px; color:#777; word-wrap:break-word;\">\n    🕒 Generated at: @{utcNow()}<br/>\n    📄 Request ID: @{workflow()?['run']['name']}\n  </p>\n</div>"
+      },
+      "Compose_Attachment_Content": {
+        "runAfter": {
+          "For_each": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "693292ef-3c14-43c8-b0f9-5dcb227ec7da"
+        },
+        "type": "Compose",
+        "inputs": "@variables('varAttachmentContent')"
+      },
+      "Initialize_variable_1": {
+        "runAfter": {},
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "AaitemId",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "Response_AI_Document_Processing": {
+        "runAfter": {
+          "Compose_HTML_Response_Template": [
+            "Succeeded"
+          ]
+        },
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200,
+          "body": "@outputs('Compose_HTTP_AI_Response')"
+        }
+      }
+    }
+  }
+}

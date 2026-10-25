@@ -1,0 +1,942 @@
+{
+  "nodeId": "Scope_Global",
+  "serializedValue": {
+    "actions": {
+      "Switch": {
+        "cases": {
+          "Case_Verify": {
+            "case": "verify",
+            "actions": {
+              "Compose_OTP_Code": {
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerBody()?['otp_code'], '')))"
+              },
+              "Compose_OTP_Code_Verify": {
+                "runAfter": {
+                  "Compose_OTP_Code": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerBody()?['otp_code'], '')))"
+              },
+              "Compose_OTP_Identifier_Verify": {
+                "runAfter": {
+                  "Compose_OTP_Code_Verify": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerBody()?['identifier'], triggerBody()?['userEmail'], triggerBody()?['id'], triggerBody()?['device']?['id'], '')))"
+              },
+              "Get_items_OTP_Attempts": {
+                "runAfter": {
+                  "Compose_OTP_Identifier_Verify": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9421d473-8906-43b7-a41f-a213046683c1",
+                    "$filter": "Title eq '@{replace(outputs('Compose_OTP_Identifier_Verify'),'''','''''')}' and Is_Verified eq 0",
+                    "$orderby": "Created desc",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  }
+                }
+              },
+              "Compose_Attempts_So_Far": {
+                "runAfter": {
+                  "Get_items_OTP_Attempts": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@int(coalesce(first(outputs('Get_items_OTP_Attempts')?['body/value'])?['Attempts'], 0))"
+              },
+              "Condition_Attempt_Cap": {
+                "actions": {
+                  "Set_variable_varStatusCode_Too_Many_Attempts": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varStatusCode",
+                      "value": 429
+                    }
+                  },
+                  "Append_to_string_variable_varResponse_Too_Many_Attempts": {
+                    "runAfter": {
+                      "Set_variable_varStatusCode_Too_Many_Attempts": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "AppendToStringVariable",
+                    "inputs": {
+                      "name": "varResponse",
+                      "value": {
+                        "status": "error",
+                        "valid": false,
+                        "message": "Too many attempts. Request a new code.",
+                        "request_id": "@{guid()}"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Compose_Attempts_So_Far": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Get_items_OTP_Verify": {
+                      "runAfter": {
+                        "Condition_Otp_Has_Pending_Code": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                          "table": "9421d473-8906-43b7-a41f-a213046683c1",
+                          "$filter": "Title eq '@{replace(outputs('Compose_OTP_Identifier_Verify'),'''','''''')}' and OTP_Code eq '@{replace(outputs('Compose_OTP_Code'),'''','''''')}' and Is_Verified eq 0",
+                          "$orderby": "Created desc",
+                          "$top": 1
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "GetItems"
+                        }
+                      }
+                    },
+                    "Compose_Count_Items_Check": {
+                      "runAfter": {
+                        "Get_items_OTP_Verify": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "Compose",
+                      "inputs": "@length(outputs('Get_items_OTP_Verify')?['body/value'])"
+                    },
+                    "Condition": {
+                      "actions": {
+                        "Set_variable_varStatusCode_No_Pending_OTP_Found": {
+                          "runAfter": {
+                            "Append_to_string_variable_varRsponse_No_Pending_OTP_Found": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varStatusCode",
+                            "value": 404
+                          }
+                        },
+                        "Append_to_string_variable_varRsponse_No_Pending_OTP_Found": {
+                          "type": "AppendToStringVariable",
+                          "inputs": {
+                            "name": "varResponse",
+                            "value": {
+                              "status": "error",
+                              "valid": false,
+                              "message": "No OTP found",
+                              "request_id": "@{guid()}"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Compose_Count_Items_Check": [
+                          "Succeeded"
+                        ]
+                      },
+                      "else": {
+                        "actions": {
+                          "Condition_1": {
+                            "actions": {
+                              "Update_item": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                    "table": "9421d473-8906-43b7-a41f-a213046683c1",
+                                    "id": "@outputs('Get_item_OTP_Record')?['body/ID']",
+                                    "item/Is_Verified": true
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                    "connection": "shared_sharepointonline",
+                                    "operationId": "PatchItem"
+                                  }
+                                }
+                              },
+                              "Get_Otp_Directory_User": {
+                                "type": "OpenApiConnection",
+                                "runAfter": {
+                                  "Update_item": [
+                                    "Succeeded"
+                                  ]
+                                },
+                                "inputs": {
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                    "connection": "shared_sharepointonline",
+                                    "operationId": "GetItems"
+                                  },
+                                  "parameters": {
+                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                    "table": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+                                    "$filter": "@concat('Email eq ''',replace(toLower(trim(string(coalesce(outputs('Compose_OTP_Identifier_Verify'),'')))),'''',''''''),''' and Status eq ''active''')",
+                                    "$top": 1
+                                  }
+                                }
+                              },
+                              "Compose_Otp_Proof_Token": {
+                                "type": "Compose",
+                                "inputs": "@guid()",
+                                "runAfter": {
+                                  "Get_Otp_Directory_User": [
+                                    "Succeeded"
+                                  ]
+                                }
+                              },
+                              "Compose_Otp_Proof_Expires": {
+                                "type": "Compose",
+                                "inputs": "@addHours(utcNow(),4)",
+                                "runAfter": {
+                                  "Compose_Otp_Proof_Token": [
+                                    "Succeeded"
+                                  ]
+                                }
+                              },
+                              "Condition_Otp_Known_User": {
+                                "type": "If",
+                                "runAfter": {
+                                  "Compose_Otp_Proof_Expires": [
+                                    "Succeeded"
+                                  ]
+                                },
+                                "expression": {
+                                  "greater": [
+                                    "@length(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))",
+                                    0
+                                  ]
+                                },
+                                "actions": {
+                                  "Create_Otp_Proof": {
+                                    "type": "OpenApiConnection",
+                                    "inputs": {
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "connection": "shared_sharepointonline",
+                                        "operationId": "PostItem"
+                                      },
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                        "table": "444102d6-2c29-45cf-8b59-52774d7c4dd4",
+                                        "item/Title": "@outputs('Compose_Otp_Proof_Token')",
+                                        "item/Email": "@toLower(string(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Email']))",
+                                        "item/Purpose": "internal-session",
+                                        "item/ExpiresAtUtc": "@outputs('Compose_Otp_Proof_Expires')",
+                                        "item/CreatedAtUtc": "@utcNow()",
+                                        "item/Consumed": false
+                                      }
+                                    },
+                                    "runAfter": {}
+                                  },
+                                  "Set_variable_Verification_Successful": {
+                                    "runAfter": {
+                                      "Create_Otp_Proof": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                      "name": "varStatusCode",
+                                      "value": 200
+                                    }
+                                  },
+                                  "Append_to_string_variable_Verification_Successful": {
+                                    "type": "AppendToStringVariable",
+                                    "runAfter": {
+                                      "Set_variable_Verification_Successful": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "inputs": {
+                                      "name": "varResponse",
+                                      "value": {
+                                        "ok": true,
+                                        "status": "success",
+                                        "valid": true,
+                                        "message": "OTP verified",
+                                        "request_id": "@guid()",
+                                        "token": "@outputs('Compose_Otp_Proof_Token')",
+                                        "expiresAt": "@outputs('Compose_Otp_Proof_Expires')",
+                                        "claims": {
+                                          "preferred_username": "@toLower(string(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Email']))",
+                                          "email": "@toLower(string(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Email']))",
+                                          "name": "@string(coalesce(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['FullName'],first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Email']))",
+                                          "role": "@coalesce(toLower(trim(string(coalesce(json(if(startsWith(string(coalesce(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Role'],'')),'{'),string(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Role']),concat('{\"Value\":\"',replace(string(coalesce(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Role'],'')),'\"',''),'\"}')))?['Value'],'')))),'viewer')",
+                                          "roles": "@createArray(coalesce(toLower(trim(string(coalesce(json(if(startsWith(string(coalesce(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Role'],'')),'{'),string(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Role']),concat('{\"Value\":\"',replace(string(coalesce(first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['Role'],'')),'\"',''),'\"}')))?['Value'],'')))),'viewer'))",
+                                          "accessScope": "@first(coalesce(outputs('Get_Otp_Directory_User')?['body/value'],json('[]')))?['AccessScope']"
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "else": {
+                                  "actions": {
+                                    "Set_variable_Verification_Not_A_Directory_User": {
+                                      "type": "SetVariable",
+                                      "runAfter": {
+                                        "Compose_Value_Set_variable_Verification_Not_A_Directory_User": [
+                                          "Succeeded"
+                                        ]
+                                      },
+                                      "inputs": {
+                                        "name": "varStatusCode",
+                                        "value": "@outputs('Compose_Value_Set_variable_Verification_Not_A_Directory_User')"
+                                      }
+                                    },
+                                    "Append_to_string_variable_Verification_Not_A_Directory_User": {
+                                      "type": "AppendToStringVariable",
+                                      "runAfter": {
+                                        "Set_variable_Verification_Not_A_Directory_User": [
+                                          "Succeeded"
+                                        ]
+                                      },
+                                      "inputs": {
+                                        "name": "varResponse",
+                                        "value": {
+                                          "ok": false,
+                                          "valid": false,
+                                          "verified": false,
+                                          "reason": "NOT_A_DIRECTORY_USER",
+                                          "message": "The code is correct, but this address is not an active user of the platform."
+                                        }
+                                      }
+                                    },
+                                    "Compose_Value_Set_variable_Verification_Not_A_Directory_User": {
+                                      "type": "Compose",
+                                      "inputs": 401,
+                                      "runAfter": {}
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "runAfter": {
+                              "Get_item_OTP_Record": [
+                                "Succeeded"
+                              ]
+                            },
+                            "else": {
+                              "actions": {
+                                "Set_variable_OTP__OTP_Invalid_or_Expired": {
+                                  "type": "SetVariable",
+                                  "inputs": {
+                                    "name": "varStatusCode",
+                                    "value": 400
+                                  }
+                                },
+                                "Append_to_string_variable__OTP_Invalid_or_Expired": {
+                                  "runAfter": {
+                                    "Set_variable_OTP__OTP_Invalid_or_Expired": [
+                                      "Succeeded"
+                                    ]
+                                  },
+                                  "type": "AppendToStringVariable",
+                                  "inputs": {
+                                    "name": "varResponse",
+                                    "value": {
+                                      "status": "error",
+                                      "valid": false,
+                                      "message": "Invalid code or code expired",
+                                      "request_id": "@{guid()}"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "expression": {
+                              "and": [
+                                {
+                                  "greater": [
+                                    "@outputs('Get_item_OTP_Record')?['body/Expires_At']",
+                                    "@utcNow()"
+                                  ]
+                                }
+                              ]
+                            },
+                            "type": "If"
+                          },
+                          "Compose_OTP_Veriify_Structure_Update": {
+                            "runAfter": {
+                              "Condition_1": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "Compose",
+                            "inputs": "    \"Case_Verify\": {\n              \"case\": \"verify\",\n              \"actions\": {\n                \"Compose_OTP_Identifier_Verify\": {\n                  \"type\": \"Compose\",\n                  \"inputs\": @{trim(string(coalesce(triggerBody()?['identifier'], triggerBody()?['userEmail'], triggerBody()?['id'], triggerBody()?['device']?['id'], '')))}\n                },\n                \"Compose_OTP_Code_Verify\": {\n                  \"type\": \"Compose\",\n                  \"inputs\": @{trim(string(coalesce(triggerBody()?['otp_code'], '')))},\n                  \"runAfter\": {\n                    \"Compose_OTP_Identifier_Verify\": [\n                      \"Succeeded\"\n                    ]\n                  }\n                },\n                \"Condition_Verify_Inputs_Required\": {\n                  \"type\": \"If\",\n                  \"expression\": {\n                    \"or\": [\n                      {\n                        \"equals\": [\n                          @{empty(trim(string(coalesce(outputs('Compose_OTP_Identifier_Verify'), ''))))},\n                          true\n                        ]\n                      },\n                      {\n                        \"equals\": [\n                          @{empty(trim(string(coalesce(outputs('Compose_OTP_Code_Verify'), ''))))},\n                          true\n                        ]\n                      }\n                    ]\n                  },\n                  \"actions\": {\n                    \"Set_variable_varStatusCode_Verify_Missing_Input\": {\n                      \"type\": \"SetVariable\",\n                      \"inputs\": {\n                        \"name\": \"varStatusCode\",\n                        \"value\": 400\n                      }\n                    },\n                    \"Append_to_string_variable_varResponse_Verify_Missing_Input\": {\n                      \"type\": \"SetVariable\",\n                      \"inputs\": {\n                        \"name\": \"varResponse\",\n                        \"value\": {\n                          \"valid\": false,\n                          \"code\": \"OTP_INPUT_REQUIRED\",\n                          \"message\": \"identifier/userEmail and otp_code are required to verify an OTP.\"\n                        }\n                      },\n                      \"runAfter\": {\n                        \"Set_variable_varStatusCode_Verify_Missing_Input\": [\n                          \"Succeeded\"\n                        ]\n                      }\n                    }\n                  },\n                  \"else\": {\n                    \"actions\": {\n                      \"Get_items\": {\n                        \"type\": \"OpenApiConnection\",\n                        \"inputs\": {\n                          \"parameters\": {\n                            \"dataset\": \"https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING\",\n                            \"table\": \"9421d473-8906-43b7-a41f-a213046683c1\",\n                            \"$filter\": @{concat('Title eq ''', replace(outputs('Compose_OTP_Identifier_Verify'), '''', ''''''), ''' and Is_Verified eq false')},\n                            \"$orderby\": \"Created desc\",\n                            \"$top\": 1\n                          },\n                          \"host\": {\n                            \"apiId\": \"/providers/Microsoft.PowerApps/apis/shared_sharepointonline\",\n                            \"connection\": \"shared_sharepointonline\",\n                            \"operationId\": \"GetItems\"\n                          }\n                        }\n                      },\n                      \"Compose_Count_Items_Check\": {\n                        \"type\": \"Compose\",\n                        \"inputs\": @{length(coalesce(outputs('Get_items_OTP_Verify')?['body']?['value'], json('[]')))},\n                        \"runAfter\": {\n                          \"Get_items\": [\n                            \"Succeeded\"\n                          ]\n                        }\n                      },\n                      \"Condition\": {\n                        \"type\": \"If\",\n                        \"expression\": {\n                          \"less\": [\n                            @{int(coalesce(outputs('Compose_Count_Items_Check'), 0))},\n                            1\n                          ]\n                        },\n                        \"actions\": {\n                          \"Set_variable_varStatusCode_No_Pending_OTP_Found\": {\n                            \"type\": \"SetVariable\",\n                            \"inputs\": {\n                              \"name\": \"varStatusCode\",\n                              \"value\": 404\n                            }\n                          },\n                          \"Append_to_string_variable_varResponse_No_Pending_OTP_Found\": {\n                            \"type\": \"SetVariable\",\n                            \"inputs\": {\n                              \"name\": \"varResponse\",\n                              \"value\": {\n                                \"valid\": false,\n                                \"code\": \"OTP_NOT_FOUND\",\n                                \"message\": \"No pending OTP was found for this identifier.\"\n                              }\n                            },\n                            \"runAfter\": {\n                              \"Set_variable_varStatusCode_No_Pending_OTP_Found\": [\n                                \"Succeeded\"\n                              ]\n                            }\n                          }\n                        },\n                        \"else\": {\n                          \"actions\": {\n                            \"Condition_Code_Matches\": {\n                              \"type\": \"If\",\n                              \"expression\": {\n                                \"equals\": [\n                                  @{trim(string(coalesce(first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['OTP_Code'], '')))},\n                                  @{outputs('Compose_OTP_Code_Verify')}\n                                ]\n                              },\n                              \"actions\": {\n                                \"Condition_Not_Expired\": {\n                                  \"type\": \"If\",\n                                  \"expression\": {\n                                    \"greater\": [\n                                      @{ticks(coalesce(first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['Expires_At'], '1900-01-01T00:00:00Z'))},\n                                      @{ticks(utcNow())}\n                                    ]\n                                  },\n                                  \"actions\": {\n                                    \"Update_item\": {\n                                      \"type\": \"OpenApiConnection\",\n                                      \"inputs\": {\n                                        \"parameters\": {\n                                          \"dataset\": \"https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING\",\n                                          \"table\": \"9421d473-8906-43b7-a41f-a213046683c1\",\n                                          \"id\": @{coalesce(first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['ID'], first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['Id'])},\n                                          \"item/Title\": @{coalesce(first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['Title'], outputs('Compose_OTP_Identifier_Verify'))},\n                                          \"item/Is_Verified\": true\n                                        },\n                                        \"host\": {\n                                          \"apiId\": \"/providers/Microsoft.PowerApps/apis/shared_sharepointonline\",\n                                          \"connection\": \"shared_sharepointonline\",\n                                          \"operationId\": \"PatchItem\"\n                                        }\n                                      }\n                                    },\n                                    \"Set_variable_Verification_Successful_Status\": {\n                                      \"type\": \"SetVariable\",\n                                      \"inputs\": {\n                                        \"name\": \"varStatusCode\",\n                                        \"value\": 200\n                                      },\n                                      \"runAfter\": {\n                                        \"Update_item\": [\n                                          \"Succeeded\"\n                                        ]\n                                      }\n                                    },\n                                    \"Append_to_string_variable_Verification_Successful\": {\n                                      \"type\": \"SetVariable\",\n                                      \"inputs\": {\n                                        \"name\": \"varResponse\",\n                                        \"value\": {\n                                          \"valid\": true,\n                                          \"message\": \"Verification successful\",\n                                          \"verificationToken\": @{variables('varRequestId')},\n                                          \"otpId\": @{string(coalesce(first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['ID'], first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['Id'], ''))}\n                                        }\n                                      },\n                                      \"runAfter\": {\n                                        \"Set_variable_Verification_Successful_Status\": [\n                                          \"Succeeded\"\n                                        ]\n                                      }\n                                    }\n                                  },\n                                  \"else\": {\n                                    \"actions\": {\n                                      \"Set_variable_OTP_Expired_Status\": {\n                                        \"type\": \"SetVariable\",\n                                        \"inputs\": {\n                                          \"name\": \"varStatusCode\",\n                                          \"value\": 410\n                                        }\n                                      },\n                                      \"Append_to_string_variable_OTP_Expired\": {\n                                        \"type\": \"SetVariable\",\n                                        \"inputs\": {\n                                          \"name\": \"varResponse\",\n                                          \"value\": {\n                                            \"valid\": false,\n                                            \"code\": \"OTP_EXPIRED\",\n                                            \"message\": \"OTP expired.\"\n                                          }\n                                        },\n                                        \"runAfter\": {\n                                          \"Set_variable_OTP_Expired_Status\": [\n                                            \"Succeeded\"\n                                          ]\n                                        }\n                                      }\n                                    }\n                                  }\n                                }\n                              },\n                              \"else\": {\n                                \"actions\": {\n                                  \"Set_variable_OTP_Invalid_Status\": {\n                                    \"type\": \"SetVariable\",\n                                    \"inputs\": {\n                                      \"name\": \"varStatusCode\",\n                                      \"value\": 401\n                                    }\n                                  },\n                                  \"Append_to_string_variable_OTP_Invalid\": {\n                                    \"type\": \"SetVariable\",\n                                    \"inputs\": {\n                                      \"name\": \"varResponse\",\n                                      \"value\": {\n                                        \"valid\": false,\n                                        \"code\": \"OTP_INVALID\",\n                                        \"message\": \"Invalid OTP code.\"\n                                      }\n                                    },\n                                    \"runAfter\": {\n                                      \"Set_variable_OTP_Invalid_Status\": [\n                                        \"Succeeded\"\n                                      ]\n                                    }\n                                  }\n                                }\n                              }\n                            }\n                          }\n                        },\n                        \"runAfter\": {\n                          \"Compose_Count_Items_Check\": [\n                            \"Succeeded\"\n                          ]\n                        }\n                      }\n                    }\n                  },\n                  \"runAfter\": {\n                    \"Compose_OTP_Code_Verify\": [\n                      \"Succeeded\"\n                    ]\n                  }\n                }\n              }\n            }\n          }\n        }\n"
+                          },
+                          "Get_item_OTP_Record": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                "table": "9421d473-8906-43b7-a41f-a213046683c1",
+                                "id": "@first(outputs('Get_items_OTP_Verify')?['body']?['value'])?['ID']"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                "connection": "shared_sharepointonline",
+                                "operationId": "GetItem"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "less": [
+                              "@outputs('Compose_Count_Items_Check')",
+                              1
+                            ]
+                          }
+                        ]
+                      },
+                      "type": "If"
+                    },
+                    "Condition_Otp_Has_Pending_Code": {
+                      "type": "If",
+                      "runAfter": {},
+                      "expression": {
+                        "and": [
+                          {
+                            "greater": [
+                              "@length(coalesce(outputs('Get_items_OTP_Attempts')?['body/value'],json('[]')))",
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Update_item_Attempts": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                              "table": "9421d473-8906-43b7-a41f-a213046683c1",
+                              "id": "@first(outputs('Get_items_OTP_Attempts')?['body/value'])?['ID']",
+                              "item/Attempts": "@add(outputs('Compose_Attempts_So_Far'), 1)"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connection": "shared_sharepointonline",
+                              "operationId": "PatchItem"
+                            }
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {}
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greaterOrEquals": [
+                        "@outputs('Compose_Attempts_So_Far')",
+                        5
+                      ]
+                    }
+                  ]
+                },
+                "type": "If"
+              }
+            }
+          }
+        },
+        "default": {
+          "actions": {
+            "Append_to_string_variable_Default": {
+              "runAfter": {
+                "Set_variable_Default": [
+                  "Succeeded"
+                ]
+              },
+              "type": "AppendToStringVariable",
+              "inputs": {
+                "name": "varResponse",
+                "value": {
+                  "valid": false,
+                  "message": "Unknown or invalid action: @{triggerBody()}"
+                }
+              }
+            },
+            "Set_variable_Default": {
+              "type": "SetVariable",
+              "inputs": {
+                "name": "varStatusCode",
+                "value": 400
+              }
+            }
+          }
+        },
+        "expression": "@triggerBody()?['action']",
+        "type": "Switch"
+      },
+      "Set_variable_varData": {
+        "runAfter": {
+          "Compose_Value_Set_variable_varData": [
+            "Succeeded"
+          ]
+        },
+        "type": "SetVariable",
+        "inputs": {
+          "name": "varData",
+          "value": "@outputs('Compose_Value_Set_variable_varData')"
+        }
+      },
+      "Scope_Flow_Data_Capture": {
+        "actions": {
+          "Compose_Redacted_Queries": {
+            "runAfter": {
+              "Compose_Response_Body": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000427"
+            },
+            "type": "Compose",
+            "inputs": "@setProperty(setProperty(coalesce(triggerOutputs()?['queries'],json('{}')),'sig','***REDACTED***'),'code','***REDACTED***')"
+          },
+          "Compose_Redacted_Headers": {
+            "runAfter": {
+              "Compose_Redacted_Queries": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000428"
+            },
+            "type": "Compose",
+            "inputs": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(coalesce(triggerOutputs()?['headers'],json('{}')),'Authorization','***REDACTED***'),'Cookie','***REDACTED***'),'x-api-key','***REDACTED***'),'Ocp-Apim-Subscription-Key','***REDACTED***'),'x-ms-igw-external-uri','***REDACTED***'),'x-ms-igw-raw-target','***REDACTED***'), 'x-dgo-proof', '***REDACTED***'), 'X-DGO-Proof', '***REDACTED***')"
+          },
+          "Compose_Flow_Run_Record": {
+            "runAfter": {
+              "Compose_Redacted_Headers": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000429"
+            },
+            "type": "Compose",
+            "inputs": {
+              "capture_metadata": {
+                "telemetry_kind": "flow_run_record",
+                "capture_version": "2.0.0",
+                "captured_at_utc": "@utcNow()",
+                "capture_scope": "Scope_Flow_Data_Capture"
+              },
+              "workflow_identity": {
+                "internal_name": "@workflow()?['name']",
+                "full_resource_id": "@workflow()?['id']",
+                "type": "@workflow()?['type']",
+                "location": "@workflow()?['location']",
+                "tags": "@coalesce(workflow()?['tags'],json('{}'))"
+              },
+              "run_identity": {
+                "run_name": "@workflow()?['run']?['name']",
+                "run_resource_id": "@workflow()?['run']?['id']"
+              },
+              "trigger_record": {
+                "method": "@triggerOutputs()?['method']",
+                "headers_redacted": "@coalesce(outputs('Compose_Redacted_Headers'),json('{}'))",
+                "queries_redacted": "@coalesce(outputs('Compose_Redacted_Queries'),json('{}'))"
+              },
+              "request": {
+                "body_redacted": {
+                  "action": "@triggerBody()?['action']",
+                  "knownUser": ""
+                }
+              },
+              "design_definition": {
+                "contract_version": "2026-08-21.1",
+                "endpoint": "Otp"
+              },
+              "response_record": {
+                "status_code_sent": "@variables('varStatusCode')",
+                "error_count": "@length(coalesce(variables('varErrors'),json('[]')))"
+              },
+              "outcome": {
+                "flow_outcome": "@if(less(int(variables('varStatusCode')),400),'Succeeded','Failed')"
+              },
+              "timing": {
+                "received_at_utc": "@variables('varReceivedAtUtc')",
+                "completed_at_utc": "@variables('varCompletedAtUtc')",
+                "duration_ms": "@variables('varDurationMs')"
+              }
+            }
+          },
+          "Create_Flow_Telemetry": {
+            "runAfter": {
+              "Compose_Flow_Run_Record": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000430"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                "item/RunId": "@workflow()?['run']?['name']",
+                "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+                "item/CompletedAtUtc": "@variables('varCompletedAtUtc')",
+                "item/Outcome": "@if(less(int(variables('varStatusCode')),400),'Succeeded','Failed')",
+                "item/DurationMs": "@variables('varDurationMs')",
+                "item/ErrorMessage": "@string(variables('varErrors'))",
+                "item/RunRecordJson": "@string(outputs('Compose_Flow_Run_Record'))"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "PostItem"
+              }
+            }
+          },
+          "Compose_Response_Body": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000420"
+            },
+            "type": "Compose",
+            "inputs": "@outputs('Compose__Standard_Response_Revised')"
+          }
+        },
+        "runAfter": {
+          "Scope_Finalize_Response_State": [
+            "Succeeded",
+            "Skipped",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000431"
+        },
+        "type": "Scope"
+      },
+      "Scope_Finalize_Response_State": {
+        "actions": {
+          "Set_variable__varDurationMs": {
+            "runAfter": {
+              "Set_variable_varCompletedAtUtc": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "d9fe8acd-9316-42f2-8e38-c0f60c351165"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "varDurationMs",
+              "value": "@if(\n  equals(coalesce(variables('varStartTicks'), 0), 0),\n  0,\n  max(\n    div(\n      sub(\n        ticks(\n          coalesce(\n            variables('varCompletedAtUtc'),\n            utcNow()\n          )\n        ),\n        variables('varStartTicks')\n      ),\n      10000\n    ),\n    0\n  )\n)"
+            }
+          },
+          "Set_variable_varCompletedAtUtc": {
+            "metadata": {
+              "operationMetadataId": "03ed97ec-68f5-4ef2-b1b6-a77ec85edc26"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "varCompletedAtUtc",
+              "value": "@utcNow()"
+            }
+          },
+          "Compose__Standard_Response_Revised": {
+            "runAfter": {
+              "Compose_Allowed_Origin_Otp": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "da80497d-c321-4fdf-97a2-c6a9cb2c0707"
+            },
+            "type": "Compose",
+            "inputs": {
+              "ok": "@less(coalesce(variables('varStatusCode'), 500), 400)",
+              "status": {
+                "http": "@coalesce(variables('varStatusCode'), 500)",
+                "code": "@if(\n      less(coalesce(variables('varStatusCode'), 500), 400),\n      'OK',\n      concat('ERR', string(coalesce(variables('varStatusCode'), 500)))\n    )",
+                "message": "@if(\n      greater(coalesce(variables('varFailedCount'), 0), 0),\n      'Completed with errors',\n      if(\n        greaterOrEquals(coalesce(variables('varStatusCode'), 500), 400),\n        'Failed',\n        'Completed successfully'\n      )\n    )"
+              },
+              "confidence": "@and(\n    less(coalesce(variables('varStatusCode'), 500), 400),\n    equals(coalesce(variables('varFailedCount'), 0), 0),\n    greater(length(coalesce(variables('varResults'), json('[]'))), 0)\n  )",
+              "request": {
+                "requestId": "@if(\n      empty(trim(string(coalesce(triggerBody()?['requestId'], '')))),\n      variables('varRequestId'),\n      triggerBody()?['requestId']\n    )",
+                "trackingId": "@coalesce(\n      triggerBody()?['trackingId'],\n      triggerBody()?['trackingID'],\n      ''\n    )",
+                "action": "@coalesce(string(triggerBody()?['action']), 'singleassignment')",
+                "operation": "@coalesce(string(triggerBody()?['operation']), 'create')",
+                "mode": "@if(\n      greater(length(coalesce(triggerBody()?['SelectedItems'], json('[]'))), 1),\n      'bulk',\n      'single'\n    )",
+                "requestedBy": "@if(\n      empty(trim(string(coalesce(triggerBody()?['userEmail'], '')))),\n      coalesce(triggerBody()?['NewActivityTask']?['CreatedBy'], 'unknown'),\n      triggerBody()?['userEmail']\n    )",
+                "source": "@coalesce(string(triggerBody()?['source']), 'http')"
+              },
+              "timing": {
+                "receivedAtUtc": "@coalesce(\n      variables('varReceivedAtUtc'),\n      variables('varCompletedAtUtc')\n    )",
+                "completedAtUtc": "@variables('varCompletedAtUtc')",
+                "durationMs": "@coalesce(variables('varDurationMs'), 0)"
+              },
+              "data": "@variables('varData')",
+              "results": "@coalesce(variables('varResults'), json('[]'))",
+              "errors": "@coalesce(variables('varErrors'), json('[]'))",
+              "meta": {
+                "ts": "@variables('varCompletedAtUtc')",
+                "runId": "@workflow()?['run']?['name']",
+                "flowName": "@workflow()?['name']",
+                "contractVersion": "2026-04-14.1"
+              }
+            }
+          },
+          "Response": {
+            "runAfter": {
+              "Compose__Standard_Response_Revised": [
+                "Succeeded"
+              ]
+            },
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": "@coalesce(variables('varStatusCode'), 500)",
+              "headers": {
+                "Access-Control-Allow-Origin": "@{outputs('Compose_Allowed_Origin_Otp')}",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, X-DGO-Trigger, X-Correlation-ID",
+                "Content-Type": "application/json"
+              },
+              "body": "@outputs('Compose__Standard_Response_Revised')"
+            }
+          },
+          "Get_Allowed_Origins_Otp": {
+            "runAfter": {
+              "Set_variable__varDurationMs": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000421"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                "$filter": "startswith(Title,'ALLOWED_ORIGIN')",
+                "$top": 20
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Select_Allowed_Origins_Otp": {
+            "runAfter": {
+              "Get_Allowed_Origins_Otp": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000422"
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(outputs('Get_Allowed_Origins_Otp')?['body/value'],json('[]'))",
+              "select": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+            }
+          },
+          "Compose_Request_Origin_Otp": {
+            "runAfter": {
+              "Select_Allowed_Origins_Otp": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000423"
+            },
+            "type": "Compose",
+            "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['Origin'],triggerOutputs()?['headers']?['origin'],'')))"
+          },
+          "Compose_Allowed_Origin_Otp": {
+            "runAfter": {
+              "Compose_Request_Origin_Otp": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000424"
+            },
+            "type": "Compose",
+            "inputs": "@if(contains(coalesce(body('Select_Allowed_Origins_Otp'),json('[]')),outputs('Compose_Request_Origin_Otp')),outputs('Compose_Request_Origin_Otp'),string(coalesce(first(coalesce(body('Select_Allowed_Origins_Otp'),json('[]'))),'')))"
+          }
+        },
+        "runAfter": {
+          "Set_variable_varData": [
+            "Succeeded",
+            "TimedOut",
+            "Skipped",
+            "Failed"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "cba07334-15b6-4135-9c7e-cc292e8f339b"
+        },
+        "type": "Scope"
+      },
+      "Compose_Value_Set_variable_varData": {
+        "type": "Compose",
+        "inputs": "@json(if(empty(variables('varResponse')),'{}',variables('varResponse')))",
+        "runAfter": {
+          "Switch": [
+            "Succeeded",
+            "Skipped",
+            "TimedOut",
+            "Failed"
+          ]
+        }
+      }
+    },
+    "runAfter": {},
+    "type": "Scope"
+  },
+  "allConnectionData": {
+    "Get_items_OTP_Attempts": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_items_OTP_Verify": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Update_item": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_item_OTP_Record": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Update_item_Attempts": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Flow_Telemetry": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Allowed_Origins_Otp": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Otp_Directory_User": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Otp_Proof": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

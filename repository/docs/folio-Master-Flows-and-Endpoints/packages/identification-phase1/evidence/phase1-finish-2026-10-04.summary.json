@@ -1,0 +1,382 @@
+{
+ "what": "Summary of the ID_Phase1_Finish run report (run 08584105200478466943209931995CU20). 20 of 23 steps succeeded in 20 seconds; the 3 index requests on DGO DIGITAL OPS (22,108 items) each ran 11 to 13 minutes and failed without a SharePoint message in the report.",
+ "run": {
+  "requestId": "40486651-017e-4f26-af17-28410d48df21",
+  "startedAtUtc": "2026-10-04T04:07:17.8335533Z",
+  "runName": "08584105200478466943209931995CU20",
+  "planned": 23
+ },
+ "completedAtUtc": "2026-10-04T04:44:06.7102244Z",
+ "columns": [
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "RegistryFileRef",
+   "existed": false,
+   "create": "Succeeded",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:19.4010786Z",
+   "endTime": "2026-10-04T04:07:19.4027937Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "NVERSE",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": "",
+   "unindex": "Succeeded",
+   "startTime": "2026-10-04T04:07:20.3192653Z",
+   "endTime": "2026-10-04T04:07:20.3207903Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "RefIDDN",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": "",
+   "unindex": "Succeeded",
+   "startTime": "2026-10-04T04:07:21.0285469Z",
+   "endTime": "2026-10-04T04:07:21.0300937Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "Reference_ID",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": "",
+   "unindex": "Succeeded",
+   "startTime": "2026-10-04T04:07:21.6086032Z",
+   "endTime": "2026-10-04T04:07:21.6101024Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "GDSUROUT",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": "",
+   "unindex": "Succeeded",
+   "startTime": "2026-10-04T04:07:22.2270857Z",
+   "endTime": "2026-10-04T04:07:22.228661Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "Followuptrigger",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": "",
+   "unindex": "Succeeded",
+   "startTime": "2026-10-04T04:07:22.9158692Z",
+   "endTime": "2026-10-04T04:07:22.9169037Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "GTQGrouping",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": "",
+   "unindex": "Succeeded",
+   "startTime": "2026-10-04T04:07:23.7525447Z",
+   "endTime": "2026-10-04T04:07:23.7536929Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "_x0033_rdAssigned",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": "",
+   "unindex": "Succeeded",
+   "startTime": "2026-10-04T04:07:24.5482811Z",
+   "endTime": "2026-10-04T04:07:24.5498595Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:25.4563218Z",
+   "endTime": "2026-10-04T04:07:25.4573724Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:26.1045625Z",
+   "endTime": "2026-10-04T04:07:26.1058657Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:26.9127668Z",
+   "endTime": "2026-10-04T04:07:26.9142003Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:27.7680154Z",
+   "endTime": "2026-10-04T04:07:27.769148Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "AssigneeKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:28.5850507Z",
+   "endTime": "2026-10-04T04:07:28.5864064Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "RoutedOrgKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:29.5031766Z",
+   "endTime": "2026-10-04T04:07:29.5043222Z"
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:30.4376973Z",
+   "endTime": "2026-10-04T04:07:30.4390592Z"
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:32.0647751Z",
+   "endTime": "2026-10-04T04:07:32.065789Z"
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "TaskRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:33.6207835Z",
+   "endTime": "2026-10-04T04:07:33.6224786Z"
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:34.855447Z",
+   "endTime": "2026-10-04T04:07:34.8570042Z"
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:36.2189493Z",
+   "endTime": "2026-10-04T04:07:36.2205077Z"
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Succeeded",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:07:37.9295378Z",
+   "endTime": "2026-10-04T04:07:37.9310629Z"
+  },
+  {
+   "list": "DGO DIGITAL OPS",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Failed",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:19:05.7055284Z",
+   "endTime": "2026-10-04T04:19:05.7068023Z"
+  },
+  {
+   "list": "DGO DIGITAL OPS",
+   "column": "ReferenceId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Failed",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:32:24.4306209Z",
+   "endTime": "2026-10-04T04:32:24.4320735Z"
+  },
+  {
+   "list": "DGO DIGITAL OPS",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Failed",
+   "error": "",
+   "unindex": "Skipped",
+   "startTime": "2026-10-04T04:44:06.1211443Z",
+   "endTime": "2026-10-04T04:44:06.1230331Z"
+  }
+ ],
+ "indexConditionTimings": [
+  {
+   "startTime": "2026-10-04T04:07:19.0693529Z",
+   "endTime": "2026-10-04T04:07:19.3900007Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:19.9179591Z",
+   "endTime": "2026-10-04T04:07:19.9231213Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:20.7713392Z",
+   "endTime": "2026-10-04T04:07:20.7775483Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:21.3673171Z",
+   "endTime": "2026-10-04T04:07:21.3731403Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:21.9560223Z",
+   "endTime": "2026-10-04T04:07:21.9618271Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:22.6204273Z",
+   "endTime": "2026-10-04T04:07:22.6255368Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:23.4834219Z",
+   "endTime": "2026-10-04T04:07:23.4896429Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:24.1859832Z",
+   "endTime": "2026-10-04T04:07:24.1929829Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:24.9718453Z",
+   "endTime": "2026-10-04T04:07:25.4485043Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:25.8267942Z",
+   "endTime": "2026-10-04T04:07:26.0939267Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:26.5853335Z",
+   "endTime": "2026-10-04T04:07:26.9043712Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:27.4442947Z",
+   "endTime": "2026-10-04T04:07:27.7571367Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:28.2437675Z",
+   "endTime": "2026-10-04T04:07:28.5728457Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:29.1355237Z",
+   "endTime": "2026-10-04T04:07:29.4932346Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:30.0244872Z",
+   "endTime": "2026-10-04T04:07:30.4242505Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:30.8722173Z",
+   "endTime": "2026-10-04T04:07:32.0568597Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:32.4360828Z",
+   "endTime": "2026-10-04T04:07:33.608887Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:34.0007381Z",
+   "endTime": "2026-10-04T04:07:34.8450763Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:35.2965471Z",
+   "endTime": "2026-10-04T04:07:36.2094333Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:36.8325156Z",
+   "endTime": "2026-10-04T04:07:37.919051Z",
+   "status": "Succeeded"
+  },
+  {
+   "startTime": "2026-10-04T04:07:38.3988081Z",
+   "endTime": "2026-10-04T04:19:05.6811201Z",
+   "status": "Failed"
+  },
+  {
+   "startTime": "2026-10-04T04:19:06.0986983Z",
+   "endTime": "2026-10-04T04:32:24.4093367Z",
+   "status": "Failed"
+  },
+  {
+   "startTime": "2026-10-04T04:32:25.6985465Z",
+   "endTime": "2026-10-04T04:44:06.0939526Z",
+   "status": "Failed"
+  }
+ ]
+}

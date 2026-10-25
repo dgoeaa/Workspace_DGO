@@ -1,0 +1,1565 @@
+.
+├── .devcontainer
+│   └── devcontainer.json
+├── .gitattributes
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── .gitignore
+├── .htaccess
+├── CLAUDE.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── OWNERS.yaml
+├── README.md
+├── SECURITY.md
+├── acknowledge.html
+├── assets
+│   ├── fonts
+│   │   └── CascadiaMono-Regular.woff2
+│   ├── icons
+│   │   └── sprite.svg
+│   ├── nitda-lockup-white.png
+│   ├── nitda-lockup.png
+│   └── nitda-symbol.png
+├── config
+│   ├── acknowledgement-flow.config.js
+│   ├── action-ownership.config.js
+│   ├── action-routing.config.js
+│   ├── activity-parity.config.js
+│   ├── app.config.js
+│   ├── assignment-cascade.config.js
+│   ├── auth.config.js
+│   ├── brand.config.js
+│   ├── browser-certification.config.js
+│   ├── cache-policy.config.js
+│   ├── category-matrix.config.js
+│   ├── correspondence-categories.config.js
+│   ├── correspondence-email-templates.config.js
+│   ├── deeplink.config.js
+│   ├── dynamic-actions.config.js
+│   ├── email-documents.generated.js
+│   ├── email-fragments.generated.js
+│   ├── endpoints.config.js
+│   ├── entry-points.config.js
+│   ├── fetch-policy.config.js
+│   ├── filename-policy.config.js
+│   ├── flow-shapes.data.js
+│   ├── module-boundaries.config.js
+│   ├── nav.config.js
+│   ├── navigation-relationships.config.js
+│   ├── notice-links.config.js
+│   ├── notification-delivery.config.js
+│   ├── notification-failure-groups.config.js
+│   ├── notification-matrix.config.js
+│   ├── ops-runbook.config.js
+│   ├── organizational-units.config.js
+│   ├── performance-budget.config.js
+│   ├── platform-provisioning.config.js
+│   ├── platforms.data.js
+│   ├── priority.config.js
+│   ├── product-definition.config.json
+│   ├── rbac.config.js
+│   ├── receipt-ledger.config.js
+│   ├── routes.config.js
+│   ├── source-routing.config.js
+│   ├── source-views.config.js
+│   ├── staff-notice-templates.config.js
+│   ├── state-schema.config.js
+│   ├── status-vocabulary.config.js
+│   ├── support-routing.config.js
+│   ├── welcome-experience.config.js
+│   └── workflow-clarity.config.js
+├── core
+│   ├── acknowledgement-service.js
+│   ├── action-authority.js
+│   ├── action-runtime.js
+│   ├── activity-parity.js
+│   ├── admin-actions.js
+│   ├── api.js
+│   ├── archive.js
+│   ├── assignment-cascade.js
+│   ├── assignment-payload.js
+│   ├── audit-log.js
+│   ├── auth.js
+│   ├── boot.js
+│   ├── brand-sub.js
+│   ├── build-freshness.js
+│   ├── cache-manager.js
+│   ├── capsule-client.js
+│   ├── contracts.js
+│   ├── correspondence-email-service.js
+│   ├── current-user.js
+│   ├── data-client.js
+│   ├── data-loader.js
+│   ├── data-reconciler.js
+│   ├── data-selectors.js
+│   ├── deeplink-parse.js
+│   ├── deeplink-resolver.js
+│   ├── directorate-scope.js
+│   ├── dispatch-actions.js
+│   ├── dispatch-service.js
+│   ├── document-flags.js
+│   ├── domain.js
+│   ├── email-fragment-service.js
+│   ├── endpoint-atlas.js
+│   ├── endpoint-formation.js
+│   ├── endpoint-registry.js
+│   ├── enterprise-domain.js
+│   ├── entity-store.js
+│   ├── entry-point-feeds.js
+│   ├── errors.js
+│   ├── executive-register.js
+│   ├── export-bundle.js
+│   ├── failure-health.js
+│   ├── fetch-manager.js
+│   ├── flow-confirmation.js
+│   ├── flow-shapes.js
+│   ├── focus-trap.js
+│   ├── governed-actions.js
+│   ├── health-contract.js
+│   ├── idempotency.js
+│   ├── inbox-view.js
+│   ├── intake-list.js
+│   ├── intake-triage.js
+│   ├── lifecycle.js
+│   ├── link-guard.js
+│   ├── loading-state.js
+│   ├── metrics-service.js
+│   ├── nitda-module-adapter.js
+│   ├── notification-center.js
+│   ├── offline-action-queue.js
+│   ├── ops-runbook.js
+│   ├── otp-identity.js
+│   ├── otp-service.js
+│   ├── overview.js
+│   ├── pending-queue.js
+│   ├── performance-monitor.js
+│   ├── platform-provisioner.js
+│   ├── portal-status-service.js
+│   ├── query-store.js
+│   ├── receipt-ledger.js
+│   ├── record-actions.js
+│   ├── record-search.js
+│   ├── record-view.js
+│   ├── reference-minter.js
+│   ├── registry-actions.js
+│   ├── render-budget.js
+│   ├── report-email-service.js
+│   ├── report-export-service.js
+│   ├── retention.js
+│   ├── route-redirects.js
+│   ├── router.js
+│   ├── scan-intake-service.js
+│   ├── security-actions.js
+│   ├── server-payloads.js
+│   ├── server-writes.js
+│   ├── source-normalizer.js
+│   ├── source-views.js
+│   ├── staff-notice-service.js
+│   ├── state.js
+│   ├── support-service.js
+│   ├── task-views.js
+│   ├── ui-interactions.js
+│   ├── ui-state.js
+│   ├── ui.js
+│   ├── welcome-experience.js
+│   ├── work-measures.js
+│   ├── workspace-enhance.js
+│   └── write-manager.js
+├── docs
+│   ├── PLATFORM.md
+│   ├── README.md
+│   ├── admin-centre
+│   │   ├── 01-design.md
+│   │   ├── 02-developer-guide.md
+│   │   ├── 03-provisioning-and-configuration.md
+│   │   ├── 04-user-guides.md
+│   │   ├── 05-assessment.md
+│   │   └── README.md
+│   ├── architecture
+│   │   ├── ADMIN_MONITORING_MANAGEMENT_SPEC.md
+│   │   ├── AUTHENTICATION_CONTRACT.md
+│   │   ├── AUTH_RBAC_GUIDE.md
+│   │   ├── BOOT_DATA_DEEPLINK_TRACE.md
+│   │   ├── CONSOLIDATION_ANALYSIS.md
+│   │   ├── ESSENTIALS_MAP.md
+│   │   ├── ESSENTIALS_PLAN.json
+│   │   ├── ESSENTIALS_PLAN.md
+│   │   ├── LAYOUT_REVIEW.md
+│   │   ├── MODULE_RATIONALISATION.md
+│   │   ├── PLATFORM_ACCESS_SPEC.md
+│   │   ├── PLATFORM_INDEPENDENCE.md
+│   │   ├── ROTATION_REGISTER.md
+│   │   ├── TARGET_ARCHITECTURE.md
+│   │   ├── VAULT_ADOPTION.md
+│   │   ├── architecture-data.json
+│   │   ├── architecture.html
+│   │   └── components.html
+│   ├── audits
+│   │   └── ui-wayfinding-audit-2026-10-20.md
+│   ├── cutover
+│   │   └── ARCHIVE_DISPOSITION.md
+│   ├── deployment
+│   │   ├── DOCUMENT_PORTAL_LIVE_OPERATIONS.md
+│   │   ├── LOCAL-DEV.md
+│   │   ├── OUTSTANDING_SOURCES.json
+│   │   ├── PACKAGING.md
+│   │   ├── PLAN.md
+│   │   ├── PLATFORM_ACCESS_RUNBOOK.md
+│   │   ├── PRODUCTION_READINESS_REGISTER.json
+│   │   ├── README.md
+│   │   ├── RUNBOOK.md
+│   │   ├── closure-disposition.json
+│   │   └── outstanding-rollup.json
+│   ├── folio-Master-Flows-and-Endpoints
+│   │   ├── FLOW_CATALOGUE.md
+│   │   ├── README.md
+│   │   ├── contracts
+│   │   │   ├── ALIGNMENT_FINDINGS.md
+│   │   │   ├── ALIGNMENT_REPORT.json
+│   │   │   ├── DOCUMENT_PORTAL_FLOWS.html
+│   │   │   ├── DOCUMENT_PORTAL_FLOWS.json
+│   │   │   ├── DOCUMENT_PORTAL_FLOWS.md
+│   │   │   ├── IDENTITY.md
+│   │   │   ├── INTERNAL_PLATFORM_FLOWS.md
+│   │   │   ├── create-task.aligned.request-schema.json
+│   │   │   ├── deployed
+│   │   │   │   ├── 01 - GOV - Provision HTTP Flow Registry__17a85efb-1ed2-45c9-a602-2ad6f8bb7ead__full_definition.json
+│   │   │   │   ├── 02 - GOV - Register HTTP Flow Truth__651ae389-eeed-4bf0-9799-67bd964ebe71__full_definition.json
+│   │   │   │   ├── 03 - GOV - Record HTTP Flow Execution__0545e19a-c34a-45db-bd11-27b87a34973e__full_definition.json
+│   │   │   │   ├── 04 - GOV - Audit HTTP Flow Registry__3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b__full_definition.json
+│   │   │   │   ├── 05 - GOV - Retire HTTP Flow__493b4ab7-8f63-4fab-8121-746c2cac7f98__full_definition.json
+│   │   │   │   ├── 06 - GOV - Registry Exception Notification__87a74d7e-7435-4e34-baa1-7e759ebf5565__full_definition.json
+│   │   │   │   ├── 07 - GOV - Consumer HTTP Self-Registration Template__c6a011c5-7b11-4241-82ae-a45b88ebf276__full_definition.json
+│   │   │   │   ├── 08 - GOV - Discover and Register HTTP Consumers__f5e7679f-ca1b-4216-8a6e-bb6c044ed06f__full_definition.json
+│   │   │   │   ├── AI_Document_Processing__fefa43c6-fb9d-4337-8b65-7fd19fa09b6d__full_definition.json
+│   │   │   │   ├── AUTO_SCHEDULED_SWEEP__8c19b45c-4174-4d2f-9429-ffd08dd1a5ae__full_definition.json
+│   │   │   │   ├── BULK OPS DATA RETRIEVAL HTTP__5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06__full_definition.json
+│   │   │   │   ├── CG_Portal_Daily_Sweep__f12aec6d-1554-483d-a525-a96ddb60d06f__full_definition.json
+│   │   │   │   ├── CG_Portal_Status_Check_Endpoint__60042a2e-dadb-4ad8-a672-38b4132d299f__full_definition.json
+│   │   │   │   ├── CG_Portal_Support_Endpoint__4873c936-a2be-4726-8e69-426edb8f70e6__full_definition.json
+│   │   │   │   ├── CG_Portal_Verification_Confirmation_Endpoint__f96e3448-3c79-4d42-b224-825258a552ba__full_definition.json
+│   │   │   │   ├── CG_Portal_Verification_Endpoint__ba47f79b-a831-49e8-b00b-3f8937c331df__full_definition.json
+│   │   │   │   ├── CG_Portal_Writeback_Endpoint__bde13d27-73b3-4e1a-9687-eb289b039c7a__full_definition.json
+│   │   │   │   ├── CG_Registry_Status_Notifier__8ebf6001-89cd-49c9-a9b6-4dedb9a5768b__full_definition.json
+│   │   │   │   ├── CG_Submission_Endpoint__de9ef13b-ae4c-42b0-9afa-20e71a180759__full_definition.json
+│   │   │   │   ├── CG_Upload_Endpoint__df82e331-b800-4a8d-996e-d2b2ca846c77__full_definition.json
+│   │   │   │   ├── DGSO INCOMING AI PROCESSING__b6d92bae-591e-fa1e-52eb-b350cad988a7__full_definition.json
+│   │   │   │   ├── Folio_Failure_Watch__c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6__full_definition.json
+│   │   │   │   ├── Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8-e76c-4f7d-81b8-3cb5c88b1c6c__full_definition.json
+│   │   │   │   ├── IP_Activity_Lifecycle_Endpoint__b4db02d8-02a0-4bc9-b9d3-06e2aae2448c__full_definition.json
+│   │   │   │   ├── IP_Create__Task__for_received_Email_Endpoint__ab1a3555-7fce-4bfe-a193-b8b84654b0a4__full_definition.json
+│   │   │   │   ├── IP_Dynamic_Global_Actions_Endpoint__31c0aaf0-ddbb-478c-9a98-bc013265c4c7__full_definition.json
+│   │   │   │   ├── IP_FETCH_ALL_BOOTSTRAP__b79e6707-df4d-4ae7-8a65-738aa45e9a73__full_definition.json
+│   │   │   │   ├── IP_Get_Docs_Endpoint__28f6e62a-fea8-437c-a61a-47aec706c4e2__full_definition.json
+│   │   │   │   ├── IP_OTP_GENERATE__e5632336-641f-4b9b-bd93-99185b5eb975__full_definition.json
+│   │   │   │   ├── IP_OTP_VERIFY__4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61__full_definition.json
+│   │   │   │   ├── IP_Reference_Data_Endpoint__9a4dea8e-15f2-42b6-904d-3655056fa3c2__full_definition.json
+│   │   │   │   ├── IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3-7a99-4259-b6a2-315fbc794d9b__full_definition.json
+│   │   │   │   ├── IP_SCAN_INTAKE__5504d7f9-cc96-470c-be79-217582faf415__full_definition.json
+│   │   │   │   ├── IP_SEND_EMAIL__df59a69f-92ca-4554-ae68-6b464aa73ef7__full_definition.json
+│   │   │   │   ├── IP_User_Admin_Endpoint__e3e5c825-55ba-447e-88c1-96b7e89fd013__full_definition.json
+│   │   │   │   └── Single_Task_Assignment__3caf9458-8d95-4740-a01b-6803dad97d34__full_definition.json
+│   │   │   ├── flow-alignment-console.html
+│   │   │   ├── flow-run-record-schema.json
+│   │   │   ├── flow_run_record_schema.json
+│   │   │   └── transcripts
+│   │   │       ├── DOCUMENTS_PORTAL_transcript_endpoint-check-portal-probe-mskul63e.json
+│   │   │       └── INTERNAL_PLATFORM-transcript_probe-mskv094z.json
+│   │   ├── cutover
+│   │   │   └── FLOW_DECOMMISSION_INVENTORY.md
+│   │   ├── deployment
+│   │   │   ├── DEEPLINK_AUDIT.md
+│   │   │   ├── ENDPOINT_REQUIREMENTS_ASSESSMENT_BRIEF.md
+│   │   │   ├── ESTATE_APPLY.console.js
+│   │   │   ├── ESTATE_APPLY.md
+│   │   │   ├── FLOWS_UPDATE.md
+│   │   │   ├── FLOW_PACKAGE_PROVENANCE.md
+│   │   │   ├── NOTICE_LINKS.md
+│   │   │   ├── NOTIFICATION_MATRIX.md
+│   │   │   ├── PROVISIONING_CONSOLE_GUIDE.md
+│   │   │   ├── estate-apply.cli.mjs
+│   │   │   ├── governance
+│   │   │   │   ├── EXECUTION-AGENT-BRIEF.md
+│   │   │   │   ├── GOVERNANCE-STATUS.md
+│   │   │   │   ├── WHAT-WAS-DONE.md
+│   │   │   │   └── list-bindings.json
+│   │   │   ├── internal
+│   │   │   │   ├── ENDPOINT_INVENTORY_FLOW.md
+│   │   │   │   ├── dynamic-operations.json
+│   │   │   │   ├── evidence
+│   │   │   │   │   ├── 2026-08-31-dynamic-actions-column-evidence.json
+│   │   │   │   │   ├── 2026-09-04-origin-check-not-delegable.json
+│   │   │   │   │   ├── 2026-09-18-tenant-flow-inventory.json
+│   │   │   │   │   ├── 2026-09-22-fetchall-authorisation-bypass.json
+│   │   │   │   │   ├── 2026-09-24-email-flow-adoption.json
+│   │   │   │   │   ├── 2026-09-24-tenant-remediation-verified.json
+│   │   │   │   │   └── 2026-09-27-live-endpoint-wiring.json
+│   │   │   │   └── internal-field-evidence.json
+│   │   │   ├── live-operations-console
+│   │   │   │   ├── ACTIVATION_AND_VALIDATION.md
+│   │   │   │   ├── EMBEDDED_DATA_MODEL.json
+│   │   │   │   ├── EXPLICIT_EXECUTION_SPECIFICATION.md
+│   │   │   │   ├── IMPLEMENTATION_PARAMETER_REGISTER.md
+│   │   │   │   ├── README.md
+│   │   │   │   ├── SHA256_MANIFEST.json
+│   │   │   │   └── coverage.json
+│   │   │   ├── notification-instrument
+│   │   │   │   ├── README.md
+│   │   │   │   ├── REMEDIATION_SHA256_MANIFEST.json
+│   │   │   │   ├── email-templates
+│   │   │   │   │   ├── DEPLOYMENT.md
+│   │   │   │   │   ├── PLATFORM_MAPPING.md
+│   │   │   │   │   ├── TOKEN_CONTRACT.md
+│   │   │   │   │   ├── build
+│   │   │   │   │   │   ├── registry.json
+│   │   │   │   │   │   └── tokens.json
+│   │   │   │   │   └── deploy
+│   │   │   │   │       ├── nitda-dp-01-submission-received.html
+│   │   │   │   │       ├── nitda-dp-02-verification-code.html
+│   │   │   │   │       ├── nitda-dp-03-under-review.html
+│   │   │   │   │       ├── nitda-dp-04-request-for-information.html
+│   │   │   │   │       ├── nitda-dp-05-decision-issued.html
+│   │   │   │   │       ├── nitda-dp-06-matter-closed.html
+│   │   │   │   │       ├── nitda-dp-07-support-case-acknowledged.html
+│   │   │   │   │       ├── nitda-dp-08-acknowledgement-overdue.html
+│   │   │   │   │       ├── nitda-ip-01-single-task-assignment.html
+│   │   │   │   │       ├── nitda-ip-02-bulk-dispatch.html
+│   │   │   │   │       ├── nitda-ip-03-email-to-task.html
+│   │   │   │   │       ├── nitda-ip-04-portal-intake-alert.html
+│   │   │   │   │       ├── nitda-ip-05-document-submitted-for-review.html
+│   │   │   │   │       ├── nitda-ip-06-action-required-reminder.html
+│   │   │   │   │       ├── nitda-ip-07-daily-task-digest.html
+│   │   │   │   │       ├── nitda-ip-08-approval-decision-request.html
+│   │   │   │   │       ├── nitda-ip-09-dispatch-transmittal.html
+│   │   │   │   │       ├── nitda-ip-10-internal-support-request.html
+│   │   │   │   │       ├── nitda-ip-11-official-correspondence.html
+│   │   │   │   │       └── nitda-ip-12-single-task-from-email.html
+│   │   │   │   ├── notification-acceptance-cases.json
+│   │   │   │   ├── notification-processor
+│   │   │   │   │   └── processor-spec.json
+│   │   │   │   ├── notification-release-manifest.json
+│   │   │   │   └── tenant-execution
+│   │   │   │       ├── cutover-register.json
+│   │   │   │       ├── decisions
+│   │   │   │       │   └── agency-decisions.json
+│   │   │   │       ├── evidence
+│   │   │   │       │   ├── 2026-10-16-risk-acceptance-RN-022.json
+│   │   │   │       │   ├── connection-verification.json
+│   │   │   │       │   ├── notification-test-results.json
+│   │   │   │       │   ├── rollback-rehearsal-2026-10-17.json
+│   │   │   │       │   └── tenant-inventory.json
+│   │   │   │       ├── production-authorisation-template.json
+│   │   │   │       ├── risk-acceptance-template.json
+│   │   │   │       └── templates
+│   │   │   │           ├── flow-inventory-record.json
+│   │   │   │           └── notification-result-record.json
+│   │   │   ├── rotation
+│   │   │   │   ├── ROTATION.md
+│   │   │   │   ├── rotation-worksheet.json
+│   │   │   │   └── values.template.txt
+│   │   │   ├── sharepoint
+│   │   │   │   ├── CLOSING_STATE.md
+│   │   │   │   ├── DECISIONS.md
+│   │   │   │   ├── FLOW_STANDARD.md
+│   │   │   │   ├── FLOW_STRUCTURES.md
+│   │   │   │   ├── FUNCTIONAL_SPEC_RECONCILIATION.md
+│   │   │   │   ├── HANDOVER.md
+│   │   │   │   ├── INTERNAL_OPS_COVERAGE.md
+│   │   │   │   ├── LISTS.md
+│   │   │   │   ├── OPEN_ITEMS.md
+│   │   │   │   ├── PORTAL_CIRCLES.md
+│   │   │   │   ├── PORTAL_CLIENT_FINDINGS.md
+│   │   │   │   ├── PORTAL_DATA_CONTRACT.md
+│   │   │   │   ├── PORTAL_WIRING.md
+│   │   │   │   ├── README.md
+│   │   │   │   ├── flow-standard.json
+│   │   │   │   ├── index-targets.json
+│   │   │   │   ├── portal-circles.json
+│   │   │   │   ├── portal-data-contract.json
+│   │   │   │   ├── portal-field-spec.json
+│   │   │   │   ├── portal-wiring.json
+│   │   │   │   └── remediation
+│   │   │   │       ├── 29-redact-igw-headers.md
+│   │   │   │       ├── ACTION_LIST_PREREQUISITES.md
+│   │   │   │       ├── ANALYSIS.md
+│   │   │   │       ├── B2_CONTROL_FLOW_PROPOSAL.md
+│   │   │   │       └── README.md
+│   │   │   └── verification
+│   │   │       ├── README.md
+│   │   │       └── endpoint-verification.json
+│   │   ├── email-catalogue
+│   │   │   ├── ACCEPTANCE.md
+│   │   │   ├── BULK_ASSIGNMENT__BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61
+│   │   │   │   └── Send_Bulk_Failure_Email.html
+│   │   │   ├── EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555
+│   │   │   │   └── Send_an_email_V2_Main_1_1_1.html
+│   │   │   ├── NOKEY__AUTO_SCHEDULED_SWEEP__8c19b45c
+│   │   │   │   ├── Send_Case_Email.html
+│   │   │   │   ├── Send_Digest_Email.html
+│   │   │   │   ├── Send_Server_Error_Alert_Email.html
+│   │   │   │   ├── Send_Task_Reminder_Email.html
+│   │   │   │   └── Send_Undeliverable_Alert_Email.html
+│   │   │   ├── NOKEY__CG_Portal_Daily_Sweep__f12aec6d
+│   │   │   │   ├── Send_Citizen_Ack_Overdue_Email.html
+│   │   │   │   ├── Send_Expired_Upload_Email.html
+│   │   │   │   ├── Send_Registry_Digest_Email.html
+│   │   │   │   └── Send_Server_Error_Alert_Email.html
+│   │   │   ├── NOKEY__CG_Registry_Status_Notifier__8ebf6001
+│   │   │   │   ├── Send_Server_Error_Alert_Email.html
+│   │   │   │   ├── Send_Status_Acknowledged_Email.html
+│   │   │   │   ├── Send_Status_ActionRequired_Email.html
+│   │   │   │   ├── Send_Status_Approved_Email.html
+│   │   │   │   ├── Send_Status_Declined_Email.html
+│   │   │   │   ├── Send_Status_Progress_Email.html
+│   │   │   │   └── Send_Status_Withdrawn_Email.html
+│   │   │   ├── NOKEY__Folio_Failure_Watch__c38bfeaa
+│   │   │   │   └── Send_Failure_Watch_Email.html
+│   │   │   ├── NOKEY__Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8
+│   │   │   │   └── Send_an_email_V2.html
+│   │   │   ├── README.md
+│   │   │   ├── SCAN_INTAKE__IP_SCAN_INTAKE__5504d7f9
+│   │   │   │   ├── Send_DGO_Scan_Notification_Email.html
+│   │   │   │   └── Send_Telemetry_Email.html
+│   │   │   ├── STATUS__CG_Portal_Status_Check_Endpoint__60042a2e
+│   │   │   │   └── Send_Server_Error_Alert_Email.html
+│   │   │   ├── SUBMISSION__CG_Submission_Endpoint__de9ef13b
+│   │   │   │   ├── Send_Rate_Limit_Alert_Email.html
+│   │   │   │   ├── Send_Registry_Alert_Email.html
+│   │   │   │   ├── Send_Sender_Acknowledgement_Email.html
+│   │   │   │   └── Send_Server_Error_Alert_Email.html
+│   │   │   ├── SUPPORT__CG_Portal_Support_Endpoint__4873c936
+│   │   │   │   ├── Send_Helpdesk_Alert_Email.html
+│   │   │   │   ├── Send_Rate_Limit_Alert_Email.html
+│   │   │   │   ├── Send_Server_Error_Alert_Email.html
+│   │   │   │   └── Send_Support_Acknowledgement_Email.html
+│   │   │   ├── UPLOAD__CG_Upload_Endpoint__df82e331
+│   │   │   │   ├── Send_Server_Error_Alert_Email.html
+│   │   │   │   └── Send_Telemetry_Email.html
+│   │   │   ├── VERIFY_CONFIRM__CG_Portal_Verification_Confirmation_Endpoint__f96e3448
+│   │   │   │   ├── Send_Lockout_Alert_Email.html
+│   │   │   │   └── Send_Server_Error_Alert_Email.html
+│   │   │   ├── VERIFY__CG_Portal_Verification_Endpoint__ba47f79b
+│   │   │   │   ├── Send_Server_Error_Alert_Email.html
+│   │   │   │   ├── Send_Undelivered_Alert_Email.html
+│   │   │   │   └── Send_Verification_Code_Email.html
+│   │   │   ├── WRITEBACK__CG_Portal_Writeback_Endpoint__bde13d27
+│   │   │   │   ├── Send_Citizen_Note_Email.html
+│   │   │   │   ├── Send_Citizen_Respond_Email.html
+│   │   │   │   ├── Send_Citizen_Withdraw_Email.html
+│   │   │   │   ├── Send_Server_Error_Alert_Email.html
+│   │   │   │   ├── Send_Telemetry_Email.html
+│   │   │   │   └── Send_Writeback_Alert_Email.html
+│   │   │   ├── catalogue.json
+│   │   │   ├── person-acceptance.json
+│   │   │   └── shared
+│   │   │       ├── an-email-v2-main-5.html
+│   │   │       ├── an-email-v2.html
+│   │   │       ├── email-with-attachments.html
+│   │   │       └── server-error-alert-email.html
+│   │   ├── packages
+│   │   │   ├── harvester
+│   │   │   │   ├── HARVEST-THE-VALUES-FILE.md
+│   │   │   │   └── Scope_Endpoint_Values_Delivery.designer-paste.json
+│   │   │   ├── identification-kit
+│   │   │   │   ├── 00-identity-header.designer-paste.json
+│   │   │   │   ├── 01-claim-registry-reference.designer-paste.json
+│   │   │   │   ├── 02-claim-task-references.designer-paste.json
+│   │   │   │   ├── 03-claim-file-reference.designer-paste.json
+│   │   │   │   ├── 04-case-reference.designer-paste.json
+│   │   │   │   ├── 05-guarded-update.designer-paste.json
+│   │   │   │   ├── 06-void-registry-row.designer-paste.json
+│   │   │   │   ├── 07-client-request-hash.designer-paste.json
+│   │   │   │   ├── 08-resolve-target.designer-paste.json
+│   │   │   │   └── README.md
+│   │   │   ├── identification-phase1
+│   │   │   │   ├── README.md
+│   │   │   │   ├── Scope_Phase1_Columns_Flow.paste.json
+│   │   │   │   ├── Scope_Phase1_Complete_Flow.paste.json
+│   │   │   │   ├── Scope_Phase1_Finish_Flow.paste.json
+│   │   │   │   ├── Scope_Phase1_GTQ_Indexes_Flow.paste.json
+│   │   │   │   ├── Scope_Phase1_ListCheck_Flow.paste.json
+│   │   │   │   └── evidence
+│   │   │   │       ├── p1-1-list-check-2026-10-03-after-p1-2.json
+│   │   │   │       ├── p1-1-list-check-2026-10-03.json
+│   │   │   │       ├── p1-1-list-check-2026-10-04-after-completion.json
+│   │   │   │       ├── p1-1-list-check-2026-10-04-after-finish.json
+│   │   │   │       ├── phase1-completion-rerun-2026-10-04.summary.json
+│   │   │   │       ├── phase1-finish-2026-10-04.summary.json
+│   │   │   │       ├── phase1-gtq-indexes-2026-10-04-run.jpg
+│   │   │   │       ├── phase1-gtq-indexes-2026-10-04.summary.json
+│   │   │   │       └── phase1-gtq-report-and-notifier-email-2026-10-04.jpg
+│   │   │   ├── identification-phase2
+│   │   │   │   ├── README.md
+│   │   │   │   ├── Scope_Phase2_ClaimTest_Flow.paste.json
+│   │   │   │   └── evidence
+│   │   │   │       ├── phase2-claim-test-2026-10-04-run1.summary.json
+│   │   │   │       ├── phase2-claim-test-2026-10-04-run2.summary.json
+│   │   │   │       └── phase2-claim-test-2026-10-04-run3.summary.json
+│   │   │   ├── identification-phase3
+│   │   │   │   ├── NOKEY__CG_Portal_Daily_Sweep__f12aec6d.paste.json
+│   │   │   │   ├── NOKEY__CG_Registry_Status_Notifier__8ebf6001.paste.json
+│   │   │   │   ├── README.md
+│   │   │   │   ├── SCAN_INTAKE__IP_SCAN_INTAKE__5504d7f9.paste.json
+│   │   │   │   ├── STATUS__CG_Portal_Status_Check_Endpoint__60042a2e.paste.json
+│   │   │   │   ├── SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json
+│   │   │   │   ├── SUPPORT__CG_Portal_Support_Endpoint__4873c936.paste.json
+│   │   │   │   ├── UPLOAD__CG_Upload_Endpoint__df82e331.paste.json
+│   │   │   │   ├── VERIFY_CONFIRM__CG_Portal_Verification_Confirmation_Endpoint__f96e3448.paste.json
+│   │   │   │   ├── VERIFY__CG_Portal_Verification_Endpoint__ba47f79b.paste.json
+│   │   │   │   └── WRITEBACK__CG_Portal_Writeback_Endpoint__bde13d27.paste.json
+│   │   │   ├── identification-phase4
+│   │   │   │   ├── ACTIVITY_LIFECYCLE__IP_Activity_Lifecycle_Endpoint__b4db02d8.paste.json
+│   │   │   │   ├── AI_DOC_ANALYSIS__AI_Document_Processing__fefa43c6.paste.json
+│   │   │   │   ├── BULK_ASSIGNMENT__BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61.paste.json
+│   │   │   │   ├── DYNAMIC_ACTIONS__IP_Dynamic_Global_Actions_Endpoint__31c0aaf0.paste.json
+│   │   │   │   ├── EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555.paste.json
+│   │   │   │   ├── EMAIL__IP_SEND_EMAIL__df59a69f.paste.json
+│   │   │   │   ├── FETCH_ALL__IP_FETCH_ALL_BOOTSTRAP__b79e6707.paste.json
+│   │   │   │   ├── FETCH_EMAIL_ATTACHMENTS__IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3.paste.json
+│   │   │   │   ├── GET_DOCS__IP_Get_Docs_Endpoint__28f6e62a.paste.json
+│   │   │   │   ├── NOKEY__AUTO_SCHEDULED_SWEEP__8c19b45c.paste.json
+│   │   │   │   ├── NOKEY__Folio_Failure_Watch__c38bfeaa.paste.json
+│   │   │   │   ├── NOKEY__Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8.paste.json
+│   │   │   │   ├── OTP_GENERATE__IP_OTP_GENERATE__e5632336.paste.json
+│   │   │   │   ├── OTP_VERIFY__IP_OTP_VERIFY__4dbe6dde.paste.json
+│   │   │   │   ├── README.md
+│   │   │   │   ├── REFERENCE_DATA__IP_Reference_Data_Endpoint__9a4dea8e.paste.json
+│   │   │   │   ├── SINGLE_ASSIGNMENT__Single_Task_Assignment__3caf9458.paste.json
+│   │   │   │   └── USER_ADMIN__IP_User_Admin_Endpoint__e3e5c825.paste.json
+│   │   │   ├── identification-phase5
+│   │   │   │   ├── NOKEY__ID_Phase5_Keys__NOT_CAPTURED.paste.json
+│   │   │   │   ├── NOKEY__ID_Phase5_Survey__NOT_CAPTURED.paste.json
+│   │   │   │   └── README.md
+│   │   │   └── sharepoint-lists.json
+│   │   ├── patches
+│   │   │   └── folio-flows-in-use
+│   │   │       ├── 2-body.designer-paste.json
+│   │   │       └── README.md
+│   │   ├── provisioning
+│   │   │   ├── ENDPOINT_REGISTER.md
+│   │   │   ├── README.md
+│   │   │   ├── brand
+│   │   │   │   ├── brand.css
+│   │   │   │   ├── brand.js
+│   │   │   │   ├── dgo-mark.svg
+│   │   │   │   ├── nitda-lockup-digital-colour.png
+│   │   │   │   ├── nitda-lockup-digital-white.png
+│   │   │   │   └── nitda-symbol-infoweb.png
+│   │   │   ├── console.css
+│   │   │   ├── console.js
+│   │   │   ├── flows
+│   │   │   │   ├── 01-gov-provision-http-flow-registry.md
+│   │   │   │   ├── 02-gov-register-http-flow-truth.md
+│   │   │   │   ├── 03-gov-record-http-flow-execution.md
+│   │   │   │   ├── 04-gov-audit-http-flow-registry.md
+│   │   │   │   ├── 05-gov-retire-http-flow.md
+│   │   │   │   ├── 06-gov-registry-exception-notification.md
+│   │   │   │   ├── 07-gov-consumer-http-self-registration-template.md
+│   │   │   │   ├── 08-gov-discover-and-register-http-consumers.md
+│   │   │   │   ├── ai-document-processing.md
+│   │   │   │   ├── auto-scheduled-sweep.md
+│   │   │   │   ├── bulk-ops-data-retrieval-http.md
+│   │   │   │   ├── cg-portal-daily-sweep.md
+│   │   │   │   ├── cg-portal-status-check-endpoint.md
+│   │   │   │   ├── cg-portal-support-endpoint.md
+│   │   │   │   ├── cg-portal-verification-confirmation-endpoint.md
+│   │   │   │   ├── cg-portal-verification-endpoint.md
+│   │   │   │   ├── cg-portal-writeback-endpoint.md
+│   │   │   │   ├── cg-registry-status-notifier.md
+│   │   │   │   ├── cg-submission-endpoint.md
+│   │   │   │   ├── cg-upload-endpoint.md
+│   │   │   │   ├── dgso-incoming-ai-processing.md
+│   │   │   │   ├── folio-failure-watch.md
+│   │   │   │   ├── folio-incoming-correspondence-scan-processing-flow.md
+│   │   │   │   ├── ip-activity-lifecycle-endpoint.md
+│   │   │   │   ├── ip-create-task-for-received-email-endpoint.md
+│   │   │   │   ├── ip-dynamic-global-actions-endpoint.md
+│   │   │   │   ├── ip-fetch-all-bootstrap.md
+│   │   │   │   ├── ip-get-docs-endpoint.md
+│   │   │   │   ├── ip-otp-generate.md
+│   │   │   │   ├── ip-otp-verify.md
+│   │   │   │   ├── ip-reference-data-endpoint.md
+│   │   │   │   ├── ip-retrieve-email-attachment-endpoint.md
+│   │   │   │   ├── ip-scan-intake.md
+│   │   │   │   ├── ip-send-email.md
+│   │   │   │   ├── ip-user-admin-endpoint.md
+│   │   │   │   └── single-task-assignment.md
+│   │   │   ├── index.html
+│   │   │   ├── packages
+│   │   │   │   ├── 00-identity-header.md
+│   │   │   │   ├── 01-claim-registry-reference.md
+│   │   │   │   ├── 02-claim-task-references.md
+│   │   │   │   ├── 03-claim-file-reference.md
+│   │   │   │   ├── 04-case-reference.md
+│   │   │   │   ├── 05-guarded-update.md
+│   │   │   │   ├── 06-void-registry-row.md
+│   │   │   │   ├── 07-client-request-hash.md
+│   │   │   │   ├── 08-resolve-target.md
+│   │   │   │   ├── activity-lifecycle-ip-activity-lifecycle-endpoint-b4db02d8-paste.md
+│   │   │   │   ├── ai-doc-analysis-ai-document-processing-fefa43c6-paste.md
+│   │   │   │   ├── bulk-assignment-bulk-ops-data-retrieval-http-5aab9e61-paste.md
+│   │   │   │   ├── dynamic-actions-ip-dynamic-global-actions-endpoint-31c0aaf0-paste.md
+│   │   │   │   ├── email-ip-send-email-df59a69f-paste.md
+│   │   │   │   ├── email-related-task-ip-create-task-for-received-email-endpoint-ab1a3555-paste.md
+│   │   │   │   ├── fetch-all-ip-fetch-all-bootstrap-b79e6707-paste.md
+│   │   │   │   ├── fetch-email-attachments-ip-retrieve-email-attachment-endpoint-5bc87cf3-paste.md
+│   │   │   │   ├── get-docs-ip-get-docs-endpoint-28f6e62a-paste.md
+│   │   │   │   ├── nokey-auto-scheduled-sweep-8c19b45c-paste.md
+│   │   │   │   ├── nokey-cg-portal-daily-sweep-f12aec6d-paste.md
+│   │   │   │   ├── nokey-cg-registry-status-notifier-8ebf6001-paste.md
+│   │   │   │   ├── nokey-folio-failure-watch-c38bfeaa-paste.md
+│   │   │   │   ├── nokey-folio-incoming-correspondence-scan-processing-flow-197527c8-paste.md
+│   │   │   │   ├── nokey-id-phase5-keys-not-captured-paste.md
+│   │   │   │   ├── nokey-id-phase5-survey-not-captured-paste.md
+│   │   │   │   ├── otp-generate-ip-otp-generate-e5632336-paste.md
+│   │   │   │   ├── otp-verify-ip-otp-verify-4dbe6dde-paste.md
+│   │   │   │   ├── reference-data-ip-reference-data-endpoint-9a4dea8e-paste.md
+│   │   │   │   ├── scan-intake-ip-scan-intake-5504d7f9-paste.md
+│   │   │   │   ├── scope-endpoint-values-delivery.md
+│   │   │   │   ├── scope-phase1-columns-flow-paste.md
+│   │   │   │   ├── scope-phase1-complete-flow-paste.md
+│   │   │   │   ├── scope-phase1-finish-flow-paste.md
+│   │   │   │   ├── scope-phase1-gtq-indexes-flow-paste.md
+│   │   │   │   ├── scope-phase1-listcheck-flow-paste.md
+│   │   │   │   ├── scope-phase2-claimtest-flow-paste.md
+│   │   │   │   ├── single-assignment-single-task-assignment-3caf9458-paste.md
+│   │   │   │   ├── status-cg-portal-status-check-endpoint-60042a2e-paste.md
+│   │   │   │   ├── submission-cg-submission-endpoint-de9ef13b-paste.md
+│   │   │   │   ├── support-cg-portal-support-endpoint-4873c936-paste.md
+│   │   │   │   ├── upload-cg-upload-endpoint-df82e331-paste.md
+│   │   │   │   ├── user-admin-ip-user-admin-endpoint-e3e5c825-paste.md
+│   │   │   │   ├── verify-cg-portal-verification-endpoint-ba47f79b-paste.md
+│   │   │   │   ├── verify-confirm-cg-portal-verification-confirmation-endpoint-f96e3448-paste.md
+│   │   │   │   └── writeback-cg-portal-writeback-endpoint-bde13d27-paste.md
+│   │   │   ├── provisioning-detail.js
+│   │   │   └── provisioning-index.js
+│   │   ├── registers
+│   │   │   ├── config-build-ledger.json
+│   │   │   ├── connector
+│   │   │   │   └── sharepoint-operation-shape.json
+│   │   │   ├── dgo-endpoint-catalog.xlsx
+│   │   │   ├── flow-adoption.json
+│   │   │   ├── flow-catalogue.json
+│   │   │   ├── flow-definition-map.json
+│   │   │   ├── flow-identity-crosswalk.json
+│   │   │   ├── flow-list-map.json
+│   │   │   ├── flow-retirement.json
+│   │   │   ├── flow-trigger-auth.json
+│   │   │   ├── http-flow-registry-spec.json
+│   │   │   ├── http-flow-registry-workbook.xlsx
+│   │   │   ├── identification-paste-ledger.json
+│   │   │   ├── identification-phase3-status.json
+│   │   │   ├── identification-phase4-status.json
+│   │   │   ├── identification-release.json
+│   │   │   ├── internal-flow-register.json
+│   │   │   ├── inventory-flow-candidates.json
+│   │   │   ├── portal-endpoint-workflow-ids.json
+│   │   │   └── tenant-function-proof.json
+│   │   └── surfaces
+│   │       ├── governance
+│   │       │   ├── 02-register-http-flow-truth.corrected.json
+│   │       │   ├── 03-record-http-flow-execution.corrected.json
+│   │       │   ├── 05-retire-http-flow.corrected.json
+│   │       │   ├── 07-consumer-self-registration.corrected.json
+│   │       │   ├── DGO_FLOW_TRUTH_PERSISTENCE.designer-paste.json
+│   │       │   ├── DGO_FLOW_TRUTH_PERSISTENCE.host-contract.json
+│   │       │   ├── DGO_FLOW_TRUTH_PERSISTENCE.variables.designer-paste.json
+│   │       │   ├── DGO_FLOW_TRUTH_PERSISTENCE.variables.md
+│   │       │   ├── DGO_USERDIRECTORY_SYNC.Scope_Global.designer-paste.json
+│   │       │   ├── DGO_USERDIRECTORY_SYNC.md
+│   │       │   ├── DGO_USERDIRECTORY_SYNC.trigger.json
+│   │       │   └── README.md
+│   │       └── internal
+│   │           └── inventory
+│   │               ├── DGO_ENDPOINT_INVENTORY.designer-paste.json
+│   │               ├── DGO_ENDPOINT_INVENTORY.variables.designer-paste.json
+│   │               └── DGO_ENDPOINT_INVENTORY.variables.md
+│   ├── governance
+│   │   ├── RETIRED_RECORDS.md
+│   │   ├── approved-large-files.json
+│   │   ├── evidence-register.yaml
+│   │   └── retired-records.json
+│   ├── handbook
+│   │   ├── 01-GO-LIVE-WALKTHROUGH.md
+│   │   ├── 02-ARCHITECTURE.md
+│   │   ├── 03-COMPONENTS.md
+│   │   ├── 04-DATA-MODEL.md
+│   │   ├── 05-PROCESSES.md
+│   │   ├── 07-DEVELOPER-GUIDE.md
+│   │   ├── 08-ADMINISTRATOR-GUIDE.md
+│   │   ├── 09-USER-GUIDE.md
+│   │   ├── 10-TROUBLESHOOTING.md
+│   │   ├── 11-COMMISSIONING-REPORT.md
+│   │   └── README.md
+│   ├── policies
+│   │   └── universal-filename-policy
+│   │       ├── universal_filename_policy_ai_machine_usage.json
+│   │       ├── universal_filename_policy_one_page_memo.pdf
+│   │       ├── universal_filename_policy_sop.md
+│   │       ├── universal_filename_policy_sop.txt
+│   │       ├── universal_filename_policy_team_handbook.pdf
+│   │       └── universal_filename_policy_word_version.docx
+│   ├── process
+│   │   ├── 00-README.md
+│   │   ├── 01-EXECUTIVE-SUMMARY.md
+│   │   ├── 02-SCOPE-AND-BOUNDARIES.md
+│   │   ├── 03-SOURCE-INVENTORY.md
+│   │   ├── 04-METHODOLOGY.md
+│   │   ├── 05-EVIDENCE-FRAMEWORK.md
+│   │   ├── 06-PROCESS-ARCHITECTURE.md
+│   │   ├── 07-MASTER-PROCESS-INVENTORY.md
+│   │   ├── 08-PROCESS-HIERARCHY.md
+│   │   ├── 09-PROCESS-DETAIL.md
+│   │   ├── 10-SUBPROCESS-AND-VARIANT-CATALOGUE.md
+│   │   ├── 11-PROCESS-STEP-CATALOGUE.md
+│   │   ├── 12-RULE-AND-CONTROL-CATALOGUE.md
+│   │   ├── 13-ROLES-AND-RESPONSIBILITY-MATRIX.md
+│   │   ├── 14-STATUS-AND-TRANSITION-CATALOGUE.md
+│   │   ├── 15-INTEGRATION-CATALOGUE.md
+│   │   ├── 16-DEPENDENCY-MAP.md
+│   │   ├── 17-EXCEPTION-AND-RECOVERY-CATALOGUE.md
+│   │   ├── 18-NOTIFICATION-AND-ESCALATION-CATALOGUE.md
+│   │   ├── 19-MONITORING-AUDIT-AND-PERFORMANCE.md
+│   │   ├── 20-PROCESS-DIAGRAMS.md
+│   │   ├── 21-TRACEABILITY-MATRIX.md
+│   │   ├── 22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md
+│   │   ├── 23-COVERAGE-AND-RECONCILIATION.md
+│   │   ├── 24-COMPLETENESS-AND-CONSISTENCY-REVIEW.md
+│   │   ├── 25-RECOMMENDATIONS.md
+│   │   ├── 26-STATUS-AND-CONFIDENCE.md
+│   │   ├── 27-SOURCE-REGISTER.md
+│   │   ├── 28-TERMINOLOGY-AND-INDEX.md
+│   │   └── detail
+│   │       ├── PROC-001.md
+│   │       ├── PROC-002.md
+│   │       ├── PROC-003.md
+│   │       ├── PROC-004.md
+│   │       ├── PROC-005.md
+│   │       ├── PROC-006.md
+│   │       ├── PROC-007.md
+│   │       ├── PROC-008.md
+│   │       ├── PROC-009.md
+│   │       ├── PROC-010.md
+│   │       ├── PROC-011.md
+│   │       ├── PROC-012.md
+│   │       ├── PROC-013.md
+│   │       ├── PROC-014.md
+│   │       ├── PROC-015.md
+│   │       ├── PROC-016.md
+│   │       ├── PROC-017.md
+│   │       ├── PROC-018.md
+│   │       ├── PROC-019.md
+│   │       ├── PROC-020.md
+│   │       ├── PROC-021.md
+│   │       ├── PROC-022.md
+│   │       ├── PROC-023.md
+│   │       ├── PROC-024.md
+│   │       ├── PROC-025.md
+│   │       ├── PROC-026.md
+│   │       ├── PROC-027.md
+│   │       ├── PROC-028.md
+│   │       ├── PROC-029.md
+│   │       ├── PROC-030.md
+│   │       ├── PROC-031.md
+│   │       ├── PROC-032.md
+│   │       ├── PROC-033.md
+│   │       ├── PROC-034.md
+│   │       ├── PROC-035.md
+│   │       ├── PROC-036.md
+│   │       ├── PROC-037.md
+│   │       ├── PROC-038.md
+│   │       ├── PROC-039.md
+│   │       ├── PROC-040.md
+│   │       ├── PROC-041.md
+│   │       ├── PROC-042.md
+│   │       ├── PROC-043.md
+│   │       ├── PROC-044.md
+│   │       ├── PROC-045.md
+│   │       ├── SUBPROC-001.md
+│   │       ├── SUBPROC-003.md
+│   │       ├── SUBPROC-005.md
+│   │       ├── SUBPROC-006.md
+│   │       ├── SUBPROC-007.md
+│   │       ├── SUBPROC-008.md
+│   │       ├── SUBPROC-010.md
+│   │       ├── SUBPROC-011.md
+│   │       ├── SUBPROC-012.md
+│   │       ├── SUBPROC-014.md
+│   │       ├── SUBPROC-015.md
+│   │       ├── SUBPROC-016.md
+│   │       ├── SUBPROC-017.md
+│   │       ├── SUBPROC-018.md
+│   │       ├── SUBPROC-019.md
+│   │       ├── SUBPROC-022.md
+│   │       ├── SUBPROC-023.md
+│   │       ├── SUBPROC-024.md
+│   │       └── SUBPROC-025.md
+│   ├── process-scope-note.md
+│   ├── reference
+│   │   ├── ADMIN_SUITE.md
+│   │   ├── ORG_STRUCTURE_REVALIDATION_2026-09-26.md
+│   │   ├── PLATFORM_NAMING.md
+│   │   ├── PLATFORM_REGISTER.html
+│   │   ├── PROVISIONING_ATLAS.html
+│   │   ├── README.md
+│   │   ├── approved
+│   │   │   ├── category-matrix.csv
+│   │   │   ├── dsu-key-corrections.csv
+│   │   │   └── organizational-units.csv
+│   │   ├── business_requirements_functional_requirements_hybrid.txt
+│   │   ├── correspondence-email-templates
+│   │   │   ├── README.md
+│   │   │   ├── html
+│   │   │   │   ├── circular-notice.html
+│   │   │   │   ├── closure-response.html
+│   │   │   │   ├── document-transmittal.html
+│   │   │   │   ├── meeting-invitation.html
+│   │   │   │   ├── official-correspondence.html
+│   │   │   │   └── request-for-information.html
+│   │   │   ├── index.html
+│   │   │   ├── partials
+│   │   │   │   └── flow-attachment-section.html
+│   │   │   ├── rendered
+│   │   │   │   ├── circular-notice.html
+│   │   │   │   ├── closure-response.html
+│   │   │   │   ├── document-transmittal.html
+│   │   │   │   ├── meeting-invitation.html
+│   │   │   │   ├── official-correspondence.html
+│   │   │   │   └── request-for-information.html
+│   │   │   └── templates.json
+│   │   ├── data-model-architecture.md
+│   │   ├── directorate-aliases.csv
+│   │   ├── document-ownership.json
+│   │   ├── governance-list-registry.json
+│   │   ├── identification
+│   │   │   ├── IDENTIFICATION_SYSTEM.md
+│   │   │   ├── identifier-catalogue.json
+│   │   │   └── provisioning
+│   │   │       ├── README.md
+│   │   │       └── identity-provisioning.json
+│   │   ├── internal-proof-ledger.json
+│   │   ├── platform-architecture-pack
+│   │   │   ├── ARCHITECTURE_DECISIONS.md
+│   │   │   ├── CHANGE_CONTROL.md
+│   │   │   ├── CODING_STANDARDS.md
+│   │   │   ├── FOLDER_STRUCTURE.md
+│   │   │   ├── GUIDING_PRINCIPLES.md
+│   │   │   ├── IMPLEMENTATION_ROADMAP.md
+│   │   │   ├── MASTER_BLUEPRINT.md
+│   │   │   ├── MODULE_CONTRACT.md
+│   │   │   ├── MODULE_REGISTRY_TEMPLATE.md
+│   │   │   ├── OPERATIONS_RUNBOOK.md
+│   │   │   ├── README.md
+│   │   │   ├── RELEASE_CHECKLIST.md
+│   │   │   ├── RISK_REGISTER.md
+│   │   │   ├── SECURITY_GOVERNANCE.md
+│   │   │   ├── SPA_MIGRATION_PLAN.md
+│   │   │   └── TESTING_PLAN.md
+│   │   ├── process-inventory.json
+│   │   ├── role-catalogue-seed.json
+│   │   ├── sharepoint-list-index.json
+│   │   └── sharepoint-provisioning-spec.json
+│   └── visual
+│       ├── README.md
+│       ├── app.js
+│       ├── brand
+│       │   ├── brand.css
+│       │   ├── brand.js
+│       │   ├── dgo-mark.svg
+│       │   ├── nitda-lockup-digital-colour.png
+│       │   ├── nitda-lockup-digital-white.png
+│       │   └── nitda-symbol-infoweb.png
+│       ├── folio-brief.html
+│       ├── index.html
+│       ├── platform-data.js
+│       └── visual.css
+├── document-portal
+│   ├── 404.html
+│   ├── README.md
+│   ├── ds
+│   │   ├── colors_and_type.css
+│   │   ├── ds.css
+│   │   ├── fonts
+│   │   │   └── CascadiaMono-Regular.woff2
+│   │   ├── icons
+│   │   │   └── sprite.svg
+│   │   ├── logo
+│   │   │   ├── nitda-lockup-white.png
+│   │   │   ├── nitda-lockup.png
+│   │   │   └── nitda-symbol.png
+│   │   ├── styles
+│   │   │   ├── base.css
+│   │   │   ├── components
+│   │   │   │   └── command-palette.css
+│   │   │   ├── components.css
+│   │   │   ├── layout.css
+│   │   │   └── reset.css
+│   │   └── tokens
+│   │       ├── tokens.breakpoint.css
+│   │       ├── tokens.component.css
+│   │       ├── tokens.density.css
+│   │       ├── tokens.platforms.css
+│   │       ├── tokens.portal.css
+│   │       ├── tokens.primitive.css
+│   │       ├── tokens.semantic.css
+│   │       ├── tokens.theme-dark.css
+│   │       ├── tokens.theme-hc.css
+│   │       └── tokens.theme-light.css
+│   ├── email-assets
+│   │   ├── dgo-logo-whiteout.png
+│   │   └── nitda-lockup-white.png
+│   ├── favicon.svg
+│   ├── index.html
+│   ├── js
+│   │   ├── core.js
+│   │   ├── data.js
+│   │   ├── home.js
+│   │   ├── icons.js
+│   │   ├── submit.js
+│   │   ├── support.js
+│   │   └── track.js
+│   ├── manifest.webmanifest
+│   ├── portal.css
+│   ├── privacy.html
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   ├── submit.html
+│   ├── support.html
+│   ├── sw.js
+│   └── track.html
+├── index.html
+├── index_Bulk.html
+├── mailer
+│   ├── README.md
+│   ├── VERSION
+│   ├── brand
+│   │   ├── brand.css
+│   │   ├── brand.js
+│   │   ├── dgo-mark.svg
+│   │   ├── nitda-lockup-digital-colour.png
+│   │   ├── nitda-lockup-digital-white.png
+│   │   └── nitda-symbol-infoweb.png
+│   ├── config.js
+│   ├── config.local.example.js
+│   ├── css
+│   │   └── mailer.css
+│   ├── flows
+│   │   ├── definitions
+│   │   │   ├── DGO_MAIL_AUTH.definition.json
+│   │   │   ├── DGO_MAIL_DATA.definition.json
+│   │   │   ├── DGO_MAIL_DIRECTORY.definition.json
+│   │   │   ├── DGO_MAIL_LOG.definition.json
+│   │   │   ├── DGO_MAIL_PROVISION.definition.json
+│   │   │   ├── DGO_MAIL_SEND.definition.json
+│   │   │   └── DGO_MAIL_TEMPLATES.definition.json
+│   │   └── flows.catalogue.json
+│   ├── index.html
+│   └── js
+│       ├── api.js
+│       ├── app.js
+│       ├── campaign.js
+│       ├── editor.js
+│       ├── export.js
+│       ├── letterhead.generated.js
+│       ├── letterhead.js
+│       ├── letters.js
+│       ├── logcheck.js
+│       ├── merge.js
+│       ├── reports.js
+│       ├── sanitize.js
+│       ├── seed-directory.js
+│       ├── seed-letters.generated.js
+│       ├── seed-templates.js
+│       ├── sender.js
+│       ├── session.js
+│       ├── settings.js
+│       ├── store.js
+│       ├── sync.js
+│       ├── ui.js
+│       ├── util.js
+│       ├── views
+│       │   ├── activity.js
+│       │   ├── compose.js
+│       │   ├── dashboard.js
+│       │   ├── directory.js
+│       │   ├── flows.js
+│       │   ├── home.js
+│       │   ├── hub.js
+│       │   ├── letter.js
+│       │   ├── outbox.js
+│       │   ├── sent.js
+│       │   ├── settings.js
+│       │   ├── signin.js
+│       │   └── templates.js
+│       └── zip.js
+├── modules
+│   ├── acknowledgment.js
+│   ├── activities.js
+│   ├── admin-suite.js
+│   ├── approvals.js
+│   ├── archive.js
+│   ├── assistant.js
+│   ├── briefs.js
+│   ├── bulk-assignment.js
+│   ├── comments.js
+│   ├── correspondence-email.js
+│   ├── correspondence.js
+│   ├── diagnostics.js
+│   ├── dispatch.js
+│   ├── ecm-erp-charter.js
+│   ├── endpoint-console.js
+│   ├── executive.js
+│   ├── fasttrack.js
+│   ├── home.js
+│   ├── inbox.js
+│   ├── lookup.js
+│   ├── meetings.js
+│   ├── operator-hud.js
+│   ├── orchestrator.js
+│   ├── overview.js
+│   ├── projects.js
+│   ├── registry.js
+│   ├── reports.js
+│   ├── response-tracking.js
+│   ├── scan-intake.js
+│   ├── settings.js
+│   ├── single-assignment.js
+│   ├── statistics.js
+│   ├── tasks.js
+│   └── user-admin.js
+├── package-lock.json
+├── package.json
+├── playwright.config.js
+├── scripts
+│   ├── acceptance-internal-endpoints.browser.js
+│   ├── architecture-data.mjs
+│   ├── audit-authorisation-gates.mjs
+│   ├── audit-deeplinks.mjs
+│   ├── audit-trigger-auth.mjs
+│   ├── backup-governance-lists.browser.js
+│   ├── brand-sync.mjs
+│   ├── build-admin-console.mjs
+│   ├── build-adopted-estate.mjs
+│   ├── build-closure-disposition.mjs
+│   ├── build-column-verifier.mjs
+│   ├── build-connector-details-xlsx.py
+│   ├── build-connector-register-xlsx.py
+│   ├── build-connector-register.mjs
+│   ├── build-contract-key-reconciliation.mjs
+│   ├── build-email-catalogue.mjs
+│   ├── build-email-fragments.mjs
+│   ├── build-end-to-end-walkthrough.mjs
+│   ├── build-endpoint-dataset.mjs
+│   ├── build-endpoint-workbook-model.mjs
+│   ├── build-endpoint-workflow-ids.mjs
+│   ├── build-estate-apply.mjs
+│   ├── build-estate-docs.mjs
+│   ├── build-estate-register-artifact.mjs
+│   ├── build-estate-register-views.mjs
+│   ├── build-estate-register.mjs
+│   ├── build-execution-agent-brief.mjs
+│   ├── build-flow-adoption.mjs
+│   ├── build-flow-catalogue.mjs
+│   ├── build-flow-file-names.mjs
+│   ├── build-flow-registry-provisioner.mjs
+│   ├── build-flow-registry-seed.mjs
+│   ├── build-flow-requirements.mjs
+│   ├── build-flow-shapes.mjs
+│   ├── build-flow-truth-persistence.mjs
+│   ├── build-flow-truth-verifier.mjs
+│   ├── build-flow-usage-analysis.py
+│   ├── build-folio-flows.mjs
+│   ├── build-governance-backup.mjs
+│   ├── build-governance-browser-provisioner.mjs
+│   ├── build-governance-cleanup.mjs
+│   ├── build-governance-comparison.mjs
+│   ├── build-governance-list-registry.mjs
+│   ├── build-governance-remediation.mjs
+│   ├── build-governance-retirement.mjs
+│   ├── build-governance-runbook.mjs
+│   ├── build-handover.mjs
+│   ├── build-harvest-bookmarklet.mjs
+│   ├── build-harvest-console.mjs
+│   ├── build-http-flow-registry-spec.mjs
+│   ├── build-identification-conformance.mjs
+│   ├── build-identification-kit.mjs
+│   ├── build-identification-phase3.mjs
+│   ├── build-identification-phase4.mjs
+│   ├── build-identification-phase5.mjs
+│   ├── build-identification-provisioning.mjs
+│   ├── build-identification-release.mjs
+│   ├── build-identification-spec.mjs
+│   ├── build-inventory-flow.mjs
+│   ├── build-mailer-flows.mjs
+│   ├── build-mailer-letterhead.mjs
+│   ├── build-org-routing.mjs
+│   ├── build-outstanding-rollup.mjs
+│   ├── build-plan.mjs
+│   ├── build-platform-doc.mjs
+│   ├── build-platforms-data.mjs
+│   ├── build-provisioning-atlas.mjs
+│   ├── build-provisioning-console.mjs
+│   ├── build-provisioning-reference.mjs
+│   ├── build-registry-decisions.mjs
+│   ├── build-remediation-standard.mjs
+│   ├── build-rotation-worksheet.mjs
+│   ├── build-runbook.mjs
+│   ├── build-sharepoint-browser-provisioner.mjs
+│   ├── build-tenant-function-proof.mjs
+│   ├── build-userdirectory-sync.mjs
+│   ├── build_flow_harvest_collector.py
+│   ├── build_harvest_flow_package.py
+│   ├── build_watermark_flow_package.py
+│   ├── check-config-local.mjs
+│   ├── check-links.mjs
+│   ├── cleanup-disambiguated-columns.browser.js
+│   ├── commission-check.mjs
+│   ├── compare-duplicate-governance-lists.browser.js
+│   ├── compare-live-export.mjs
+│   ├── config-build.mjs
+│   ├── correct-governance-fields.mjs
+│   ├── derive-dynamic-operations.mjs
+│   ├── describe-values.mjs
+│   ├── dev
+│   │   ├── endpoints.mjs
+│   │   ├── intake.mjs
+│   │   ├── mime.mjs
+│   │   ├── runtime-config.mjs
+│   │   ├── seed.mjs
+│   │   └── store.mjs
+│   ├── dev-server.mjs
+│   ├── diagnose-deployed-config.browser.js
+│   ├── dump-governance-columns.browser.js
+│   ├── export-handover.mjs
+│   ├── export-power-automate-flows.ps1
+│   ├── extract-correspondence-email-templates.mjs
+│   ├── fetch-values-file.mjs
+│   ├── flow-inventory.mjs
+│   ├── flow-list-sweep.mjs
+│   ├── flows-update.mjs
+│   ├── folio-admin.mjs
+│   ├── go.mjs
+│   ├── gov04-update.mjs
+│   ├── govmail-update.mjs
+│   ├── handover
+│   │   ├── deployment-instructions.md
+│   │   ├── evidence-index.json
+│   │   ├── read-me-first.md
+│   │   ├── registers.py
+│   │   ├── running-the-tools.md
+│   │   └── toolkit
+│   │       ├── Start the tools - Windows.cmd
+│   │       └── Start the tools - macOS and Linux.sh
+│   ├── harvest-trigger-urls.bookmarklet.txt
+│   ├── identity-provision.browser.js
+│   ├── identity-verify.browser.js
+│   ├── inspect-governance-strays.browser.js
+│   ├── learn-connector-shape.mjs
+│   ├── lib
+│   │   ├── admin-console-ui.js
+│   │   ├── asset-stamp.mjs
+│   │   ├── brand-kit.mjs
+│   │   ├── brand-tokens.mjs
+│   │   ├── browser-relay.mjs
+│   │   ├── column-verifier-verdicts.mjs
+│   │   ├── config-drift.mjs
+│   │   ├── device-sign-in.mjs
+│   │   ├── document-ownership.mjs
+│   │   ├── email-catalogue.mjs
+│   │   ├── endpoint-config-render.mjs
+│   │   ├── endpoint-probes.mjs
+│   │   ├── endpoint-recovery.mjs
+│   │   ├── endpoint-surface.mjs
+│   │   ├── endpoint-validation.mjs
+│   │   ├── estate-apply-runtime.mjs
+│   │   ├── estate-cli-main.mjs
+│   │   ├── estate-sources.mjs
+│   │   ├── flow-adoption-data.mjs
+│   │   ├── flow-artifact-name.mjs
+│   │   ├── flow-bulk-update.mjs
+│   │   ├── flow-definition-reader.mjs
+│   │   ├── flow-install.mjs
+│   │   ├── flow-patch.mjs
+│   │   ├── flow-remediation.mjs
+│   │   ├── folio-flows-live-flow.mjs
+│   │   ├── folio-flows-report.template.html
+│   │   ├── gov04-fix.mjs
+│   │   ├── gov04-notice-links.mjs
+│   │   ├── govmail-fix.mjs
+│   │   ├── harvest-bookmarklet.template.js
+│   │   ├── identification-flow-edit.mjs
+│   │   ├── identification-kit.mjs
+│   │   ├── internal-preflight.template.js
+│   │   ├── outstanding-sources.mjs
+│   │   ├── package-fingerprint.mjs
+│   │   ├── package-identity.mjs
+│   │   ├── provisioning-model.mjs
+│   │   ├── provisioning-reader.mjs
+│   │   ├── published-signatures.mjs
+│   │   ├── registry-provisioning-scope.mjs
+│   │   ├── registry-spec-amendments.mjs
+│   │   ├── sharepoint-browser-provisioner.template.js
+│   │   ├── stable-sort.mjs
+│   │   ├── tracked-files.mjs
+│   │   ├── wdl-sim.mjs
+│   │   ├── xlsx-reader.mjs
+│   │   ├── zip-reader.mjs
+│   │   └── zip-writer.mjs
+│   ├── live-check.mjs
+│   ├── mailer-mock-flows.mjs
+│   ├── mailer-package
+│   │   ├── GO-LIVE.html
+│   │   ├── README.md
+│   │   ├── bundle.mjs
+│   │   ├── flow-package.mjs
+│   │   ├── serve.mjs
+│   │   ├── setup.cmd
+│   │   ├── setup.mjs
+│   │   ├── setup.sh
+│   │   ├── start-demo.cmd
+│   │   ├── start-demo.sh
+│   │   ├── start.cmd
+│   │   ├── start.sh
+│   │   └── verify-package.mjs
+│   ├── make-values-template.mjs
+│   ├── measure-layout.mjs
+│   ├── mine-list-columns.mjs
+│   ├── otp-cutover-tests.browser.js
+│   ├── package-bundle.mjs
+│   ├── package-mailer.mjs
+│   ├── package-platform-release.mjs
+│   ├── package.mjs
+│   ├── patch-governance-flows.mjs
+│   ├── platform-parts
+│   │   └── 20-architecture.md
+│   ├── platform-release
+│   │   ├── README.md
+│   │   ├── VERSION
+│   │   ├── folio
+│   │   ├── folio.cmd
+│   │   ├── folio.mjs
+│   │   ├── start.cmd
+│   │   ├── start.sh
+│   │   └── verify-release.mjs
+│   ├── platforms.config.mjs
+│   ├── portal-seo.mjs
+│   ├── process
+│   │   ├── discover-core.mjs
+│   │   ├── discover-flows.mjs
+│   │   ├── discover-modules.mjs
+│   │   └── lib.mjs
+│   ├── process-discovery.mjs
+│   ├── process-docs.mjs
+│   ├── prove-tenant.mjs
+│   ├── provision-flow-registry-lists.browser.js
+│   ├── provision-governance-lists.browser.js
+│   ├── provision-sharepoint-fields.browser.js
+│   ├── provision-sharepoint-fields.ps1
+│   ├── reconcile-endpoint-register.mjs
+│   ├── reconcile-flow-definitions.mjs
+│   ├── redact-signed-urls.ps1
+│   ├── register-live-flows.mjs
+│   ├── remediate-governance-strays.browser.js
+│   ├── render_endpoint_workbook.py
+│   ├── repoint-governance-provisioning.mjs
+│   ├── retire-duplicate-governance-lists.browser.js
+│   ├── role-catalogue-seed.mjs
+│   ├── rotation-register.mjs
+│   ├── run-pending.mjs
+│   ├── run-platform.mjs
+│   ├── runbook-parts
+│   │   ├── 10-install-route-and-reference.md
+│   │   ├── 20-portal-commissioning.md
+│   │   ├── 30-notifications.md
+│   │   ├── 40-governance-estate.md
+│   │   ├── 50-flow-build-walkthrough.md
+│   │   ├── 60-minimal-pilot.md
+│   │   └── 70-commissioning-from-a-phone.md
+│   ├── set-content-approval.browser.js
+│   ├── set-values-signature.mjs
+│   ├── setup-sharepoint.ps1
+│   ├── setup.mjs
+│   ├── update-flow-definition.ps1
+│   ├── ux-plan.mjs
+│   ├── validate-tenant-notification-evidence.mjs
+│   ├── values-secret.mjs
+│   ├── verify-artifact-triggers.mjs
+│   ├── verify-contract-key-implementation.mjs
+│   ├── verify-deployed-package.browser.js
+│   ├── verify-execution-guide.mjs
+│   ├── verify-flow-standard.mjs
+│   ├── verify-flow-truth-provisioning.browser.js
+│   ├── verify-governance-columns.browser.js
+│   ├── verify-notification-matrix.mjs
+│   ├── verify-portal-data-contract.mjs
+│   ├── verify-portal-wiring.mjs
+│   ├── verify-readiness-register.mjs
+│   ├── verify_endpoint_workbook.py
+│   ├── verify_flow_harvest_collector.py
+│   ├── verify_harvest_flow_package.py
+│   ├── verify_watermark_flow_package.py
+│   ├── visual-docs-data.mjs
+│   ├── wire.mjs
+│   ├── write-failure-watch-flow.mjs
+│   ├── write-gov04-notice-links.mjs
+│   ├── write-governance-flows.mjs
+│   └── write-scan-processing-flow.mjs
+├── shared
+│   ├── accessibility.js
+│   ├── components.js
+│   ├── design-system-adapter.js
+│   ├── figma-uiux-runtime.js
+│   ├── record-page.js
+│   ├── relationship-runtime.js
+│   ├── shell.js
+│   ├── sign-in-dialog.js
+│   ├── support-form.js
+│   ├── welcome-runtime.js
+│   └── workspace-guide.js
+├── styles
+│   ├── app.css
+│   ├── dgo-design-system
+│   │   ├── README.md
+│   │   ├── base.css
+│   │   ├── brand
+│   │   │   ├── dgo
+│   │   │   │   ├── dgo-mark-reverse.svg
+│   │   │   │   └── dgo-mark.svg
+│   │   │   └── nitda
+│   │   │       ├── nitda-lockup-digital-colour.png
+│   │   │       ├── nitda-lockup-digital-white.png
+│   │   │       ├── nitda-logo-horizontal-colour.jpeg
+│   │   │       ├── nitda-logo-horizontal-whiteout.png
+│   │   │       ├── nitda-logo-stacked-whiteout.png
+│   │   │       └── nitda-symbol-infoweb.png
+│   │   ├── brand-type.css
+│   │   ├── colors_and_type.css
+│   │   ├── components.css
+│   │   ├── kit
+│   │   │   ├── brand-kit.css
+│   │   │   ├── brand-kit.js
+│   │   │   └── brand-platform.css
+│   │   ├── layout.css
+│   │   ├── platform-authority.css
+│   │   ├── reset.css
+│   │   └── tokens
+│   │       ├── tokens.breakpoint.css
+│   │       ├── tokens.component.css
+│   │       ├── tokens.density.css
+│   │       ├── tokens.enhanced.css
+│   │       ├── tokens.legacy-bridge.css
+│   │       ├── tokens.platforms.css
+│   │       ├── tokens.primitive.css
+│   │       ├── tokens.semantic.css
+│   │       ├── tokens.theme-dark.css
+│   │       ├── tokens.theme-hc.css
+│   │       └── tokens.theme-light.css
+│   └── index.css
+├── support.html
+├── tests
+│   ├── README.md
+│   ├── acknowledgement-actor.test.mjs
+│   ├── admin-console.spec.js
+│   ├── admin-console.test.mjs
+│   ├── admin-suite.spec.js
+│   ├── admin-suite.test.mjs
+│   ├── architecture.test.mjs
+│   ├── asset-stamp.spec.js
+│   ├── asset-stamp.test.mjs
+│   ├── assignment-messages.test.mjs
+│   ├── audit-remediation.spec.js
+│   ├── auth-posture.test.mjs
+│   ├── baseline.json
+│   ├── boot-data-deeplinks.spec.js
+│   ├── brand-authority.test.mjs
+│   ├── breakpoint-scale.test.mjs
+│   ├── categories.test.mjs
+│   ├── check-imports.mjs
+│   ├── check-secrets.mjs
+│   ├── closure-alignment.test.mjs
+│   ├── closure.spec.js
+│   ├── commissioning-authority.test.mjs
+│   ├── commissioning.test.mjs
+│   ├── containment.spec.js
+│   ├── content-approval-failopen.test.mjs
+│   ├── correspondence.spec.js
+│   ├── css-cascade-contract.mjs
+│   ├── cutover.spec.js
+│   ├── dated-reports.test.mjs
+│   ├── deeplinks-signin.spec.js
+│   ├── deeplinks.test.mjs
+│   ├── design-tokens.test.mjs
+│   ├── dev-server.test.mjs
+│   ├── directory-served-shape.test.mjs
+│   ├── document-flags.spec.js
+│   ├── document-flags.test.mjs
+│   ├── dual-spine.spec.js
+│   ├── email-catalogue.test.mjs
+│   ├── email-fragments.test.mjs
+│   ├── endpoint-console.test.mjs
+│   ├── endpoint-dataset.test.mjs
+│   ├── endpoint-register.test.mjs
+│   ├── entry-points.test.mjs
+│   ├── envelope-lift.test.mjs
+│   ├── error-taxonomy.test.mjs
+│   ├── estate-apply.test.mjs
+│   ├── estate-register.test.mjs
+│   ├── executive-register.test.mjs
+│   ├── failure-register.test.mjs
+│   ├── filename-policy.test.mjs
+│   ├── flow-artifact-names.test.mjs
+│   ├── flow-definition-coverage-baseline.json
+│   ├── flow-definition-coverage.test.mjs
+│   ├── flow-list-map.test.mjs
+│   ├── flow-package-provenance.test.mjs
+│   ├── flow-patch.test.mjs
+│   ├── flow-registry-seed.test.mjs
+│   ├── flow-requirements.test.mjs
+│   ├── flow-truth-coverage.test.mjs
+│   ├── flow-truth-persistence.test.mjs
+│   ├── flow-truth-verifier.test.mjs
+│   ├── flows-update.test.mjs
+│   ├── folio-admin.test.mjs
+│   ├── gov04-fix.test.mjs
+│   ├── gov04-notice-links.test.mjs
+│   ├── governance-estate.test.mjs
+│   ├── governance-flow-corrections.test.mjs
+│   ├── governance-retirement.test.mjs
+│   ├── governance-runbook-contract.test.mjs
+│   ├── govmail-fix.test.mjs
+│   ├── hardening.test.mjs
+│   ├── header-search.spec.js
+│   ├── http-flow-registry.test.mjs
+│   ├── identification-claim-lean.test.mjs
+│   ├── identification-conformance.test.mjs
+│   ├── identification-kit.test.mjs
+│   ├── identification-phase3.test.mjs
+│   ├── identification-phase4.test.mjs
+│   ├── identification-phase5.test.mjs
+│   ├── identification-provisioning.test.mjs
+│   ├── identification-release.test.mjs
+│   ├── identification-replay.test.mjs
+│   ├── identification-system.test.mjs
+│   ├── identity-directory.test.mjs
+│   ├── in-app-notices.spec.js
+│   ├── inbox-overview.spec.js
+│   ├── inbox-overview.test.mjs
+│   ├── index-targets.test.mjs
+│   ├── intake-definition.test.mjs
+│   ├── intake-list.spec.js
+│   ├── intake-triage.test.mjs
+│   ├── inventory-flow.test.mjs
+│   ├── layout-budget.spec.js
+│   ├── lib
+│   │   ├── identification-sharepoint.mjs
+│   │   ├── run-after-reach.mjs
+│   │   └── userdirectory-tenant.mjs
+│   ├── live-operations-coverage.test.mjs
+│   ├── mailer-setup.test.mjs
+│   ├── mailer.e2e.mjs
+│   ├── mailer.test.mjs
+│   ├── master-flows-folder.test.mjs
+│   ├── module-rationalisation.test.mjs
+│   ├── notice-links.spec.js
+│   ├── notification-delivery.test.mjs
+│   ├── notification-matrix.test.mjs
+│   ├── otp-protocol-contract.test.mjs
+│   ├── otp-verify-deployed.test.mjs
+│   ├── output-encoding.test.mjs
+│   ├── outstanding-sources.test.mjs
+│   ├── package-portability.test.mjs
+│   ├── path-portability.test.mjs
+│   ├── pending-plan.test.mjs
+│   ├── platform-release.test.mjs
+│   ├── platforms.test.mjs
+│   ├── portal-outbox.test.mjs
+│   ├── portal-script-status.test.mjs
+│   ├── portal-status-service.test.mjs
+│   ├── portal-vault-mode.test.mjs
+│   ├── portal-wiring.test.mjs
+│   ├── portal.spec.js
+│   ├── powershell-51-compat.test.mjs
+│   ├── preflight-addressing.test.mjs
+│   ├── probe-contract.test.mjs
+│   ├── process-docs.test.mjs
+│   ├── proof-identity.test.mjs
+│   ├── provisioning-atlas.test.mjs
+│   ├── provisioning-console.spec.js
+│   ├── provisioning-console.test.mjs
+│   ├── provisioning-reference.test.mjs
+│   ├── record-close.spec.js
+│   ├── record-custody.spec.js
+│   ├── record-page.spec.js
+│   ├── record-search.test.mjs
+│   ├── record-view.test.mjs
+│   ├── reference-minter.test.mjs
+│   ├── references.test.mjs
+│   ├── registry-decisions.test.mjs
+│   ├── remediation.test.mjs
+│   ├── reminders.test.mjs
+│   ├── repo-hygiene-baseline.json
+│   ├── repo-hygiene.test.mjs
+│   ├── rotation-worksheet.test.mjs
+│   ├── scan-intake.spec.js
+│   ├── secrets-baseline.txt
+│   ├── server-writes.test.mjs
+│   ├── shared-sign-in.test.mjs
+│   ├── sharepoint-field-spec.test.mjs
+│   ├── single-source-of-truth.test.mjs
+│   ├── smoke.spec.js
+│   ├── source-normalizer.test.mjs
+│   ├── staff-notice.test.mjs
+│   ├── standing-claims.test.mjs
+│   ├── static
+│   │   └── css-contract.mjs
+│   ├── status-vocabulary.test.mjs
+│   ├── task-views.test.mjs
+│   ├── tasks-screen.spec.js
+│   ├── tenant-notification-evidence.test.mjs
+│   ├── tool-coverage.test.mjs
+│   ├── userdirectory-sync.test.mjs
+│   ├── utc-guard.test.mjs
+│   ├── visual-docs.test.mjs
+│   ├── walkthrough-values-contract.test.mjs
+│   ├── wayfinding.spec.js
+│   ├── wiring-path.test.mjs
+│   └── zip-reader.test.mjs
+└── tools
+    ├── admin-centre
+    │   ├── README.md
+    │   ├── config
+    │   │   └── settings.json
+    │   ├── scripts
+    │   │   ├── start.sh
+    │   │   └── verify.py
+    │   ├── static
+    │   │   ├── app.css
+    │   │   ├── brand
+    │   │   │   ├── brand.css
+    │   │   │   ├── brand.js
+    │   │   │   ├── dgo-mark.svg
+    │   │   │   ├── nitda-lockup-digital-colour.png
+    │   │   │   ├── nitda-lockup-digital-white.png
+    │   │   │   └── nitda-symbol-infoweb.png
+    │   │   ├── estate-check.js
+    │   │   └── index.html
+    │   └── tests
+    │       └── test_flow_owner.py
+    ├── coordination-hub
+    │   └── index.html
+    └── flow-capsule
+        ├── CHANGELOG.md
+        ├── README.md
+        ├── VERSION
+        ├── app
+        │   ├── POWER_AUTOMATE.md
+        │   ├── flowcapctl.py
+        │   └── flowcapsule.py
+        ├── flowcapsule.service
+        ├── requirements.txt
+        ├── termux-setup.sh
+        └── tests
+            ├── test_flowcapsule.py
+            └── test_installer.py

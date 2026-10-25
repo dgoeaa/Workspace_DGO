@@ -1,0 +1,56 @@
+{
+  "schema": "nitda-rollback-rehearsal/v1",
+  "date": "2026-10-17",
+  "authorisedBy": "owner, 2026-10-17 (\"You may rehearse\")",
+  "flow": "CG_Portal_Daily_Sweep (f12aec6d), adopted, Stopped throughout, so no run could start",
+  "tool": "npm run flows:update -- restore <backup> (scripts/lib/flow-bulk-update.mjs restore)",
+  "steps": [
+    {
+      "phase": "backup",
+      "atUtc": "2026-10-17T00:09:38.643Z",
+      "flow": "CG_Portal_Daily_Sweep",
+      "flowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "state": "Stopped",
+      "lastModified": "2026-10-08T00:32:16.7274891Z",
+      "definitionHash": "ddf571f81ca82ea5",
+      "hasRehearsalStep": false
+    },
+    {
+      "phase": "change",
+      "atUtc": "2026-10-17T00:09:59.952Z",
+      "flow": "CG_Portal_Daily_Sweep",
+      "flowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "state": "Stopped",
+      "lastModified": "2026-10-08T00:32:16.7274891Z",
+      "definitionHash": "ddf571f81ca82ea5",
+      "hasRehearsalStep": false,
+      "write": 200,
+      "after": {
+        "state": "Stopped",
+        "definitionHash": "f834788414816007",
+        "hasRehearsalStep": true
+      }
+    },
+    {
+      "phase": "verify",
+      "atUtc": "2026-10-17T00:10:55.665Z",
+      "flow": "CG_Portal_Daily_Sweep",
+      "flowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "state": "Stopped",
+      "lastModified": "2026-10-17T00:10:33.7190422Z",
+      "definitionHash": "ddf571f81ca82ea5",
+      "hasRehearsalStep": false
+    }
+  ],
+  "outcome": {
+    "originalHash": "ddf571f81ca82ea5",
+    "changedHash": "f834788414816007",
+    "restoredHash": "ddf571f81ca82ea5",
+    "restoredMatchesOriginal": true,
+    "stateBefore": "Stopped",
+    "stateAfter": "Stopped",
+    "restoreToolResult": "RESTORED, read back and confirmed",
+    "packageCheckAfter": "UP_TO_DATE (npm run flows:update -- check --only CG_Portal_Daily_Sweep)"
+  },
+  "note": "The backup file holds the flow definition and stays outside the repository."
+}

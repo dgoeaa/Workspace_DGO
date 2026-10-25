@@ -1,0 +1,46 @@
+Title,Category Code,Subcategory,SubCategory Code,Default Primary Responsible,Default Supporting Department/Unit,INFORMDSU1,INFORMDSU2,INFORMDSU3,List Name,Priority,SPT,EPT,Description
+Administrative Matters,ADM,Human Resources,HRM,HRM,,DGO,CEO,,AdminServicesList,Medium,5,7,Policies procedures and activities related to HR management
+Administrative Matters,ADM,Administrative Services,ADS,AGS,PM,DGO,CEO,PU,AdminServicesList,Medium,3,5,General administrative functions within NITDA
+Administrative Matters,HRM,General Administration,GEN,AGS,,DGO,CEO,,GeneralAdminList,Medium,3,7,Oversight of all general administrative activities
+Administrative Matters,ADM,Scholarships,SCH,AGS,,DGO,CEO,,ScholarshipList,Medium,Ongoing,,Scholarship programs within NITDA
+Contracts and Services,CAS,Procurement,PRC,PU,PM,DGO,CEO,,ProcurementList,Medium,7,10,Procurement of goods and services
+Contracts and Services,CAS,Projects Management,PRM,PM,PU,DGO,CEO,,ProcurementList,Medium,7,10,Management of procurement processes for projects
+Contracts and Services,CAS,Legal Services,LGS,LBMU,PU,DGO,CEO,PM,LegalServicesList,Medium,7,10,Legal engagements in contracts and service agreements
+Engagements and Events,EAI,Events,EVE,CEO,,DGO,PA,CCMR,EventsList,Medium,14,30,Events organized or hosted by NITDA
+Engagements and Events,EAI,Invitations,INV,CEO,,DGO,PA,,InvitationsList,High,48 Hours,,Invitations extended for NITDA participation in activities
+Engagements and Events,EAI,High-Level Engagements,HLE,CEO,,DGO,PA,,HighLevelEngagementsList,High,7,14,High-level engagements involving key stakeholders
+Finance Matters,FIN,Budgeting,BUD,BDMU,FMC,DGO,CEO,,BudgetList,Medium,10,15,Budget planning allocation and management within NITDA
+Finance Matters,FIN,Expenditure,EXP,FMC,,DGO,CEO,,ExpenditureList,High,5,7,Management and oversight of financial expenditures
+Finance Matters,FIN,Miscellaneous,MSC,FMC,,DGO,CEO,,MiscellaneousList,Medium,Ongoing,,Miscellaneous financial matters within NITDA
+FMCIDE,MCI,Honourable Minister,HMM,CEO,,DGO,,,HonourableMinisterList,High,7,14,Matters relating to the Honourable Minister
+FMCIDE,MCI,Mainstream,MCI,CEO,,CEO,,,MainstreamList,High,Ongoing,,Mainstream FMCIDE matters
+GOV TO GOV,GOV,Regulatory Affairs,REA,CEO,,DGO,,,InterAgencyCollabList,Medium,Ongoing,,Collaborations with other government agencies
+GOV TO GOV,GOV,StakeHolder Engagements,STE,SMP,,DGO,CEO,,,,,,
+GOV TO GOV,GOV,Inter Agency Collaborations,IAC,SMP,,DGO,CEO,,,,,,
+Internships,INI,Industrial Attachment,IAT,HRA,,DGO,,,IndustrialAttachmentList,Low,5,7,Industrial Attachment internships for students
+Internships,INI,NYSC,NYC,HRA,,DGO,,,InternshipsList,Low,5,7,Manage internships for National Youth Service Corps members
+Interventions,ITV,Government Agencies,GOV,PATODGCEO,,DGO,CEO,,InterventionsList,Low,10,15,Manage interventions and collaborations with government agencies
+Interventions,ITV,Private Sector,PRV,PATODGCEO,,DGO,CEO,,InterventionsList,Low,10,15,Manage interventions and collaborations with private sector
+Interventions,ITV,Legislature,LGS,PATODGCEO,,DGO,CEO,,LegislatureList,Low,7,10,Legislative collaboration and interventions
+Legal Matters,LGM,N/A,N/A,LBMU,,DGO,CEO,,,High,,,
+Legislative Matters,LLM,House of Representatives,LMH,CEO,,DGO,,,HouseofRepList,High,Ongoing,,Collaboration with the House of Representatives
+Legislative Matters,LLM,Senate,LMS,CEO,,DGO,,,SenateList,High,Ongoing,,Collaboration with the Senate
+NITDA Engagements,NTE,Specialized,SPE,ODG,,DGO,CEO,,NITDAEngagementsList,Medium,Ongoing,,NITDA-related engagements
+NITDA Engagements,NTE,Tech Innovation,TIN,CEO,DGO,DGO,CEO,,TechInnovationList,Medium,Ongoing,,NITDA engagements related to technology innovation
+NITDA Engagements,NTE,Long-Term Strategy,LTS,CPS,DGO,DGO,CEO,,LongTermStrategyList,Medium,Ongoing,,NITDA engagements related to long-term strategies
+NITDA Internal Operations,OPS,Operations,OPS,DGO,,GO,,,OperationsList,High,Ongoing,,Internal operational management at NITDA
+NITDA Services,NSS,IT Project Clearance,ITP,ITPC,ITPCU,DGO,CEO,,ITClearanceList,High,Ongoing,,Manage IT project clearance for NITDA
+NITDA Services,NSS,No Objection,NOB,RC,RC,DGO,CEO,,NoObjectionList,High,7,10,Manage 'No Objection' certifications for ICT projects
+NITDA Services,NSS,General Services,GEN,DGO,,,,,GeneralServicesList,Medium,Ongoing,,General IT services provided by NITDA
+NITDA Services,NSS,Domains,DMS,DMS,RC,DGO,CEO,,DomainsList,Medium,Ongoing,,Domain name management and services within NITDA
+NITDA Services,NSS,IICP,IIC,IIC,RC,DGO,CEO,,NSIList,High,Ongoing,,Manage ICT policy and services for NSI
+Public Relations,PRS,N/A,N/A,PRS,,DGO,CEO,,PublicRelationsList,Medium,Ongoing,,Public relations and communication for NITDA
+Sponsorship And Collaborations,SSC,Institutional Collaborations,ICP,CEO,,DGO,,,InstCollabList,Medium,Ongoing,,Institutional collaborations and partnerships
+Sponsorship And Collaborations,SSC,International Agreements,IAS,CEO,,DGO,,,IntlAgreementsList,Medium,Ongoing,,International partnerships and agreements
+Sponsorship And Collaborations,SSC,Others,OTH,CEO,,DGO,,,ProposalsList,Medium,Ongoing,,Submission and review of proposals
+Unclassifieds,UNC,,,,,,,,N/A,N/A,,,N/A
+Public Relations,PRC,Courtesy Visits,CVT,CCMR,PA,DGO,CEO,,PublicRelationsList,Medium,,,"Visits by external parties to NITDA for courtesy, relationship-building, or protocol purposes. | Enhance stakeholder engagement."
+Public Relations,PRC,Apprecialtions and Recognitions,APR,CCMR,,DGO,CEO,PA,PublicRelationsList,Medium,,,Expressions of gratitude or recognition received by NITDA for its services or contributions. | Document appreciation from external parties.      |
+Sponsorship And Collaborations,SSC,PROPOSALS,PPS,,,DGO,,,ProposalsList,,,,Expression of Interest to estabish a desired relationship with NITDA
+Interventions,ITV,Educational Institutions,EDU,PADGCEO,,DGO,CEO,,,Low,,,
+Interventions,ITV,Education lal Institutions,EDU,PADGCEO,,DGO,CEO,,,Low,,,

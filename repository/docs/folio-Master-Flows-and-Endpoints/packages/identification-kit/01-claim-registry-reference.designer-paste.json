@@ -1,0 +1,1968 @@
+{
+  "nodeId": "Scope_Claim_Registry_Reference",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_EntityKey_Record": {
+        "type": "Compose",
+        "inputs": "@guid()",
+        "runAfter": {}
+      },
+      "Compose_Claim_Registry_Year": {
+        "type": "Compose",
+        "inputs": "@formatDateTime(convertFromUtc(utcNow(), 'W. Central Africa Standard Time'), 'yyyy')",
+        "runAfter": {
+          "Compose_EntityKey_Record": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Claim_Registry_Count": {
+        "type": "Compose",
+        "inputs": "@int(1)",
+        "runAfter": {
+          "Compose_Claim_Registry_Year": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_1": {
+        "type": "Scope",
+        "actions": {
+          "Get_Counter_Registry_1": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {}
+          },
+          "Condition_Counter_Registry_1_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_1')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_1": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_1')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_1": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_1')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_1')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_1')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_1'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_1": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_1": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_1')",
+                "runAfter": {
+                  "Claim_Counter_Registry_1": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_1": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_1": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_1": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_1": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_Claim_Registry_Count": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_2": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_2": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_2": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_2": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_2_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_2')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_2": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_2')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_2": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_2')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_2')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_2')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_2'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_2": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_2": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_2')",
+                "runAfter": {
+                  "Claim_Counter_Registry_2": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_2": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_2": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_2": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_2": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_1": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_3": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_3": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_3": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_3": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_3_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_3')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_3": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_3')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_3": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_3')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_3')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_3')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_3'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_3": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_3": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_3')",
+                "runAfter": {
+                  "Claim_Counter_Registry_3": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_3": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_3": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_3": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_3": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_2": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_4": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_4": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_4": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_4": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_4_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_4')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_4": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_4')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_4": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_4')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_4')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_4')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_4'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_4": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_4": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_4')",
+                "runAfter": {
+                  "Claim_Counter_Registry_4": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_4": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_4": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_4": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_4": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_3": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_5": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_5": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_5": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_5": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_5_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_5')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_5": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_5')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_5": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_5')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_5')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_5')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_5'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_5": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_5": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_5')",
+                "runAfter": {
+                  "Claim_Counter_Registry_5": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_5": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_5": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_5": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_5": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_4": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_6": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_6": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_6": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_6": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_6_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_6')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_6": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_6')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_6": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_6')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_6')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_6')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_6'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_6": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_6": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_6')",
+                "runAfter": {
+                  "Claim_Counter_Registry_6": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_6": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_6": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_6": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_6": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_5": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_7": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_7": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_7": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_7": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_7_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_7')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_7": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_7')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_7": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_7')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_7')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_7')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_7'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_7": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_7": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_7')",
+                "runAfter": {
+                  "Claim_Counter_Registry_7": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_7": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_7": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_7": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_7": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_6": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_8": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_8": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_8": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_8": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_8_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_8')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_8": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_8')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_8": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_8')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_8')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_8')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_8'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_8": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_8": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_8')",
+                "runAfter": {
+                  "Claim_Counter_Registry_8": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_8": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_8": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_8": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_8": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_7": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_9": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_9": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_9": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_9": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_9_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_9')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_9": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_9')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_9": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_9')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_9')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_9')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_9'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_9": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_9": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_9')",
+                "runAfter": {
+                  "Claim_Counter_Registry_9": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_9": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_9": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_9": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_9": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_8": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_Registry_10": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_Registry_10": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_Registry_10": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'NITDA'%20and%20Year%20eq%20'@{outputs('Compose_Claim_Registry_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_Registry_10": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_Registry_10_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_Registry_10')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_Registry_10": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_Registry_10')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_Registry_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_Registry_10": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_Registry_10')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_Registry_10')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_Registry_10')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Next_Registry_10'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_Registry_10": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_Registry_10": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_Registry_10')",
+                "runAfter": {
+                  "Claim_Counter_Registry_10": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_Registry_10": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('NITDA-', string(outputs('Compose_Claim_Registry_Year')))), 'Prefix', 'NITDA'), 'Year', string(outputs('Compose_Claim_Registry_Year'))), 'CurrentSequence', outputs('Compose_Claim_Registry_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(outputs('Compose_Claim_Registry_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_Registry_10": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_Registry_Count')",
+                  "runAfter": {
+                    "Create_Counter_Registry_10": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_Registry_10": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_9": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Claim_Registry": {
+        "type": "Compose",
+        "inputs": {
+          "ok": "@not(equals(coalesce(actions('Compose_Claimed_Registry_1')?['outputs'], actions('Compose_Created_Registry_1')?['outputs'], actions('Compose_Claimed_Registry_2')?['outputs'], actions('Compose_Created_Registry_2')?['outputs'], actions('Compose_Claimed_Registry_3')?['outputs'], actions('Compose_Created_Registry_3')?['outputs'], actions('Compose_Claimed_Registry_4')?['outputs'], actions('Compose_Created_Registry_4')?['outputs'], actions('Compose_Claimed_Registry_5')?['outputs'], actions('Compose_Created_Registry_5')?['outputs'], actions('Compose_Claimed_Registry_6')?['outputs'], actions('Compose_Created_Registry_6')?['outputs'], actions('Compose_Claimed_Registry_7')?['outputs'], actions('Compose_Created_Registry_7')?['outputs'], actions('Compose_Claimed_Registry_8')?['outputs'], actions('Compose_Created_Registry_8')?['outputs'], actions('Compose_Claimed_Registry_9')?['outputs'], actions('Compose_Created_Registry_9')?['outputs'], actions('Compose_Claimed_Registry_10')?['outputs'], actions('Compose_Created_Registry_10')?['outputs']), null))",
+          "prefix": "NITDA",
+          "year": "@outputs('Compose_Claim_Registry_Year')",
+          "last": "@coalesce(actions('Compose_Claimed_Registry_1')?['outputs'], actions('Compose_Created_Registry_1')?['outputs'], actions('Compose_Claimed_Registry_2')?['outputs'], actions('Compose_Created_Registry_2')?['outputs'], actions('Compose_Claimed_Registry_3')?['outputs'], actions('Compose_Created_Registry_3')?['outputs'], actions('Compose_Claimed_Registry_4')?['outputs'], actions('Compose_Created_Registry_4')?['outputs'], actions('Compose_Claimed_Registry_5')?['outputs'], actions('Compose_Created_Registry_5')?['outputs'], actions('Compose_Claimed_Registry_6')?['outputs'], actions('Compose_Created_Registry_6')?['outputs'], actions('Compose_Claimed_Registry_7')?['outputs'], actions('Compose_Created_Registry_7')?['outputs'], actions('Compose_Claimed_Registry_8')?['outputs'], actions('Compose_Created_Registry_8')?['outputs'], actions('Compose_Claimed_Registry_9')?['outputs'], actions('Compose_Created_Registry_9')?['outputs'], actions('Compose_Claimed_Registry_10')?['outputs'], actions('Compose_Created_Registry_10')?['outputs'])",
+          "first": "@if(equals(coalesce(actions('Compose_Claimed_Registry_1')?['outputs'], actions('Compose_Created_Registry_1')?['outputs'], actions('Compose_Claimed_Registry_2')?['outputs'], actions('Compose_Created_Registry_2')?['outputs'], actions('Compose_Claimed_Registry_3')?['outputs'], actions('Compose_Created_Registry_3')?['outputs'], actions('Compose_Claimed_Registry_4')?['outputs'], actions('Compose_Created_Registry_4')?['outputs'], actions('Compose_Claimed_Registry_5')?['outputs'], actions('Compose_Created_Registry_5')?['outputs'], actions('Compose_Claimed_Registry_6')?['outputs'], actions('Compose_Created_Registry_6')?['outputs'], actions('Compose_Claimed_Registry_7')?['outputs'], actions('Compose_Created_Registry_7')?['outputs'], actions('Compose_Claimed_Registry_8')?['outputs'], actions('Compose_Created_Registry_8')?['outputs'], actions('Compose_Claimed_Registry_9')?['outputs'], actions('Compose_Created_Registry_9')?['outputs'], actions('Compose_Claimed_Registry_10')?['outputs'], actions('Compose_Created_Registry_10')?['outputs']), null), null, sub(int(coalesce(coalesce(actions('Compose_Claimed_Registry_1')?['outputs'], actions('Compose_Created_Registry_1')?['outputs'], actions('Compose_Claimed_Registry_2')?['outputs'], actions('Compose_Created_Registry_2')?['outputs'], actions('Compose_Claimed_Registry_3')?['outputs'], actions('Compose_Created_Registry_3')?['outputs'], actions('Compose_Claimed_Registry_4')?['outputs'], actions('Compose_Created_Registry_4')?['outputs'], actions('Compose_Claimed_Registry_5')?['outputs'], actions('Compose_Created_Registry_5')?['outputs'], actions('Compose_Claimed_Registry_6')?['outputs'], actions('Compose_Created_Registry_6')?['outputs'], actions('Compose_Claimed_Registry_7')?['outputs'], actions('Compose_Created_Registry_7')?['outputs'], actions('Compose_Claimed_Registry_8')?['outputs'], actions('Compose_Created_Registry_8')?['outputs'], actions('Compose_Claimed_Registry_9')?['outputs'], actions('Compose_Created_Registry_9')?['outputs'], actions('Compose_Claimed_Registry_10')?['outputs'], actions('Compose_Created_Registry_10')?['outputs']), 0)), sub(outputs('Compose_Claim_Registry_Count'), 1)))",
+          "references": "@if(equals(coalesce(actions('Compose_Claimed_Registry_1')?['outputs'], actions('Compose_Created_Registry_1')?['outputs'], actions('Compose_Claimed_Registry_2')?['outputs'], actions('Compose_Created_Registry_2')?['outputs'], actions('Compose_Claimed_Registry_3')?['outputs'], actions('Compose_Created_Registry_3')?['outputs'], actions('Compose_Claimed_Registry_4')?['outputs'], actions('Compose_Created_Registry_4')?['outputs'], actions('Compose_Claimed_Registry_5')?['outputs'], actions('Compose_Created_Registry_5')?['outputs'], actions('Compose_Claimed_Registry_6')?['outputs'], actions('Compose_Created_Registry_6')?['outputs'], actions('Compose_Claimed_Registry_7')?['outputs'], actions('Compose_Created_Registry_7')?['outputs'], actions('Compose_Claimed_Registry_8')?['outputs'], actions('Compose_Created_Registry_8')?['outputs'], actions('Compose_Claimed_Registry_9')?['outputs'], actions('Compose_Created_Registry_9')?['outputs'], actions('Compose_Claimed_Registry_10')?['outputs'], actions('Compose_Created_Registry_10')?['outputs']), null), json('[]'), body('Select_Claim_Registry_References'))"
+        },
+        "runAfter": {
+          "Select_Claim_Registry_References": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Select_Claim_Registry_References": {
+        "type": "Select",
+        "inputs": {
+          "from": "@if(equals(coalesce(actions('Compose_Claimed_Registry_1')?['outputs'], actions('Compose_Created_Registry_1')?['outputs'], actions('Compose_Claimed_Registry_2')?['outputs'], actions('Compose_Created_Registry_2')?['outputs'], actions('Compose_Claimed_Registry_3')?['outputs'], actions('Compose_Created_Registry_3')?['outputs'], actions('Compose_Claimed_Registry_4')?['outputs'], actions('Compose_Created_Registry_4')?['outputs'], actions('Compose_Claimed_Registry_5')?['outputs'], actions('Compose_Created_Registry_5')?['outputs'], actions('Compose_Claimed_Registry_6')?['outputs'], actions('Compose_Created_Registry_6')?['outputs'], actions('Compose_Claimed_Registry_7')?['outputs'], actions('Compose_Created_Registry_7')?['outputs'], actions('Compose_Claimed_Registry_8')?['outputs'], actions('Compose_Created_Registry_8')?['outputs'], actions('Compose_Claimed_Registry_9')?['outputs'], actions('Compose_Created_Registry_9')?['outputs'], actions('Compose_Claimed_Registry_10')?['outputs'], actions('Compose_Created_Registry_10')?['outputs']), null), json('[]'), range(sub(int(coalesce(coalesce(actions('Compose_Claimed_Registry_1')?['outputs'], actions('Compose_Created_Registry_1')?['outputs'], actions('Compose_Claimed_Registry_2')?['outputs'], actions('Compose_Created_Registry_2')?['outputs'], actions('Compose_Claimed_Registry_3')?['outputs'], actions('Compose_Created_Registry_3')?['outputs'], actions('Compose_Claimed_Registry_4')?['outputs'], actions('Compose_Created_Registry_4')?['outputs'], actions('Compose_Claimed_Registry_5')?['outputs'], actions('Compose_Created_Registry_5')?['outputs'], actions('Compose_Claimed_Registry_6')?['outputs'], actions('Compose_Created_Registry_6')?['outputs'], actions('Compose_Claimed_Registry_7')?['outputs'], actions('Compose_Created_Registry_7')?['outputs'], actions('Compose_Claimed_Registry_8')?['outputs'], actions('Compose_Created_Registry_8')?['outputs'], actions('Compose_Claimed_Registry_9')?['outputs'], actions('Compose_Created_Registry_9')?['outputs'], actions('Compose_Claimed_Registry_10')?['outputs'], actions('Compose_Created_Registry_10')?['outputs']), 0)), sub(outputs('Compose_Claim_Registry_Count'), 1)), outputs('Compose_Claim_Registry_Count')))",
+          "select": "@concat(string(outputs('Compose_Environment_Prefix')), 'NITDA-', string(outputs('Compose_Claim_Registry_Year')), '-', string(formatNumber(item(), '00000')))"
+        },
+        "runAfter": {
+          "Scope_Claim_Registry_10": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Condition_Claim_Registry_Failed": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@outputs('Compose_Claim_Registry')?['ok']",
+                false
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Response_Claim_Registry_Retry_Later": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 503,
+              "headers": {
+                "Content-Type": "application/json",
+                "Retry-After": "5"
+              },
+              "body": {
+                "ok": false,
+                "code": "RETRY_LATER",
+                "message": "The reference service is busy. Try again in a few seconds.",
+                "requestId": "@outputs('Compose_Request_Context')?['requestId']"
+              }
+            },
+            "runAfter": {}
+          },
+          "Terminate_Claim_Registry": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Response_Claim_Registry_Retry_Later": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Compose_Claim_Registry": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Counter_Registry_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_Registry_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_Registry_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_Registry_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

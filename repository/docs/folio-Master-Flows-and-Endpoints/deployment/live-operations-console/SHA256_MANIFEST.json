@@ -1,0 +1,36 @@
+{
+  "algorithm": "SHA-256",
+  "fileCount": 6,
+  "files": [
+    {
+      "file": "ACTIVATION_AND_VALIDATION.md",
+      "bytes": 709,
+      "sha256": "3a9ac8c47d12361d09c455b5d1f6692d3ce93fdc6607e239d0c197477bb4497f"
+    },
+    {
+      "file": "EMBEDDED_DATA_MODEL.json",
+      "bytes": 46298,
+      "sha256": "5fd02677840b4e3caea5e642443dc8b331ccb5cb8cbd38ee7b37f1816354579e"
+    },
+    {
+      "file": "EXPLICIT_EXECUTION_SPECIFICATION.md",
+      "bytes": 14039,
+      "sha256": "709d4725d811300f25e139f840fbed6d9ebbd843c180d4e78590c60b118ab851"
+    },
+    {
+      "file": "IMPLEMENTATION_PARAMETER_REGISTER.md",
+      "bytes": 5799,
+      "sha256": "b669452026c40300c41d77748731c2bba68cafb6db42684c059cb7cc83ea6ab4"
+    },
+    {
+      "file": "README.md",
+      "bytes": 895,
+      "sha256": "7ee6f362c86e9c91d294b015fb1860d5de8d7ec415e8e0e57520316f22fbf699"
+    },
+    {
+      "file": "index.html",
+      "bytes": 52462,
+      "sha256": "f0e6c9b2cd4232df335e658703bd89a002ac96103fd99301043609a9b9d8b1bd"
+    }
+  ]
+}

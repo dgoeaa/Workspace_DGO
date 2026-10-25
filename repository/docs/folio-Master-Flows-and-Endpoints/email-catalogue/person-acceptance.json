@@ -1,0 +1,18 @@
+{
+  "outcome": "Accepted",
+  "date": "2026-10-18",
+  "reviewer": "Hamza Kani (hkani@nitda.gov.ng), technical owner, reviewed the 43 samples sent 2026-10-16",
+  "acceptedBy": "the owner, Office of the Director-General/CEO (dgsregistry@nitda.gov.ng), who directed the replacement set be implemented as the closure of ITEM-68 (2026-10-18)",
+  "findings": [
+    "templates not designed to the brand and design system in use",
+    "the logo missing from some templates",
+    "no greeting to the recipient in some bodies",
+    "the same colour used by two or more different notices",
+    "poor formatting"
+  ],
+  "resolution": "The owner-supplied set (Comprehensive Portfolio Brand System Package) replaces all 43 templates: a Deep Green masthead with the white NITDA lockup on every message, the DGO Digital Ops logo on internal mail, a greeting in every body, colour by purpose so no two kinds of notice share a scheme, and one layout system. Logos are served only from https://correspondence-gateway.rf.gd/email-assets/ (owner decision 2026-10-18), deployed with the Portal package. Three colours outside the brand tokens were mapped to the nearest tokens (#E1DFE0 to ink-100, #EEEDED to ink-50, #00575C to info-800); two expressions longer than one build part were split with identical output. Identification release 36 applied to all 21 sending flows.",
+  "evidence": [
+    "npm run test:emailcatalogue: every package body is its catalogue template; 48 of 48 messages pass every template check (the one recipient finding is a fixed address in the scan flow, not part of the template set)",
+    "docs/folio-Master-Flows-and-Endpoints/evidence/2026-10-18-template-release-proof.json: live sends composed by the new templates without error, receipts 1632, 1633, 1635, 1637"
+  ]
+}

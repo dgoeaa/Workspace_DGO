@@ -1,0 +1,2929 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/01_-_GOV_-_Provision_HTTP_Flow_Registry__17a85efb-1ed2-45c9-a602-2ad6f8bb7ead.json",
+  "workflow_identity": {
+    "internal_name": "17a85efb-1ed2-45c9-a602-2ad6f8bb7ead",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/17a85efb-1ed2-45c9-a602-2ad6f8bb7ead",
+    "tags": {
+      "flowDisplayName": "01 - GOV - Provision HTTP Flow Registry"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Button",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          }
+        }
+      }
+    },
+    "actions": {
+      "Initialize_Provisioning_Start_Utc": {
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "c695f074-a0c5-4ac9-a76b-99dedd1a3576"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varProvisioningStartUtc",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        }
+      },
+      "Initialize_Provisioning_Results": {
+        "runAfter": {
+          "Initialize_Provisioning_Start_Utc": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "8b3969f8-38d0-4057-a395-fa0bc6e30bc5"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varProvisioningResults",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_Provisioning_Errors": {
+        "runAfter": {
+          "Initialize_Provisioning_Results": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "7b0ba834-4d7d-4b5e-8acf-4cc05be97abf"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varProvisioningErrors",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Scope_01_GOV_Provision_HTTP_Flow_Registry_COMPLETE_UPDATED": {
+        "actions": {
+          "Compose_List_Definitions": {
+            "metadata": {
+              "operationMetadataId": "34ee71af-8ea8-4889-a08e-b60132fb5f5e"
+            },
+            "type": "Compose",
+            "inputs": [
+              {
+                "title": "DGO_HTTPFlowRegistry",
+                "description": "Current authoritative HTTP flow truth"
+              },
+              {
+                "title": "DGO_HTTPFlowContractVersions",
+                "description": "Immutable contracts"
+              },
+              {
+                "title": "DGO_HTTPFlowExecutionLedger",
+                "description": "Execution ledger"
+              },
+              {
+                "title": "DGO_HTTPFlowDependencies",
+                "description": "Flow dependencies"
+              },
+              {
+                "title": "DGO_HTTPFlowRegistryExceptions",
+                "description": "Governance exceptions"
+              },
+              {
+                "title": "DGO_HTTPFlowRegistryConfiguration",
+                "description": "Registry configuration"
+              },
+              {
+                "title": "DGO_HTTPFlowConsumerRegistry",
+                "description": "Consumer registry"
+              }
+            ]
+          },
+          "Apply_to_each_List": {
+            "foreach": "@outputs('Compose_List_Definitions')",
+            "actions": {
+              "Check_List": {
+                "metadata": {
+                  "operationMetadataId": "dd0c3d83-e655-4352-889e-f5ac2f08b4d1"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists?$select=Id,Title&$filter=Title eq ''',replace(items('Apply_to_each_List')?['title'],'''',''''''),'''&$top=1')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "If_List_Missing": {
+                "actions": {
+                  "Create_List": {
+                    "metadata": {
+                      "operationMetadataId": "8879f6a6-e261-4522-a8c4-6bb5e5dbd641"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(json('{}'),'BaseTemplate',100),'Title',items('Apply_to_each_List')?['title']),'Description',items('Apply_to_each_List')?['description'])"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": {
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                        "type": "Raw"
+                      }
+                    }
+                  },
+                  "Log_List_Created": {
+                    "runAfter": {
+                      "Create_List": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "211b2095-e68f-4a1d-9997-a210dae8b80d"
+                    },
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varProvisioningResults",
+                      "value": {
+                        "stage": "Lists",
+                        "resource": "@items('Apply_to_each_List')?['title']",
+                        "status": "Created",
+                        "utc": "@utcNow()"
+                      }
+                    }
+                  },
+                  "Log_List_Create_Error": {
+                    "runAfter": {
+                      "Create_List": [
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "d07887c1-df74-49dc-9948-c52d492b4795"
+                    },
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varProvisioningErrors",
+                      "value": {
+                        "stage": "Lists",
+                        "resource": "@items('Apply_to_each_List')?['title']",
+                        "status": "CreateFailed",
+                        "detail": "@coalesce(outputs('Create_List')?['body']?['error']?['message'],outputs('Create_List')?['statusCode'],'Create list failed')",
+                        "utc": "@utcNow()"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Check_List": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Log_List_Exists": {
+                      "metadata": {
+                        "operationMetadataId": "e5b950bb-c1a5-4d9d-b4e4-fa65d221f46a"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varProvisioningResults",
+                        "value": {
+                          "stage": "Lists",
+                          "resource": "@items('Apply_to_each_List')?['title']",
+                          "status": "AlreadyExists",
+                          "utc": "@utcNow()"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@length(coalesce(body('Check_List')?['value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "2b615911-811d-41bd-bbac-db46483529c5"
+                },
+                "type": "If"
+              },
+              "Configure_List": {
+                "runAfter": {
+                  "If_List_Missing": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "befded9c-2130-4c99-96cf-d236b801c61d"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_List')?['title'],'''',''''''),''')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'EnableAttachments',false),'EnableFolderCreation',false),'EnableVersioning',true),'MajorVersionLimit',100),'ForceCheckout',false),'Hidden',false)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "Log_List_Configured": {
+                "runAfter": {
+                  "Configure_Title_Field": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "60b0e709-0504-4392-82e8-c4e87c8f254a"
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varProvisioningResults",
+                  "value": {
+                    "stage": "ListSettings",
+                    "resource": "@items('Apply_to_each_List')?['title']",
+                    "status": "Configured",
+                    "utc": "@utcNow()"
+                  }
+                }
+              },
+              "Log_List_Configuration_Error": {
+                "runAfter": {
+                  "Configure_List": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "32570ab0-f51f-4285-a143-baeace592581"
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varProvisioningErrors",
+                  "value": {
+                    "stage": "ListSettings",
+                    "resource": "@items('Apply_to_each_List')?['title']",
+                    "status": "ConfigurationFailed",
+                    "detail": "@coalesce(outputs('Configure_List')?['body']?['error']?['message'],outputs('Configure_List')?['statusCode'],'Configure list failed')",
+                    "utc": "@utcNow()"
+                  }
+                }
+              },
+              "Configure_Title_Field": {
+                "runAfter": {
+                  "Configure_List": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "5a5d4355-e996-41a8-b4f7-204b3282a4ef"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_List')?['title'],'''',''''''),''')/fields/getByInternalNameOrTitle(''Title'')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(json('{}'),'Required',false)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "Log_Title_Configuration_Error": {
+                "runAfter": {
+                  "Configure_Title_Field": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "f4171111-ee14-42a2-a718-b408c963293a"
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varProvisioningErrors",
+                  "value": {
+                    "stage": "ListSettings",
+                    "resource": "@concat(items('Apply_to_each_List')?['title'],'.Title')",
+                    "status": "TitleConfigurationFailed",
+                    "detail": "@coalesce(outputs('Configure_Title_Field')?['body']?['error']?['message'],outputs('Configure_Title_Field')?['statusCode'],'Configure Title failed')",
+                    "utc": "@utcNow()"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_List_Definitions": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b17c4ec1-ee1a-4b61-ab6d-4ed66d6736b3"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Compose_Field_Definitions": {
+            "runAfter": {
+              "Apply_to_each_List": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "fb6f4aee-606f-49c1-85e8-84f49e6d470b"
+            },
+            "type": "Compose",
+            "inputs": [
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "RegistryKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": true,
+                "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "FlowId",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "EnvironmentId",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='EnvironmentId' Name='EnvironmentId' StaticName='EnvironmentId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "EnvironmentName",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='EnvironmentName' Name='EnvironmentName' StaticName='EnvironmentName' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "FlowName",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='FlowName' Name='FlowName' StaticName='FlowName' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "SystemName",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='SystemName' Name='SystemName' StaticName='SystemName' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "BusinessProcess",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='BusinessProcess' Name='BusinessProcess' StaticName='BusinessProcess' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "FlowDescription",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='FlowDescription' Name='FlowDescription' StaticName='FlowDescription' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "TechnicalOwnerEmail",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='TechnicalOwnerEmail' Name='TechnicalOwnerEmail' StaticName='TechnicalOwnerEmail' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "BusinessOwnerEmail",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='BusinessOwnerEmail' Name='BusinessOwnerEmail' StaticName='BusinessOwnerEmail' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "SupportEmail",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='SupportEmail' Name='SupportEmail' StaticName='SupportEmail' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "HttpMethod",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='HttpMethod' Name='HttpMethod' StaticName='HttpMethod' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "EndpointRedacted",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='EndpointRedacted' Name='EndpointRedacted' StaticName='EndpointRedacted' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "EndpointFingerprint",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='EndpointFingerprint' Name='EndpointFingerprint' StaticName='EndpointFingerprint' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "AuthenticationMode",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='AuthenticationMode' Name='AuthenticationMode' StaticName='AuthenticationMode' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "DataClassification",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='DataClassification' Name='DataClassification' StaticName='DataClassification' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "Criticality",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='Criticality' Name='Criticality' StaticName='Criticality' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "LifecycleStatus",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='LifecycleStatus' Name='LifecycleStatus' StaticName='LifecycleStatus' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "DefinitionVersion",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='DefinitionVersion' Name='DefinitionVersion' StaticName='DefinitionVersion' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "DefinitionFingerprint",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='DefinitionFingerprint' Name='DefinitionFingerprint' StaticName='DefinitionFingerprint' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "RequestSchemaJson",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='RequestSchemaJson' Name='RequestSchemaJson' StaticName='RequestSchemaJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "ResponseContractJson",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='ResponseContractJson' Name='ResponseContractJson' StaticName='ResponseContractJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "LastRegisteredUtc",
+                "expectedType": "DateTime",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='LastRegisteredUtc' Name='LastRegisteredUtc' StaticName='LastRegisteredUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "LastSeenUtc",
+                "expectedType": "DateTime",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='LastSeenUtc' Name='LastSeenUtc' StaticName='LastSeenUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "LastSuccessfulCallUtc",
+                "expectedType": "DateTime",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='LastSuccessfulCallUtc' Name='LastSuccessfulCallUtc' StaticName='LastSuccessfulCallUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "LastFailureUtc",
+                "expectedType": "DateTime",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='LastFailureUtc' Name='LastFailureUtc' StaticName='LastFailureUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "LastAuditUtc",
+                "expectedType": "DateTime",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='LastAuditUtc' Name='LastAuditUtc' StaticName='LastAuditUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "TotalExecutions",
+                "expectedType": "Number",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='TotalExecutions' Name='TotalExecutions' StaticName='TotalExecutions' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "SuccessfulExecutions",
+                "expectedType": "Number",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='SuccessfulExecutions' Name='SuccessfulExecutions' StaticName='SuccessfulExecutions' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "FailedExecutions",
+                "expectedType": "Number",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='FailedExecutions' Name='FailedExecutions' StaticName='FailedExecutions' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "ConsecutiveFailures",
+                "expectedType": "Number",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='ConsecutiveFailures' Name='ConsecutiveFailures' StaticName='ConsecutiveFailures' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "AverageDurationMs",
+                "expectedType": "Number",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='AverageDurationMs' Name='AverageDurationMs' StaticName='AverageDurationMs' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "IsCompliant",
+                "expectedType": "Boolean",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Boolean' DisplayName='IsCompliant' Name='IsCompliant' StaticName='IsCompliant' Required='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "ComplianceIssues",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='ComplianceIssues' Name='ComplianceIssues' StaticName='ComplianceIssues' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "internalName": "RecordVersion",
+                "expectedType": "Number",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='RecordVersion' Name='RecordVersion' StaticName='RecordVersion' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "ContractKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": true,
+                "schemaXml": "<Field Type='Text' DisplayName='ContractKey' Name='ContractKey' StaticName='ContractKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "RegistryKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "FlowId",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "EnvironmentId",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='EnvironmentId' Name='EnvironmentId' StaticName='EnvironmentId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "DefinitionVersion",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='DefinitionVersion' Name='DefinitionVersion' StaticName='DefinitionVersion' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "DefinitionFingerprint",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='DefinitionFingerprint' Name='DefinitionFingerprint' StaticName='DefinitionFingerprint' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "RequestSchemaJson",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='RequestSchemaJson' Name='RequestSchemaJson' StaticName='RequestSchemaJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "ResponseContractJson",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='ResponseContractJson' Name='ResponseContractJson' StaticName='ResponseContractJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "DependenciesJson",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='DependenciesJson' Name='DependenciesJson' StaticName='DependenciesJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "SnapshotJson",
+                "expectedType": "Note",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='SnapshotJson' Name='SnapshotJson' StaticName='SnapshotJson' Required='TRUE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "EffectiveFromUtc",
+                "expectedType": "DateTime",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='EffectiveFromUtc' Name='EffectiveFromUtc' StaticName='EffectiveFromUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "EffectiveToUtc",
+                "expectedType": "DateTime",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='EffectiveToUtc' Name='EffectiveToUtc' StaticName='EffectiveToUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "internalName": "IsCurrent",
+                "expectedType": "Boolean",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Boolean' DisplayName='IsCurrent' Name='IsCurrent' StaticName='IsCurrent' Required='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "ExecutionKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": true,
+                "schemaXml": "<Field Type='Text' DisplayName='ExecutionKey' Name='ExecutionKey' StaticName='ExecutionKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "RegistryKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "FlowId",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "EnvironmentId",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='EnvironmentId' Name='EnvironmentId' StaticName='EnvironmentId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "RunId",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='RunId' Name='RunId' StaticName='RunId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "CorrelationId",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='CorrelationId' Name='CorrelationId' StaticName='CorrelationId' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "StartedUtc",
+                "expectedType": "DateTime",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='StartedUtc' Name='StartedUtc' StaticName='StartedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "CompletedUtc",
+                "expectedType": "DateTime",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='CompletedUtc' Name='CompletedUtc' StaticName='CompletedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "DurationMs",
+                "expectedType": "Number",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='DurationMs' Name='DurationMs' StaticName='DurationMs' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "Outcome",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='Outcome' Name='Outcome' StaticName='Outcome' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "HttpStatusCode",
+                "expectedType": "Number",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Number' DisplayName='HttpStatusCode' Name='HttpStatusCode' StaticName='HttpStatusCode' Required='FALSE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "CallerSystem",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='CallerSystem' Name='CallerSystem' StaticName='CallerSystem' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "ErrorCode",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='ErrorCode' Name='ErrorCode' StaticName='ErrorCode' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "ErrorMessage",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='ErrorMessage' Name='ErrorMessage' StaticName='ErrorMessage' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "internalName": "ExecutionMetadataJson",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='ExecutionMetadataJson' Name='ExecutionMetadataJson' StaticName='ExecutionMetadataJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "DependencyKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": true,
+                "schemaXml": "<Field Type='Text' DisplayName='DependencyKey' Name='DependencyKey' StaticName='DependencyKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "RegistryKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "Direction",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='Direction' Name='Direction' StaticName='Direction' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "DependencyType",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='DependencyType' Name='DependencyType' StaticName='DependencyType' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "DependencyIdentifier",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='DependencyIdentifier' Name='DependencyIdentifier' StaticName='DependencyIdentifier' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "DependencyEndpointRedacted",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='DependencyEndpointRedacted' Name='DependencyEndpointRedacted' StaticName='DependencyEndpointRedacted' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "IsCritical",
+                "expectedType": "Boolean",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Boolean' DisplayName='IsCritical' Name='IsCritical' StaticName='IsCritical' Required='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "LifecycleStatus",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='LifecycleStatus' Name='LifecycleStatus' StaticName='LifecycleStatus' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "internalName": "LastConfirmedUtc",
+                "expectedType": "DateTime",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='LastConfirmedUtc' Name='LastConfirmedUtc' StaticName='LastConfirmedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "ExceptionKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": true,
+                "schemaXml": "<Field Type='Text' DisplayName='ExceptionKey' Name='ExceptionKey' StaticName='ExceptionKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "RegistryKey",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "FlowId",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "RunId",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='RunId' Name='RunId' StaticName='RunId' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "ExceptionType",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='ExceptionType' Name='ExceptionType' StaticName='ExceptionType' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "Severity",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='Severity' Name='Severity' StaticName='Severity' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "Status",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='Status' Name='Status' StaticName='Status' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "Details",
+                "expectedType": "Note",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='Details' Name='Details' StaticName='Details' Required='TRUE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "DetectedUtc",
+                "expectedType": "DateTime",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='DetectedUtc' Name='DetectedUtc' StaticName='DetectedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "ResolvedUtc",
+                "expectedType": "DateTime",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='ResolvedUtc' Name='ResolvedUtc' StaticName='ResolvedUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "AssignedToEmail",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='AssignedToEmail' Name='AssignedToEmail' StaticName='AssignedToEmail' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "internalName": "DiagnosticJson",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='DiagnosticJson' Name='DiagnosticJson' StaticName='DiagnosticJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryConfiguration",
+                "internalName": "ConfigKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": true,
+                "schemaXml": "<Field Type='Text' DisplayName='ConfigKey' Name='ConfigKey' StaticName='ConfigKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryConfiguration",
+                "internalName": "ConfigValue",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='ConfigValue' Name='ConfigValue' StaticName='ConfigValue' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryConfiguration",
+                "internalName": "ValueType",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='ValueType' Name='ValueType' StaticName='ValueType' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryConfiguration",
+                "internalName": "IsSecret",
+                "expectedType": "Boolean",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Boolean' DisplayName='IsSecret' Name='IsSecret' StaticName='IsSecret' Required='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryConfiguration",
+                "internalName": "ConfigDescription",
+                "expectedType": "Note",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Note' DisplayName='ConfigDescription' Name='ConfigDescription' StaticName='ConfigDescription' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryConfiguration",
+                "internalName": "IsEnabled",
+                "expectedType": "Boolean",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Boolean' DisplayName='IsEnabled' Name='IsEnabled' StaticName='IsEnabled' Required='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "ConsumerKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": true,
+                "schemaXml": "<Field Type='Text' DisplayName='ConsumerKey' Name='ConsumerKey' StaticName='ConsumerKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "RegistryKey",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "ConsumerName",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='ConsumerName' Name='ConsumerName' StaticName='ConsumerName' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "ConsumerType",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='ConsumerType' Name='ConsumerType' StaticName='ConsumerType' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "ConsumerIdentifier",
+                "expectedType": "Text",
+                "required": false,
+                "indexed": true,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='ConsumerIdentifier' Name='ConsumerIdentifier' StaticName='ConsumerIdentifier' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "OwnerEmail",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='OwnerEmail' Name='OwnerEmail' StaticName='OwnerEmail' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "ExpectedAuthentication",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='ExpectedAuthentication' Name='ExpectedAuthentication' StaticName='ExpectedAuthentication' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "IsApproved",
+                "expectedType": "Boolean",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Boolean' DisplayName='IsApproved' Name='IsApproved' StaticName='IsApproved' Required='TRUE' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "ApprovedUtc",
+                "expectedType": "DateTime",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='ApprovedUtc' Name='ApprovedUtc' StaticName='ApprovedUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "LastObservedUtc",
+                "expectedType": "DateTime",
+                "required": false,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='DateTime' DisplayName='LastObservedUtc' Name='LastObservedUtc' StaticName='LastObservedUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "internalName": "LifecycleStatus",
+                "expectedType": "Text",
+                "required": true,
+                "indexed": false,
+                "unique": false,
+                "schemaXml": "<Field Type='Text' DisplayName='LifecycleStatus' Name='LifecycleStatus' StaticName='LifecycleStatus' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />"
+              }
+            ]
+          },
+          "Apply_to_each_Field": {
+            "foreach": "@outputs('Compose_Field_Definitions')",
+            "actions": {
+              "Check_Field": {
+                "metadata": {
+                  "operationMetadataId": "8b64a8d3-b59e-49fe-abf0-56d59bf16f07"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_Field')?['list'],'''',''''''),''')/fields?$select=Id,InternalName,TypeAsString,Required,Indexed,EnforceUniqueValues&$filter=InternalName eq ''',replace(items('Apply_to_each_Field')?['internalName'],'''',''''''),'''&$top=1')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "If_Field_Missing": {
+                "actions": {
+                  "Create_Field": {
+                    "metadata": {
+                      "operationMetadataId": "21c8af8b-5a51-4f13-bfb3-5def88226d2f"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_Field')?['list'],'''',''''''),''')/fields/createfieldasxml')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(json('{\"parameters\":{\"Options\":12}}'),'parameters',setProperty(json('{\"Options\":12}'),'SchemaXml',items('Apply_to_each_Field')?['schemaXml']))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": {
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                        "type": "Raw"
+                      }
+                    }
+                  },
+                  "Log_Field_Created": {
+                    "runAfter": {
+                      "Create_Field": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "3a81e12d-ef72-442b-89b9-f88d5350f41b"
+                    },
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varProvisioningResults",
+                      "value": {
+                        "stage": "Fields",
+                        "resource": "@concat(items('Apply_to_each_Field')?['list'],'.',items('Apply_to_each_Field')?['internalName'])",
+                        "status": "Created",
+                        "utc": "@utcNow()"
+                      }
+                    }
+                  },
+                  "Log_Field_Create_Error": {
+                    "runAfter": {
+                      "Create_Field": [
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "901fd329-4694-4431-9a90-c3aab5c095ac"
+                    },
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varProvisioningErrors",
+                      "value": {
+                        "stage": "Fields",
+                        "resource": "@concat(items('Apply_to_each_Field')?['list'],'.',items('Apply_to_each_Field')?['internalName'])",
+                        "status": "CreateFailed",
+                        "detail": "@coalesce(outputs('Create_Field')?['body']?['error']?['message'],outputs('Create_Field')?['statusCode'],'Create field failed')",
+                        "utc": "@utcNow()"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Check_Field": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Log_Field_Exists": {
+                      "metadata": {
+                        "operationMetadataId": "f40c904f-b53e-4f99-8819-7a260d391a13"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varProvisioningResults",
+                        "value": {
+                          "stage": "Fields",
+                          "resource": "@concat(items('Apply_to_each_Field')?['list'],'.',items('Apply_to_each_Field')?['internalName'])",
+                          "status": "AlreadyExists",
+                          "utc": "@utcNow()"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@length(coalesce(body('Check_Field')?['value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "77ef96b0-47b7-4010-b8a5-08a8de4183ba"
+                },
+                "type": "If"
+              },
+              "Validate_Field": {
+                "runAfter": {
+                  "If_Field_Missing": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "3234a8c6-dcf8-4862-bed2-212794fd7641"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_Field')?['list'],'''',''''''),''')/fields/getByInternalNameOrTitle(''',replace(items('Apply_to_each_Field')?['internalName'],'''',''''''),''')?$select=InternalName,TypeAsString,Required,Indexed,EnforceUniqueValues')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "If_Field_Valid": {
+                "actions": {
+                  "Log_Field_Validated": {
+                    "metadata": {
+                      "operationMetadataId": "b76f5244-c695-4dea-888d-9194e118ec7d"
+                    },
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varProvisioningResults",
+                      "value": {
+                        "stage": "FieldValidation",
+                        "resource": "@concat(items('Apply_to_each_Field')?['list'],'.',items('Apply_to_each_Field')?['internalName'])",
+                        "status": "Validated",
+                        "utc": "@utcNow()"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Validate_Field": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Log_Field_Validation_Mismatch": {
+                      "metadata": {
+                        "operationMetadataId": "5189e6dc-190f-4ef0-97a2-89892a2baeab"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varProvisioningErrors",
+                        "value": {
+                          "stage": "FieldValidation",
+                          "resource": "@concat(items('Apply_to_each_Field')?['list'],'.',items('Apply_to_each_Field')?['internalName'])",
+                          "status": "Mismatch",
+                          "expected": "@items('Apply_to_each_Field')",
+                          "actual": "@body('Validate_Field')",
+                          "utc": "@utcNow()"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@body('Validate_Field')?['InternalName']",
+                        "@items('Apply_to_each_Field')?['internalName']"
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@body('Validate_Field')?['TypeAsString']",
+                        "@items('Apply_to_each_Field')?['expectedType']"
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@body('Validate_Field')?['Required']",
+                        "@items('Apply_to_each_Field')?['required']"
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@body('Validate_Field')?['Indexed']",
+                        "@items('Apply_to_each_Field')?['indexed']"
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@body('Validate_Field')?['EnforceUniqueValues']",
+                        "@items('Apply_to_each_Field')?['unique']"
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "cd7295a8-9282-44bc-bcd0-dec53b65bab9"
+                },
+                "type": "If"
+              }
+            },
+            "runAfter": {
+              "Compose_Field_Definitions": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "adda6b61-bb4c-488a-accc-5b13f9c061f6"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Compose_Config_Seeds": {
+            "runAfter": {
+              "Apply_to_each_Field": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "77505762-244c-48b8-b92f-408fe22394ad"
+            },
+            "type": "Compose",
+            "inputs": [
+              {
+                "Title": "RegistrySchemaVersion",
+                "ConfigKey": "RegistrySchemaVersion",
+                "ConfigValue": "1.0",
+                "ValueType": "String",
+                "IsSecret": false,
+                "ConfigDescription": "Current DGO HTTP flow registry contract version.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "StaleAfterDays",
+                "ConfigKey": "StaleAfterDays",
+                "ConfigValue": "7",
+                "ValueType": "Integer",
+                "IsSecret": false,
+                "ConfigDescription": "Days without registration or execution activity before an active flow is stale.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "ExecutionRetentionDays",
+                "ConfigKey": "ExecutionRetentionDays",
+                "ConfigValue": "180",
+                "ValueType": "Integer",
+                "IsSecret": false,
+                "ConfigDescription": "Approved retention period for execution-ledger records.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "ConsecutiveFailureThreshold",
+                "ConfigKey": "ConsecutiveFailureThreshold",
+                "ConfigValue": "3",
+                "ValueType": "Integer",
+                "IsSecret": false,
+                "ConfigDescription": "Consecutive failures required before creating a governance exception.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "GovernanceNotificationEmail",
+                "ConfigKey": "GovernanceNotificationEmail",
+                "ConfigValue": "dgsRegistry@nitda.gov.ng",
+                "ValueType": "Email",
+                "IsSecret": false,
+                "ConfigDescription": "Mailbox for registry, exception and provisioning notifications.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "CaptureRequestBody",
+                "ConfigKey": "CaptureRequestBody",
+                "ConfigValue": "false",
+                "ValueType": "Boolean",
+                "IsSecret": false,
+                "ConfigDescription": "Raw HTTP request-body capture is disabled.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "CaptureHeaders",
+                "ConfigKey": "CaptureHeaders",
+                "ConfigValue": "false",
+                "ValueType": "Boolean",
+                "IsSecret": false,
+                "ConfigDescription": "Raw HTTP header capture is disabled.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "CaptureQueries",
+                "ConfigKey": "CaptureQueries",
+                "ConfigValue": "true",
+                "ValueType": "Boolean",
+                "IsSecret": false,
+                "ConfigDescription": "Sanitized query metadata may be captured.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "RegistryEnabled",
+                "ConfigKey": "RegistryEnabled",
+                "ConfigValue": "true",
+                "ValueType": "Boolean",
+                "IsSecret": false,
+                "ConfigDescription": "Master switch for flow-truth registration.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "ExecutionLedgerEnabled",
+                "ConfigKey": "ExecutionLedgerEnabled",
+                "ConfigValue": "true",
+                "ValueType": "Boolean",
+                "IsSecret": false,
+                "ConfigDescription": "Master switch for execution-ledger persistence.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "ProvisioningSchemaExpectedListCount",
+                "ConfigKey": "ProvisioningSchemaExpectedListCount",
+                "ConfigValue": "7",
+                "ValueType": "Integer",
+                "IsSecret": false,
+                "ConfigDescription": "Expected number of registry SharePoint lists.",
+                "IsEnabled": true
+              },
+              {
+                "Title": "ProvisioningSchemaExpectedFieldCount",
+                "ConfigKey": "ProvisioningSchemaExpectedFieldCount",
+                "ConfigValue": "101",
+                "ValueType": "Integer",
+                "IsSecret": false,
+                "ConfigDescription": "Expected number of custom registry fields.",
+                "IsEnabled": true
+              }
+            ]
+          },
+          "Apply_to_each_Seed": {
+            "foreach": "@outputs('Compose_Config_Seeds')",
+            "actions": {
+              "Check_Seed": {
+                "metadata": {
+                  "operationMetadataId": "0c3c6424-c113-44f1-92bb-c0adfcd7145a"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryConfiguration'')/items?$select=Id,ConfigKey&$filter=ConfigKey eq ''',replace(items('Apply_to_each_Seed')?['ConfigKey'],'''',''''''),'''&$top=1')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "If_Seed_Missing": {
+                "actions": {
+                  "Create_Seed": {
+                    "metadata": {
+                      "operationMetadataId": "44132f7a-b3ad-4c2f-b9d7-67a9c2aa4e6c"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryConfiguration')/items",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@items('Apply_to_each_Seed')"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": {
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                        "type": "Raw"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Check_Seed": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Update_Seed": {
+                      "metadata": {
+                        "operationMetadataId": "81bbc137-ca7d-4fe3-9d95-9ef3ec9c5986"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                          "parameters/method": "POST",
+                          "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryConfiguration'')/items(',string(first(body('Check_Seed')?['value'])?['Id']),')')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata",
+                            "IF-MATCH": "*",
+                            "X-HTTP-Method": "MERGE"
+                          },
+                          "parameters/body": "@items('Apply_to_each_Seed')"
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline-1",
+                          "operationId": "HttpRequest"
+                        },
+                        "authentication": {
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                          "type": "Raw"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@length(coalesce(body('Check_Seed')?['value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "197bc67d-eda8-4a41-b5ad-fdad1fe7dce6"
+                },
+                "type": "If"
+              },
+              "Log_Seed_Upserted": {
+                "runAfter": {
+                  "If_Seed_Missing": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "972b2b4f-8d00-4c0d-b379-8523957b9f39"
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varProvisioningResults",
+                  "value": {
+                    "stage": "Seeds",
+                    "resource": "@items('Apply_to_each_Seed')?['ConfigKey']",
+                    "status": "Upserted",
+                    "utc": "@utcNow()"
+                  }
+                }
+              },
+              "Log_Seed_Error": {
+                "runAfter": {
+                  "If_Seed_Missing": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "311778e7-1a0c-448a-bcc4-403d16c335cd"
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varProvisioningErrors",
+                  "value": {
+                    "stage": "Seeds",
+                    "resource": "@items('Apply_to_each_Seed')?['ConfigKey']",
+                    "status": "UpsertFailed",
+                    "detail": "@result('If_Seed_Missing')",
+                    "utc": "@utcNow()"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Config_Seeds": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "29180349-8fb5-41a2-9598-2d6121360dca"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Compose_View_Definitions": {
+            "runAfter": {
+              "Apply_to_each_Seed": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "d7f02fa8-4fe6-41dd-b8a7-20679fe0bc04"
+            },
+            "type": "Compose",
+            "inputs": [
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "title": "Active HTTP Flows",
+                "query": "<Where><Eq><FieldRef Name='LifecycleStatus'/><Value Type='Text'>Active</Value></Eq></Where>",
+                "fields": [
+                  "LinkTitle",
+                  "RegistryKey",
+                  "SystemName",
+                  "Criticality",
+                  "LifecycleStatus",
+                  "LastSeenUtc",
+                  "IsCompliant"
+                ]
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "title": "Noncompliant Flows",
+                "query": "<Where><Eq><FieldRef Name='IsCompliant'/><Value Type='Boolean'>0</Value></Eq></Where>",
+                "fields": [
+                  "LinkTitle",
+                  "RegistryKey",
+                  "SystemName",
+                  "TechnicalOwnerEmail",
+                  "ComplianceIssues",
+                  "LastAuditUtc"
+                ]
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "title": "Critical Flows",
+                "query": "<Where><Eq><FieldRef Name='Criticality'/><Value Type='Text'>Critical</Value></Eq></Where>",
+                "fields": [
+                  "LinkTitle",
+                  "RegistryKey",
+                  "SystemName",
+                  "TechnicalOwnerEmail",
+                  "LastSeenUtc"
+                ]
+              },
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "title": "Retired Flows",
+                "query": "<Where><Eq><FieldRef Name='LifecycleStatus'/><Value Type='Text'>Retired</Value></Eq></Where>",
+                "fields": [
+                  "LinkTitle",
+                  "RegistryKey",
+                  "SystemName",
+                  "LastRegisteredUtc"
+                ]
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "title": "Open Exceptions",
+                "query": "<Where><Eq><FieldRef Name='Status'/><Value Type='Text'>Open</Value></Eq></Where>",
+                "fields": [
+                  "LinkTitle",
+                  "ExceptionKey",
+                  "Severity",
+                  "ExceptionType",
+                  "RegistryKey",
+                  "DetectedUtc",
+                  "AssignedToEmail"
+                ]
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "title": "Recent Failures",
+                "query": "<Where><Eq><FieldRef Name='Outcome'/><Value Type='Text'>Failed</Value></Eq></Where>",
+                "fields": [
+                  "LinkTitle",
+                  "RegistryKey",
+                  "FlowId",
+                  "Outcome",
+                  "CompletedUtc",
+                  "ErrorCode"
+                ]
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "title": "Unapproved Consumers",
+                "query": "<Where><Eq><FieldRef Name='IsApproved'/><Value Type='Boolean'>0</Value></Eq></Where>",
+                "fields": [
+                  "LinkTitle",
+                  "ConsumerKey",
+                  "RegistryKey",
+                  "ConsumerType",
+                  "OwnerEmail",
+                  "LastObservedUtc"
+                ]
+              }
+            ]
+          },
+          "Apply_to_each_View": {
+            "foreach": "@outputs('Compose_View_Definitions')",
+            "actions": {
+              "Check_View": {
+                "metadata": {
+                  "operationMetadataId": "c79e0bba-80c0-4410-ab61-b0a813332f07"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_View')?['list'],'''',''''''),''')/views?$select=Id,Title&$filter=Title eq ''',replace(items('Apply_to_each_View')?['title'],'''',''''''),'''&$top=1')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "If_View_Missing": {
+                "actions": {
+                  "Create_View": {
+                    "metadata": {
+                      "operationMetadataId": "1cbbce97-0e76-4e07-ac81-2d1e2b425a16"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_View')?['list'],'''',''''''),''')/views')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(json('{}'),'Title',items('Apply_to_each_View')?['title']),'PersonalView',false),'ViewQuery',items('Apply_to_each_View')?['query'])"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": {
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                        "type": "Raw"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Check_View": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Update_View": {
+                      "metadata": {
+                        "operationMetadataId": "0fd5948d-7243-448d-8312-771686dd3799"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                          "parameters/method": "POST",
+                          "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_View')?['list'],'''',''''''),''')/views/getByTitle(''',replace(items('Apply_to_each_View')?['title'],'''',''''''),''')')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata",
+                            "IF-MATCH": "*",
+                            "X-HTTP-Method": "MERGE"
+                          },
+                          "parameters/body": "@setProperty(json('{}'),'ViewQuery',items('Apply_to_each_View')?['query'])"
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline-1",
+                          "operationId": "HttpRequest"
+                        },
+                        "authentication": {
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                          "type": "Raw"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@length(coalesce(body('Check_View')?['value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "c7e0ef99-204f-4d5d-8c61-71fcd2018faf"
+                },
+                "type": "If"
+              },
+              "Apply_View_Fields": {
+                "foreach": "@items('Apply_to_each_View')?['fields']",
+                "actions": {
+                  "Add_View_Field": {
+                    "metadata": {
+                      "operationMetadataId": "d7fd7ac6-4c60-433d-9185-8db713774e32"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_View')?['list'],'''',''''''),''')/views/getByTitle(''',replace(items('Apply_to_each_View')?['title'],'''',''''''),''')/viewfields/addViewField(''',replace(item(),'''',''''''),''')')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "{}"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": {
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                        "type": "Raw"
+                      }
+                    }
+                  },
+                  "Confirm_View_Field_Added": {
+                    "runAfter": {
+                      "Add_View_Field": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "2299d61e-4d93-41e4-af05-cf6490283446"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "field": "@item()",
+                      "status": "Added"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Clear_View_Fields": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Foreach",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                }
+              },
+              "Log_View_Upserted": {
+                "runAfter": {
+                  "Apply_View_Fields": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "607478a0-3b66-4669-88b0-30621c09ff6f"
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varProvisioningResults",
+                  "value": {
+                    "stage": "Views",
+                    "resource": "@concat(items('Apply_to_each_View')?['list'],'.',items('Apply_to_each_View')?['title'])",
+                    "status": "Upserted",
+                    "utc": "@utcNow()"
+                  }
+                }
+              },
+              "Clear_View_Fields": {
+                "runAfter": {
+                  "If_View_Missing": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "826d6850-670f-4fd2-a51f-15be7ce312de"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Apply_to_each_View')?['list'],'''',''''''),''')/views/getByTitle(''',replace(items('Apply_to_each_View')?['title'],'''',''''''),''')/viewfields/removeAllViewFields')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "{}"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_View_Definitions": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "2bde8ba9-c599-4868-8366-1204d48ab393"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Compose_Unique_Key_Definitions": {
+            "runAfter": {
+              "Apply_to_each_View": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "66a837c6-83b4-46ff-b4da-4590bb350c56"
+            },
+            "type": "Compose",
+            "inputs": [
+              {
+                "list": "DGO_HTTPFlowRegistry",
+                "field": "RegistryKey"
+              },
+              {
+                "list": "DGO_HTTPFlowContractVersions",
+                "field": "ContractKey"
+              },
+              {
+                "list": "DGO_HTTPFlowExecutionLedger",
+                "field": "ExecutionKey"
+              },
+              {
+                "list": "DGO_HTTPFlowDependencies",
+                "field": "DependencyKey"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryExceptions",
+                "field": "ExceptionKey"
+              },
+              {
+                "list": "DGO_HTTPFlowRegistryConfiguration",
+                "field": "ConfigKey"
+              },
+              {
+                "list": "DGO_HTTPFlowConsumerRegistry",
+                "field": "ConsumerKey"
+              }
+            ]
+          },
+          "Apply_to_each_Unique_Key": {
+            "foreach": "@outputs('Compose_Unique_Key_Definitions')",
+            "actions": {
+              "Get_Unique_Key": {
+                "metadata": {
+                  "operationMetadataId": "8cbdbb31-028b-45d9-b2f9-7558eb0c7d9e"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',items('Apply_to_each_Unique_Key')?['list'],''')/fields/getByInternalNameOrTitle(''',items('Apply_to_each_Unique_Key')?['field'],''')?$select=Indexed,EnforceUniqueValues')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
+              },
+              "If_Unique_Key_Valid": {
+                "actions": {
+                  "Increment_Validated_Unique_Keys": {
+                    "metadata": {
+                      "operationMetadataId": "0e26849f-41d8-4834-bcdf-bed870a5bac6"
+                    },
+                    "type": "IncrementVariable",
+                    "inputs": {
+                      "name": "varValidatedUniqueKeys",
+                      "value": 1
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Unique_Key": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Log_Unique_Key_Mismatch": {
+                      "metadata": {
+                        "operationMetadataId": "66d1cae6-90dc-4449-9d1a-94fa661a0781"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varProvisioningErrors",
+                        "value": {
+                          "stage": "UniqueKeyValidation",
+                          "resource": "@concat(items('Apply_to_each_Unique_Key')?['list'],'.',items('Apply_to_each_Unique_Key')?['field'])",
+                          "status": "Mismatch",
+                          "actual": "@body('Get_Unique_Key')",
+                          "utc": "@utcNow()"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@body('Get_Unique_Key')?['Indexed']",
+                        true
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@body('Get_Unique_Key')?['EnforceUniqueValues']",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "1a0a8ab4-0d37-4ce1-b395-0bb0f4564623"
+                },
+                "type": "If"
+              }
+            },
+            "runAfter": {
+              "Compose_Unique_Key_Definitions": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "17d9d7b6-b731-4cb8-8461-4ad6d8e3d905"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Final_Get_Lists": {
+            "runAfter": {
+              "Apply_to_each_Unique_Key": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "2f0383cb-3441-49bd-b05f-ffe218949b0c"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists?$select=Title,EnableAttachments,EnableFolderCreation,EnableVersioning,MajorVersionLimit,ForceCheckout&$filter=startswith(Title,'DGO_HTTPFlow')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Final_Get_Seeds": {
+            "runAfter": {
+              "Final_Get_Lists": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a7726aa7-260b-4eee-9e33-5a85448cb107"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryConfiguration')/items?$select=ConfigKey,IsEnabled&$filter=IsEnabled eq 1&$top=100",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Final_Get_Registry_Views": {
+            "runAfter": {
+              "Filter_Required_Seeds": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "63ad6641-3932-42d3-aaf6-a14eeb3fcbf7"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistry')/views?$select=Title",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Final_Get_Exception_Views": {
+            "runAfter": {
+              "Final_Get_Registry_Views": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "bda17352-f0d9-42f9-8156-e0ff25d51f38"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryExceptions')/views?$select=Title",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Final_Get_Ledger_Views": {
+            "runAfter": {
+              "Final_Get_Exception_Views": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "f702dbbd-03f5-4e08-8b02-d77df2618e41"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowExecutionLedger')/views?$select=Title",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Final_Get_Consumer_Views": {
+            "runAfter": {
+              "Final_Get_Ledger_Views": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "849b7ed5-a034-44ad-a948-fe35db6c83b4"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowConsumerRegistry')/views?$select=Title",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Compose_All_Views": {
+            "runAfter": {
+              "Final_Get_Consumer_Views": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a7c6e999-4bf1-4b73-a28b-3b733b3379e9"
+            },
+            "type": "Compose",
+            "inputs": "@union(union(body('Final_Get_Registry_Views')?['value'],body('Final_Get_Exception_Views')?['value']),union(body('Final_Get_Ledger_Views')?['value'],body('Final_Get_Consumer_Views')?['value']))"
+          },
+          "Filter_Required_Views": {
+            "runAfter": {
+              "Compose_All_Views": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "4e069bf3-96c4-4413-81c6-8817cd78bef7"
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@outputs('Compose_All_Views')",
+              "where": "@contains(createArray('Active HTTP Flows','Noncompliant Flows','Critical Flows','Retired Flows','Open Exceptions','Recent Failures','Unapproved Consumers'),item()?['Title'])"
+            }
+          },
+          "Filter_Valid_List_Settings": {
+            "runAfter": {
+              "Filter_Required_Lists": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "5e365250-1720-4138-bcd5-b3a1b30c14f5"
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Filter_Required_Lists')",
+              "where": "@and(equals(item()?['EnableAttachments'],false),equals(item()?['EnableFolderCreation'],false),equals(item()?['EnableVersioning'],true),equals(item()?['MajorVersionLimit'],100),equals(item()?['ForceCheckout'],false))"
+            }
+          },
+          "Compose_Final_Report_JSON": {
+            "runAfter": {
+              "Filter_Validated_Fields": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "44b014ec-077f-4d8c-98c2-362e1707ea57"
+            },
+            "type": "Compose",
+            "inputs": {
+              "reportType": "DGO HTTP Flow Registry Complete Provisioning Report",
+              "schemaVersion": "5.0.0",
+              "flow": {
+                "displayName": "01 - GOV - Provision HTTP Flow Registry",
+                "flowId": "@workflow()?['name']",
+                "environmentId": "@workflow()?['tags']?['environmentName']",
+                "runId": "@workflow()?['run']?['name']",
+                "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+              },
+              "timing": {
+                "startedUtc": "@variables('varProvisioningStartUtc')",
+                "completedUtc": "@utcNow()",
+                "durationMs": "@div(sub(ticks(utcNow()),ticks(variables('varProvisioningStartUtc'))),10000)"
+              },
+              "validation": {
+                "expectedLists": 7,
+                "validatedLists": "@length(body('Filter_Required_Lists'))",
+                "expectedFields": 101,
+                "validatedFields": "@length(body('Filter_Validated_Fields'))",
+                "expectedUniqueKeys": 7,
+                "validatedUniqueKeys": "@variables('varValidatedUniqueKeys')",
+                "expectedSeeds": 12,
+                "validatedSeeds": "@length(body('Filter_Required_Seeds'))",
+                "expectedViews": 7,
+                "validatedViews": "@length(body('Filter_Required_Views'))",
+                "validatedListSettings": "@length(body('Filter_Valid_List_Settings'))",
+                "errorCount": "@length(variables('varProvisioningErrors'))"
+              },
+              "status": "@if(and(equals(length(body('Filter_Required_Lists')),7),equals(length(body('Filter_Valid_List_Settings')),7),equals(length(body('Filter_Validated_Fields')),101),equals(variables('varValidatedUniqueKeys'),7),equals(length(body('Filter_Required_Seeds')),12),equals(length(body('Filter_Required_Views')),7),equals(length(variables('varProvisioningErrors')),0)),'Succeeded','Failed')",
+              "results": "@variables('varProvisioningResults')",
+              "errors": "@variables('varProvisioningErrors')",
+              "generatedAtUtc": "@utcNow()"
+            }
+          },
+          "Compose_Final_Report_HTML": {
+            "runAfter": {
+              "Compose_Final_Report_JSON": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "6390285d-15b3-47ec-82dc-88db1fc8bc17"
+            },
+            "type": "Compose",
+            "inputs": "@concat('<!DOCTYPE html><html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px;color:#172033\"><div style=\"max-width:920px;margin:auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #dfe5ec\"><div style=\"background:#004578;color:#fff;padding:26px\"><h1 style=\"margin:0\">DGO HTTP Flow Registry Provisioning</h1><p>Complete execution and validation report</p></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Lists:</b> ',string(outputs('Compose_Final_Report_JSON')?['validation']?['validatedLists']),' / 7</p><p><b>List settings:</b> ',string(outputs('Compose_Final_Report_JSON')?['validation']?['validatedListSettings']),' / 7</p><p><b>Unique keys:</b> ',string(outputs('Compose_Final_Report_JSON')?['validation']?['validatedUniqueKeys']),' / 7</p><p><b>Seeds:</b> ',string(outputs('Compose_Final_Report_JSON')?['validation']?['validatedSeeds']),' / 12</p><p><b>Views:</b> ',string(outputs('Compose_Final_Report_JSON')?['validation']?['validatedViews']),' / 7</p><p><b>Errors:</b> ',string(outputs('Compose_Final_Report_JSON')?['validation']?['errorCount']),'</p><h3>Errors and mismatches</h3><pre style=\"white-space:pre-wrap;background:#f8fafc;border:1px solid #e5e7eb;padding:14px;border-radius:8px\">',string(outputs('Compose_Final_Report_JSON')?['errors']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['flow']?['runUrl'],'\" style=\"color:#005a9e;font-weight:700\">Open this run in Power Automate</a></p></div></div></body></html>')"
+          },
+          "Send_Final_Report_Email": {
+            "runAfter": {
+              "Compose_Final_Report_HTML": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "45c77b48-ce7d-4b61-816f-e3bec3afb941"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "@concat('dgsregistry@nitda.gov.ng',if(or(empty(trim(string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],'')))),equals(toLower(trim(string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],'')))),'dgsregistry@nitda.gov.ng')),'',concat(';',trim(string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],''))))))",
+                "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] DGO HTTP Flow Registry Complete Provisioning | ',workflow()?['run']?['name'])",
+                "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@concat('DGO_HTTP_Flow_Registry_Complete_Provisioning_',formatDateTime(utcNow(),'yyyyMMdd_HHmmss'),'_UTC.json')",
+                    "ContentBytes": "@string(outputs('Compose_Final_Report_JSON'))"
+                  }
+                ],
+                "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "If_Provisioning_Failed": {
+            "actions": {
+              "Terminate_Failed": {
+                "metadata": {
+                  "operationMetadataId": "22626652-07f6-48f8-83de-b33ae3d7ee5b"
+                },
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Failed",
+                  "runError": {
+                    "code": "DGOProvisioningValidationFailed",
+                    "message": "@concat('Provisioning failed validation. Error count: ',string(outputs('Compose_Final_Report_JSON')?['validation']?['errorCount']))"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Terminate_Succeeded": {
+                  "metadata": {
+                    "operationMetadataId": "ec8f19e1-95cc-43fe-a733-7bddf8c81c5b"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@outputs('Compose_Final_Report_JSON')?['status']",
+                    "Failed"
+                  ]
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "34c66c93-d2e8-4785-bbe0-7e7073720b46"
+            },
+            "type": "If"
+          },
+          "Filter_Required_Lists": {
+            "runAfter": {
+              "Filter_Required_Views": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "5dfbd53e-acde-4138-a0d6-918070942711"
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@coalesce(body('Final_Get_Lists')?['value'],json('[]'))",
+              "where": "@contains(createArray('DGO_HTTPFlowRegistry','DGO_HTTPFlowContractVersions','DGO_HTTPFlowExecutionLedger','DGO_HTTPFlowDependencies','DGO_HTTPFlowRegistryExceptions','DGO_HTTPFlowRegistryConfiguration','DGO_HTTPFlowConsumerRegistry'),item()?['Title'])"
+            }
+          },
+          "Filter_Required_Seeds": {
+            "runAfter": {
+              "Final_Get_Seeds": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "8e349ea4-cc28-472c-bb6d-b5374dadc28e"
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@coalesce(body('Final_Get_Seeds')?['value'],json('[]'))",
+              "where": "@contains(createArray('RegistrySchemaVersion','StaleAfterDays','ExecutionRetentionDays','ConsecutiveFailureThreshold','GovernanceNotificationEmail','CaptureRequestBody','CaptureHeaders','CaptureQueries','RegistryEnabled','ExecutionLedgerEnabled','ProvisioningSchemaExpectedListCount','ProvisioningSchemaExpectedFieldCount'),item()?['ConfigKey'])"
+            }
+          },
+          "Filter_Validated_Fields": {
+            "runAfter": {
+              "Filter_Valid_List_Settings": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "1c5978a1-e936-40e8-ad8a-e2d77287ccad"
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@variables('varProvisioningResults')",
+              "where": "@equals(item()?['stage'], 'FieldValidation')"
+            }
+          },
+          "Create_Send_Final_Report_Email_Receipt": {
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PostItem"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "item/Title": "@concat('final-report:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                "item/MessageType": "final-report",
+                "item/RecipientEmail": "@concat('dgsregistry@nitda.gov.ng',if(or(empty(trim(string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],'')))),equals(toLower(trim(string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],'')))),'dgsregistry@nitda.gov.ng')),'',concat(';',trim(string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],''))))))",
+                "item/Reference": "@string(workflow()?['run']?['name'])",
+                "item/SentAtUtc": "@utcNow()",
+                "item/Status": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'sent','failed')",
+                "item/Attempts": 1,
+                "item/LastError": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Compose_Send_Final_Report_Email_Outcome": {
+            "runAfter": {
+              "Create_Send_Final_Report_Email_Receipt": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "type": "Compose",
+            "inputs": "@int(if(or(equals(actions('Send_Final_Report_Email')?['status'],'Failed'),equals(actions('Send_Final_Report_Email')?['status'],'TimedOut')),'send-failed','0'))"
+          }
+        },
+        "runAfter": {
+          "Initialize_Validated_Unique_Keys": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "5ffcfb31-95f3-42fc-8bdf-09c55bf27364"
+        },
+        "type": "Scope"
+      },
+      "Initialize_Provisioning_Start_Utc_1": {
+        "runAfter": {
+          "Initialize_Provisioning_Errors": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c695f074-a0c5-4ac9-a76b-99dedd1a3576"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varProvisioningStartUtc2",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        }
+      },
+      "Initialize_Provisioning_Results_1": {
+        "runAfter": {
+          "Initialize_Provisioning_Start_Utc_1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "8b3969f8-38d0-4057-a395-fa0bc6e30bc5"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varProvisioningResults2",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_Provisioning_Errors_1": {
+        "runAfter": {
+          "Initialize_Provisioning_Results_1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "7b0ba834-4d7d-4b5e-8acf-4cc05be97abf"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varProvisioningErrors2",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_Validated_Unique_Keys": {
+        "runAfter": {
+          "Initialize_Provisioning_Errors_1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "0589355a-af3b-47ba-88ca-594f47286f90"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varValidatedUniqueKeys",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        }
+      }
+    },
+    "outputs": {}
+  }
+}

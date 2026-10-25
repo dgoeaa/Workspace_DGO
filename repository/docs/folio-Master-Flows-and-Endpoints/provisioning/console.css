@@ -1,0 +1,604 @@
+/* Provisioning console — the interface over docs/folio-Master-Flows-and-Endpoints/provisioning/.
+ *
+ * Authored, not generated. `scripts/build-provisioning-console.mjs` writes the two data files
+ * beside this one and nothing else; the interface is reviewed like any other source.
+ * `build-provisioning-reference.mjs` sweeps this directory of anything it did not write, and
+ * names these five files as the exception — see CONSOLE_FILES there.
+ *
+ * THE CONSTRAINT THAT SHAPES EVERYTHING HERE
+ * This folder must stay one you can copy to a memory stick and open. Firefox refuses a file://
+ * subresource above the page's own folder, so nothing here links out of this directory — the
+ * tokens below are the house tokens from styles/dgo-design-system/, copied rather than
+ * imported, and the mark is inline SVG. That is the same trade docs/visual/ documents.
+ *
+ * THE LAYOUT PROBLEM THIS SOLVES
+ * A flow page carries values that are expressions, body templates and 300-character JSON. In a
+ * markdown table those cells decide the column widths, so the page grows a horizontal scrollbar
+ * and the whole document moves sideways under the reader. Here, every wide thing — a table, a
+ * JSON block, a long path — scrolls inside its own box, and the page itself never does.
+ */
+
+/* ── tokens ───────────────────────────────────────────────────────────────────────────── */
+/* Every value is a design-system name. brand/brand.css — copied into this folder from
+   styles/dgo-design-system/ by `npm run brand:sync` — defines them with their light, dark and
+   high-contrast bindings, so this file states no colour of its own and needs no dark block. */
+
+:root {
+  --green-900: var(--dgo-green-900);
+  --green-800: var(--dgo-color-action-primary);
+  --green-700: var(--dgo-color-fg-brand);
+  --smart-500: var(--dgo-smart-400);
+  --smart-300: var(--dgo-smart-300);
+  --smart-200: var(--dgo-smart-200);
+
+  --surface-page:   var(--dgo-color-surface-page);
+  --surface-raised: var(--dgo-color-surface-raised);
+  --surface-sunken: var(--dgo-color-surface-sunken);
+  --surface-muted:  var(--dgo-color-surface-muted);
+  --surface-code:   color-mix(in srgb, var(--dgo-color-fg-default) 4%, var(--dgo-color-surface-raised));
+
+  --fg-default: var(--dgo-color-fg-default);
+  --fg-strong:  var(--dgo-color-fg-strong);
+  --fg-muted:   var(--dgo-color-fg-muted);
+  --fg-subtle:  var(--dgo-color-fg-subtle);
+  --fg-link:    var(--dgo-color-fg-link);
+
+  --border-default:  var(--dgo-color-border-default);
+  --border-strong:   var(--dgo-color-border-strong);
+  --border-stronger: var(--dgo-color-border-stronger);
+
+  --accent:      var(--dgo-color-action-primary);
+  --accent-fg:   var(--dgo-color-fg-on-brand);
+  --accent-soft: color-mix(in srgb, var(--dgo-color-fg-brand) 12%, var(--dgo-color-surface-raised));
+  --accent-text: var(--dgo-color-fg-brand);
+
+  --warn-bg: var(--dgo-color-warning-subtle-bg);  --warn-fg: var(--dgo-color-warning-subtle-fg);  --warn-br: color-mix(in srgb, var(--dgo-color-warning-subtle-fg) 30%, transparent);
+  --info-bg: var(--dgo-color-info-subtle-bg);     --info-fg: var(--dgo-color-info-subtle-fg);     --info-br: color-mix(in srgb, var(--dgo-color-info-subtle-fg) 30%, transparent);
+  --dead-bg: var(--dgo-color-status-archived-bg); --dead-fg: var(--dgo-color-status-archived-fg); --dead-br: var(--dgo-color-border-default);
+
+  --s-1: var(--dgo-s-1);  --s-2: var(--dgo-s-2);  --s-3: var(--dgo-s-3);  --s-4: var(--dgo-s-4);
+  --s-5: var(--dgo-s-6);  --s-6: var(--dgo-s-8);  --s-7: var(--dgo-s-12);
+
+  --r-4: var(--dgo-r-4);  --r-6: var(--dgo-radius-control);  --r-10: var(--dgo-radius-card);  --r-pill: 999px;
+
+  --size-11: var(--dgo-size-11); --size-12: var(--dgo-size-12); --size-13: 13px; --size-14: var(--dgo-size-14);
+  --size-16: var(--dgo-size-16); --size-18: 18px; --size-22: 22px; --size-28: var(--dgo-size-28);
+
+  --font: var(--dgo-family-sans);
+  --display: var(--dgo-family-display);
+  --mono: var(--dgo-family-mono);
+
+  --shadow-card: var(--dgo-shadow-1);
+  --shadow-pop:  var(--dgo-shadow-4);
+
+  --rail-w: 300px;
+  --outline-w: 248px;
+  --topbar-h: 64px;
+
+  --focus: var(--dgo-focus-ring);
+}
+
+/* ── reset ────────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font: var(--size-14)/1.55 var(--font);
+  color: var(--fg-default);
+  background: var(--surface-page);
+  -webkit-text-size-adjust: 100%;
+  /* `anywhere` here broke ordinary words mid-glyph — "OpenApiConnection" came out as
+     "OpenApiC onnection". The long unbroken tokens in this reference are all code: action
+     paths, GUIDs, expressions. So prose wraps at word boundaries and code breaks anywhere. */
+  overflow-wrap: break-word;
+}
+code, .mono, .json pre { overflow-wrap: anywhere; }
+h1, h2, h3, h4 { margin: 0; font-weight: 650; line-height: 1.25; color: var(--fg-strong); }
+p { margin: 0 0 var(--s-3); }
+a { color: var(--fg-link); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: none; box-shadow: var(--focus); border-radius: var(--r-4); }
+[hidden] { display: none !important; }
+
+.skip {
+  position: fixed; left: var(--s-3); top: -60px; z-index: 100;
+  padding: var(--s-2) var(--s-4); border-radius: var(--r-6);
+  background: var(--accent); color: var(--accent-fg); text-decoration: none;
+  transition: top .15s;
+}
+.skip:focus { top: var(--s-3); }
+.vh {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── shell ────────────────────────────────────────────────────────────────────────────── */
+
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr) var(--outline-w);
+  grid-template-rows: var(--topbar-h) minmax(0, 1fr);
+  grid-template-areas: "bar bar bar" "rail main outline";
+  height: 100dvh;
+}
+
+/* The brand bar: Deep Green in both themes, the agency lockup in white, controls drawn for a
+   dark surface. It is a row of the fixed shell, so it never scrolls with any region below. */
+.topbar {
+  grid-area: bar;
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: 0 var(--s-4);
+  background: var(--bk-hdr-bg); color: var(--bk-hdr-fg);
+  box-shadow: 0 1px 0 var(--bk-hdr-line);
+  z-index: 5;
+}
+.brand { display: flex; align-items: center; gap: var(--s-3); min-width: 0; color: inherit; text-decoration: none; }
+.brand img { width: 120px; height: auto; flex: none; display: block; }
+.brand .bk-sub { font-size: 14px; padding-left: var(--s-3); border-left: 1px solid var(--bk-hdr-line); }
+.brand .brand-text { display: grid; gap: 1px; min-width: 0; padding-left: var(--s-3); border-left: 1px solid var(--bk-hdr-line); }
+.brand b { font: 650 var(--size-16)/1.15 var(--display); letter-spacing: -.005em; white-space: nowrap; }
+.brand .brand-text span { color: var(--bk-hdr-soft); font-size: var(--size-11); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar .spacer { flex: 1 1 auto; }
+
+.counts { display: flex; gap: var(--s-4); color: var(--bk-hdr-soft); font-size: var(--size-12); }
+.counts b { color: var(--bk-hdr-fg); font-variant-numeric: tabular-nums; font-weight: 650; }
+
+.iconbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  height: 36px; min-width: 36px; padding: 0 var(--s-2);
+  border: 1px solid var(--border-strong); border-radius: var(--r-6);
+  background: var(--surface-raised); cursor: pointer;
+  font-size: var(--size-12); color: var(--fg-muted);
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.iconbtn:hover { border-color: var(--border-stronger); color: var(--fg-default); }
+.iconbtn:active { transform: translateY(1px); }
+.iconbtn svg { width: 16px; height: 16px; }
+.topbar .iconbtn { background: var(--bk-hdr-veil); border-color: var(--bk-hdr-line); color: var(--bk-hdr-fg); }
+.topbar .iconbtn:hover { background: var(--bk-hdr-veil-strong); border-color: var(--bk-hdr-soft); color: var(--bk-hdr-fg); }
+
+@media (max-width: 760px) {
+  .brand .brand-text { display: none; }
+  .brand .bk-sub .bk-sub__name { display: none; }
+  .counts { display: none; }
+}
+
+/* A partial export has to announce itself. Someone handed a two-flow file will otherwise read
+   it as the estate and conclude the other 130 do not exist — which is a worse failure than not
+   sending it, because it looks complete. Full width, above everything, on every view. */
+.partial {
+  grid-area: bar; align-self: end;
+  /* A sentence, not a row of controls. `display:flex` here made every text node its own flex
+     item, so `gap` pushed the commas and the full stop away from the words they belong to —
+     "SUBMISSION , UPLOAD ." Block, with the chips inline inside it. */
+  display: block;
+  padding: 5px var(--s-4);
+  background: var(--warn-bg); color: var(--warn-fg);
+  border-bottom: 1px solid var(--warn-br);
+  font-size: var(--size-12);
+}
+.partial b { font-weight: 700; margin-right: 4px; }
+.partial code {
+  background: transparent; border-color: var(--warn-br); color: inherit;
+  padding: 0 4px;
+}
+body:not([data-partial]) .partial { display: none; }
+body[data-partial] .shell { grid-template-rows: calc(var(--topbar-h) + 28px) minmax(0, 1fr); }
+body[data-partial] .topbar { align-self: start; height: var(--topbar-h); }
+
+/* ── rail ─────────────────────────────────────────────────────────────────────────────── */
+
+.rail {
+  grid-area: rail;
+  display: flex; flex-direction: column; min-height: 0;
+  border-right: 1px solid var(--border-default);
+  background: var(--surface-muted);
+}
+.railhead { padding: var(--s-3); border-bottom: 1px solid var(--border-default); }
+
+.search { position: relative; }
+.search svg {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  width: 15px; height: 15px; color: var(--fg-subtle); pointer-events: none;
+}
+.search input {
+  width: 100%; height: 38px; padding: 0 30px 0 32px;
+  border: 1px solid var(--border-strong); border-radius: var(--r-6);
+  background: var(--surface-page);
+}
+.search input::placeholder { color: var(--fg-subtle); }
+.search .clear {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: 0; border-radius: var(--r-4);
+  background: none; color: var(--fg-subtle); cursor: pointer; line-height: 1;
+}
+.search .clear:hover { background: var(--surface-sunken); color: var(--fg-default); }
+
+.filters { display: flex; flex-wrap: wrap; gap: var(--s-1); margin-top: var(--s-3); }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 10px;
+  border: 1px solid var(--border-strong); border-radius: var(--r-pill);
+  background: var(--surface-page); color: var(--fg-muted);
+  font-size: var(--size-12); cursor: pointer; white-space: nowrap;
+}
+.chip:hover { border-color: var(--border-stronger); color: var(--fg-default); }
+.chip[aria-pressed="true"] {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600;
+}
+.chip .n { font-variant-numeric: tabular-nums; opacity: .7; }
+
+.railmeta {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  border-bottom: 1px solid var(--border-default);
+  color: var(--fg-muted); font-size: var(--size-12);
+}
+.railmeta select {
+  height: 26px; border: 1px solid var(--border-strong); border-radius: var(--r-4);
+  background: var(--surface-page); padding: 0 var(--s-1);
+  font-size: var(--size-12);
+}
+
+.list { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: var(--s-2); }
+.group {
+  position: sticky; top: calc(var(--s-2) * -1); z-index: 2;
+  padding: var(--s-3) var(--s-2) var(--s-2);
+  margin: 0 calc(var(--s-2) * -1);
+  background: var(--surface-muted);
+  box-shadow: 0 1px 0 var(--border-default);
+  color: var(--fg-subtle); font-size: var(--size-11);
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  /* One line each, so every heading is the same height and the one that sticks last covers the
+     one before it completely, instead of two headings showing through each other. */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.group + .item { margin-top: var(--s-1); }
+.item {
+  display: block; width: 100%; text-align: left;
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid transparent; border-radius: var(--r-6);
+  background: none; cursor: pointer; color: inherit;
+}
+.item:hover { background: var(--surface-page); border-color: var(--border-default); }
+.item[aria-current="true"] { background: var(--accent-soft); border-color: var(--accent); }
+:root[data-theme="dark"] .item[aria-current="true"] { border-color: var(--smart-500); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .item[aria-current="true"] { border-color: var(--smart-500); }
+}
+.item .nm { display: block; font-weight: 600; font-size: var(--size-13); color: var(--fg-strong); }
+.item .sub {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin-top: 3px; color: var(--fg-muted); font-size: var(--size-11);
+  min-width: 0;
+}
+/* Four contract keys on one flow ran past the edge of the card. Truncated with the full list
+   on the element's title, because a clipped key is worse than an ellipsis that says so. */
+.item .sub .keys { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item mark { background: var(--smart-200); color: var(--dgo-color-fg-on-accent); border-radius: 2px; padding: 0 1px; }
+
+.tag {
+  display: inline-block; padding: 1px 6px; border-radius: var(--r-4);
+  border: 1px solid var(--border-default); background: var(--surface-sunken);
+  font-size: var(--size-11); font-weight: 600; color: var(--fg-muted); white-space: nowrap;
+}
+.tag.portal { background: var(--info-bg); color: var(--info-fg); border-color: var(--info-br); }
+.tag.live   { background: var(--accent-soft); color: var(--green-700); border-color: var(--smart-300); }
+:root[data-theme="dark"] .tag.live { color: var(--smart-300); border-color: var(--green-700); }
+.tag.notlive{ background: var(--dead-bg); color: var(--dead-fg); border-color: var(--dead-br); }
+.tag.warn   { background: var(--warn-bg); color: var(--warn-fg); border-color: var(--warn-br); }
+.tag.mono   { font-family: var(--mono); font-weight: 500; }
+
+.empty { padding: var(--s-6) var(--s-4); text-align: center; color: var(--fg-muted); }
+.empty b { display: block; color: var(--fg-strong); margin-bottom: var(--s-2); }
+
+/* ── main ─────────────────────────────────────────────────────────────────────────────── */
+
+/* No `scroll-behavior: smooth` here, deliberately. It applies to EVERY scroll of this
+   container, including the `scrollTop = 0` that resets the pane when you open another flow —
+   so switching flows animated the new page from wherever the old one was down to the top, and
+   that animation then raced the scroll into a linked section and won. Smoothness is decided
+   per call in console.js instead: glide when a click moves you within a page, jump when a link
+   drops you into one. */
+.main { grid-area: main; min-width: 0; overflow-y: auto; overscroll-behavior: contain; }
+@media (prefers-reduced-motion: reduce) { .skip { transition: none; } }
+.wrap { max-width: 980px; margin: 0 auto; padding: var(--s-5) var(--s-5) var(--s-7); }
+
+.backbtn { display: none; }
+
+.flowhead { margin-bottom: var(--s-5); }
+.flowhead .eyebrow {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2);
+  margin-bottom: var(--s-2); color: var(--fg-muted); font-size: var(--size-12);
+}
+.flowhead h1 { font-size: var(--size-28); letter-spacing: -.02em; }
+.flowhead .sourceline {
+  margin-top: var(--s-3); padding: var(--s-3);
+  border: 1px solid var(--border-default); border-left: 3px solid var(--accent);
+  border-radius: var(--r-6); background: var(--surface-muted);
+  color: var(--fg-muted); font-size: var(--size-12);
+}
+.flowhead .sourceline code { font-size: var(--size-11); }
+
+.facts {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--s-2); margin-top: var(--s-4);
+}
+.fact {
+  padding: var(--s-3); border: 1px solid var(--border-default);
+  border-radius: var(--r-6); background: var(--surface-raised);
+}
+.fact dt { color: var(--fg-muted); font-size: var(--size-11); text-transform: uppercase; letter-spacing: .06em; }
+.fact dd { margin: 4px 0 0; font-weight: 650; color: var(--fg-strong); font-size: var(--size-16); font-variant-numeric: tabular-nums; }
+.fact dd.sm { font-size: var(--size-13); font-weight: 600; }
+
+section.sec { margin-top: var(--s-6); scroll-margin-top: var(--s-4); }
+section.sec > h2 {
+  display: flex; align-items: baseline; gap: var(--s-2);
+  padding-bottom: var(--s-2); margin-bottom: var(--s-3);
+  border-bottom: 1px solid var(--border-default);
+  font-size: var(--size-18);
+}
+section.sec > h2 .num {
+  color: var(--fg-subtle); font-variant-numeric: tabular-nums;
+  font-size: var(--size-13); font-weight: 600;
+}
+section.sec > h2 .anchor {
+  margin-left: auto; opacity: 0; border: 0; background: none; cursor: pointer;
+  color: var(--fg-subtle); font-size: var(--size-12); padding: 2px 6px; border-radius: var(--r-4);
+}
+section.sec > h2:hover .anchor, section.sec > h2 .anchor:focus-visible { opacity: 1; }
+section.sec > h2 .anchor:hover { background: var(--surface-sunken); color: var(--fg-default); }
+
+.note { color: var(--fg-muted); font-size: var(--size-13); margin-bottom: var(--s-3); }
+.nothing { color: var(--fg-subtle); font-style: italic; }
+
+/* Tables never widen the page. The cells here hold expressions and body templates, which is
+   exactly what made the markdown version scroll sideways under the reader. */
+.tablewrap {
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border-default); border-radius: var(--r-6);
+  background: var(--surface-raised);
+}
+table { border-collapse: collapse; width: 100%; font-size: var(--size-13); }
+th, td { padding: var(--s-2) var(--s-3); text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-default); }
+th {
+  position: sticky; top: 0; z-index: 1;
+  background: var(--surface-sunken); color: var(--fg-muted);
+  font-size: var(--size-11); font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--surface-muted); }
+td.k { color: var(--fg-muted); white-space: nowrap; width: 1%; }
+td.v { color: var(--fg-default); min-width: 0; }
+/* A GUID wrapped to one character per line is not a cell. Code in a table keeps its shape and
+   the wrapper scrolls instead — the whole reason every wide thing here has its own scrollbar. */
+td.v > code { white-space: pre; }
+
+code, .mono { font-family: var(--mono); font-size: .92em; }
+:not(pre) > code {
+  padding: 1px 5px; border-radius: var(--r-4);
+  background: var(--surface-code); border: 1px solid var(--border-default);
+}
+
+.json {
+  position: relative; margin: var(--s-2) 0 0;
+  border: 1px solid var(--border-default); border-radius: var(--r-6);
+  background: var(--surface-code);
+}
+.json > .jsonbar {
+  display: flex; align-items: center; gap: var(--s-2);
+  padding: 6px var(--s-2) 6px var(--s-3);
+  border-bottom: 1px solid var(--border-default);
+  color: var(--fg-muted); font-size: var(--size-11);
+}
+.json > .jsonbar .grow { flex: 1 1 auto; }
+.json pre {
+  margin: 0; padding: var(--s-3);
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  font-family: var(--mono); font-size: var(--size-12); line-height: 1.5;
+  tab-size: 2;
+}
+/* JSON syntax: strings, numbers and booleans in the design system's danger, info and
+   categorical indigo, which the dark theme re-binds, so one rule covers both themes. */
+.json pre .s { color: var(--dgo-color-danger-subtle-fg); }
+.json pre .n { color: var(--dgo-color-info-subtle-fg); }
+.json pre .b { color: color-mix(in srgb, var(--dgo-cat-6) 80%, var(--dgo-color-fg-default)); }
+.json pre .k { color: var(--fg-strong); font-weight: 600; }
+.json pre .x { color: var(--fg-subtle); }
+.json.clipped pre { max-height: 320px; }
+.json .more {
+  display: block; width: 100%; padding: 6px; border: 0; border-top: 1px solid var(--border-default);
+  background: var(--surface-sunken); color: var(--fg-link); cursor: pointer; font-size: var(--size-12);
+  border-radius: 0 0 var(--r-6) var(--r-6);
+}
+.json .more:hover { background: var(--surface-muted); }
+
+/* ── section 13: the action register ──────────────────────────────────────────────────── */
+
+.actionbar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2);
+  padding: var(--s-2) 0; margin-bottom: var(--s-2);
+  background: var(--surface-page);
+}
+.actionbar input {
+  flex: 1 1 200px; min-width: 0; height: 32px; padding: 0 var(--s-3);
+  border: 1px solid var(--border-strong); border-radius: var(--r-6);
+  background: var(--surface-page);
+}
+.actionbar .n { color: var(--fg-muted); font-size: var(--size-12); font-variant-numeric: tabular-nums; }
+
+.action {
+  border: 1px solid var(--border-default); border-radius: var(--r-6);
+  background: var(--surface-raised); margin-bottom: var(--s-2);
+  scroll-margin-top: 52px;
+}
+.action > summary {
+  display: flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-2) var(--s-3); cursor: pointer; list-style: none;
+  border-radius: var(--r-6);
+}
+.action > summary::-webkit-details-marker { display: none; }
+.action > summary::before {
+  content: "\203A"; flex: none; width: 12px;
+  color: var(--fg-subtle); font-size: var(--size-16); line-height: 1;
+  transition: transform .12s;
+}
+.action[open] > summary::before { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) { .action > summary::before { transition: none; } }
+.action > summary:hover { background: var(--surface-muted); }
+.action > summary .path {
+  flex: 1 1 auto; min-width: 0;
+  font-family: var(--mono); font-size: var(--size-12); font-weight: 600; color: var(--fg-strong);
+}
+.action > summary .path .scope { color: var(--fg-subtle); font-weight: 400; }
+.action[data-depth="0"] { border-left: 3px solid var(--border-strong); }
+.action .body { padding: 0 var(--s-3) var(--s-3); border-top: 1px solid var(--border-default); }
+.action .body > * { margin-top: var(--s-3); }
+.action.hit > summary { background: var(--accent-soft); }
+
+/* ── outline ──────────────────────────────────────────────────────────────────────────── */
+
+.outline {
+  grid-area: outline; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: var(--s-4) var(--s-3);
+  border-left: 1px solid var(--border-default);
+  background: var(--surface-muted);
+}
+.outline h2 {
+  color: var(--fg-subtle); font-size: var(--size-11);
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: var(--s-2);
+}
+.outline ol { list-style: none; margin: 0 0 var(--s-5); padding: 0; }
+.outline a {
+  display: block; padding: 5px var(--s-2); border-radius: var(--r-4);
+  border-left: 2px solid transparent;
+  color: var(--fg-muted); text-decoration: none; font-size: var(--size-12);
+}
+.outline a:hover { background: var(--surface-page); color: var(--fg-default); }
+.outline a[aria-current="true"] {
+  border-left-color: var(--accent); background: var(--surface-page);
+  color: var(--fg-strong); font-weight: 600;
+}
+.outline a .num { color: var(--fg-subtle); font-variant-numeric: tabular-nums; margin-right: 5px; }
+.outline a[aria-current="true"] .num { color: var(--accent); }
+
+/* ── home ─────────────────────────────────────────────────────────────────────────────── */
+
+.home h1 { font-size: var(--size-28); letter-spacing: -.02em; margin-bottom: var(--s-3); }
+.home .lede { color: var(--fg-muted); font-size: var(--size-16); max-width: 62ch; }
+.home .grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--s-3); margin: var(--s-5) 0;
+}
+.home .card {
+  padding: var(--s-4); border: 1px solid var(--border-default);
+  border-radius: var(--r-10); background: var(--surface-raised); box-shadow: var(--shadow-card);
+}
+.home .card .big {
+  font-size: var(--size-28); font-weight: 700; color: var(--fg-strong);
+  font-variant-numeric: tabular-nums; line-height: 1.1;
+}
+.home .card .lbl { color: var(--fg-muted); font-size: var(--size-12); margin-top: 4px; }
+.home h2 { font-size: var(--size-18); margin: var(--s-6) 0 var(--s-3); }
+.home ul { margin: 0 0 var(--s-4); padding-left: var(--s-5); color: var(--fg-muted); }
+.home li { margin-bottom: var(--s-2); }
+.home li b { color: var(--fg-default); }
+.kbd {
+  display: inline-block; min-width: 20px; padding: 1px 6px; text-align: center;
+  border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: var(--r-4);
+  background: var(--surface-sunken); font-family: var(--mono); font-size: var(--size-11);
+  color: var(--fg-default);
+}
+
+.loading {
+  display: flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-3); margin-top: var(--s-3);
+  border: 1px dashed var(--border-strong); border-radius: var(--r-6);
+  color: var(--fg-muted); font-size: var(--size-13);
+}
+.spin {
+  width: 14px; height: 14px; flex: none; border-radius: 50%;
+  border: 2px solid var(--border-strong); border-top-color: var(--accent);
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } }
+
+.toast {
+  position: fixed; left: 50%; bottom: var(--s-5); transform: translateX(-50%);
+  padding: var(--s-2) var(--s-4); border-radius: var(--r-pill);
+  background: var(--fg-strong); color: var(--surface-page);
+  font-size: var(--size-12); box-shadow: var(--shadow-pop); z-index: 60;
+}
+
+/* ── responsive ───────────────────────────────────────────────────────────────────────── */
+
+/* The outline is the first thing to go: it is a convenience over content that is still
+   reachable by scrolling. The rail is the last, because on a narrow screen the list IS the
+   navigation, and a reference you cannot get out of is the thing being fixed here. */
+@media (max-width: 1200px) {
+  .shell { grid-template-columns: var(--rail-w) minmax(0, 1fr); grid-template-areas: "bar bar" "rail main"; }
+  .outline {
+    position: fixed; inset: var(--topbar-h) 0 0 auto; width: 280px; z-index: 20;
+    border-left: 1px solid var(--border-strong); box-shadow: var(--shadow-pop);
+    transform: translateX(100%); transition: transform .18s ease;
+  }
+  .outline.open { transform: none; }
+}
+@media (max-width: 1200px) and (prefers-reduced-motion: reduce) {
+  .outline { transition: none; }
+}
+@media (min-width: 1201px) { .outlinebtn { display: none; } }
+
+@media (max-width: 900px) {
+  :root { --topbar-h: 52px; }
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "bar" "main"; }
+  .rail {
+    position: fixed; inset: var(--topbar-h) 0 0 0; z-index: 15;
+    border-right: 0; width: 100%;
+  }
+  /* One column, two views. The rail IS the page until a flow is chosen, and the back control
+     returns to it — a phone has no room for both, and browser-back is not a navigation model
+     for a reference somebody is reading through. */
+  body[data-view="detail"] .rail { display: none; }
+  body[data-view="list"] .main { display: none; }
+  .backbtn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: var(--s-3); padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--border-strong); border-radius: var(--r-6);
+    background: var(--surface-raised); color: var(--fg-default); cursor: pointer;
+    font-size: var(--size-13);
+  }
+  body[data-view="list"] .backbtn { display: none; }
+  .wrap { padding: var(--s-4) var(--s-3) var(--s-6); }
+  .counts { display: none; }
+  .brand span { display: none; }
+  .outline { top: var(--topbar-h); width: min(300px, 88vw); }
+  .flowhead h1 { font-size: var(--size-22); }
+  th, td { padding: var(--s-2); }
+}
+
+@media (max-width: 560px) {
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .railmeta { flex-wrap: wrap; }
+}
+
+/* ── print ────────────────────────────────────────────────────────────────────────────── */
+
+@media print {
+  .topbar, .rail, .outline, .actionbar, .backbtn, .json .more, .anchor { display: none !important; }
+  .shell { display: block; height: auto; }
+  .main { overflow: visible; }
+  .wrap { max-width: none; padding: 0; }
+  .action { break-inside: avoid; border-color: var(--dgo-ink-300); }
+  .action > summary::before { content: ""; }
+  .json.clipped pre { max-height: none; }
+  body { background: var(--dgo-ink-0); color: var(--dgo-ink-1000); }
+}

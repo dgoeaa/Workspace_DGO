@@ -1,0 +1,104 @@
+{
+  "capturedUtc": "2026-08-31",
+  "item": "OPEN_ITEMS 25 — 15 of the 19 DYNAMIC_ACTIONS operations answer 501, not a write",
+  "purpose": "Item 25 says the lists these operations touch 'have no column evidence, so no write can be built for them without guessing', and assigns the first step to capturing that column set from the tenant. This is that capture — made from sources already in the repository rather than from the tenant, because both of the evidence classes internal-field-evidence.json accepts were already present: the 58 exported definitions, and the client normaliser that builds each payload.",
+  "method": "scripts/mine-list-columns.mjs attributes every item/ write, $filter/$orderby/$select reference and body/<Col> read in the 58 exported definitions to the list the touching ACTION addresses, by GUID — never per file, because one flow writes to three lists. The payload shapes come from core/activity-parity.js buildQueuePayload() and buildDgoPatch(). A projection key is deliberately not counted as evidence of a column: the fetch flows emit output objects whose keys are named after columns, and counting those is how a mis-attribution got into the evidence file in the first place.",
+  "correctionMade": {
+    "column": "RoutedToDSU",
+    "wasRecordedOn": "Global Tracking Queue",
+    "actuallyWrittenTo": "DGO DIGITAL OPS",
+    "why": "The fetch flows project a key named RoutedToDSU out of Global Tracking Queue rows, sourced from that list's real column GDSUROUT. The projection key is the shape the client receives, not a column on the list. Only DGO DIGITAL OPS carries an item/RoutedToDSU write, in Update_item_Doc.",
+    "consequence": "internal-field-evidence.json is the gate deciding whether a generated package may write item/<Column>. A column recorded against the wrong list licenses a package that the designer refuses at SAVE time with WorkflowOperationParametersExtraParameter. No package wrote it, so nothing had failed — the trap was armed, not sprung. Removed from Global Tracking Queue, which now carries 31 columns, every one attested. npm run test:listcolumns fails if this class returns."
+  },
+  "findingsPerOperation": [
+    {
+      "operations": [
+        "activity-archive:set-reference-id",
+        "activity-nysc:set-reference-id",
+        "activity-siwes:set-reference-id"
+      ],
+      "targetList": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "status": "FULLY EVIDENCED",
+      "detail": "Patches one column, Reference_ID, which is attested on that list by the deployed exports. Nothing is missing."
+    },
+    {
+      "operations": [
+        "activity-archive:update-activity",
+        "activity-nysc:update-activity",
+        "activity-siwes:update-activity"
+      ],
+      "targetList": "DGO DIGITAL OPS",
+      "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+      "status": "EVIDENCED — five of six, and the sixth needs no column",
+      "mapping": {
+        "status": "Status",
+        "assignmentStatus": "AssignmentStatus",
+        "assignedTo": "AssignedTo",
+        "category": "Category0",
+        "referenceId": "RefIDD",
+        "updatedAt": "no column, and none needed — SharePoint stamps Modified on every patch, so this field is dropped rather than written"
+      },
+      "caveat": "category -> Category0 is an inference. Category0 is the only category-shaped column attested on the list and DGO DIGITAL OPS carries no plain Category, but no export writes the Canvas app's `category` value into it, so the pairing is reasoned, not observed. Confirm before building."
+    },
+    {
+      "operations": [
+        "activity-archive:create-queue-record",
+        "activity-nysc:create-queue-record",
+        "activity-siwes:create-queue-record"
+      ],
+      "targetList": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "status": "BLOCKED — 12 of 15 columns evidenced, 3 are not on the list",
+      "evidenced": [
+        "Title",
+        "ActivityTrackingID",
+        "StartDate",
+        "AttachmentLink",
+        "AssignedBy",
+        "RefIDD",
+        "AssignedTo",
+        "RefIDDN",
+        "Priority",
+        "Acknowledgement_x0020_Due_x0020_",
+        "DueDate",
+        "Reference_ID"
+      ],
+      "missing": [
+        {
+          "clientField": "Status",
+          "note": "No Status column is attested on Global Tracking Queue. DGO DIGITAL OPS has both Status and OverallStatus; the queue has Progress, Assigned, Classification, TaskType and TaskTypeChoice. Progress is a candidate and is NOT asserted here — pairing them would be exactly the guess this item exists to avoid."
+        },
+        {
+          "clientField": "NVERSE",
+          "note": "Appears in no exported definition at all, on any list. Either a Canvas-only column the flow estate has never touched, or a display name whose internal name is unrecognisable from here."
+        },
+        {
+          "clientField": "Category",
+          "note": "Not attested on the queue. DGO DIGITAL OPS has Category0; AI TEXT DATA LOG has Category. Neither is this list."
+        }
+      ],
+      "detail": "The designer validates item/<Column> at save time, so writing any of these three would make the flow refuse to save. Twelve correct columns and three wrong ones is not a partial write — it is a package that cannot be pasted."
+    },
+    {
+      "operations": [
+        "dispatch",
+        "dispatchoutbound",
+        "archivereference"
+      ],
+      "targetList": null,
+      "status": "BLOCKED — but not on column evidence",
+      "detail": "These three have no SharePoint target at all. core/archive.js archiveReference() calls Entities.archive(), and dispatch is created through core/entity-store.js createDispatch() — both operate on client-side entity-store state. There is no dispatch register or archive list for a flow to write, so no column capture can unblock them. What they need is a decision about whether these actions should persist server-side and to which list, which is a design question and not a tenant lookup.",
+      "consequence": "Item 25 groups these with the twelve activity-parity operations as though one column capture unblocks all fifteen. It does not. They are a separate, smaller question and should be tracked apart."
+    }
+  ],
+  "summary": {
+    "operationsAnswering501": 15,
+    "nowFullyEvidenced": 6,
+    "blockedOnThreeColumns": 3,
+    "blockedOnADesignDecision": 3,
+    "stillUnexamined": 3,
+    "note": "The three unexamined are the bare activity-archive, activity-nysc and activity-siwes discriminators, which the client sends as the umbrella action for the three-step lifecycle rather than as a write of their own. Whether they need a write at all depends on how the three sub-steps are sequenced server-side.",
+    "whatItem25ShouldNowAsk": "Not 'capture the column set' — that is done for the lists that have one. Three things instead: confirm Status, NVERSE and Category on Global Tracking Queue (or agree the queue write drops them); confirm category -> Category0 on DGO DIGITAL OPS; and decide whether dispatch and archive persist server-side at all."
+  }
+}

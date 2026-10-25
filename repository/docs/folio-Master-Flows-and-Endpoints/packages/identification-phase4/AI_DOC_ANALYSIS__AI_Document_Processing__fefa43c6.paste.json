@@ -1,0 +1,255 @@
+{
+  "nodeId": "Scope_AI_Caller_Gate",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Get_AI_Gate_Proof_Mode": {
+        "type": "OpenApiConnection",
+        "runAfter": {},
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "GetItems"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+            "$filter": "Title eq 'IDENTITY_PROOF_REQUIRED'",
+            "$top": 1
+          }
+        }
+      },
+      "Compose_AI_Gate_Proof_Token": {
+        "type": "Compose",
+        "inputs": "@trim(replace(replace(string(coalesce(triggerOutputs()?['headers']?['X-DGO-Proof'],triggerOutputs()?['headers']?['x-dgo-proof'],triggerOutputs()?['headers']?['Authorization'],triggerOutputs()?['headers']?['authorization'],'')),'Bearer ',''),'bearer ',''))",
+        "runAfter": {
+          "Get_AI_Gate_Proof_Mode": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Get_AI_Gate_Proof": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_AI_Gate_Proof_Token": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "GetItems"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "table": "444102d6-2c29-45cf-8b59-52774d7c4dd4",
+            "$filter": "@if(empty(outputs('Compose_AI_Gate_Proof_Token')),'ID eq 0',concat('Title eq ''',replace(outputs('Compose_AI_Gate_Proof_Token'),'''',''''''),''' and Consumed eq 0 and Purpose eq ''internal-session'''))",
+            "$top": 1
+          }
+        }
+      },
+      "Compose_AI_Gate_Identity": {
+        "type": "Compose",
+        "inputs": {
+          "proofRequired": "@equals(toLower(trim(string(coalesce(first(coalesce(outputs('Get_AI_Gate_Proof_Mode')?['body/value'],json('[]')))?['ConfigValue'],'')))),'true')",
+          "proofValid": "@and(not(empty(outputs('Compose_AI_Gate_Proof_Token'))),greater(length(coalesce(outputs('Get_AI_Gate_Proof')?['body/value'],json('[]'))),0),greater(ticks(coalesce(first(coalesce(outputs('Get_AI_Gate_Proof')?['body/value'],json('[]')))?['ExpiresAtUtc'],'1900-01-01T00:00:00Z')),ticks(utcNow())))"
+        },
+        "runAfter": {
+          "Get_AI_Gate_Proof": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_AI_Gate_Caller": {
+        "type": "Compose",
+        "inputs": "@if(outputs('Compose_AI_Gate_Identity')?['proofValid'],toLower(trim(string(coalesce(first(coalesce(outputs('Get_AI_Gate_Proof')?['body/value'],json('[]')))?['Email'],'')))),if(outputs('Compose_AI_Gate_Identity')?['proofRequired'],'',toLower(trim(string(coalesce(coalesce(triggerBody()?['userEmail'],triggerBody()?['payload']?['userEmail']),''))))))",
+        "runAfter": {
+          "Compose_AI_Gate_Identity": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Get_AI_Gate_Directory_User": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_AI_Gate_Caller": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "GetItems"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "table": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+            "$filter": "@if(empty(outputs('Compose_AI_Gate_Caller')),'ID eq 0',concat('Email eq ''',replace(outputs('Compose_AI_Gate_Caller'),'''',''''''),''' and Status eq ''active'''))",
+            "$top": 1
+          }
+        }
+      },
+      "Compose_AI_Gate_Auth": {
+        "type": "Compose",
+        "inputs": "@if(not(outputs('Compose_AI_Gate_Identity')?['proofRequired']),'ok',if(or(empty(outputs('Compose_AI_Gate_Caller')),empty(coalesce(outputs('Get_AI_Gate_Directory_User')?['body/value'],json('[]')))),'unauthenticated','ok'))",
+        "runAfter": {
+          "Get_AI_Gate_Directory_User": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Condition_AI_Gate_Refused": {
+        "type": "If",
+        "runAfter": {
+          "Compose_AI_Gate_Auth": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "and": [
+            {
+              "not": {
+                "equals": [
+                  "@outputs('Compose_AI_Gate_Auth')",
+                  "ok"
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "Response_AI_Gate_Unauthenticated": {
+            "type": "Response",
+            "kind": "Http",
+            "runAfter": {},
+            "inputs": {
+              "statusCode": 401,
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "body": {
+                "ok": false,
+                "status": {
+                  "http": 401,
+                  "code": "UNAUTHENTICATED",
+                  "message": "A valid sign-in is required."
+                },
+                "data": {
+                  "code": "UNAUTHENTICATED"
+                },
+                "errors": [
+                  {
+                    "code": "UNAUTHENTICATED"
+                  }
+                ]
+              }
+            }
+          },
+          "Terminate_AI_Gate": {
+            "type": "Terminate",
+            "runAfter": {
+              "Response_AI_Gate_Unauthenticated": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "runStatus": "Cancelled"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "Get_OpenRouter_Key": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Condition_AI_Gate_Refused": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "GetItems"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+            "$filter": "Title eq 'OPENROUTER_API_KEY'",
+            "$top": 5
+          }
+        }
+      },
+      "Compose_OpenRouter_Authorization": {
+        "type": "Compose",
+        "runAfter": {
+          "Get_OpenRouter_Key": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "inputs": "@concat('Bearer ',trim(string(coalesce(first(coalesce(outputs('Get_OpenRouter_Key')?['body/value'],json('[]')))?['ConfigValue'],''))))"
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_AI_Gate_Proof_Mode": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_AI_Gate_Proof": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_AI_Gate_Directory_User": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OpenRouter_Key": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

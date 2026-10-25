@@ -1,0 +1,427 @@
+{
+  "recordVersion": "1.0.0",
+  "what": "Which flow answers each endpoint key's wired workflow id, read live. Flow names and ids only; no trigger address, signature or token is recorded.",
+  "capturedUtc": "2026-09-27",
+  "source": {
+    "tool": "docs/deployment/estate-apply.cli.mjs values (reads only), version 1.0.0+716ed64ed217",
+    "account": "the flow-owner account (Registry)",
+    "flowsVisible": 693,
+    "flowsRead": 693
+  },
+  "comparedWith": [
+    "docs/reference/contract-key-flow-map.json (owner's intended flow)",
+    "docs/reference/contract-key-flow-reconciliation.json (wiredFlowIds from the 2026-09-18 tenant reading)"
+  ],
+  "counts": {
+    "DIFFERS_FROM_OWNER_MAP": 9,
+    "AS_INTENDED": 15,
+    "NOT_IN_OWNER_MAP": 1,
+    "disagreeWith20260918": 3
+  },
+  "rows": [
+    {
+      "surface": "runtime",
+      "key": "FETCH_ALL",
+      "liveFlowName": "IP_FETCH_ALL_BOOTSTRAP",
+      "liveFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "ownerMapFlow": {
+        "name": "IP_FETCH_ALL__EXTENDED_ENDPOINT",
+        "flowId": "ce2cbed8-d180-4160-a0c7-f552101bc412"
+      },
+      "reading20260918FlowIds": [
+        "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "be1f89bd-d7ea-4a15-87c9-2ce6fd4d0eaa"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "DYNAMIC_ACTIONS",
+      "liveFlowName": "IP_Dynamic_Global_Actions_Endpoint",
+      "liveFlowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "ownerMapFlow": {
+        "name": "IP_Dynamic_Global_Actions_Endpoint",
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7"
+      },
+      "reading20260918FlowIds": [
+        "08da1783-927f-4662-a429-45e1249a989f"
+      ],
+      "agreesWith20260918": false,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "SINGLE_ASSIGNMENT",
+      "liveFlowName": "Single_Task_Assignment",
+      "liveFlowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "ownerMapFlow": {
+        "name": "IP_Single_Assignment_Endpoint",
+        "flowId": "05825db0-c806-4974-807c-c062f386cc41"
+      },
+      "reading20260918FlowIds": [
+        "05825db0-c806-4974-807c-c062f386cc41",
+        "3caf9458-8d95-4740-a01b-6803dad97d34"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "BULK_ASSIGNMENT",
+      "liveFlowName": "BULK OPS DATA RETRIEVAL HTTP",
+      "liveFlowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+      "ownerMapFlow": {
+        "name": "IP_Bulk_Assignment_Endpoint",
+        "flowId": "f96399c6-31d9-493a-a304-3fa8efda6ef8"
+      },
+      "reading20260918FlowIds": [],
+      "agreesWith20260918": false,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "FETCH_ACTIVITIES",
+      "liveFlowName": "IP_Get_Docs_Endpoint",
+      "liveFlowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "ownerMapFlow": null,
+      "reading20260918FlowIds": [],
+      "agreesWith20260918": false,
+      "verdict": "NOT_IN_OWNER_MAP",
+      "status": "WRITTEN",
+      "note": "the owner map has no row for this key; config/endpoints.config.js names SUBSIDIARY_ACTIONS as its source flow (action LIST-ACTIVITIES)"
+    },
+    {
+      "surface": "runtime",
+      "key": "REFERENCE_DATA",
+      "liveFlowName": "IP_Reference_Data_Endpoint",
+      "liveFlowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "ownerMapFlow": {
+        "name": "IP_Reference_Data_Endpoint",
+        "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2"
+      },
+      "reading20260918FlowIds": [
+        "9a4dea8e-15f2-42b6-904d-3655056fa3c2"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "GET_DOCS",
+      "liveFlowName": "IP_Get_Docs_Endpoint",
+      "liveFlowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "ownerMapFlow": {
+        "name": "IP_Get_Docs_Endpoint",
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2"
+      },
+      "reading20260918FlowIds": [],
+      "agreesWith20260918": false,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "FETCH_EMAIL_ATTACHMENTS",
+      "liveFlowName": "IP_Retrieve_Email_Attachment_Endpoint",
+      "liveFlowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "ownerMapFlow": {
+        "name": "IP_Retrieve_Email_Attachment_Endpoint",
+        "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b"
+      },
+      "reading20260918FlowIds": [
+        "5bc87cf3-7a99-4259-b6a2-315fbc794d9b"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "BULK_ASSIGNMENT_DIRECT",
+      "liveFlowName": "IP_Bulk_Assign_Endpoint",
+      "liveFlowId": "0d1e8df5-30b3-4069-8903-665b87c197eb",
+      "ownerMapFlow": {
+        "name": "Deployed Bulk Task Assignment_Create Task",
+        "flowId": "122bb363-ddea-40c7-8578-d0d613a17bf7"
+      },
+      "reading20260918FlowIds": [
+        "0d1e8df5-30b3-4069-8903-665b87c197eb"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "EMAIL",
+      "liveFlowName": "IP_SEND_EMAIL",
+      "liveFlowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "ownerMapFlow": {
+        "name": "IP_SEND_EMAIL",
+        "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7"
+      },
+      "reading20260918FlowIds": [
+        "df59a69f-92ca-4554-ae68-6b464aa73ef7"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "EMAIL_RELATED_TASK",
+      "liveFlowName": "IP_Create_Email_Assignment",
+      "liveFlowId": "3f2f649b-55af-48e0-9a1e-43135e11a4b0",
+      "ownerMapFlow": {
+        "name": "IP_Create_Email_Assignment_Endpoint",
+        "flowId": "2fbb5485-6244-46eb-8a38-48e443a1d9fb"
+      },
+      "reading20260918FlowIds": [
+        "2fbb5485-6244-46eb-8a38-48e443a1d9fb"
+      ],
+      "agreesWith20260918": false,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "AI_EMAIL_ANALYSIS",
+      "liveFlowName": "AI_Document_Processing",
+      "liveFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "ownerMapFlow": {
+        "name": "AI_Document_Processing",
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d"
+      },
+      "reading20260918FlowIds": [],
+      "agreesWith20260918": false,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "AI_DOC_ANALYSIS",
+      "liveFlowName": "AI_Document_Processing",
+      "liveFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "ownerMapFlow": {
+        "name": "AI_Document_Processing",
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d"
+      },
+      "reading20260918FlowIds": [],
+      "agreesWith20260918": false,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "AI_CHAT",
+      "liveFlowName": "AI_Document_Processing",
+      "liveFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "ownerMapFlow": {
+        "name": "AI_Document_Processing",
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d"
+      },
+      "reading20260918FlowIds": [],
+      "agreesWith20260918": false,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "OTP_GENERATE",
+      "liveFlowName": "IP_OTP_VERIFY",
+      "liveFlowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "ownerMapFlow": {
+        "name": "IP_OTP_Endpoint",
+        "flowId": "913bd078-5411-404f-85ac-507c10fe1a09"
+      },
+      "reading20260918FlowIds": [
+        "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "913bd078-5411-404f-85ac-507c10fe1a09"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "OTP_VERIFY",
+      "liveFlowName": "IP_OTP_VERIFY",
+      "liveFlowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "ownerMapFlow": {
+        "name": "IP_OTP_VERIFY",
+        "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61"
+      },
+      "reading20260918FlowIds": [
+        "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "913bd078-5411-404f-85ac-507c10fe1a09"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "SUBSIDIARY_ACTIONS",
+      "liveFlowName": "IP_Dynamic_Global_Actions_Endpoint",
+      "liveFlowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "ownerMapFlow": {
+        "name": "IP_Subsidiary_Actions_Endpoint",
+        "flowId": "08da1783-927f-4662-a429-45e1249a989f"
+      },
+      "reading20260918FlowIds": [
+        "08da1783-927f-4662-a429-45e1249a989f"
+      ],
+      "agreesWith20260918": false,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "runtime",
+      "key": "SCAN_INTAKE",
+      "liveFlowName": "IP_SCAN_INTAKE",
+      "liveFlowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "ownerMapFlow": {
+        "name": "IP_SCAN_INTAKE_Endpoint_v2.1",
+        "flowId": "12b6e690-a065-468d-b470-fcfba015f1f8"
+      },
+      "reading20260918FlowIds": [
+        "5504d7f9-cc96-470c-be79-217582faf415"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "MISSING",
+      "why": "trigger address has no signature: Tenant authentication, required for the sanctioned crossing (ENDPOINT_REGISTER.md §5, ITEM-59)"
+    },
+    {
+      "surface": "portal",
+      "key": "SUBMISSION",
+      "liveFlowName": "CG_Submission_Endpoint",
+      "liveFlowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "ownerMapFlow": {
+        "name": "CG_Submission_Endpoint",
+        "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759"
+      },
+      "reading20260918FlowIds": [
+        "de9ef13b-ae4c-42b0-9afa-20e71a180759"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "portal",
+      "key": "UPLOAD",
+      "liveFlowName": "CG_Upload_Endpoint",
+      "liveFlowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "ownerMapFlow": {
+        "name": "CG_Upload_Endpoint",
+        "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77"
+      },
+      "reading20260918FlowIds": [
+        "df82e331-b800-4a8d-996e-d2b2ca846c77"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "portal",
+      "key": "STATUS",
+      "liveFlowName": "CG_Portal_Status_Check_Endpoint",
+      "liveFlowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "ownerMapFlow": {
+        "name": "CG_Portal_Status_Check_Endpoint",
+        "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f"
+      },
+      "reading20260918FlowIds": [
+        "60042a2e-dadb-4ad8-a672-38b4132d299f",
+        "badb65d8-f472-407e-8975-c29d77b855d7"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "portal",
+      "key": "SUPPORT",
+      "liveFlowName": "CG_Portal_Support_Endpoint",
+      "liveFlowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "ownerMapFlow": {
+        "name": "CG_Portal_Support_Endpoint",
+        "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6"
+      },
+      "reading20260918FlowIds": [
+        "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+        "4873c936-a2be-4726-8e69-426edb8f70e6"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "portal",
+      "key": "VERIFY",
+      "liveFlowName": "CG_Portal_Verification_Endpoint",
+      "liveFlowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "ownerMapFlow": {
+        "name": "CG_Verification_Endpoint",
+        "flowId": "86897b2f-9770-4efa-8486-2642f24bb947"
+      },
+      "reading20260918FlowIds": [
+        "86897b2f-9770-4efa-8486-2642f24bb947",
+        "ba47f79b-a831-49e8-b00b-3f8937c331df"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "DIFFERS_FROM_OWNER_MAP",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "portal",
+      "key": "VERIFY_CONFIRM",
+      "liveFlowName": "CG_Portal_Verification_Confirmation_Endpoint",
+      "liveFlowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "ownerMapFlow": {
+        "name": "CG_Portal_Verification_Confirmation_Endpoint",
+        "flowId": "f96e3448-3c79-4d42-b224-825258a552ba"
+      },
+      "reading20260918FlowIds": [
+        "f96e3448-3c79-4d42-b224-825258a552ba"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    },
+    {
+      "surface": "portal",
+      "key": "WRITEBACK",
+      "liveFlowName": "CG_Portal_Writeback_Endpoint",
+      "liveFlowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "ownerMapFlow": {
+        "name": "CG_Portal_Writeback_Endpoint",
+        "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a"
+      },
+      "reading20260918FlowIds": [
+        "bde13d27-73b3-4e1a-9687-eb289b039c7a"
+      ],
+      "agreesWith20260918": true,
+      "verdict": "AS_INTENDED",
+      "status": "WRITTEN"
+    }
+  ],
+  "planOfSameDay": {
+    "repoints": {
+      "OTP_GENERATE": "AFTER_APPLY (IP_OTP_Endpoint 913bd078…; the staged package reads as re-serialised, fixed in the orchestrator the same day)",
+      "OTP_VERIFY": "DONE (IP_OTP_VERIFY 4dbe6dde…)",
+      "DYNAMIC_ACTIONS": "DONE (IP_Dynamic_Global_Actions_Endpoint 31c0aaf0…)",
+      "SUBSIDIARY_ACTIONS": "READY by the build of that run, which did not check routes; the export held of IP_Subsidiary_Actions_Endpoint (flow-exports, 2026-09-05) implements none of its 18 routes",
+      "FETCH_ACTIVITIES": "BLOCKED: IP_Subsidiary_Actions_Endpoint does not implement LIST-ACTIVITIES"
+    },
+    "portalPackages": "all seven WILL_UPDATE after being applied and verified the same day: the service stores the written definitions re-serialised"
+  }
+}

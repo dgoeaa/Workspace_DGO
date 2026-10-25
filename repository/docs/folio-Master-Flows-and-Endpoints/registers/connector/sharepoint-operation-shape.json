@@ -1,0 +1,886 @@
+{
+  "schema": "dgo-sharepoint-connector-shape/v1",
+  "learnedUtc": "2026-09-01",
+  "whatThisIs": "What the SharePoint connector accepts, derived from operations inside flow definitions Power Automate has already saved. Evidence, not a specification: a rule resting on many observations is strong, one resting on two is a hint. Every rule carries its count so a checker can weigh it.",
+  "corpus": {
+    "definitions": 90,
+    "operations": 519
+  },
+  "operations": {
+    "CreateFile": {
+      "observed": 13,
+      "parameters": {
+        "dataset": {
+          "seen": 13,
+          "inEveryInstance": true
+        },
+        "folderPath": {
+          "seen": 13,
+          "inEveryInstance": true
+        },
+        "name": {
+          "seen": 13,
+          "inEveryInstance": true
+        },
+        "body": {
+          "seen": 13,
+          "inEveryInstance": true
+        }
+      },
+      "alwaysPresent": [
+        "body",
+        "dataset",
+        "folderPath",
+        "name"
+      ]
+    },
+    "GetItem": {
+      "observed": 22,
+      "parameters": {
+        "dataset": {
+          "seen": 22,
+          "inEveryInstance": true
+        },
+        "table": {
+          "seen": 22,
+          "inEveryInstance": true
+        },
+        "id": {
+          "seen": 22,
+          "inEveryInstance": true
+        },
+        "view": {
+          "seen": 14,
+          "inEveryInstance": false
+        }
+      },
+      "alwaysPresent": [
+        "dataset",
+        "id",
+        "table"
+      ]
+    },
+    "GetItems": {
+      "observed": 223,
+      "parameters": {
+        "dataset": {
+          "seen": 223,
+          "inEveryInstance": true
+        },
+        "table": {
+          "seen": 223,
+          "inEveryInstance": true
+        },
+        "$top": {
+          "seen": 221,
+          "inEveryInstance": false
+        },
+        "$filter": {
+          "seen": 139,
+          "inEveryInstance": false
+        },
+        "$orderby": {
+          "seen": 74,
+          "inEveryInstance": false
+        },
+        "view": {
+          "seen": 66,
+          "inEveryInstance": false
+        }
+      },
+      "alwaysPresent": [
+        "dataset",
+        "table"
+      ]
+    },
+    "HttpRequest": {
+      "observed": 26,
+      "parameters": {
+        "dataset": {
+          "seen": 26,
+          "inEveryInstance": true
+        },
+        "parameters/method": {
+          "seen": 26,
+          "inEveryInstance": true
+        },
+        "parameters/uri": {
+          "seen": 26,
+          "inEveryInstance": true
+        },
+        "parameters/headers": {
+          "seen": 26,
+          "inEveryInstance": true
+        },
+        "parameters/body": {
+          "seen": 7,
+          "inEveryInstance": false
+        }
+      },
+      "alwaysPresent": [
+        "dataset",
+        "parameters/headers",
+        "parameters/method",
+        "parameters/uri"
+      ]
+    },
+    "PatchFileItem": {
+      "observed": 8,
+      "parameters": {
+        "dataset": {
+          "seen": 8,
+          "inEveryInstance": true
+        },
+        "table": {
+          "seen": 8,
+          "inEveryInstance": true
+        },
+        "id": {
+          "seen": 8,
+          "inEveryInstance": true
+        }
+      },
+      "alwaysPresent": [
+        "dataset",
+        "id",
+        "table"
+      ]
+    },
+    "PatchItem": {
+      "observed": 93,
+      "parameters": {
+        "item/*": {
+          "seen": 367,
+          "inEveryInstance": false
+        },
+        "dataset": {
+          "seen": 93,
+          "inEveryInstance": true
+        },
+        "table": {
+          "seen": 93,
+          "inEveryInstance": true
+        },
+        "id": {
+          "seen": 93,
+          "inEveryInstance": true
+        }
+      },
+      "alwaysPresent": [
+        "dataset",
+        "id",
+        "table"
+      ]
+    },
+    "PostItem": {
+      "observed": 134,
+      "parameters": {
+        "item/*": {
+          "seen": 1239,
+          "inEveryInstance": false
+        },
+        "dataset": {
+          "seen": 134,
+          "inEveryInstance": true
+        },
+        "table": {
+          "seen": 134,
+          "inEveryInstance": true
+        }
+      },
+      "alwaysPresent": [
+        "dataset",
+        "table"
+      ]
+    }
+  },
+  "columnsAddressedByValue": {
+    "ee82725a-c408-45e2-a8e8-facf7a092047": [
+      {
+        "column": "Acknowledge_x0020_Task",
+        "viaValue": 3,
+        "direct": 0
+      },
+      {
+        "column": "Priority",
+        "viaValue": 4,
+        "direct": 4
+      },
+      {
+        "column": "Progress",
+        "viaValue": 4,
+        "direct": 4
+      },
+      {
+        "column": "TaskTypeChoice",
+        "viaValue": 7,
+        "direct": 0
+      },
+      {
+        "column": "TaskType",
+        "viaValue": 7,
+        "direct": 0
+      }
+    ],
+    "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf": [
+      {
+        "column": "TaskTypeChoice",
+        "viaValue": 3,
+        "direct": 0
+      },
+      {
+        "column": "TaskType",
+        "viaValue": 3,
+        "direct": 0
+      },
+      {
+        "column": "Acknowledge_x0020_Task",
+        "viaValue": 1,
+        "direct": 0
+      },
+      {
+        "column": "Priority",
+        "viaValue": 1,
+        "direct": 0
+      },
+      {
+        "column": "Progress",
+        "viaValue": 1,
+        "direct": 0
+      }
+    ],
+    "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3": [
+      {
+        "column": "AssignmentStatus",
+        "viaValue": 3,
+        "direct": 0
+      },
+      {
+        "column": "Status",
+        "viaValue": 6,
+        "direct": 1
+      },
+      {
+        "column": "Marked_Item",
+        "viaValue": 7,
+        "direct": 1
+      },
+      {
+        "column": "OverallStatus",
+        "viaValue": 3,
+        "direct": 0
+      }
+    ],
+    "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667": [
+      {
+        "column": "Status",
+        "viaValue": 6,
+        "direct": 0
+      }
+    ],
+    "90dda8e2-5b62-4ab9-a766-d1dc95deb000": [
+      {
+        "column": "Status",
+        "viaValue": 2,
+        "direct": 0
+      }
+    ],
+    "be0c7af1-b21d-4efe-8c30-53fc55598d95": [
+      {
+        "column": "Severity",
+        "viaValue": 23,
+        "direct": 0
+      }
+    ]
+  },
+  "columnsSeenPerList": {
+    "27ea9338-31c0-4f44-ac6e-aac8e1d01cf1": [],
+    "49b6e988-bc64-43b9-bc5d-dc02acf2e22d": [],
+    "ee82725a-c408-45e2-a8e8-facf7a092047": [
+      "Acknowledge_x0020_Task",
+      "AcknowledgedBy",
+      "Acknowledgement_x0020_Due_x0020_",
+      "ActivityTrackingID",
+      "AssgnedTpUserDSU",
+      "Assigned",
+      "AssignedBy",
+      "AssignedTo",
+      "AssignedToUserTitle",
+      "AttachmentLink",
+      "Classification",
+      "Comments",
+      "Description",
+      "DraftResponse",
+      "DueDate",
+      "GDSUROUT",
+      "GTQGrouping",
+      "HDSUTitltetxt",
+      "LinktoDoc",
+      "OData__x0033_rdAssigned",
+      "ParentTask",
+      "Priority",
+      "Progress",
+      "RefID",
+      "RefIDD",
+      "RefIDDN",
+      "Reference_ID",
+      "StartDate",
+      "TaskType",
+      "TaskTypeChoice",
+      "Title"
+    ],
+    "1932d687-e77a-4929-9047-a1f544c68a0b": [],
+    "8aab9c4e-001f-4e32-862c-8a50e750f04e": [],
+    "f64c8b65-c921-46e9-8814-a8cef61f6016": [],
+    "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf": [
+      "Acknowledge_x0020_Task",
+      "Acknowledgement_x0020_Due_x0020_",
+      "ActivityTrackingID",
+      "AssgnedTpUserDSU",
+      "Assigned",
+      "AssignedBy",
+      "AssignedTo",
+      "AssignedToUserTitle",
+      "AttachmentLink",
+      "Classification",
+      "Comments",
+      "Description",
+      "DueDate",
+      "GDSUROUT",
+      "GTQGrouping",
+      "HDSUTitltetxt",
+      "HTML_x0020_TEXT",
+      "LinktoDoc",
+      "OData__x0033_rdAssigned",
+      "Priority",
+      "Progress",
+      "RefIDD",
+      "RefIDDN",
+      "StartDate",
+      "TaskType",
+      "TaskTypeChoice",
+      "Title"
+    ],
+    "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3": [
+      "AppFlter",
+      "Assigned",
+      "AssignedTo",
+      "AssignmentStatus",
+      "BodyExtract",
+      "CC_x0027_dTo",
+      "Category0",
+      "Marked_Item",
+      "OverallStatus",
+      "RefIDD",
+      "RoutedToDSU",
+      "RoutedToHDSUTitle",
+      "Routed_x0020_To",
+      "StartDate",
+      "Status",
+      "TextExtraxt",
+      "Title"
+    ],
+    "d6b97198-489c-4bd7-8647-1133c55efdf9": [
+      "RequestCount",
+      "Title",
+      "UpdatedAtUtc",
+      "WindowStartUtc"
+    ],
+    "d777f3cd-0696-426e-8096-ffc860e7c0d4": [
+      "CreatedAtUtc",
+      "DeclaredName",
+      "DeclaredSha256",
+      "DeclaredSizeBytes",
+      "ExpiresAtUtc",
+      "Redeemed",
+      "Status",
+      "StoredName",
+      "SubmissionRef",
+      "Title"
+    ],
+    "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e": [
+      "AttachmentLink",
+      "CreatedAtUtc",
+      "DeclaredName",
+      "DeclaredSha256",
+      "DeclaredSizeBytes",
+      "Status",
+      "StoredName",
+      "SubmissionRef",
+      "Title"
+    ],
+    "726c210d-09d5-45d9-952d-7a506b644b13": [
+      "CompletedAtUtc",
+      "DurationMs",
+      "ErrorMessage",
+      "Flow",
+      "Outcome",
+      "RunId",
+      "RunRecordJson",
+      "StartedAtUtc",
+      "Title"
+    ],
+    "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56": [
+      "Attempts",
+      "Consumed",
+      "CreatedAtUtc",
+      "Email",
+      "Expires_At",
+      "OTP_Code",
+      "SourceIp",
+      "Title"
+    ],
+    "88a81ca1-319a-45f5-8409-f91a24538ffa": [
+      "Attempts",
+      "LastError",
+      "MessageType",
+      "RecipientEmail",
+      "Reference",
+      "SentAtUtc",
+      "Status",
+      "Title"
+    ],
+    "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9": [
+      "Consumed",
+      "CreatedAtUtc",
+      "Email",
+      "ExpiresAtUtc",
+      "Purpose",
+      "Title"
+    ],
+    "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667": [
+      "ActionRequired",
+      "AttachmentCount",
+      "Category",
+      "Channel",
+      "CorrespondenceType",
+      "Description",
+      "EventDate",
+      "LocalId",
+      "ReferenceId",
+      "SenderEmail",
+      "SenderName",
+      "SenderOrganisation",
+      "SenderOrganisationType",
+      "SenderPhone",
+      "SourceIp",
+      "Status",
+      "StatusLabel",
+      "Subject",
+      "SubmittedAtUtc",
+      "Title",
+      "UpdatedAtUtc",
+      "VerifiedSubmission"
+    ],
+    "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd": [
+      "Actor",
+      "AtUtc",
+      "Label",
+      "Note",
+      "Status",
+      "SubmissionRef",
+      "Title"
+    ],
+    "f59026cc-9fd7-4322-b681-73c599b852c6": [
+      "AtUtc",
+      "Detail",
+      "EventType",
+      "Flow",
+      "Reference",
+      "SourceIp",
+      "Title"
+    ],
+    "9bc168c3-06e5-4d58-982b-0df06205fd35": [],
+    "d46a2be7-eaca-4056-bc4f-a439eb59721a": [
+      "AIOUTPUT",
+      "Category",
+      "Category_x0020_Code",
+      "Date",
+      "Document_x0020_Type",
+      "EXTRACTEDTEXT",
+      "Key_x0020_Points",
+      "RefID",
+      "Sender_x0020_Name",
+      "SubCategory",
+      "Subject",
+      "Summary",
+      "Title",
+      "recipient_x0020__x0020_name"
+    ],
+    "f553959f-d55b-4591-aa87-d61fb6f9eda9": [],
+    "9421d473-8906-43b7-a41f-a213046683c1": [
+      "Expires_At",
+      "Is_Verified",
+      "OTP_Code",
+      "Title"
+    ],
+    "83107389-0d2f-4707-a5a6-c5485b5047c2": [],
+    "90dda8e2-5b62-4ab9-a766-d1dc95deb000": [
+      "DG_Instruction",
+      "Status",
+      "Title"
+    ],
+    "18b63c7f-04bb-4741-bda0-07026b13d1f2": [
+      "Description",
+      "Submission_UID",
+      "Title"
+    ],
+    "d95409a4-2b48-4d34-9f60-da5d27db862d": [
+      "CurrentSequence",
+      "LastIssuedAt",
+      "LastReferenceId",
+      "LockToken",
+      "ModifiedByFlowRun",
+      "Prefix",
+      "Title",
+      "Year"
+    ],
+    "3d591f5b-3f2f-409c-983a-a77b5c174834": [],
+    "f675598b-271d-4200-8d75-2597aad4057f": [],
+    "be0c7af1-b21d-4efe-8c30-53fc55598d95": [
+      "Action",
+      "ActorEmail",
+      "ActorPersona",
+      "ActorRole",
+      "AuditId",
+      "CreatedAt",
+      "EntityId",
+      "EntityType",
+      "Event",
+      "MetaJson",
+      "Module",
+      "Ref",
+      "RequestId",
+      "Severity",
+      "Title"
+    ],
+    "b984645b-8e3a-457f-a305-b95650fd3f23": [
+      "AboutReference",
+      "Email",
+      "Message",
+      "Name",
+      "SourceIp",
+      "Status",
+      "SubmittedAtUtc",
+      "Title",
+      "Topic"
+    ]
+  },
+  "requiredByList": {
+    "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf": {
+      "PostItem": {
+        "observed": 3,
+        "alwaysPresent": [
+          "TaskType",
+          "TaskTypeChoice"
+        ]
+      }
+    },
+    "d6b97198-489c-4bd7-8647-1133c55efdf9": {
+      "PatchItem": {
+        "observed": 21,
+        "alwaysPresent": [
+          "RequestCount",
+          "Title",
+          "WindowStartUtc"
+        ]
+      },
+      "PostItem": {
+        "observed": 21,
+        "alwaysPresent": [
+          "RequestCount",
+          "Title",
+          "UpdatedAtUtc",
+          "WindowStartUtc"
+        ]
+      }
+    },
+    "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e": {
+      "PostItem": {
+        "observed": 3,
+        "alwaysPresent": [
+          "AttachmentLink",
+          "CreatedAtUtc",
+          "DeclaredName",
+          "DeclaredSha256",
+          "DeclaredSizeBytes",
+          "Status",
+          "StoredName",
+          "SubmissionRef",
+          "Title"
+        ]
+      }
+    },
+    "d777f3cd-0696-426e-8096-ffc860e7c0d4": {
+      "PatchItem": {
+        "observed": 6,
+        "alwaysPresent": [
+          "Redeemed",
+          "Status",
+          "Title"
+        ]
+      },
+      "PostItem": {
+        "observed": 3,
+        "alwaysPresent": [
+          "CreatedAtUtc",
+          "DeclaredName",
+          "DeclaredSha256",
+          "DeclaredSizeBytes",
+          "ExpiresAtUtc",
+          "Redeemed",
+          "Status",
+          "StoredName",
+          "SubmissionRef",
+          "Title"
+        ]
+      }
+    },
+    "726c210d-09d5-45d9-952d-7a506b644b13": {
+      "PostItem": {
+        "observed": 34,
+        "alwaysPresent": [
+          "CompletedAtUtc",
+          "DurationMs",
+          "ErrorMessage",
+          "Flow",
+          "Outcome",
+          "RunId",
+          "StartedAtUtc",
+          "Title"
+        ]
+      }
+    },
+    "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56": {
+      "PatchItem": {
+        "observed": 13,
+        "alwaysPresent": [
+          "Consumed",
+          "Expires_At",
+          "OTP_Code",
+          "Title"
+        ]
+      },
+      "PostItem": {
+        "observed": 5,
+        "alwaysPresent": [
+          "Attempts",
+          "Consumed",
+          "Email",
+          "Expires_At",
+          "OTP_Code",
+          "SourceIp",
+          "Title"
+        ]
+      }
+    },
+    "88a81ca1-319a-45f5-8409-f91a24538ffa": {
+      "PostItem": {
+        "observed": 7,
+        "alwaysPresent": [
+          "Attempts",
+          "LastError",
+          "MessageType",
+          "RecipientEmail",
+          "SentAtUtc",
+          "Status",
+          "Title"
+        ]
+      }
+    },
+    "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9": {
+      "PatchItem": {
+        "observed": 7,
+        "alwaysPresent": [
+          "Consumed",
+          "Title"
+        ]
+      },
+      "PostItem": {
+        "observed": 5,
+        "alwaysPresent": [
+          "Consumed",
+          "CreatedAtUtc",
+          "Email",
+          "ExpiresAtUtc",
+          "Purpose",
+          "Title"
+        ]
+      }
+    },
+    "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd": {
+      "PostItem": {
+        "observed": 6,
+        "alwaysPresent": [
+          "Actor",
+          "AtUtc",
+          "Label",
+          "Note",
+          "Status",
+          "SubmissionRef",
+          "Title"
+        ]
+      }
+    },
+    "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667": {
+      "PatchItem": {
+        "observed": 6,
+        "alwaysPresent": [
+          "ReferenceId",
+          "SenderEmail",
+          "Title",
+          "UpdatedAtUtc"
+        ]
+      },
+      "PostItem": {
+        "observed": 3,
+        "alwaysPresent": [
+          "ActionRequired",
+          "AttachmentCount",
+          "Category",
+          "Channel",
+          "CorrespondenceType",
+          "Description",
+          "EventDate",
+          "LocalId",
+          "ReferenceId",
+          "SenderEmail",
+          "SenderName",
+          "SenderOrganisation",
+          "SenderOrganisationType",
+          "SenderPhone",
+          "SourceIp",
+          "Status",
+          "StatusLabel",
+          "Subject",
+          "SubmittedAtUtc",
+          "Title",
+          "UpdatedAtUtc",
+          "VerifiedSubmission"
+        ]
+      }
+    },
+    "f59026cc-9fd7-4322-b681-73c599b852c6": {
+      "PostItem": {
+        "observed": 3,
+        "alwaysPresent": [
+          "AtUtc",
+          "Detail",
+          "EventType",
+          "Flow",
+          "Reference",
+          "SourceIp",
+          "Title"
+        ]
+      }
+    },
+    "ee82725a-c408-45e2-a8e8-facf7a092047": {
+      "PatchItem": {
+        "observed": 12,
+        "alwaysPresent": []
+      },
+      "PostItem": {
+        "observed": 3,
+        "alwaysPresent": [
+          "Acknowledge_x0020_Task",
+          "AcknowledgedBy",
+          "Acknowledgement_x0020_Due_x0020_",
+          "ActivityTrackingID",
+          "AssgnedTpUserDSU",
+          "Assigned",
+          "AssignedBy",
+          "AssignedTo",
+          "AssignedToUserTitle",
+          "AttachmentLink",
+          "Classification",
+          "Comments",
+          "Description",
+          "DueDate",
+          "GDSUROUT",
+          "GTQGrouping",
+          "LinktoDoc",
+          "OData__x0033_rdAssigned",
+          "ParentTask",
+          "Priority",
+          "Progress",
+          "RefID",
+          "RefIDD",
+          "RefIDDN",
+          "StartDate",
+          "TaskType",
+          "TaskTypeChoice",
+          "Title"
+        ]
+      }
+    },
+    "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3": {
+      "PatchItem": {
+        "observed": 13,
+        "alwaysPresent": [
+          "Title"
+        ]
+      }
+    },
+    "9421d473-8906-43b7-a41f-a213046683c1": {
+      "PatchItem": {
+        "observed": 6,
+        "alwaysPresent": [
+          "Is_Verified"
+        ]
+      },
+      "PostItem": {
+        "observed": 8,
+        "alwaysPresent": [
+          "Expires_At",
+          "Is_Verified",
+          "OTP_Code",
+          "Title"
+        ]
+      }
+    },
+    "d95409a4-2b48-4d34-9f60-da5d27db862d": {
+      "PatchItem": {
+        "observed": 6,
+        "alwaysPresent": [
+          "CurrentSequence",
+          "Prefix",
+          "Title",
+          "Year"
+        ]
+      },
+      "PostItem": {
+        "observed": 3,
+        "alwaysPresent": [
+          "CurrentSequence",
+          "LockToken",
+          "ModifiedByFlowRun",
+          "Prefix",
+          "Title",
+          "Year"
+        ]
+      }
+    },
+    "be0c7af1-b21d-4efe-8c30-53fc55598d95": {
+      "PostItem": {
+        "observed": 23,
+        "alwaysPresent": [
+          "Action",
+          "ActorEmail",
+          "ActorPersona",
+          "ActorRole",
+          "AuditId",
+          "CreatedAt",
+          "EntityId",
+          "EntityType",
+          "Event",
+          "MetaJson",
+          "Module",
+          "Ref",
+          "RequestId",
+          "Severity",
+          "Title"
+        ]
+      }
+    }
+  }
+}

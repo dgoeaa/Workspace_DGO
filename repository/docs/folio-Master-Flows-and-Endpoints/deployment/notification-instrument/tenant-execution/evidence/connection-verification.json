@@ -1,0 +1,79 @@
+{
+  "schema": "nitda-connection-verification/v1",
+  "environment": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1",
+  "verifiedAtUtc": "2026-10-08T23:15:28Z",
+  "verifiedBy": "registry account session (Power Platform connectivity API and Flow API, read-only)",
+  "outlook": {
+    "connectionReference": "shared_office365/c0b9e7a5b0854c39a435fd8ce92f48ad",
+    "authenticatedAccount": "dgsregistry@nitda.gov.ng",
+    "approvedServiceMailbox": "dgsregistry@nitda.gov.ng",
+    "sendAsVerified": true,
+    "sendOnBehalfVerified": false,
+    "internalTestMessageTraceId": null,
+    "externalTestMessageTraceId": null,
+    "rejectionTestEvidence": null,
+    "sendAsBasis": "the connection is signed in as the approved service mailbox itself; no send action in any of the 34 adopted mail-using flows sets emailMessage/From, so each message is sent as its connection account"
+  },
+  "sharePointConnectionsVerified": false,
+  "status": "VERIFIED",
+  "connectionsInUse": {
+    "readAtUtc": "2026-10-08T23:15:28Z",
+    "registryConnection": {
+      "connection": "shared_office365/c0b9e7a5b0854c39a435fd8ce92f48ad",
+      "account": "dgsregistry@nitda.gov.ng",
+      "status": "Connected",
+      "flows": [
+        "CG_Submission_Endpoint (de9ef13b)",
+        "CG_Upload_Endpoint (df82e331)",
+        "CG_Portal_Status_Check_Endpoint (60042a2e)",
+        "CG_Portal_Support_Endpoint (4873c936)",
+        "CG_Portal_Writeback_Endpoint (bde13d27)",
+        "CG_Portal_Verification_Endpoint (ba47f79b)",
+        "CG_Portal_Verification_Confirmation_Endpoint (f96e3448)",
+        "CG_Registry_Status_Notifier (8ebf6001)",
+        "CG_Portal_Daily_Sweep (f12aec6d)",
+        "AUTO_SCHEDULED_SWEEP (8c19b45c)",
+        "IP_FETCH_ALL_BOOTSTRAP (b79e6707)",
+        "IP_Get_Docs_Endpoint (28f6e62a)",
+        "IP_Reference_Data_Endpoint (9a4dea8e)",
+        "IP_Retrieve_Email_Attachment_Endpoint (5bc87cf3)",
+        "IP_Dynamic_Global_Actions_Endpoint (31c0aaf0)",
+        "Single_Task_Assignment (3caf9458)",
+        "BULK OPS DATA RETRIEVAL HTTP (5aab9e61)",
+        "IP_Create__Task__for_received_Email_Endpoint (ab1a3555)",
+        "Folio_Incoming_Correspondence_Scan_Processing_Flow (197527c8)",
+        "IP_OTP_GENERATE (e5632336)",
+        "IP_User_Admin_Endpoint (e3e5c825)",
+        "IP_SCAN_INTAKE (5504d7f9)",
+        "IP_SEND_EMAIL (df59a69f)",
+        "01 - GOV - Provision HTTP Flow Registry (17a85efb)",
+        "02 - GOV - Register HTTP Flow Truth (651ae389)",
+        "03 - GOV - Record HTTP Flow Execution (0545e19a)",
+        "04 - GOV - Audit HTTP Flow Registry (3e9e1342)",
+        "05 - GOV - Retire HTTP Flow (493b4ab7)",
+        "06 - GOV - Registry Exception Notification (87a74d7e)",
+        "07 - GOV - Consumer HTTP Self-Registration Template (c6a011c5)",
+        "08 - GOV - Discover and Register HTTP Consumers (f5e7679f)",
+        "DGO_MAIL_AUTH (7d90f8f0)",
+        "DGO_MAIL_SEND (0fb53e16)"
+      ]
+    },
+    "exceptions": [
+      {
+        "flow": "DGSO INCOMING AI PROCESSING (b6d92bae), legacy, Started",
+        "connection": "shared_office365/shared-office365-dd43302a-d478-4e8b-bbad-9c58de29f8ce",
+        "account": "dgs@nitda.gov.ng",
+        "status": "Connected",
+        "action": "Send_an_email_(V2)",
+        "note": "sends as dgs@nitda.gov.ng, against the 2026-10-07 owner decision; the flow is turned off once the scan processing flow is proven (ITEM-80)",
+        "resolved": "2026-10-16: DGSO INCOMING AI PROCESSING (b6d92bae) is Stopped (evidence/tenant-inventory.json, captured 2026-10-16); the legacy intake was stopped when the rebuilt scan intake took over (ITEM-80, register 1.12.46). No started adopted flow sends through a connection other than the registry one."
+      }
+    ],
+    "sendmail": {
+      "connector": "shared_sendmail (Mail)",
+      "connections": 7,
+      "usedByAdoptedFlows": 0,
+      "note": "the only flow that used it, Web - Email To Task Processing (447b1b4d), is retired in registers/flow-adoption.json and no longer appears in the environment flow list"
+    }
+  }
+}

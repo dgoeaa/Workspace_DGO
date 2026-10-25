@@ -1,0 +1,1885 @@
+{
+ "what": "Summary of the ID_Phase1_Complete re-run report (raw report 1.3 MB, held in the operator mailbox). On this run every list, column and Flow Configuration row was found already present (created by the first run), so it doubles as a complete read-back.",
+ "run": {
+  "requestId": "4e6b8560-040a-4930-a1db-fe235133f5b8",
+  "startedAtUtc": "2026-10-04T02:48:16.6331424Z",
+  "runName": "08584105247890361893396919003CU08",
+  "newLists": 8,
+  "plannedColumns": 188,
+  "configRows": 55,
+  "source": "docs/reference/identification/provisioning/identity-provisioning.json"
+ },
+ "completedAtUtc": "2026-10-04T03:03:30.1412929Z",
+ "lists": [
+  {
+   "iteration": 0,
+   "listMissing": false
+  },
+  {
+   "iteration": 1,
+   "listMissing": false
+  },
+  {
+   "iteration": 2,
+   "listMissing": false
+  },
+  {
+   "iteration": 3,
+   "listMissing": false
+  },
+  {
+   "iteration": 4,
+   "listMissing": false
+  },
+  {
+   "iteration": 5,
+   "listMissing": false
+  },
+  {
+   "iteration": 6,
+   "listMissing": false
+  },
+  {
+   "iteration": 7,
+   "listMissing": false
+  }
+ ],
+ "columns": [
+  {
+   "list": "Portal Registry",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "SupersededBy",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "VoidReason",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "SourceLocator",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "Direction",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "AttachmentHashSet",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Registry",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Attachments",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Attachments",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Attachments",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Attachments",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Attachments",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Attachments",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Attachments",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "NITDA_Central_Registry",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "NITDA_Central_Registry",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "NITDA_Central_Registry",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "NITDA_Central_Registry",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "NITDA_Central_Registry",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "NITDA_Central_Registry",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "NITDA_Central_Registry",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "SubjectKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "Action",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "ActorKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "RequestId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "RevAfter",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "Process",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Status Timeline",
+   "column": "ContractKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Support Cases",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Support Cases",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Support Cases",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Support Cases",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Support Cases",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Support Cases",
+   "column": "CaseRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Support Cases",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Flow Telemetry",
+   "column": "RequestId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Flow Telemetry",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Flow Telemetry",
+   "column": "ClientCorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Flow Telemetry",
+   "column": "RegistryKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Portal Flow Telemetry",
+   "column": "ContractKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "TaskRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "AssigneeKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "RoutedOrgKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "SupersededBy",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Global Tracking Queue",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "TaskRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "AssigneeKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "RoutedOrgKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "SupersededBy",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DEV_OPS_Global_Tracking_Queue",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO DIGITAL OPS",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO DIGITAL OPS",
+   "column": "ReferenceId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO DIGITAL OPS",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Task_Comments",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Task_Comments",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Task_Comments",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Task_Comments",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Task_Comments",
+   "column": "AuthorKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Task_Comments",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "Task_Comments",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "SubjectKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "Action",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "ActorKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "RequestId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "RevAfter",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "Process",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "AI TEXT DATA LOG",
+   "column": "ContractKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "SubjectKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "Action",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "ActorKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "RequestId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "RevAfter",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "Process",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_AuditLog",
+   "column": "ContractKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_DepartmentDirectory",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_DepartmentDirectory",
+   "column": "UnitKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_DepartmentDirectory",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_DepartmentDirectory",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "FromKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "ToKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "LinkType",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "LinkMatchKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RecordLinks",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "EntityRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "EntryKind",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "Kind",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "System",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "Environment",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "Container",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "Value",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "ValueLong",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "MatchKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "Ambiguous",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "ValidFromUtc",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "ValidToUtc",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_IdentityMap",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Briefs",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Briefs",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Briefs",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Briefs",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Briefs",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Briefs",
+   "column": "SupersededBy",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Briefs",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Meetings",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Meetings",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Meetings",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Meetings",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Meetings",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Meetings",
+   "column": "SupersededBy",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Meetings",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Projects",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Projects",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Projects",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Projects",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Projects",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Projects",
+   "column": "SupersededBy",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Projects",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "ParentKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "Decision",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_Approvals",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "IdState",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "Rev",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "CreatedByRequest",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "FileRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Failed",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "CurrentHolder",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "SupersededBy",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_RegistryFiles",
+   "column": "ClientRequestHash",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "EntityKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "SubjectKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "RootKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "RootRef",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "Action",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "ActorKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "RequestId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "CorrelationId",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "RevAfter",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "Process",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "ContractKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "FromOrgKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "ToOrgKey",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  },
+  {
+   "list": "DGO_FileMovements",
+   "column": "MovementAction",
+   "existed": true,
+   "create": "Skipped",
+   "index": "Skipped",
+   "error": ""
+  }
+ ],
+ "config": [
+  {
+   "title": "ENVIRONMENT_CODE",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_INTAKE_REGISTER_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_INTAKE_REGISTER_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_ATTACHMENTS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_ATTACHMENTS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_SCAN_LIBRARY_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_SCAN_LIBRARY_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_STATUS_TIMELINE_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_STATUS_TIMELINE_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_SUPPORT_CASES_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_SUPPORT_CASES_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_SEQUENCE_COUNTERS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_SEQUENCE_COUNTERS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_TELEMETRY_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_TELEMETRY_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_TASK_QUEUE_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_TASK_QUEUE_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_TASK_QUEUE_MIRROR_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_TASK_QUEUE_MIRROR_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_OPS_WORKING_REGISTER_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_OPS_WORKING_REGISTER_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_MINUTES_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_MINUTES_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_AI_TEXT_LOG_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_AI_TEXT_LOG_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_CONFIGURATION_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_CONFIGURATION_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_AUDIT_LOG_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_AUDIT_LOG_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_USER_DIRECTORY_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_USER_DIRECTORY_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_ORG_DIRECTORY_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_ORG_DIRECTORY_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_ENDPOINT_REGISTRY_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_ENDPOINT_REGISTRY_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_REGISTRY_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_REGISTRY_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_DEPENDENCIES_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FLOW_DEPENDENCIES_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_RECORD_LINKS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_RECORD_LINKS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_IDENTITY_MAP_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_IDENTITY_MAP_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_BRIEFS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_BRIEFS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_MEETINGS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_MEETINGS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_PROJECTS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_PROJECTS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_APPROVALS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_APPROVALS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_REGISTRY_FILES_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_REGISTRY_FILES_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FILE_MOVEMENTS_SITE_URL",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  },
+  {
+   "title": "DATASET_FILE_MOVEMENTS_LIST_ID",
+   "existed": true,
+   "create": "Skipped",
+   "error": ""
+  }
+ ]
+}

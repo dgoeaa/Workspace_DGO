@@ -1,0 +1,529 @@
+{
+  "nodeId": "Scope_Phase1_GTQ_Indexes_Flow",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_GTQ_Context": {
+        "type": "Compose",
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000010"
+        },
+        "inputs": {
+          "requestId": "@guid()",
+          "startedAtUtc": "@utcNow()",
+          "runName": "@workflow()?['run']?['name']",
+          "planned": 6
+        }
+      },
+      "Get_GTQ_Views": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_GTQ_Context": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000011"
+        },
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getByTitle('Global%20Tracking%20Queue')/views?$select=Title,ViewQuery&$top=500",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          }
+        }
+      },
+      "Select_View_Queries": {
+        "type": "Select",
+        "runAfter": {
+          "Get_GTQ_Views": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000012"
+        },
+        "inputs": {
+          "from": "@coalesce(body('Get_GTQ_Views')?['value'], json('[]'))",
+          "select": "@string(coalesce(item()?['ViewQuery'], ''))"
+        }
+      },
+      "Compose_Free_Candidate": {
+        "type": "Compose",
+        "runAfter": {
+          "Select_View_Queries": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000013"
+        },
+        "inputs": "@if(not(contains(join(body('Select_View_Queries'), ' '), '\"_x0033_rdAssigned\"')), '_x0033_rdAssigned', if(not(contains(join(body('Select_View_Queries'), ' '), '\"Reference_ID\"')), 'Reference_ID', ''))"
+      },
+      "Compose_Column_Plan": {
+        "type": "Compose",
+        "runAfter": {
+          "Compose_Free_Candidate": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000014"
+        },
+        "inputs": [
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "CorrelationId",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "new identity index in one of the 4 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "RootRef",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "new identity index in one of the 4 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "AssigneeKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "new identity index in one of the 4 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "RoutedOrgKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "new identity index in one of the 4 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "@outputs('Compose_Free_Candidate')",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": "@not(empty(outputs('Compose_Free_Candidate')))",
+            "why": "frees the slot ClientRequestHash needs: a legacy index no view of the list uses, and no flow in the repo filters on"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "ClientRequestHash",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": "@not(empty(outputs('Compose_Free_Candidate')))",
+            "unindex": false,
+            "why": "the duplicate-request check filters on it; indexed only if a slot was freed"
+          }
+        ]
+      },
+      "Foreach_Planned_Column": {
+        "type": "Foreach",
+        "foreach": "@outputs('Compose_Column_Plan')",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "runAfter": {
+          "Compose_Column_Plan": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000001"
+        },
+        "actions": {
+          "Get_Existing_Field": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "b6000000-0000-4000-8000-000000000002"
+            },
+            "inputs": {
+              "parameters": {
+                "dataset": "@items('Foreach_Planned_Column')?['site']",
+                "parameters/method": "GET",
+                "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields?$select=Id,InternalName,TypeAsString,Indexed&$filter=InternalName eq ''',items('Foreach_Planned_Column')?['column'],'''&$top=1')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              }
+            }
+          },
+          "Condition_Field_Missing": {
+            "type": "If",
+            "runAfter": {
+              "Get_Existing_Field": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b6000000-0000-4000-8000-000000000003"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@empty(first(coalesce(body('Get_Existing_Field')?['value'],json('[]'))))",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['create']",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Create_Field": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b6000000-0000-4000-8000-000000000004"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/createfieldasxml')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(json('{\"parameters\":{\"Options\":12}}'),'parameters',setProperty(json('{\"Options\":12}'),'SchemaXml',items('Foreach_Planned_Column')?['schemaXml']))"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Condition_Index_Needed": {
+            "type": "If",
+            "runAfter": {
+              "Condition_Field_Missing": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b6000000-0000-4000-8000-000000000005"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['index']",
+                    true
+                  ]
+                },
+                {
+                  "not": {
+                    "equals": [
+                      "@coalesce(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))?['Indexed'],false)",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Set_Field_Indexed": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b6000000-0000-4000-8000-000000000006"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/getByInternalNameOrTitle(''',items('Foreach_Planned_Column')?['column'],''')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(json('{}'),'Indexed',true)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Compose_Column_Result": {
+            "type": "Compose",
+            "runAfter": {
+              "Condition_Unindex_Needed": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b6000000-0000-4000-8000-000000000007"
+            },
+            "inputs": {
+              "list": "@items('Foreach_Planned_Column')?['list']",
+              "column": "@items('Foreach_Planned_Column')?['column']",
+              "existed": "@not(empty(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))))",
+              "create": "@coalesce(actions('Create_Field')?['status'],'not needed')",
+              "index": "@coalesce(actions('Set_Field_Indexed')?['status'],'not needed')",
+              "error": "@string(coalesce(body('Create_Field')?['message'],body('Set_Field_Indexed')?['message'],body('Remove_Field_Index')?['message'],''))",
+              "unindex": "@coalesce(actions('Remove_Field_Index')?['status'],'not needed')"
+            }
+          },
+          "Condition_Unindex_Needed": {
+            "type": "If",
+            "runAfter": {
+              "Condition_Index_Needed": [
+                "Succeeded",
+                "Failed",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b6000000-0000-4000-8000-000000000008"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['unindex']",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@coalesce(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))?['Indexed'],false)",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Remove_Field_Index": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b6000000-0000-4000-8000-000000000009"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/getByInternalNameOrTitle(''',items('Foreach_Planned_Column')?['column'],''')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(json('{}'),'Indexed',false)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          }
+        }
+      },
+      "Compose_GTQ_Report": {
+        "type": "Compose",
+        "runAfter": {
+          "Foreach_Planned_Column": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000015"
+        },
+        "inputs": {
+          "context": "@outputs('Compose_GTQ_Context')",
+          "completedAtUtc": "@utcNow()",
+          "views": "@length(body('Select_View_Queries'))",
+          "legacyIndexUsedByAView": {
+            "_x0033_rdAssigned": "@contains(join(body('Select_View_Queries'), ' '), '\"_x0033_rdAssigned\"')",
+            "Reference_ID": "@contains(join(body('Select_View_Queries'), ' '), '\"Reference_ID\"')"
+          },
+          "freedIndex": "@outputs('Compose_Free_Candidate')",
+          "columns": "@result('Foreach_Planned_Column')"
+        }
+      },
+      "Send_GTQ_Report": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_GTQ_Report": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b6000000-0000-4000-8000-000000000016"
+        },
+        "inputs": {
+          "parameters": {
+            "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+            "emailMessage/Subject": "@concat('NITDA Folio | Phase 1 GTQ indexes | ',outputs('Compose_GTQ_Context')?['runName'])",
+            "emailMessage/Body": "@concat('<p>Global Tracking Queue index run ',outputs('Compose_GTQ_Context')?['runName'],' finished at ',outputs('Compose_GTQ_Report')?['completedAtUtc'],'.</p><p>Freed legacy index: ',if(empty(outputs('Compose_Free_Candidate')),'none (both candidates are used by a view)',outputs('Compose_Free_Candidate')),'. The step-by-step record is attached.</p>')",
+            "emailMessage/Attachments": [
+              {
+                "Name": "@concat('phase1-gtq-indexes-',outputs('Compose_GTQ_Context')?['runName'],'.json')",
+                "ContentBytes": "@string(outputs('Compose_GTQ_Report'))"
+              }
+            ],
+            "emailMessage/Importance": "Normal"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connection": "shared_office365",
+            "operationId": "SendEmailV2"
+          }
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "b6000000-0000-4000-8000-000000000017"
+    }
+  },
+  "allConnectionData": {
+    "Get_Existing_Field": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Field": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Set_Field_Indexed": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Remove_Field_Index": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_GTQ_Views": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_GTQ_Report": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

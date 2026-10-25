@@ -1,0 +1,731 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/Folio_Failure_Watch__c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6.json",
+  "workflow_identity": {
+    "internal_name": "c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6",
+    "tags": {
+      "flowDisplayName": "Folio_Failure_Watch"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      }
+    },
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Week",
+          "interval": 1,
+          "timeZone": "W. Central Africa Standard Time",
+          "schedule": {
+            "weekDays": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "hours": [
+              "7",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14",
+              "15",
+              "16",
+              "17",
+              "18"
+            ],
+            "minutes": [
+              5
+            ]
+          }
+        },
+        "evaluatedRecurrence": {
+          "frequency": "Week",
+          "interval": 1,
+          "timeZone": "W. Central Africa Standard Time",
+          "schedule": {
+            "weekDays": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "hours": [
+              "7",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14",
+              "15",
+              "16",
+              "17",
+              "18"
+            ],
+            "minutes": [
+              5
+            ]
+          }
+        },
+        "type": "Recurrence"
+      }
+    },
+    "actions": {
+      "Scope_Failure_Watch": {
+        "actions": {
+          "Compose_Watch_Start": {
+            "runAfter": {},
+            "type": "Compose",
+            "inputs": "@formatDateTime(utcNow(),'yyyy-MM-ddTHH:mm:ssZ')"
+          },
+          "Get_Watch_Config": {
+            "runAfter": {
+              "Compose_Watch_Start": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "GetItems"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                "$filter": "startswith(Title,'NOTIFY_FAILURE_')",
+                "$top": 20
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Select_Watch_Config": {
+            "runAfter": {
+              "Get_Watch_Config": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(actions('Get_Watch_Config')?['outputs']?['body']?['value'],json('[]'))",
+              "select": {
+                "k": "@toUpper(trim(string(item()?['Title'])))",
+                "v": "@trim(string(coalesce(item()?['ConfigValue'],'')))",
+                "id": "@string(item()?['ID'])"
+              }
+            }
+          },
+          "Compose_Watch_Config_Xml": {
+            "runAfter": {
+              "Select_Watch_Config": [
+                "Succeeded"
+              ]
+            },
+            "type": "Compose",
+            "inputs": "@xml(json(concat('{\"r\":{\"i\":',string(union(body('Select_Watch_Config'),createArray(json('{\"k\":\"_\",\"v\":\"\",\"id\":\"\"}')))),'}}')))"
+          },
+          "Compose_Watch_Config": {
+            "runAfter": {
+              "Compose_Watch_Config_Xml": [
+                "Succeeded"
+              ]
+            },
+            "type": "Compose",
+            "inputs": {
+              "enabled": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_ENABLED\"]/v)')))),'false'))",
+              "groups": "@toLower(replace(if(empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_REPORT_GROUPS\"]/v)')))),'citizen,unclassified',trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_REPORT_GROUPS\"]/v)')))),' ',''))",
+              "burst": "@int(if(empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_BURST\"]/v)')))),'5',trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_BURST\"]/v)')))))",
+              "to": "@if(empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_REPORT_TO\"]/v)')))),'dgsregistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_REPORT_TO\"]/v)'))))",
+              "cursor": "@if(empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/v)')))),formatDateTime(addHours(outputs('Compose_Watch_Start'),-1),'yyyy-MM-ddTHH:mm:ssZ'),if(startsWith(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/v)'))),'utc:'),replace(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/v)'))),'utc:',''),formatDateTime(if(or(empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/v)')))),startsWith(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/v)'))),'utc:')),'1970-01-01T00:00:00Z',trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/v)')))),'yyyy-MM-ddTHH:mm:ssZ')))",
+              "summary": "@equals(int(formatDateTime(convertFromUtc(outputs('Compose_Watch_Start'),'W. Central Africa Standard Time'),'HH')),7)"
+            }
+          },
+          "Get_New_Failures": {
+            "runAfter": {
+              "Compose_Watch_Config": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "GetItems"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "$filter": "@concat('Status eq ''failed'' and Created gt ''',outputs('Compose_Watch_Config')?['cursor'],''' and Created le ''',outputs('Compose_Watch_Start'),'''')",
+                "$orderby": "Created asc",
+                "$top": 500
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Get_Open_Failures": {
+            "runAfter": {
+              "Get_New_Failures": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "GetItems"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "$filter": "Status eq 'failed'",
+                "$orderby": "Created desc",
+                "$top": 1000
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Select_New_Failures": {
+            "runAfter": {
+              "Get_Open_Failures": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(actions('Get_New_Failures')?['outputs']?['body']?['value'],json('[]'))",
+              "select": {
+                "group": "@string(coalesce(json('{\"IP_OTP_GENERATE|an-email-v2\":\"codes\",\"Folio_Incoming_Correspondence_Scan_Processing_Flow|an-email-v2\":\"ops\"}')?[concat(split(concat(string(coalesce(item()?['Title'],'')),'::'),':')[1],'|',string(coalesce(item()?['MessageType'],'')))],json('{\"sender-acknowledgement\":\"citizen\",\"status-acknowledged\":\"citizen\",\"status-actionrequired\":\"citizen\",\"status-approved\":\"citizen\",\"status-declined\":\"citizen\",\"status-progress\":\"citizen\",\"status-withdrawn\":\"citizen\",\"citizen-note\":\"citizen\",\"citizen-respond\":\"citizen\",\"citizen-withdraw\":\"citizen\",\"support-acknowledgement\":\"citizen\",\"support-reply\":\"citizen\",\"case\":\"citizen\",\"expired-upload\":\"citizen\",\"verification-code\":\"codes\",\"report-delivery\":\"staff\",\"an-email-v2-main-1-1-1\":\"staff\",\"an-email-v2-main-5\":\"staff\",\"task-digest\":\"staff\",\"registry-alert\":\"ops\",\"registry-digest\":\"ops\",\"helpdesk-alert\":\"ops\",\"lockout-alert\":\"ops\",\"rate-limit-alert\":\"ops\",\"server-error-alert\":\"ops\",\"writeback-alert\":\"ops\",\"dgo-scan-notification\":\"ops\",\"telemetry\":\"ops\",\"undeliverable-alert\":\"ops\",\"undelivered-alert\":\"ops\",\"bulk-failure\":\"ops\",\"failure-watch\":\"ops\",\"outward-correspondence\":\"outward\"}')?[string(coalesce(item()?['MessageType'],''))],'unclassified'))",
+                "id": "@item()?['ID']",
+                "type": "@string(coalesce(item()?['MessageType'],''))",
+                "to": "@if(or(empty(toLower(trim(string(coalesce(item()?['RecipientEmail'],''))))),not(contains(toLower(trim(string(coalesce(item()?['RecipientEmail'],'')))),'@'))),'',concat(substring(concat(toLower(trim(string(coalesce(item()?['RecipientEmail'],'')))),' '),0,1),'***@',last(split(toLower(trim(string(coalesce(item()?['RecipientEmail'],'')))),'@'))))",
+                "ref": "@string(coalesce(item()?['Reference'],''))",
+                "error": "@if(empty(string(coalesce(item()?['LastError'],''))),'',substring(string(coalesce(item()?['LastError'],'')),0,min(length(string(coalesce(item()?['LastError'],''))),200)))",
+                "at": "@if(empty(string(coalesce(item()?['Created'],''))),'',formatDateTime(convertFromUtc(if(empty(string(coalesce(item()?['Created'],''))),'1970-01-01T00:00:00Z',item()?['Created']),'W. Central Africa Standard Time'),'d MMM HH:mm'))"
+              }
+            }
+          },
+          "Select_Open_Failures": {
+            "runAfter": {
+              "Select_New_Failures": [
+                "Succeeded"
+              ]
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(actions('Get_Open_Failures')?['outputs']?['body']?['value'],json('[]'))",
+              "select": {
+                "group": "@string(coalesce(json('{\"IP_OTP_GENERATE|an-email-v2\":\"codes\",\"Folio_Incoming_Correspondence_Scan_Processing_Flow|an-email-v2\":\"ops\"}')?[concat(split(concat(string(coalesce(item()?['Title'],'')),'::'),':')[1],'|',string(coalesce(item()?['MessageType'],'')))],json('{\"sender-acknowledgement\":\"citizen\",\"status-acknowledged\":\"citizen\",\"status-actionrequired\":\"citizen\",\"status-approved\":\"citizen\",\"status-declined\":\"citizen\",\"status-progress\":\"citizen\",\"status-withdrawn\":\"citizen\",\"citizen-note\":\"citizen\",\"citizen-respond\":\"citizen\",\"citizen-withdraw\":\"citizen\",\"support-acknowledgement\":\"citizen\",\"support-reply\":\"citizen\",\"case\":\"citizen\",\"expired-upload\":\"citizen\",\"verification-code\":\"codes\",\"report-delivery\":\"staff\",\"an-email-v2-main-1-1-1\":\"staff\",\"an-email-v2-main-5\":\"staff\",\"task-digest\":\"staff\",\"registry-alert\":\"ops\",\"registry-digest\":\"ops\",\"helpdesk-alert\":\"ops\",\"lockout-alert\":\"ops\",\"rate-limit-alert\":\"ops\",\"server-error-alert\":\"ops\",\"writeback-alert\":\"ops\",\"dgo-scan-notification\":\"ops\",\"telemetry\":\"ops\",\"undeliverable-alert\":\"ops\",\"undelivered-alert\":\"ops\",\"bulk-failure\":\"ops\",\"failure-watch\":\"ops\",\"outward-correspondence\":\"outward\"}')?[string(coalesce(item()?['MessageType'],''))],'unclassified'))",
+                "id": "@item()?['ID']",
+                "type": "@string(coalesce(item()?['MessageType'],''))",
+                "to": "@if(or(empty(toLower(trim(string(coalesce(item()?['RecipientEmail'],''))))),not(contains(toLower(trim(string(coalesce(item()?['RecipientEmail'],'')))),'@'))),'',concat(substring(concat(toLower(trim(string(coalesce(item()?['RecipientEmail'],'')))),' '),0,1),'***@',last(split(toLower(trim(string(coalesce(item()?['RecipientEmail'],'')))),'@'))))",
+                "ref": "@string(coalesce(item()?['Reference'],''))",
+                "error": "@if(empty(string(coalesce(item()?['LastError'],''))),'',substring(string(coalesce(item()?['LastError'],'')),0,min(length(string(coalesce(item()?['LastError'],''))),200)))",
+                "at": "@if(empty(string(coalesce(item()?['Created'],''))),'',formatDateTime(convertFromUtc(if(empty(string(coalesce(item()?['Created'],''))),'1970-01-01T00:00:00Z',item()?['Created']),'W. Central Africa Standard Time'),'d MMM HH:mm'))"
+              }
+            }
+          },
+          "Filter_New_Reported": {
+            "runAfter": {
+              "Select_Open_Failures": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_New_Failures')",
+              "where": "@or(equals(item()?['group'],'unclassified'),contains(split(outputs('Compose_Watch_Config')?['groups'],','),item()?['group']))"
+            }
+          },
+          "Filter_Open_Reported": {
+            "runAfter": {
+              "Filter_New_Reported": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_Open_Failures')",
+              "where": "@or(equals(item()?['group'],'unclassified'),contains(split(outputs('Compose_Watch_Config')?['groups'],','),item()?['group']))"
+            }
+          },
+          "Filter_Open_Citizen": {
+            "runAfter": {
+              "Filter_Open_Reported": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_Open_Failures')",
+              "where": "@equals(item()?['group'],'citizen')"
+            }
+          },
+          "Filter_Open_Codes": {
+            "runAfter": {
+              "Filter_Open_Citizen": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_Open_Failures')",
+              "where": "@equals(item()?['group'],'codes')"
+            }
+          },
+          "Filter_Open_Staff": {
+            "runAfter": {
+              "Filter_Open_Codes": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_Open_Failures')",
+              "where": "@equals(item()?['group'],'staff')"
+            }
+          },
+          "Filter_Open_Ops": {
+            "runAfter": {
+              "Filter_Open_Staff": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_Open_Failures')",
+              "where": "@equals(item()?['group'],'ops')"
+            }
+          },
+          "Filter_Open_Outward": {
+            "runAfter": {
+              "Filter_Open_Ops": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_Open_Failures')",
+              "where": "@equals(item()?['group'],'outward')"
+            }
+          },
+          "Filter_Open_Unclassified": {
+            "runAfter": {
+              "Filter_Open_Outward": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Select_Open_Failures')",
+              "where": "@equals(item()?['group'],'unclassified')"
+            }
+          },
+          "Compose_Watch_Outcome": {
+            "runAfter": {
+              "Filter_Open_Unclassified": [
+                "Succeeded"
+              ]
+            },
+            "type": "Compose",
+            "inputs": {
+              "listed": "@if(outputs('Compose_Watch_Config')?['summary'],body('Filter_Open_Reported'),body('Filter_New_Reported'))",
+              "burst": "@greaterOrEquals(length(body('Select_New_Failures')),outputs('Compose_Watch_Config')?['burst'])",
+              "summary": "@outputs('Compose_Watch_Config')?['summary']",
+              "newCount": "@length(body('Select_New_Failures'))",
+              "openCount": "@length(body('Select_Open_Failures'))",
+              "open": {
+                "citizen": "@length(body('Filter_Open_Citizen'))",
+                "codes": "@length(body('Filter_Open_Codes'))",
+                "staff": "@length(body('Filter_Open_Staff'))",
+                "ops": "@length(body('Filter_Open_Ops'))",
+                "outward": "@length(body('Filter_Open_Outward'))",
+                "unclassified": "@length(body('Filter_Open_Unclassified'))"
+              },
+              "readNew": "@equals(string(coalesce(actions('Get_New_Failures')?['status'],'')),'Succeeded')",
+              "readOpen": "@equals(string(coalesce(actions('Get_Open_Failures')?['status'],'')),'Succeeded')"
+            }
+          },
+          "Condition_Watch_Report": {
+            "actions": {
+              "Select_Watch_Rows": {
+                "runAfter": {},
+                "type": "Select",
+                "inputs": {
+                  "from": "@outputs('Compose_Watch_Outcome')?['listed']",
+                  "select": "@concat('<tr><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:600 13px Arial,sans-serif;color:#05583B;word-break:break-all\">',replace(replace(replace(replace(replace(string(item()?['ref']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:13px Arial,sans-serif;color:#1B1A1A\">',replace(replace(replace(replace(replace(string(item()?['type']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:13px Arial,sans-serif;color:#1B1A1A\">',replace(replace(replace(replace(replace(string(item()?['to']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:13px Arial,sans-serif;color:#5F5C5D\">',replace(replace(replace(replace(replace(string(item()?['error']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:13px Arial,sans-serif;color:#5F5C5D;white-space:nowrap\">',replace(replace(replace(replace(replace(string(item()?['at']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td></tr>')"
+                }
+              },
+              "Compose_Watch_Totals": {
+                "runAfter": {
+                  "Select_Watch_Rows": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@concat('Citizen outcomes: ',string(outputs('Compose_Watch_Outcome')?['open']?['citizen']),' · ','Sign-in and verification codes: ',string(outputs('Compose_Watch_Outcome')?['open']?['codes']),' · ','Staff work notices: ',string(outputs('Compose_Watch_Outcome')?['open']?['staff']),' · ','Registry and operations alerts: ',string(outputs('Compose_Watch_Outcome')?['open']?['ops']),' · ','Outward correspondence: ',string(outputs('Compose_Watch_Outcome')?['open']?['outward']),' · ','Not yet classified: ',string(outputs('Compose_Watch_Outcome')?['open']?['unclassified']))"
+              },
+              "Compose_Watch_Html": {
+                "runAfter": {
+                  "Compose_Watch_Totals": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light\"><title>Failed notices</title></head><body style=\"margin:0;padding:0;background:#FAFAF9;\"><div style=\"display:none;max-height:0;overflow:hidden\">@{if(outputs('Compose_Watch_Outcome')?['summary'],'Open failed notices this morning','New failed notices')}</div><table role=\"presentation\" width=\"100%\" style=\"background:#FAFAF9\"><tr><td align=\"center\" style=\"padding:24px 12px\"><table role=\"presentation\" width=\"640\" style=\"max-width:640px;width:100%;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:8px\"><tr><td style=\"padding:20px 24px;border-bottom:3px solid #05583B;font:600 16px Arial,sans-serif;color:#05583B\">NITDA Folio</td></tr>@{if(outputs('Compose_Watch_Outcome')?['burst'],concat('<tr><td style=\"padding:12px 24px;background:#FBE7EB;font:600 13px Arial,sans-serif;color:#780820\">',string(outputs('Compose_Watch_Outcome')?['newCount']),' notices failed in the last hour. The mail connection may be broken: check the registry mailbox connection in Power Automate.</td></tr>'),'')}<tr><td style=\"padding:20px 24px 8px 24px;font:20px Arial,sans-serif;color:#1B1A1A\">Dear Registry,</td></tr><tr><td style=\"padding:0 24px 16px 24px;font:14px Arial,sans-serif;color:#373435\">@{if(outputs('Compose_Watch_Outcome')?['summary'],'These notices failed and are still open. Resend each one, or correct its address, then set its Status in Portal Outbox Receipts to resolved-resent, resolved-corrected or resolved-superseded.','These notices failed since the last check. Resend each one, or correct its address, then set its Status in Portal Outbox Receipts to resolved-resent, resolved-corrected or resolved-superseded.')}</td></tr><tr><td style=\"padding:0 24px 16px 24px\"><table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse\"><tr><th align=\"left\" style=\"padding:8px 10px;background:#F5F4F4;font:600 12px Arial,sans-serif;color:#373435\">Reference</th><th align=\"left\" style=\"padding:8px 10px;background:#F5F4F4;font:600 12px Arial,sans-serif;color:#373435\">Notice</th><th align=\"left\" style=\"padding:8px 10px;background:#F5F4F4;font:600 12px Arial,sans-serif;color:#373435\">Recipient</th><th align=\"left\" style=\"padding:8px 10px;background:#F5F4F4;font:600 12px Arial,sans-serif;color:#373435\">Error</th><th align=\"left\" style=\"padding:8px 10px;background:#F5F4F4;font:600 12px Arial,sans-serif;color:#373435\">Failed</th></tr>@{join(body('Select_Watch_Rows'),'')}</table></td></tr><tr><td style=\"padding:0 24px 16px 24px;font:13px Arial,sans-serif;color:#5F5C5D\">Open failures by group (registered, not all reported): @{outputs('Compose_Watch_Totals')}</td></tr><tr><td style=\"padding:14px 24px;border-top:1px solid #E8E6E7;font:12px Arial,sans-serif;color:#5F5C5D\">Folio Failure Watch checks every hour in working hours. National Information Technology Development Agency.</td></tr></table></td></tr></table></body></html>"
+              },
+              "Send_Failure_Watch_Email": {
+                "runAfter": {
+                  "Compose_Watch_Html": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                    "connectionName": "shared_office365",
+                    "operationId": "SendEmailV2"
+                  },
+                  "parameters": {
+                    "emailMessage/To": "@outputs('Compose_Watch_Config')?['to']",
+                    "emailMessage/Subject": "@concat('Folio: ',if(outputs('Compose_Watch_Outcome')?['burst'],'mail connection may be broken; ',''),string(length(outputs('Compose_Watch_Outcome')?['listed'])),if(outputs('Compose_Watch_Outcome')?['summary'],' failed notice(s) still open',' new failed notice(s)'))",
+                    "emailMessage/Body": "@outputs('Compose_Watch_Html')",
+                    "emailMessage/Importance": "High"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Create_Send_Failure_Watch_Email_Receipt": {
+                "runAfter": {
+                  "Send_Failure_Watch_Email": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "PostItem"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                    "item/Title": "@concat('failure-watch:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                    "item/MessageType": "failure-watch",
+                    "item/RecipientEmail": "@outputs('Compose_Watch_Config')?['to']",
+                    "item/Reference": "@string(workflow()?['run']?['name'])",
+                    "item/SentAtUtc": "@utcNow()",
+                    "item/Status": "@if(equals(actions('Send_Failure_Watch_Email')?['status'],'Succeeded'),'sent','failed')",
+                    "item/Attempts": 1,
+                    "item/LastError": "@if(equals(actions('Send_Failure_Watch_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Failure_Watch_Email')?['error']?['message'],actions('Send_Failure_Watch_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Failure_Watch_Email')?['error']?['message'],actions('Send_Failure_Watch_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Compose_Send_Failure_Watch_Email_Outcome": {
+                "runAfter": {
+                  "Create_Send_Failure_Watch_Email_Receipt": [
+                    "Succeeded",
+                    "Failed",
+                    "Skipped",
+                    "TimedOut"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@int(if(or(equals(actions('Send_Failure_Watch_Email')?['status'],'Failed'),equals(actions('Send_Failure_Watch_Email')?['status'],'TimedOut')),'send-failed','0'))"
+              }
+            },
+            "runAfter": {
+              "Compose_Watch_Outcome": [
+                "Succeeded"
+              ]
+            },
+            "else": {
+              "actions": {}
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@outputs('Compose_Watch_Config')?['enabled']",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@outputs('Compose_Watch_Outcome')?['readNew']",
+                    true
+                  ]
+                },
+                {
+                  "or": [
+                    {
+                      "greater": [
+                        "@length(outputs('Compose_Watch_Outcome')?['listed'])",
+                        0
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@outputs('Compose_Watch_Outcome')?['burst']",
+                        true
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          },
+          "Condition_Watch_Cursor_Row": {
+            "actions": {
+              "Update_Watch_Cursor_Row": {
+                "runAfter": {},
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "PatchItem"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "id": "@trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/id)')))",
+                    "item/Title": "NOTIFY_FAILURE_WATCH_CURSOR",
+                    "item/ConfigValue": "@concat('utc:',outputs('Compose_Watch_Start'))"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            },
+            "runAfter": {
+              "Condition_Watch_Report": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Condition_Watch_Cursor_Read": {
+                  "actions": {
+                    "Create_Watch_Cursor_Row": {
+                      "runAfter": {},
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "PostItem"
+                        },
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                          "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                          "item/Title": "NOTIFY_FAILURE_WATCH_CURSOR",
+                          "item/ConfigValue": "@concat('utc:',outputs('Compose_Watch_Start'))"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {}
+                  },
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@outputs('Compose_Watch_Outcome')?['readNew']",
+                          true
+                        ]
+                      },
+                      {
+                        "equals": [
+                          "@not(equals(string(coalesce(actions('Condition_Watch_Report')?['status'],'')),'Failed'))",
+                          true
+                        ]
+                      },
+                      {
+                        "equals": [
+                          "@empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/id)'))))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "If"
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@outputs('Compose_Watch_Outcome')?['readNew']",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@not(equals(string(coalesce(actions('Condition_Watch_Report')?['status'],'')),'Failed'))",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_WATCH_CURSOR\"]/id)'))))",
+                    false
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          },
+          "Condition_Watch_Health_Row": {
+            "actions": {
+              "Update_Watch_Health_Row": {
+                "runAfter": {},
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "PatchItem"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "id": "@trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_HEALTH\"]/id)')))",
+                    "item/Title": "NOTIFY_FAILURE_HEALTH",
+                    "item/ConfigValue": "@string(json(concat('{\"at\":\"',outputs('Compose_Watch_Start'),'\",\"open\":',string(outputs('Compose_Watch_Outcome')?['open']),',\"openTotal\":',string(outputs('Compose_Watch_Outcome')?['openCount']),',\"newSinceLastRun\":',string(outputs('Compose_Watch_Outcome')?['newCount']),',\"connectionBroken\":',if(outputs('Compose_Watch_Outcome')?['burst'],'true','false'),'}')))"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            },
+            "runAfter": {
+              "Condition_Watch_Cursor_Row": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Condition_Watch_Health_Read": {
+                  "actions": {
+                    "Create_Watch_Health_Row": {
+                      "runAfter": {},
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "PostItem"
+                        },
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                          "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                          "item/Title": "NOTIFY_FAILURE_HEALTH",
+                          "item/ConfigValue": "@string(json(concat('{\"at\":\"',outputs('Compose_Watch_Start'),'\",\"open\":',string(outputs('Compose_Watch_Outcome')?['open']),',\"openTotal\":',string(outputs('Compose_Watch_Outcome')?['openCount']),',\"newSinceLastRun\":',string(outputs('Compose_Watch_Outcome')?['newCount']),',\"connectionBroken\":',if(outputs('Compose_Watch_Outcome')?['burst'],'true','false'),'}')))"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {}
+                  },
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@outputs('Compose_Watch_Outcome')?['readOpen']",
+                          true
+                        ]
+                      },
+                      {
+                        "equals": [
+                          "@empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_HEALTH\"]/id)'))))",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "If"
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@outputs('Compose_Watch_Outcome')?['readOpen']",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@empty(trim(string(xpath(outputs('Compose_Watch_Config_Xml'),'string(/r/i[k=\"NOTIFY_FAILURE_HEALTH\"]/id)'))))",
+                    false
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          },
+          "Compose_Watch_Run_Outcome": {
+            "runAfter": {
+              "Condition_Watch_Health_Row": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "type": "Compose",
+            "inputs": "@int(if(or(not(equals(string(coalesce(actions('Compose_Watch_Outcome')?['status'],'')),'Succeeded')),equals(string(coalesce(actions('Condition_Watch_Report')?['status'],'')),'Failed'),equals(string(coalesce(actions('Condition_Watch_Cursor_Row')?['status'],'')),'Failed'),equals(string(coalesce(actions('Condition_Watch_Health_Row')?['status'],'')),'Failed')),'watch-failed','0'))"
+          }
+        },
+        "runAfter": {},
+        "type": "Scope"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "recordVersion": "1.0.0",
+  "what": "Both tenant changes, verified. SCAN_INTAKE is Tenant again; FETCH_ALL refuses the caller it served on 2026-09-22. Each is evidenced by a fresh artefact from the tenant, not by a report that the change was made.",
+  "capturedUtc": "2026-09-24",
+  "scanIntake": {
+    "item": "ITEM-59",
+    "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+    "applicationWorkflowId": "88401ce1f44148539c0da53c9491f8e6",
+    "contractKey": "SCAN_INTAKE",
+    "triggerAuthenticationType": "Tenant",
+    "method": "PUT",
+    "state": "Started",
+    "lastModifiedTimeUtc": "2026-09-24T04:55:02.0029691Z",
+    "source": {
+      "file": "IP_SCAN_INTAKE__08584113810917025456201636684CU28__complete_flow_export.json",
+      "sha256": "f5fbb7f995e4a956e6b95ce599fe0c9a51ce844408c5dc03595d7c51e9521921",
+      "bytes": 90775
+    },
+    "reads": "The same flow id the 2026-09-18 tenant read returned as All now exports as Tenant, modified 2026-09-24T04:55:02Z. DECISIONS.md D6 is satisfied again and npm run triggerauth is measuring the deployed posture rather than a superseded export."
+  },
+  "fetchAll": {
+    "item": "ITEM-61",
+    "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+    "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+    "contractKey": "FETCH_ALL",
+    "howItWasFixed": "Not the way this repository proposed, and better. The proposal was to move the real expression INTO Compose_FetchAll_Permitted. What was done instead leaves that Compose at true and compares it against the real expression in the condition itself — equals(true, <check>) — which is the same decision and removes the parked action entirely. The else branch, which previously held no actions at all, now discriminates two cases the proposal collapsed into one: a caller present in the directory but lacking the permission gets 403, and a caller in no directory row at all gets 401.",
+    "parkedExpressionRemains": false,
+    "package": {
+      "file": "docs/flows/exports/IP_FETCH_ALL_BOOTSTRAP_20260924035751.zip",
+      "sha256": "7c77d3bc19d021c10229f44641c0890f41d77605259b485ccfbf60864c327608",
+      "bytes": 8606,
+      "exportedAtUtc": "2026-09-24T03:57:51Z"
+    },
+    "provingRun": {
+      "runId": "08584113850424042017125920880CU10",
+      "startedAtUtc": "2026-09-24T03:50:43Z",
+      "outcome": "Failed",
+      "source": {
+        "file": "IP_FETCH_ALL_BOOTSTRAP__08584113850424042017125920880CU10__sharepoint_item.json",
+        "sha256": "c9603d6d3dbb921072ab1bb46797e302cc47f49bad804fd806691d31478d2779",
+        "bytes": 128900
+      },
+      "caller": "",
+      "role": "",
+      "directoryRowsMatched": 0,
+      "statusCodeSent": 401,
+      "bodyOk": false,
+      "refusal": {
+        "code": "UNAUTHENTICATED",
+        "message": "The caller is not in DGO_UserDirectory, or is not active."
+      },
+      "responseRecordChars": 1413
+    },
+    "sameInputOppositeOutcome": {
+      "2026-09-22": {
+        "caller": "",
+        "directoryRows": 0,
+        "status": 200,
+        "ok": true,
+        "responseRecordChars": 6117776
+      },
+      "2026-09-24": {
+        "caller": "",
+        "directoryRows": 0,
+        "status": 401,
+        "ok": false,
+        "responseRecordChars": 1413
+      },
+      "reads": "The identical caller — no identity, matching no directory row — received the estate on 2026-09-22 and a 401 on 2026-09-24. That is the fix demonstrated on the input that exposed it, which is the only demonstration worth having."
+    }
+  },
+  "whatThisEstablishes": [
+    "That SCAN_INTAKE's trigger requires tenant authentication again, read from a fresh export of the same flow id.",
+    "That FETCH_ALL refuses an unidentified caller in production, with 401 and a named reason, on the same input that previously returned 6.1 MB.",
+    "That the parked expression is gone, so there is one decision in that flow rather than two."
+  ],
+  "whatItExplicitlyDoesNotEstablish": [
+    "That FETCH_ALL authenticates its caller. Compose_FetchAll_Caller still reads userEmail from the REQUEST BODY, so a caller who names an active directory user is authorised as that user. The refusal proved here is of a caller who named NOBODY. That is G-04, it is unchanged, and it is now the whole of the problem rather than part of it.",
+    "That the other endpoints refuse anything. This is one flow. The audit finds no other decision pinned to a constant, but that is a statement about one defect shape, not a clean bill.",
+    "That the 2026-09-22 disclosure is resolved. Fixing the flow does not answer whether that release of directory data is notifiable; that remains the agency's to decide."
+  ]
+}

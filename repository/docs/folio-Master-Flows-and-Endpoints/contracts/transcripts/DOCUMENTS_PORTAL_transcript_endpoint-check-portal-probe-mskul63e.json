@@ -1,0 +1,148 @@
+{
+  "reportFormat": "dgo.endpoint-check/1",
+  "runId": "probe-mskul63e",
+  "at": "2026-08-08T21:03:59.016Z",
+  "package": "portal",
+  "platform": "Public document portal",
+  "buildId": "912dd39dae014544",
+  "origin": "content://media",
+  "protocol": "content:",
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 EdgA/151.0.0.0",
+  "results": [
+    {
+      "at": "2026-08-08T21:01:46.553Z",
+      "kind": "endpoint",
+      "name": "STATUS",
+      "status": 200,
+      "ms": 12394,
+      "state": "answered",
+      "reached": true,
+      "ok": true,
+      "why": "answered without record — the flow is live, but its response does not carry what the platform reads",
+      "responseKeys": [
+        "ok",
+        "status",
+        "request",
+        "timing",
+        "data",
+        "errors",
+        "meta"
+      ],
+      "dataKeys": null,
+      "missing": [
+        "record"
+      ],
+      "error": null,
+      "via": null
+    },
+    {
+      "at": "2026-08-08T21:02:29.550Z",
+      "kind": "endpoint",
+      "name": "SUBMISSION",
+      "status": 200,
+      "ms": 3772,
+      "state": "answered",
+      "reached": true,
+      "ok": true,
+      "why": "answered without uploads — the flow is live, but its response does not carry what the platform reads",
+      "responseKeys": [
+        "trackingId",
+        "status",
+        "createdAt",
+        "message",
+        "submittedBy",
+        "submittedAt",
+        "attachmentsCount",
+        "referenceId"
+      ],
+      "dataKeys": null,
+      "missing": [
+        "uploads"
+      ],
+      "error": null,
+      "via": null
+    },
+    {
+      "at": "2026-08-08T21:02:37.336Z",
+      "kind": "endpoint",
+      "name": "SUPPORT",
+      "status": 200,
+      "ms": 7772,
+      "state": "answered",
+      "reached": true,
+      "ok": true,
+      "why": "answered without caseRef — the flow is live, but its response does not carry what the platform reads",
+      "responseKeys": [
+        "ok",
+        "status",
+        "request",
+        "timing",
+        "data",
+        "errors",
+        "meta"
+      ],
+      "dataKeys": null,
+      "missing": [
+        "caseRef"
+      ],
+      "error": null,
+      "via": null
+    },
+    {
+      "at": "2026-08-08T21:02:41.323Z",
+      "kind": "endpoint",
+      "name": "VERIFY",
+      "status": 200,
+      "ms": 3157,
+      "state": "answered",
+      "reached": true,
+      "ok": true,
+      "why": "answered without sent — the flow is live, but its response does not carry what the platform reads",
+      "responseKeys": [
+        "ok",
+        "status",
+        "confidence",
+        "request",
+        "timing",
+        "data",
+        "results",
+        "errors",
+        "meta"
+      ],
+      "dataKeys": null,
+      "missing": [
+        "sent"
+      ],
+      "error": null,
+      "via": null
+    },
+    {
+      "at": "2026-08-08T21:02:47.229Z",
+      "kind": "endpoint",
+      "name": "VERIFY_CONFIRM",
+      "status": 200,
+      "ms": 5890,
+      "state": "answered",
+      "reached": true,
+      "ok": true,
+      "why": "answered without verification — the flow is live, but its response does not carry what the platform reads",
+      "responseKeys": [
+        "ok",
+        "status",
+        "confidence",
+        "request",
+        "timing",
+        "data",
+        "results",
+        "errors",
+        "meta"
+      ],
+      "dataKeys": null,
+      "missing": [
+        "verification"
+      ],
+      "error": null,
+      "via": null
+    }
+  ]
+}

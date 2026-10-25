@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NITDA Document Portal at https://folio-portal.page.gd. 404.html is deliberately absent: it is not a destination. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://folio-portal.page.gd/</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://folio-portal.page.gd/submit.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://folio-portal.page.gd/track.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://folio-portal.page.gd/support.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://folio-portal.page.gd/privacy.html</loc><changefreq>yearly</changefreq></url>
+</urlset>

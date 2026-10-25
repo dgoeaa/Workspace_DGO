@@ -1,0 +1,1436 @@
+{
+  "nodeId": "Scope_Upload_Flow",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Request_Context": {
+        "type": "Compose",
+        "inputs": {
+          "requestId": "@guid()",
+          "receivedAtUtc": "@utcNow()",
+          "startTicks": "@ticks(utcNow())",
+          "clientCorrelationId": "@take(string(coalesce(triggerOutputs()?['headers']?['X-Correlation-ID'],triggerBody()?['requestId'],'')),64)"
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000133"
+        }
+      },
+      "Scope_Global_Upload": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Upload_Ticket": {
+            "type": "Compose",
+            "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['X-Upload-Ticket'],triggerOutputs()?['headers']?['x-upload-ticket'],'')))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000134"
+            }
+          },
+          "Compose_Upload_SourceIp": {
+            "type": "Compose",
+            "inputs": "@if(startsWith(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),'['),substring(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),1,max(sub(indexOf(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),']'),1),0)),if(equals(length(split(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),':')),2),first(split(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),':')),trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),',')))))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000135"
+            },
+            "runAfter": {
+              "Compose_Upload_Ticket": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Upload_Content_Length": {
+            "type": "Compose",
+            "inputs": "@if(greater(int(concat('0',trim(string(coalesce(triggerOutputs()?['headers']?['Content-Length'],''))))),0),int(concat('0',trim(string(coalesce(triggerOutputs()?['headers']?['Content-Length'],''))))),max(sub(div(mul(length(string(coalesce(triggerBody()?['$content'],''))),3),4),if(endsWith(string(coalesce(triggerBody()?['$content'],'')),'=='),2,if(endsWith(string(coalesce(triggerBody()?['$content'],'')),'='),1,0))),0))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000136"
+            },
+            "runAfter": {
+              "Compose_Upload_SourceIp": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Bucket_Upload": {
+            "type": "Compose",
+            "inputs": "@concat('UPLOAD_IP:',outputs('Compose_Upload_Content_Length'))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000137"
+            },
+            "runAfter": {
+              "Compose_Upload_Content_Length": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Get_Rate_Limit_Upload": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                "$top": 1,
+                "$filter": "@concat('Title eq ''',replace(outputs('Compose_Bucket_Upload'),'''',''''''),'''')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000138"
+            },
+            "runAfter": {
+              "Compose_Bucket_Upload": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Rate_Limit_Upload_Exists": {
+            "type": "If",
+            "expression": {
+              "greater": [
+                "@length(coalesce(outputs('Get_Rate_Limit_Upload')?['body/value'],json('[]')))",
+                0
+              ]
+            },
+            "actions": {
+              "Update_Rate_Limit_Upload": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                    "id": "@first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['ID']",
+                    "item/RequestCount": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),add(int(concat('0',first(split(string(coalesce(first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['RequestCount'],'')),'.')))),1),1)",
+                    "item/WindowStartUtc": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['WindowStartUtc'],utcNow())",
+                    "item/UpdatedAtUtc": "@utcNow()",
+                    "item/Title": "@first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['Title']"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "PatchItem"
+                  }
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000139"
+                }
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000141"
+            },
+            "else": {
+              "actions": {
+                "Create_Rate_Limit_Upload": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                      "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                      "item/Title": "@outputs('Compose_Bucket_Upload')",
+                      "item/WindowStartUtc": "@utcNow()",
+                      "item/UpdatedAtUtc": "@utcNow()",
+                      "item/RequestCount": 1
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "PostItem"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "a0000000-0000-4000-8000-000000000140"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Rate_Limit_Upload": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Rate_Limited_Upload": {
+            "type": "Compose",
+            "inputs": "@and(greater(length(coalesce(outputs('Get_Rate_Limit_Upload')?['body/value'],json('[]'))),0),greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),greaterOrEquals(int(concat('0',first(split(string(coalesce(first(outputs('Get_Rate_Limit_Upload')?['body/value'])?['RequestCount'],'')),'.')))),200))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000142"
+            },
+            "runAfter": {
+              "Condition_Rate_Limit_Upload_Exists": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Upload_Gate": {
+            "type": "If",
+            "expression": {
+              "equals": [
+                "@outputs('Compose_Rate_Limited_Upload')",
+                true
+              ]
+            },
+            "actions": {
+              "Compose_Result_Upload_429": {
+                "type": "Compose",
+                "inputs": {
+                  "status": 429,
+                  "data": {
+                    "stored": false,
+                    "reason": "rate_limited",
+                    "attachmentLink": ""
+                  },
+                  "errors": [],
+                  "event": "none"
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000143"
+                }
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000160"
+            },
+            "else": {
+              "actions": {
+                "Condition_Upload_Ticket_Present": {
+                  "type": "If",
+                  "expression": {
+                    "equals": [
+                      "@empty(outputs('Compose_Upload_Ticket'))",
+                      true
+                    ]
+                  },
+                  "actions": {
+                    "Compose_Result_Upload_403": {
+                      "type": "Compose",
+                      "inputs": {
+                        "status": 403,
+                        "data": {
+                          "stored": false,
+                          "reason": "ticket_required",
+                          "attachmentLink": ""
+                        },
+                        "errors": [],
+                        "event": "none"
+                      },
+                      "metadata": {
+                        "operationMetadataId": "a0000000-0000-4000-8000-000000000144"
+                      }
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "a0000000-0000-4000-8000-000000000159"
+                  },
+                  "else": {
+                    "actions": {
+                      "Get_Upload_Ticket": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                            "table": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+                            "$top": 1,
+                            "$filter": "@concat('Title eq ''',replace(outputs('Compose_Upload_Ticket'),'''',''''''),'''')"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          }
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000145"
+                        }
+                      },
+                      "Compose_Ticket_Row": {
+                        "type": "Compose",
+                        "inputs": "@first(coalesce(outputs('Get_Upload_Ticket')?['body/value'],json('[]')))",
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000146"
+                        },
+                        "runAfter": {
+                          "Get_Upload_Ticket": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Compose_Ticket_State": {
+                        "type": "Compose",
+                        "inputs": "@if(empty(outputs('Compose_Ticket_Row')),'unknown',if(equals(outputs('Compose_Ticket_Row')?['Redeemed'],true),'redeemed',if(less(ticks(coalesce(outputs('Compose_Ticket_Row')?['ExpiresAtUtc'],'1900-01-01T00:00:00Z')),ticks(utcNow())),'expired','valid')))",
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000147"
+                        },
+                        "runAfter": {
+                          "Compose_Ticket_Row": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Switch_Ticket_State": {
+                        "type": "Switch",
+                        "expression": "@outputs('Compose_Ticket_State')",
+                        "cases": {
+                          "Case_Ticket_Unknown": {
+                            "case": "unknown",
+                            "actions": {
+                              "Compose_Result_Upload_404": {
+                                "type": "Compose",
+                                "inputs": {
+                                  "status": 404,
+                                  "data": {
+                                    "stored": false,
+                                    "reason": "ticket_unknown",
+                                    "attachmentLink": ""
+                                  },
+                                  "errors": [],
+                                  "event": "none"
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000148"
+                                }
+                              }
+                            }
+                          },
+                          "Case_Ticket_Redeemed": {
+                            "case": "redeemed",
+                            "actions": {
+                              "Compose_Result_Upload_200_Already": {
+                                "type": "Compose",
+                                "inputs": {
+                                  "status": 200,
+                                  "data": {
+                                    "stored": true,
+                                    "reason": "already_stored",
+                                    "attachmentLink": "",
+                                    "name": "@string(outputs('Compose_Ticket_Row')?['DeclaredName'])"
+                                  },
+                                  "errors": [],
+                                  "event": "none"
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000149"
+                                }
+                              }
+                            }
+                          },
+                          "Case_Ticket_Expired": {
+                            "case": "expired",
+                            "actions": {
+                              "Mark_Upload_Ticket_Expired": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                    "table": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+                                    "id": "@outputs('Compose_Ticket_Row')?['ID']",
+                                    "item/Title": "@string(outputs('Compose_Ticket_Row')?['Title'])",
+                                    "item/Status": "Expired"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                    "connection": "shared_sharepointonline",
+                                    "operationId": "PatchItem"
+                                  }
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000150"
+                                }
+                              },
+                              "Compose_Result_Upload_410": {
+                                "type": "Compose",
+                                "inputs": {
+                                  "status": 410,
+                                  "data": {
+                                    "stored": false,
+                                    "reason": "ticket_expired",
+                                    "attachmentLink": ""
+                                  },
+                                  "errors": [],
+                                  "event": "none"
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000151"
+                                },
+                                "runAfter": {
+                                  "Mark_Upload_Ticket_Expired": [
+                                    "Succeeded"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "Case_Ticket_Valid": {
+                            "case": "valid",
+                            "actions": {
+                              "Condition_Upload_Size_Matches": {
+                                "type": "If",
+                                "expression": {
+                                  "equals": [
+                                    "@int(concat('0',first(split(string(coalesce(outputs('Compose_Ticket_Row')?['DeclaredSizeBytes'],'')),'.'))))",
+                                    "@outputs('Compose_Upload_Content_Length')"
+                                  ]
+                                },
+                                "actions": {
+                                  "Create_Attachment_File": {
+                                    "type": "OpenApiConnection",
+                                    "inputs": {
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                        "folderPath": "/Shared Documents/Portal Attachments",
+                                        "name": "@string(outputs('Compose_Ticket_Row')?['StoredName'])",
+                                        "body": "@triggerBody()"
+                                      },
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "connection": "shared_sharepointonline",
+                                        "operationId": "CreateFile"
+                                      }
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000152"
+                                    }
+                                  },
+                                  "Create_Attachment_Record": {
+                                    "type": "OpenApiConnection",
+                                    "inputs": {
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                        "table": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+                                        "item/Title": "@string(outputs('Compose_Ticket_Row')?['StoredName'])",
+                                        "item/SubmissionRef": "@string(outputs('Compose_Ticket_Row')?['SubmissionRef'])",
+                                        "item/DeclaredName": "@string(outputs('Compose_Ticket_Row')?['DeclaredName'])",
+                                        "item/StoredName": "@string(outputs('Compose_Ticket_Row')?['StoredName'])",
+                                        "item/DeclaredSizeBytes": "@int(concat('0',first(split(string(coalesce(outputs('Compose_Ticket_Row')?['DeclaredSizeBytes'],'')),'.'))))",
+                                        "item/DeclaredSha256": "@string(coalesce(outputs('Compose_Ticket_Row')?['DeclaredSha256'],''))",
+                                        "item/AttachmentLink": "@concat('https://nitdanigeria.sharepoint.com/sites/NEDMS',replace(string(outputs('Create_Attachment_File')?['body/Path']),' ','%20'))",
+                                        "item/CreatedAtUtc": "@utcNow()",
+                                        "item/Status": "Stored",
+                                        "item/EntityKey": "@outputs('Compose_EntityKey_Attachment')",
+                                        "item/ParentKey": "@if(equals(length(string(coalesce(first(coalesce(outputs('Get_Upload_Record')?['body/value'],json('[]')))?['EntityKey'],''))),36),concat('REC:',toLower(string(first(coalesce(outputs('Get_Upload_Record')?['body/value'],json('[]')))?['EntityKey']))),'')",
+                                        "item/RootKey": "@if(equals(length(string(coalesce(first(coalesce(outputs('Get_Upload_Record')?['body/value'],json('[]')))?['EntityKey'],''))),36),concat('REC:',toLower(string(first(coalesce(outputs('Get_Upload_Record')?['body/value'],json('[]')))?['EntityKey']))),'')",
+                                        "item/RootRef": "@string(coalesce(outputs('Compose_Ticket_Row')?['SubmissionRef'],''))",
+                                        "item/IdState/Value": "ACTIVE",
+                                        "item/Rev": 1,
+                                        "item/CreatedByRequest": "@outputs('Compose_Request_Context')?['requestId']"
+                                      },
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "connection": "shared_sharepointonline",
+                                        "operationId": "PostItem"
+                                      }
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000153"
+                                    },
+                                    "runAfter": {
+                                      "Compose_EntityKey_Attachment": [
+                                        "Succeeded"
+                                      ]
+                                    }
+                                  },
+                                  "Redeem_Upload_Ticket": {
+                                    "type": "OpenApiConnection",
+                                    "inputs": {
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                        "table": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+                                        "id": "@outputs('Compose_Ticket_Row')?['ID']",
+                                        "item/Title": "@string(outputs('Compose_Ticket_Row')?['Title'])",
+                                        "item/Redeemed": true,
+                                        "item/Status": "Stored"
+                                      },
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "connection": "shared_sharepointonline",
+                                        "operationId": "PatchItem"
+                                      }
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000154"
+                                    },
+                                    "runAfter": {
+                                      "Create_Attachment_Record": [
+                                        "Succeeded"
+                                      ]
+                                    }
+                                  },
+                                  "Compose_Result_Upload_200": {
+                                    "type": "Compose",
+                                    "inputs": {
+                                      "status": 200,
+                                      "data": {
+                                        "stored": true,
+                                        "attachmentLink": "@concat('https://nitdanigeria.sharepoint.com/sites/NEDMS',replace(string(outputs('Create_Attachment_File')?['body/Path']),' ','%20'))",
+                                        "name": "@string(outputs('Compose_Ticket_Row')?['DeclaredName'])",
+                                        "reason": ""
+                                      },
+                                      "errors": [],
+                                      "event": "none"
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000155"
+                                    },
+                                    "runAfter": {
+                                      "Redeem_Upload_Ticket": [
+                                        "Succeeded"
+                                      ]
+                                    }
+                                  },
+                                  "Get_Upload_Record": {
+                                    "type": "OpenApiConnection",
+                                    "runAfter": {
+                                      "Create_Attachment_File": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "inputs": {
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "connection": "shared_sharepointonline",
+                                        "operationId": "GetItems"
+                                      },
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                        "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+                                        "$filter": "@concat('ReferenceId eq ''',replace(string(coalesce(outputs('Compose_Ticket_Row')?['SubmissionRef'],'')),'''',''''''),'''')",
+                                        "$top": 1
+                                      }
+                                    }
+                                  },
+                                  "Compose_EntityKey_Attachment": {
+                                    "type": "Compose",
+                                    "runAfter": {
+                                      "Get_Upload_Record": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "inputs": "@if(and(equals(length(toLower(string(coalesce(first(skip(split(string(coalesce(outputs('Compose_Ticket_Row')?['StoredName'],'')),'_'),3)),'')))),8),empty(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(toLower(string(coalesce(first(skip(split(string(coalesce(outputs('Compose_Ticket_Row')?['StoredName'],'')),'_'),3)),''))),'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9',''),'a',''),'b',''),'c',''),'d',''),'e',''),'f',''))),concat(toLower(string(coalesce(first(skip(split(string(coalesce(outputs('Compose_Ticket_Row')?['StoredName'],'')),'_'),3)),''))),substring(guid(),8,28)),guid())"
+                                  }
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000157"
+                                },
+                                "else": {
+                                  "actions": {
+                                    "Compose_Result_Upload_413": {
+                                      "type": "Compose",
+                                      "inputs": {
+                                        "status": 413,
+                                        "data": {
+                                          "stored": false,
+                                          "reason": "size_mismatch",
+                                          "attachmentLink": ""
+                                        },
+                                        "errors": [],
+                                        "event": "none"
+                                      },
+                                      "metadata": {
+                                        "operationMetadataId": "a0000000-0000-4000-8000-000000000156"
+                                      }
+                                    }
+                                  }
+                                },
+                                "runAfter": {}
+                              }
+                            }
+                          }
+                        },
+                        "default": {
+                          "actions": {}
+                        },
+                        "runAfter": {
+                          "Compose_Ticket_State": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000158"
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {}
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Rate_Limited_Upload": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000161"
+        },
+        "runAfter": {
+          "Compose_Request_Context": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Catch_Upload": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Result_Upload_500": {
+            "type": "Compose",
+            "inputs": {
+              "status": 500,
+              "data": {
+                "stored": false,
+                "reason": "server_error",
+                "attachmentLink": ""
+              },
+              "errors": [
+                {
+                  "scope": "Upload",
+                  "stage": "processing",
+                  "status": "failed",
+                  "message": "Upload processing failed, skipped, or timed out.",
+                  "details": "@result('Scope_Global_Upload')",
+                  "trackedAtUtc": "@utcNow()"
+                }
+              ],
+              "event": "server_error"
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000162"
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000163"
+        },
+        "runAfter": {
+          "Scope_Global_Upload": [
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ]
+        }
+      },
+      "Scope_Finalize_Response_Upload": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Outcome": {
+            "type": "Compose",
+            "inputs": "@coalesce(actions('Compose_Result_Upload_500')?['outputs'],actions('Compose_Result_Upload_200')?['outputs'],actions('Compose_Result_Upload_200_Already')?['outputs'],actions('Compose_Result_Upload_403')?['outputs'],actions('Compose_Result_Upload_404')?['outputs'],actions('Compose_Result_Upload_410')?['outputs'],actions('Compose_Result_Upload_413')?['outputs'],actions('Compose_Result_Upload_429')?['outputs'],json('{\"status\":500,\"data\":{\"stored\":false,\"reason\":\"server_error\",\"attachmentLink\":\"\"},\"errors\":[],\"event\":\"none\"}'))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000164"
+            }
+          },
+          "Compose_Completed_At": {
+            "type": "Compose",
+            "inputs": "@utcNow()",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000165"
+            },
+            "runAfter": {
+              "Compose_Outcome": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Duration_Ms": {
+            "type": "Compose",
+            "inputs": "@max(div(sub(ticks(outputs('Compose_Completed_At')),outputs('Compose_Request_Context')?['startTicks']),10000),0)",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000166"
+            },
+            "runAfter": {
+              "Compose_Completed_At": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Response_Body": {
+            "type": "Compose",
+            "inputs": "@setProperty(coalesce(actions('Compose_Outcome')?['outputs']?['data'],json('{}')),'requestId',string(coalesce(outputs('Compose_Request_Context')?['requestId'],'')))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000167"
+            },
+            "runAfter": {
+              "Compose_Duration_Ms": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Get_Allowed_Origins_Upload": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                "$filter": "startswith(Title,'ALLOWED_ORIGIN')",
+                "$top": 20
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000168"
+            },
+            "runAfter": {
+              "Compose_Response_Body": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Select_Allowed_Origins_Upload": {
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(actions('Get_Allowed_Origins_Upload')?['outputs']?['body']?['value'],json('[]'))",
+              "select": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+            },
+            "runAfter": {
+              "Get_Allowed_Origins_Upload": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000169"
+            }
+          },
+          "Compose_Request_Origin_Upload": {
+            "type": "Compose",
+            "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['Origin'],triggerOutputs()?['headers']?['origin'],'')))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000170"
+            },
+            "runAfter": {
+              "Select_Allowed_Origins_Upload": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Allowed_Origin_Upload": {
+            "type": "Compose",
+            "inputs": "@if(contains(coalesce(body('Select_Allowed_Origins_Upload'),json('[]')),outputs('Compose_Request_Origin_Upload')),outputs('Compose_Request_Origin_Upload'),string(coalesce(first(coalesce(body('Select_Allowed_Origins_Upload'),json('[]'))),'')))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000171"
+            },
+            "runAfter": {
+              "Compose_Request_Origin_Upload": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Response_Upload": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": "@coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)",
+              "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "@{string(coalesce(actions('Compose_Allowed_Origin_Upload')?['outputs'],'*'))}",
+                "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, X-Upload-Ticket, X-Correlation-ID",
+                "Vary": "Origin"
+              },
+              "body": "@coalesce(actions('Compose_Response_Body')?['outputs'],json('{\"stored\":false,\"reason\":\"server_error\",\"attachmentLink\":\"\"}'))"
+            },
+            "runAfter": {
+              "Compose_Allowed_Origin_Upload": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000172"
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000173"
+        },
+        "runAfter": {
+          "Scope_Global_Upload": [
+            "Succeeded",
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ],
+          "Scope_Catch_Upload": [
+            "Succeeded",
+            "Skipped"
+          ]
+        }
+      },
+      "Scope_Notifications": {
+        "type": "Scope",
+        "actions": {
+          "Get_Notification_Config": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                "$filter": "startswith(Title,'NOTIFY_')",
+                "$top": 50
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000174"
+            }
+          },
+          "Select_Notify_Config": {
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(actions('Get_Notification_Config')?['outputs']?['body']?['value'],json('[]'))",
+              "select": {
+                "k": "@toUpper(trim(string(item()?['Title'])))",
+                "v": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+              }
+            },
+            "runAfter": {
+              "Get_Notification_Config": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000175"
+            }
+          },
+          "Compose_Notify_Config_Xml": {
+            "type": "Compose",
+            "inputs": "@xml(json(concat('{\"r\":{\"i\":',string(body('Select_Notify_Config')),'}}')))",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000176"
+            },
+            "runAfter": {
+              "Select_Notify_Config": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Notify_Logo_Default": {
+            "type": "Compose",
+            "inputs": "data:image/png;base64,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",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000177"
+            },
+            "runAfter": {
+              "Compose_Notify_Config_Xml": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Notify_Config": {
+            "type": "Compose",
+            "inputs": {
+              "enabled": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_ENABLED\"]/v)')))),'false'))",
+              "opsTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)'))))",
+              "replyTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)'))))",
+              "logoSrc": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)')))),outputs('Compose_Notify_Logo_Default'),trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)'))))"
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000178"
+            },
+            "runAfter": {
+              "Compose_Notify_Logo_Default": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Switch_Notification_Event": {
+            "type": "Switch",
+            "expression": "@if(equals(outputs('Compose_Notify_Config')?['enabled'],true),coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none'),'disabled')",
+            "cases": {
+              "Case_Server_Error": {
+                "case": "server_error",
+                "actions": {
+                  "Select_Failed_Step_Rows": {
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@result('Scope_Global_Upload')",
+                      "select": "@if(equals(string(item()?['status']),'Failed'),concat('<tr><td valign=\"top\" width=\"38%\" style=\"padding:8px 12px 8px 0;border-bottom:1px solid #F2F4F7;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:12px;line-height:18px;font-weight:700;color:#1B1A1A;word-break:break-all;\">',replace(replace(replace(replace(replace(string(string(item()?['name'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td valign=\"top\" style=\"padding:8px 0;border-bottom:1px solid #F0EFEF;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;line-height:18px;color:#373435;word-break:break-word;\"><span style=\"display:inline-block;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:10px;font-weight:700;color:#780820;background:#FBE7EB;border-radius:4px;padding:1px 6px;margin-bottom:3px;\">',replace(replace(replace(replace(replace(string(string(coalesce(item()?['error']?['code'],item()?['code'],'Failed'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</span><br>',replace(replace(replace(replace(replace(string(concat(take(string(coalesce(item()?['error']?['message'],'No message returned.')),120),if(greater(length(string(coalesce(item()?['error']?['message'],''))),120),' …',''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td></tr>'),'')"
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000179"
+                    }
+                  },
+                  "Select_Failed_Flags": {
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@result('Scope_Global_Upload')",
+                      "select": "@if(equals(string(item()?['status']),'Failed'),'1','')"
+                    },
+                    "runAfter": {
+                      "Select_Failed_Step_Rows": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000180"
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html": {
+                    "type": "Compose",
+                    "inputs": "@{outputs('Compose_Server_Error_Alert_Html_Part1')}@{outputs('Compose_Server_Error_Alert_Html_Part2')}@{outputs('Compose_Server_Error_Alert_Html_Part3')}",
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000184"
+                    },
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html_Part3": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Send_Server_Error_Alert_Email": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "emailMessage/To": "@outputs('Compose_Notify_Config')?['opsTo']",
+                        "emailMessage/Subject": "@concat('Action required: upload endpoint failure (request ',outputs('Compose_Request_Context')?['requestId'],')')",
+                        "emailMessage/Body": "@outputs('Compose_Server_Error_Alert_Html')",
+                        "emailMessage/Importance": "High"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                        "connection": "shared_office365",
+                        "operationId": "SendEmailV2"
+                      }
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000185"
+                    },
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html_Part1": {
+                    "type": "Compose",
+                    "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,date=no,address=no,email=no,url=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Action required: A portal upload request could not be completed</title><!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,span,h1{font-family:'Segoe UI',Arial,sans-serif!important}</style><![endif]--><style>body{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}a{color:#05583B}a:hover{color:#0C603F}.list td{font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:19px;padding:9px 10px;border-bottom:1px solid #E8E6E7;color:#1B1A1A;word-break:break-word}\n@media only screen and (max-width:620px){.container{width:100%!important;max-width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}.hero{padding:24px 20px!important}.h1{font-size:23px!important;line-height:30px!important}.ref{font-size:19px!important;line-height:26px!important}.code{font-size:32px!important;letter-spacing:8px!important}.stack,.stack>tbody,.stack>tbody>tr,.stack>tr{display:block!important;width:100%!important}.stack>tbody>tr>td,.stack>tr>td{display:block!important;width:100%!important;box-sizing:border-box}.step{padding:0 0 14px 0!important}.tile{padding:0 0 8px 0!important}.cell-r{text-align:left!important;padding:10px 0 0 0!important}.kv-l,.kv-v{display:block!important;width:100%!important;box-sizing:border-box}.kv-l{padding:10px 0 0 0!important;border-bottom:0!important}.kv-v{padding:2px 0 10px 0!important}.btn{float:none!important;width:100%!important;margin:0 0 10px 0!important}.btn td,.btn a{display:block!important;width:100%!important;box-sizing:border-box;text-align:center!important}.hdr-r{display:none!important}.outer{padding:0!important}}</style></head>\n<body style=\"margin:0;padding:0;background:#F5F4F4;\">\n<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;\">@{concat('The upload endpoint failed (request ',replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'). Action may be required.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#F5F4F4;\"><tr><td class=\"outer\" align=\"center\" style=\"padding:28px 12px;\">\n<!--[if mso]><table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td><![endif]-->\n<table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;border-collapse:separate;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:14px;overflow:hidden;\">\n<tr><td class=\"px\" bgcolor=\"#05583B\" style=\"padding:24px 32px 22px 32px;background:#05583B;border-bottom:3px solid #17B255;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td valign=\"middle\" style=\"padding:0;\"><img src=\"https://folio-portal.page.gd/email-assets/nitda-lockup-white.png\" width=\"168\" alt=\"NITDA\" style=\"display:block;width:168px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:700;color:#FFFFFF;\"></td><td class=\"hdr-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><img src=\"https://folio-portal.page.gd/email-assets/dgo-logo-whiteout.png\" width=\"150\" alt=\"DGO Digital Ops, an initiative of NITDA\" style=\"display:block;width:150px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:13px;font-weight:700;color:#FFFFFF;\"></td></tr></table></td></tr>\n<tr><td class=\"hero px\" style=\"padding:30px 32px 28px 32px;background:#C8102E;border-top:1px solid #F6C2CB;border-bottom:4px solid #F6C2CB;\"><p style=\"margin:0 0 12px 0;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#780820;border:1px solid #F6C2CB;color:#FFFFFF;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">&#9888;&nbsp; Action required</span></p><h1 class=\"h1\" style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:27px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#FFFFFF;word-break:break-word;overflow-wrap:anywhere;\">A portal upload request could not be completed</h1>",
+                    "runAfter": {
+                      "Select_Failed_Flags": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html_Part2": {
+                    "type": "Compose",
+                    "inputs": "<p style=\"margin:10px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:22px;color:#FBE7EB;word-break:break-word;overflow-wrap:anywhere;\">@{concat('A request received ',concat(convertFromUtc(coalesce(outputs('Compose_Request_Context')?['receivedAtUtc'],utcNow()),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT'),' failed. The caller got an HTTP 500 and the portal reported the service as unavailable.')}</p></td></tr>\n<tr><td class=\"px\" style=\"padding:28px 32px 30px 32px;background:#FFFFFF;\"><p style=\"margin:0 0 12px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:24px;font-weight:600;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">Dear Operations Team,</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:8px 0 4px 0;border-collapse:separate;background:#FBE7EB;border:1px solid #F6C2CB;border-radius:10px;\"><tr><td width=\"6\" style=\"width:6px;background:#F6C2CB;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:16px 18px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td valign=\"middle\" style=\"padding:0;\"><p style=\"margin:0 0 4px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#5F5C5D;\">Request ID</p><p class=\"ref\" style=\"margin:0;font-family:'Cascadia Mono',Consolas,'Courier New',monospace;font-size:22px;line-height:30px;font-weight:700;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td class=\"cell-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#FBE7EB;border:1px solid #F6C2CB;color:#C8102E;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">HTTP 500</span></td></tr></table></td></tr></table><p style=\"margin:28px 0 10px 0;padding:0 0 8px 0;border-bottom:1px solid #E8E6E7;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#05583B;\">Failed steps</p>@{if(greater(length(join(body('Select_Failed_Flags'),'')),0),concat('<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"list\" style=\"border-collapse:collapse;table-layout:auto;\"><tr><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Step</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Error</th></tr>',if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat(join(take(split(join(body('Select_Failed_Step_Rows'),''),'</tr>'),2),'</tr>'),'</tr>'),join(body('Select_Failed_Step_Rows'),'')),if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat('<tr><td colspan=\"2\" style=\"padding:9px 10px;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:12px;line-height:18px;color:#5F5C5D;\">+ ',string(sub(length(join(body('Select_Failed_Flags'),'')),2)),' more &mdash; open the run for the full list.</td></tr>'),''),'</table>'),'<p style=\"margin:0 0 14px 0;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:13px;line-height:23px;color:#4A4849;word-break:break-word;overflow-wrap:anywhere;\">No failed step was reported at the top level (the run may have timed out). Open the run for details.</p>')}<p style=\"margin:28px 0 10px 0;padding:0 0 8px 0;border-bottom:1px solid #E8E6E7;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#05583B;\">Request context</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"table-layout:fixed;\"><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Ticket state</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Ticket_State')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Declared file</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{replace(replace(replace(replace(replace(string(string(coalesce(coalesce(actions('Compose_Ticket_Row')?['outputs'],json('{}'))?['DeclaredName'],'—'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</td></tr><tr>",
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html_Part1": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html_Part3": {
+                    "type": "Compose",
+                    "inputs": "<td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Submission</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{replace(replace(replace(replace(replace(string(string(coalesce(coalesce(actions('Compose_Ticket_Row')?['outputs'],json('{}'))?['SubmissionRef'],'—'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Bytes received</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{string(coalesce(actions('Compose_Upload_Content_Length')?['outputs'],0))}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Source IP</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Upload_SourceIp')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:20px 0 4px 0;border-collapse:separate;background:#F5F4F4;border:1px solid #E8E6E7;border-radius:10px;\"><tr><td width=\"5\" style=\"width:5px;background:#807D7E;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:14px 18px;\"><p style=\"margin:0 0 4px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#1B1A1A;\">Next step</p><div style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:13px;line-height:20px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">Open the failed run in Power Automate to see the failing action and its error output.</div></td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:24px 0 4px 0;\"><tr><td class=\"btn-row\" style=\"padding:0;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" align=\"left\" style=\"margin:4px 10px 4px 0;border-collapse:separate;\"><tr><td align=\"center\" style=\"border-radius:8px;background:#780820;border:1px solid #780820;\"><a href=\"@{concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))}\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block;padding:13px 24px;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:20px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:8px;white-space:nowrap;\">Open failed run in Power Automate&nbsp;&rarr;</a></td></tr></table></td></tr></table><p style=\"margin:26px 0 0 0;padding:12px 0 0 0;border-top:1px dashed #C4C3C3;font-family:'Cascadia Mono',Consolas,'Courier New',monospace;font-size:11px;line-height:18px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Run&nbsp;<strong style=\"color:#373435;font-weight:600;\">@{string(workflow()?['run']?['name'])}</strong> &nbsp;&middot;&nbsp; Flow&nbsp;<strong style=\"color:#373435;font-weight:600;\">@{replace(replace(replace(replace(replace(string(string(workflow()?['tags']?['flowDisplayName'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</strong></p></td></tr>\n<tr><td class=\"px\" style=\"padding:22px 32px 26px 32px;background:#F5F4F4;border-top:1px solid #E8E6E7;\"><p style=\"margin:0 0 10px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Sent to the operations mailbox because a portal flow run failed.</p><p style=\"margin:0 0 6px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\"><strong style=\"color:#373435;\">DGO Digital Ops &middot; NITDA</strong> &nbsp;&middot;&nbsp; Internal operational message. Do not forward outside NITDA.</p><p style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">National Information Technology Development Agency &nbsp;&middot;&nbsp; &copy; @{formatDateTime(utcNow(),'yyyy')} &nbsp;&middot;&nbsp; Automated message</p></td></tr>\n</table>\n<!--[if mso]></td></tr></table><![endif]-->\n</td></tr></table>\n</body></html>",
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html_Part2": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Create_Send_Server_Error_Alert_Email_Receipt": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Send_Server_Error_Alert_Email": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "PostItem"
+                      },
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                        "item/Title": "@concat('server-error-alert:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                        "item/MessageType": "server-error-alert",
+                        "item/RecipientEmail": "@outputs('Compose_Notify_Config')?['opsTo']",
+                        "item/Reference": "@string(workflow()?['run']?['name'])",
+                        "item/SentAtUtc": "@utcNow()",
+                        "item/Status": "@if(equals(actions('Send_Server_Error_Alert_Email')?['status'],'Succeeded'),'sent','failed')",
+                        "item/Attempts": 1,
+                        "item/LastError": "@if(equals(actions('Send_Server_Error_Alert_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Server_Error_Alert_Email')?['error']?['message'],actions('Send_Server_Error_Alert_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Server_Error_Alert_Email')?['error']?['message'],actions('Send_Server_Error_Alert_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                      }
+                    }
+                  },
+                  "Compose_Send_Server_Error_Alert_Email_Outcome": {
+                    "type": "Compose",
+                    "runAfter": {
+                      "Create_Send_Server_Error_Alert_Email_Receipt": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": "@int(if(or(equals(actions('Send_Server_Error_Alert_Email')?['status'],'Failed'),equals(actions('Send_Server_Error_Alert_Email')?['status'],'TimedOut')),'send-failed','0'))"
+                  }
+                }
+              }
+            },
+            "default": {
+              "actions": {}
+            },
+            "runAfter": {
+              "Compose_Notify_Config": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000186"
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000187"
+        },
+        "runAfter": {
+          "Scope_Finalize_Response_Upload": [
+            "Succeeded",
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ]
+        }
+      },
+      "Scope_Flow_Data_Capture": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Redacted_Queries": {
+            "type": "Compose",
+            "inputs": "@setProperty(setProperty(coalesce(triggerOutputs()?['queries'],json('{}')),'sig','***REDACTED***'),'code','***REDACTED***')",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000188"
+            }
+          },
+          "Compose_Redacted_Headers": {
+            "type": "Compose",
+            "inputs": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(coalesce(triggerOutputs()?['headers'],json('{}')),'Authorization','***REDACTED***'),'Cookie','***REDACTED***'),'x-api-key','***REDACTED***'),'Ocp-Apim-Subscription-Key','***REDACTED***'),'x-ms-igw-external-uri','***REDACTED***'),'x-ms-igw-raw-target','***REDACTED***'),'X-Upload-Ticket','***REDACTED***'), 'x-dgo-proof', '***REDACTED***'), 'X-DGO-Proof', '***REDACTED***')",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000189"
+            },
+            "runAfter": {
+              "Compose_Redacted_Queries": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Flow_Run_Record": {
+            "type": "Compose",
+            "inputs": {
+              "capture_metadata": {
+                "telemetry_kind": "flow_run_record",
+                "capture_version": "2.1.0",
+                "standard_version": "1.0.0",
+                "captured_at_utc": "@utcNow()",
+                "capture_scope": "Scope_Flow_Data_Capture"
+              },
+              "workflow_identity": {
+                "internal_name": "@workflow()?['name']",
+                "full_resource_id": "@workflow()?['id']",
+                "type": "@workflow()?['type']",
+                "location": "@workflow()?['location']",
+                "tags": "@coalesce(workflow()?['tags'],json('{}'))"
+              },
+              "run_identity": {
+                "run_name": "@workflow()?['run']?['name']",
+                "run_resource_id": "@workflow()?['run']?['id']",
+                "request_id": "@outputs('Compose_Request_Context')?['requestId']",
+                "client_correlation_id": "@outputs('Compose_Request_Context')?['clientCorrelationId']"
+              },
+              "trigger_record": {
+                "method": "@triggerOutputs()?['method']",
+                "headers_redacted": "@coalesce(outputs('Compose_Redacted_Headers'),json('{}'))",
+                "queries_redacted": "@coalesce(outputs('Compose_Redacted_Queries'),json('{}'))"
+              },
+              "request": {
+                "body_redacted": {
+                  "hasTicket": "@not(empty(string(coalesce(actions('Compose_Upload_Ticket')?['outputs'],''))))",
+                  "contentLength": "@coalesce(actions('Compose_Upload_Content_Length')?['outputs'],0)",
+                  "ticketState": "@string(coalesce(actions('Compose_Ticket_State')?['outputs'],''))"
+                }
+              },
+              "design_definition": {
+                "contract_version": "2026-08-21.1",
+                "endpoint": "Upload"
+              },
+              "response_record": {
+                "status_code_sent": "@coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)",
+                "error_count": "@length(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))"
+              },
+              "outcome": {
+                "flow_outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')"
+              },
+              "timing": {
+                "received_at_utc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                "completed_at_utc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                "duration_ms": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)"
+              },
+              "notifications": {
+                "event": "@coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none')",
+                "scope_status": "@coalesce(actions('Scope_Notifications')?['status'],'Unknown')"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000190"
+            },
+            "runAfter": {
+              "Compose_Redacted_Headers": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Create_Flow_Telemetry": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                "item/RunId": "@workflow()?['run']?['name']",
+                "item/StartedAtUtc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                "item/CompletedAtUtc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                "item/Outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')",
+                "item/DurationMs": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)",
+                "item/ErrorMessage": "@string(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))",
+                "item/RunRecordJson": "@string(outputs('Compose_Flow_Run_Record'))",
+                "item/RequestId": "@outputs('Compose_Request_Context')?['requestId']",
+                "item/CorrelationId": "@string(coalesce(first(coalesce(actions('Get_Upload_Record')?['outputs']?['body']?['value'],json('[]')))?['CorrelationId'],outputs('Compose_Request_Context')?['requestId']))",
+                "item/ClientCorrelationId": "@string(coalesce(outputs('Compose_Request_Context')?['clientCorrelationId'],''))",
+                "item/RegistryKey": "@concat('DGO:',string(workflow()?['name']))",
+                "item/ContractKey": "UPLOAD"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "PostItem"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000191"
+            },
+            "runAfter": {
+              "Compose_Flow_Run_Record": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Telemetry_Attachments": {
+            "type": "Compose",
+            "runAfter": {
+              "Create_Flow_Telemetry": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "inputs": [
+              {
+                "Name": "@{concat('CG_Upload_Endpoint__',workflow()?['run']?['name'],'__run_record.json')}",
+                "ContentBytes": "@{string(coalesce(outputs('Compose_Flow_Run_Record'),json('{}')))}"
+              }
+            ]
+          },
+          "Send_Telemetry_Email": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Compose_Telemetry_Attachments": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connection": "shared_office365",
+                "operationId": "SendEmailV2"
+              },
+              "parameters": {
+                "emailMessage/To": "dgsregistry@nitda.gov.ng",
+                "emailMessage/Subject": "@concat('CG_Upload_Endpoint — Flow Run Record — ',workflow()?['run']?['name'])",
+                "emailMessage/Body": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,date=no,address=no,email=no,url=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Portal upload run record</title><!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,span,h1{font-family:'Segoe UI',Arial,sans-serif!important}</style><![endif]--><style>body{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}a{color:#05583B}a:hover{color:#0C603F}.list td{font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:19px;padding:9px 10px;border-bottom:1px solid #E8E6E7;color:#1B1A1A;word-break:break-word}\n@media only screen and (max-width:620px){.container{width:100%!important;max-width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}.hero{padding:24px 20px!important}.h1{font-size:23px!important;line-height:30px!important}.ref{font-size:19px!important;line-height:26px!important}.code{font-size:32px!important;letter-spacing:8px!important}.stack,.stack>tbody,.stack>tbody>tr,.stack>tr{display:block!important;width:100%!important}.stack>tbody>tr>td,.stack>tr>td{display:block!important;width:100%!important;box-sizing:border-box}.step{padding:0 0 14px 0!important}.tile{padding:0 0 8px 0!important}.cell-r{text-align:left!important;padding:10px 0 0 0!important}.kv-l,.kv-v{display:block!important;width:100%!important;box-sizing:border-box}.kv-l{padding:10px 0 0 0!important;border-bottom:0!important}.kv-v{padding:2px 0 10px 0!important}.btn{float:none!important;width:100%!important;margin:0 0 10px 0!important}.btn td,.btn a{display:block!important;width:100%!important;box-sizing:border-box;text-align:center!important}.hdr-r{display:none!important}.outer{padding:0!important}}</style></head>\n<body style=\"margin:0;padding:0;background:#F5F4F4;\">\n<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;\">CG_Upload_Endpoint · run record attached&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#F5F4F4;\"><tr><td class=\"outer\" align=\"center\" style=\"padding:28px 12px;\">\n<!--[if mso]><table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td><![endif]-->\n<table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;border-collapse:separate;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:14px;overflow:hidden;\">\n<tr><td class=\"px\" bgcolor=\"#05583B\" style=\"padding:24px 32px 22px 32px;background:#05583B;border-bottom:3px solid #17B255;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td valign=\"middle\" style=\"padding:0;\"><img src=\"https://folio-portal.page.gd/email-assets/nitda-lockup-white.png\" width=\"168\" alt=\"NITDA\" style=\"display:block;width:168px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:700;color:#FFFFFF;\"></td><td class=\"hdr-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><img src=\"https://folio-portal.page.gd/email-assets/dgo-logo-whiteout.png\" width=\"150\" alt=\"DGO Digital Ops, an initiative of NITDA\" style=\"display:block;width:150px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:13px;font-weight:700;color:#FFFFFF;\"></td></tr></table></td></tr>\n<tr><td class=\"hero px\" style=\"padding:30px 32px 28px 32px;background:#F5F4F4;border-top:1px solid #E8E6E7;border-bottom:4px solid #2D2C2C;\"><p style=\"margin:0 0 12px 0;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#FFFFFF;border:1px solid #A09E9F;color:#2D2C2C;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">Portal upload run record</span></p><h1 class=\"h1\" style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:27px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">CG_Upload_Endpoint</h1><p style=\"margin:10px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:22px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">Complete execution evidence and telemetry package.</p></td></tr>\n<tr><td class=\"px\" style=\"padding:28px 32px 30px 32px;background:#FFFFFF;\"><p style=\"margin:0 0 12px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:24px;font-weight:600;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">Dear Registry Team,</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:8px 0 4px 0;border-collapse:separate;background:#F5F4F4;border:1px solid #E8E6E7;border-radius:10px;\"><tr><td width=\"6\" style=\"width:6px;background:#2D2C2C;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:16px 18px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td valign=\"middle\" style=\"padding:0;\"><p style=\"margin:0 0 4px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#5F5C5D;\">Final outcome</p><p class=\"ref\" style=\"margin:0;font-family:'Cascadia Mono',Consolas,'Courier New',monospace;font-size:20px;line-height:28px;font-weight:700;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{if(equals(actions('Create_Flow_Telemetry')?['status'],'Succeeded'),'Run record stored','Run record not stored in Portal Flow Telemetry')}</p></td><td class=\"cell-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><span style=\"display:inline-block;width:14px;height:14px;border-radius:7px;background:@{if(equals(actions('Create_Flow_Telemetry')?['status'],'Succeeded'),'#119143','#C8102E')};\"></span></td></tr></table></td></tr></table><p style=\"margin:28px 0 10px 0;padding:0 0 8px 0;border-bottom:1px solid #E8E6E7;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#05583B;\">Execution summary</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"table-layout:fixed;\"><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Flow</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">CG_Upload_Endpoint</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Run ID</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{workflow()?['run']?['name']}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Environment</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{workflow()?['location']}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Telemetry persistence</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{actions('Create_Flow_Telemetry')?['status']}</td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:20px 0 4px 0;border-collapse:separate;background:#F5F4F4;border:1px solid #E8E6E7;border-radius:10px;\"><tr><td width=\"5\" style=\"width:5px;background:#2D2C2C;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:14px 18px;\"><p style=\"margin:0 0 4px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#1B1A1A;\">&#128206;&nbsp; The run record is attached</p><div style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:13px;line-height:20px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">The complete run record: the redacted request, the scope results and the telemetry persistence.</div></td></tr></table><p style=\"margin:16px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Authentication material, cookies, keys, secrets, authorization codes, and binary payload content are redacted. Structural and operational metadata is retained.</p></td></tr>\n<tr><td class=\"px\" style=\"padding:22px 32px 26px 32px;background:#F5F4F4;border-top:1px solid #E8E6E7;\"><p style=\"margin:0 0 10px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Automated operational record.</p><p style=\"margin:0 0 6px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\"><strong style=\"color:#373435;\">DGO Digital Ops &middot; NITDA</strong> &nbsp;&middot;&nbsp; Internal operational message. Do not forward outside NITDA.</p><p style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">National Information Technology Development Agency &nbsp;&middot;&nbsp; &copy; @{formatDateTime(utcNow(),'yyyy')} &nbsp;&middot;&nbsp; Automated message</p></td></tr>\n</table>\n<!--[if mso]></td></tr></table><![endif]-->\n</td></tr></table>\n</body></html>",
+                "emailMessage/Attachments": "@outputs('Compose_Telemetry_Attachments')",
+                "emailMessage/Importance": "Low"
+              }
+            }
+          },
+          "Create_Send_Telemetry_Email_Receipt": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Send_Telemetry_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "PostItem"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "item/Title": "@concat('telemetry:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                "item/MessageType": "telemetry",
+                "item/RecipientEmail": "dgsregistry@nitda.gov.ng",
+                "item/Reference": "@string(workflow()?['run']?['name'])",
+                "item/SentAtUtc": "@utcNow()",
+                "item/Status": "@if(equals(actions('Send_Telemetry_Email')?['status'],'Succeeded'),'sent','failed')",
+                "item/Attempts": 1,
+                "item/LastError": "@if(equals(actions('Send_Telemetry_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Telemetry_Email')?['error']?['message'],actions('Send_Telemetry_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Telemetry_Email')?['error']?['message'],actions('Send_Telemetry_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+              }
+            }
+          },
+          "Compose_Send_Telemetry_Email_Outcome": {
+            "type": "Compose",
+            "runAfter": {
+              "Create_Send_Telemetry_Email_Receipt": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "inputs": "@int(if(or(equals(actions('Send_Telemetry_Email')?['status'],'Failed'),equals(actions('Send_Telemetry_Email')?['status'],'TimedOut')),'send-failed','0'))"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000192"
+        },
+        "runAfter": {
+          "Scope_Notifications": [
+            "Succeeded",
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ]
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000193"
+    }
+  },
+  "allConnectionData": {
+    "Get_Rate_Limit_Upload": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Update_Rate_Limit_Upload": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Rate_Limit_Upload": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Upload_Ticket": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Mark_Upload_Ticket_Expired": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Attachment_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Attachment_Record": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Redeem_Upload_Ticket": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Allowed_Origins_Upload": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Notification_Config": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Server_Error_Alert_Email": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    },
+    "Create_Flow_Telemetry": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Upload_Record": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Send_Server_Error_Alert_Email_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Telemetry_Email": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    },
+    "Create_Send_Telemetry_Email_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

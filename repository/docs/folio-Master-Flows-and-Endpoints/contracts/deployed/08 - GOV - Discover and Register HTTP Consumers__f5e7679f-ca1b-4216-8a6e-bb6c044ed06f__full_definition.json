@@ -1,0 +1,1249 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/08_-_GOV_-_Discover_and_Register_HTTP_Consumers__f5e7679f-ca1b-4216-8a6e-bb6c044ed06f.json",
+  "workflow_identity": {
+    "internal_name": "f5e7679f-ca1b-4216-8a6e-bb6c044ed06f",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/f5e7679f-ca1b-4216-8a6e-bb6c044ed06f",
+    "tags": {
+      "flowDisplayName": "08 - GOV - Discover and Register HTTP Consumers"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "schedule": {
+            "hours": [
+              3
+            ]
+          }
+        },
+        "evaluatedRecurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "schedule": {
+            "hours": [
+              3
+            ]
+          }
+        },
+        "type": "Recurrence"
+      }
+    },
+    "actions": {
+      "Get_Recent": {
+        "runAfter": {
+          "Compose": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowExecutionLedger')/items?$select=RegistryKey,CallerSystem,CompletedUtc",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata",
+              "Content-Type": "application/json;odata=nometadata"
+            }
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline-1",
+            "operationId": "HttpRequest"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "For_Each": {
+        "foreach": "@body('Get_Recent')?['value']",
+        "actions": {
+          "Key": {
+            "type": "Compose",
+            "inputs": "@concat(items('For_Each')?['RegistryKey'],'|',coalesce(items('For_Each')?['CallerSystem'],'Unknown'))"
+          },
+          "Find": {
+            "runAfter": {
+              "Key": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "GET",
+                "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items?$select=Id&$filter=ConsumerKey eq ''',outputs('Key'),'''')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata",
+                  "Content-Type": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "If_New": {
+            "actions": {
+              "Create": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowConsumerRegistry')/items",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@json(concat('{\"Title\":',string(coalesce(items('For_Each')?['CallerSystem'],'Unknown')),',\"ConsumerKey\":',string(outputs('Key')),',\"RegistryKey\":',string(items('For_Each')?['RegistryKey']),',\"ConsumerName\":',string(coalesce(items('For_Each')?['CallerSystem'],'Unknown')),',\"ConsumerType\":\"Other\",\"OwnerEmail\":\"Unassigned\",\"ExpectedAuthentication\":\"Unknown\",\"IsApproved\":false,\"LastObservedUtc\":\"',utcNow(),'\",\"LifecycleStatus\":\"Active\"}'))"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            },
+            "runAfter": {
+              "Find": [
+                "Succeeded"
+              ]
+            },
+            "else": {
+              "actions": {}
+            },
+            "expression": {
+              "equals": [
+                "@length(body('Find')?['value'])",
+                0
+              ]
+            },
+            "type": "If"
+          }
+        },
+        "runAfter": {
+          "Get_Recent": [
+            "Succeeded"
+          ]
+        },
+        "type": "Foreach",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        }
+      },
+      "Compose_Execution_Report_JSON": {
+        "runAfter": {
+          "For_Each": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "d78adb24-a1fa-44a1-bb60-1d27146ff6be"
+        },
+        "type": "Compose",
+        "inputs": {
+          "reportMetadata": {
+            "reportType": "DGO Power Automate Execution Report",
+            "schemaVersion": "3.0.0",
+            "generatedAtUtc": "@utcNow()",
+            "generatedAtLocal": "@convertTimeZone(utcNow(),'UTC','W. Central Africa Standard Time','yyyy-MM-dd HH:mm:ss')"
+          },
+          "flow": {
+            "displayName": "08 - GOV - Discover and Register HTTP Consumers",
+            "internalName": "@workflow()?['name']",
+            "resourceId": "@workflow()?['id']",
+            "environmentId": "@workflow()?['tags']?['environmentName']",
+            "location": "@workflow()?['location']"
+          },
+          "run": {
+            "runId": "@workflow()?['run']?['name']",
+            "runResourceId": "@workflow()?['run']?['id']",
+            "triggerName": "@trigger()?['name']",
+            "triggerStartUtc": "@trigger()?['startTime']",
+            "capturedAtUtc": "@utcNow()",
+            "elapsedMilliseconds": "@if(empty(trigger()?['startTime']),0,div(sub(ticks(utcNow()),ticks(trigger()?['startTime'])),10000))",
+            "runUrl": "@concat('https://make.powerautomate.com/environments/',coalesce(workflow()?['tags']?['environmentName'],''),'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+          },
+          "outcome": {
+            "overallStatus": "@if(contains(string(createArray(actions('Get_Recent')?['status'],actions('For_Each')?['status'])),'Failed'),'Failed',if(contains(string(createArray(actions('Get_Recent')?['status'],actions('For_Each')?['status'])),'TimedOut'),'TimedOut','Succeeded'))",
+            "actionStatuses": {
+              "Get_Recent": "@actions('Get_Recent')?['status']",
+              "For_Each": "@actions('For_Each')?['status']"
+            }
+          },
+          "governance": {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "notificationRecipient": "dgsRegistry@nitda.gov.ng",
+            "classification": "Internal",
+            "reportRetentionHint": "Retain according to DGO operational evidence policy"
+          },
+          "diagnostics": {
+            "triggerHeadersRedacted": "Sensitive trigger header values are not included.",
+            "triggerBodyCaptured": false,
+            "note": "Inspect the secured run history for connector-level inputs and outputs."
+          }
+        }
+      },
+      "Compose_Execution_Report_HTML": {
+        "runAfter": {
+          "Compose_Execution_Report_JSON": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a059578e-a981-41a1-ac63-c07adb1c3ce8"
+        },
+        "type": "Compose",
+        "inputs": "@concat('<!DOCTYPE html><html><head><meta charset=\"utf-8\"><style>body{font-family:Segoe UI,Arial;background:#f3f6f9;margin:0;padding:24px;color:#172033}.card{max-width:920px;margin:auto;background:white;border-radius:12px;box-shadow:0 5px 18px rgba(0,0,0,.12);overflow:hidden}.head{background:#004578;color:white;padding:26px}.head h1{margin:0;font-size:24px}.head p{margin:7px 0 0;color:#dbeafe}.content{padding:24px}.badge{display:inline-block;padding:5px 12px;border-radius:18px;background:#e8f5e9;color:#166534;font-weight:700}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.box{border:1px solid #dbe3ec;border-radius:8px;padding:13px;background:#fafcff}.label{font-size:11px;text-transform:uppercase;color:#617085;letter-spacing:.06em}.value{margin-top:5px;font-weight:600;word-break:break-word}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid #e6ebf0;font-size:13px}th{background:#edf3f8}.foot{padding:16px 24px;background:#f7f9fb;color:#667085;font-size:12px}@media(max-width:650px){.grid{grid-template-columns:1fr}}</style></head><body><div class=\"card\"><div class=\"head\"><h1>DGO Power Automate Execution Report</h1><p>',outputs('Compose_Execution_Report_JSON')?['flow']?['displayName'],'</p></div><div class=\"content\"><span class=\"badge\">',outputs('Compose_Execution_Report_JSON')?['outcome']?['overallStatus'],'</span><div class=\"grid\"><div class=\"box\"><div class=\"label\">Run ID</div><div class=\"value\">',outputs('Compose_Execution_Report_JSON')?['run']?['runId'],'</div></div><div class=\"box\"><div class=\"label\">Environment</div><div class=\"value\">',outputs('Compose_Execution_Report_JSON')?['flow']?['environmentId'],'</div></div><div class=\"box\"><div class=\"label\">Generated UTC</div><div class=\"value\">',outputs('Compose_Execution_Report_JSON')?['reportMetadata']?['generatedAtUtc'],'</div></div><div class=\"box\"><div class=\"label\">Duration</div><div class=\"value\">',string(outputs('Compose_Execution_Report_JSON')?['run']?['elapsedMilliseconds']),' ms</div></div></div><h2>Action status summary</h2><pre style=\"white-space:pre-wrap;background:#f6f8fa;border:1px solid #e5e7eb;padding:14px;border-radius:8px\">',string(outputs('Compose_Execution_Report_JSON')?['outcome']?['actionStatuses']),'</pre><p><a href=\"',outputs('Compose_Execution_Report_JSON')?['run']?['runUrl'],'\" style=\"color:#005a9e;font-weight:600\">Open this flow run in Power Automate</a></p></div><div class=\"foot\">Automated DGO governance evidence. Sensitive request headers and bodies are excluded.</div></div></body></html>')"
+      },
+      "Send_Execution_Report_Email": {
+        "runAfter": {
+          "Compose_Execution_Report_HTML": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "4f312595-a4c7-4752-90a1-bcac5b650b81"
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+            "emailMessage/Subject": "@concat('[',outputs('Compose_Execution_Report_JSON')?['outcome']?['overallStatus'],'] ',outputs('Compose_Execution_Report_JSON')?['flow']?['displayName'],' | ',outputs('Compose_Execution_Report_JSON')?['run']?['runId'])",
+            "emailMessage/Body": "@outputs('Compose_Execution_Report_HTML')",
+            "emailMessage/Attachments": [
+              {
+                "Name": "@concat(replace(outputs('Compose_Execution_Report_JSON')?['flow']?['displayName'],' ','_'),'_',outputs('Compose_Execution_Report_JSON')?['run']?['runId'],'_ExecutionReport.json')",
+                "ContentBytes": "@base64(string(outputs('Compose_Execution_Report_JSON')))"
+              }
+            ],
+            "emailMessage/Importance": "@if(equals(outputs('Compose_Execution_Report_JSON')?['outcome']?['overallStatus'],'Succeeded'),'Normal','High')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connectionName": "shared_office365-1",
+            "operationId": "SendEmailV2"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Compose": {
+        "runAfter": {
+          "Scope_08_GOV_Discover_and_Register_HTTP_Consumers_COMPLETE_UPDATED": [
+            "Succeeded"
+          ]
+        },
+        "type": "Compose",
+        "inputs": {
+          "nodeId": "Scope_08_GOV_Discover_and_Register_HTTP_Consumers_COMPLETE_UPDATED",
+          "serializedValue": {
+            "type": "Scope",
+            "actions": {
+              "Scope_Main": {
+                "type": "Scope",
+                "actions": {
+                  "Get_Recent_Executions": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowExecutionLedger'')/items?$select=RegistryKey,CallerSystem,CorrelationId,CompletedUtc&$filter=CompletedUtc ge datetime''',formatDateTime(addDays(utcNow(),-1),'yyyy-MM-ddTHH:mm:ssZ'),''' and CallerSystem ne null&$orderby=CompletedUtc asc&$top=5000')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      }
+                    },
+                    "metadata": {
+                      "operationMetadataId": "85b1c1c0-f84f-4fe5-891d-27570989e55d"
+                    }
+                  },
+                  "Discover_Consumers": {
+                    "type": "Foreach",
+                    "foreach": "@coalesce(body('Get_Recent_Executions')?['value'],json('[]'))",
+                    "runAfter": {
+                      "Get_Recent_Executions": [
+                        "Succeeded"
+                      ]
+                    },
+                    "runtimeConfiguration": {
+                      "concurrency": {
+                        "repetitions": 1
+                      }
+                    },
+                    "actions": {
+                      "If_Identifiable_Caller": {
+                        "type": "If",
+                        "expression": {
+                          "and": [
+                            {
+                              "greater": [
+                                "@length(trim(string(item()?['RegistryKey'])))",
+                                0
+                              ]
+                            },
+                            {
+                              "greater": [
+                                "@length(trim(string(item()?['CallerSystem'])))",
+                                0
+                              ]
+                            },
+                            {
+                              "not": {
+                                "equals": [
+                                  "@toLower(trim(string(item()?['CallerSystem'])))",
+                                  "unknown"
+                                ]
+                              }
+                            },
+                            {
+                              "lessOrEquals": [
+                                "@length(trim(string(item()?['CallerSystem'])))",
+                                255
+                              ]
+                            },
+                            {
+                              "equals": [
+                                "@contains(trim(string(item()?['CallerSystem'])),'|')",
+                                false
+                              ]
+                            }
+                          ]
+                        },
+                        "actions": {
+                          "Compose_Discovered_Key": {
+                            "type": "Compose",
+                            "inputs": "@concat(trim(string(item()?['RegistryKey'])),'|',trim(string(item()?['CallerSystem'])))",
+                            "metadata": {
+                              "operationMetadataId": "86ccc9b7-f995-4a5c-aae1-6b030d2d86e1"
+                            },
+                            "runAfter": {}
+                          },
+                          "Find_Active_Registry": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                "parameters/method": "GET",
+                                "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,LifecycleStatus,AuthenticationMode&$filter=RegistryKey eq ''',replace(trim(string(item()?['RegistryKey'])),'''',''''''),''' and LifecycleStatus eq ''Active''&$top=1')",
+                                "parameters/headers": {
+                                  "Accept": "application/json;odata=nometadata"
+                                }
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                "connection": "shared_sharepointonline-1",
+                                "operationId": "HttpRequest"
+                              }
+                            },
+                            "metadata": {
+                              "operationMetadataId": "8b20bd65-c764-4580-a677-c1dd657b231b"
+                            },
+                            "runAfter": {
+                              "Compose_Discovered_Key": [
+                                "Succeeded"
+                              ]
+                            }
+                          },
+                          "If_Active_Registry_Found": {
+                            "type": "If",
+                            "expression": {
+                              "greater": [
+                                "@length(coalesce(body('Find_Active_Registry')?['value'],json('[]')))",
+                                0
+                              ]
+                            },
+                            "runAfter": {
+                              "Find_Active_Registry": [
+                                "Succeeded"
+                              ]
+                            },
+                            "actions": {
+                              "Find_Discovered_Consumer": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                    "parameters/method": "GET",
+                                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items?$select=Id,IsApproved,ApprovedUtc,LifecycleStatus,LastObservedUtc&$filter=ConsumerKey eq ''',replace(outputs('Compose_Discovered_Key'),'''',''''''),'''&$top=1')",
+                                    "parameters/headers": {
+                                      "Accept": "application/json;odata=nometadata"
+                                    }
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                    "connection": "shared_sharepointonline-1",
+                                    "operationId": "HttpRequest"
+                                  }
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "d9f61320-2a55-4ed5-a33d-752cc13b6c8d"
+                                },
+                                "runAfter": {}
+                              },
+                              "Upsert_Discovered_Consumer": {
+                                "type": "If",
+                                "expression": {
+                                  "greater": [
+                                    "@length(coalesce(body('Find_Discovered_Consumer')?['value'],json('[]')))",
+                                    0
+                                  ]
+                                },
+                                "runAfter": {
+                                  "Find_Discovered_Consumer": [
+                                    "Succeeded"
+                                  ]
+                                },
+                                "actions": {
+                                  "Update_Discovered_Consumer": {
+                                    "type": "OpenApiConnection",
+                                    "inputs": {
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                        "parameters/method": "POST",
+                                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items(',string(first(body('Find_Discovered_Consumer')?['value'])?['Id']),')')",
+                                        "parameters/headers": {
+                                          "Accept": "application/json;odata=nometadata",
+                                          "Content-Type": "application/json;odata=nometadata",
+                                          "IF-MATCH": "*",
+                                          "X-HTTP-Method": "MERGE"
+                                        },
+                                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',trim(string(item()?['CallerSystem']))),'ConsumerKey',outputs('Compose_Discovered_Key')),'RegistryKey',trim(string(item()?['RegistryKey']))),'ConsumerName',trim(string(item()?['CallerSystem']))),'ConsumerType','DiscoveredCaller'),'ConsumerIdentifier',trim(string(item()?['CallerSystem']))),'OwnerEmail','dgsRegistry@nitda.gov.ng'),'ExpectedAuthentication',coalesce(first(body('Find_Active_Registry')?['value'])?['AuthenticationMode'],'Unknown')),'LastObservedUtc',coalesce(item()?['CompletedUtc'],utcNow())),'LifecycleStatus','Active'),'IsApproved',coalesce(first(body('Find_Discovered_Consumer')?['value'])?['IsApproved'],false)),'ApprovedUtc',if(equals(coalesce(first(body('Find_Discovered_Consumer')?['value'])?['IsApproved'],false),true),first(body('Find_Discovered_Consumer')?['value'])?['ApprovedUtc'],null))"
+                                      },
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "connection": "shared_sharepointonline-1",
+                                        "operationId": "HttpRequest"
+                                      }
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "0ec18363-500e-4e3b-9444-6b12434fa3d1"
+                                    }
+                                  }
+                                },
+                                "else": {
+                                  "actions": {
+                                    "Create_Discovered_Consumer": {
+                                      "type": "OpenApiConnection",
+                                      "inputs": {
+                                        "parameters": {
+                                          "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                          "parameters/method": "POST",
+                                          "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowConsumerRegistry')/items",
+                                          "parameters/headers": {
+                                            "Accept": "application/json;odata=nometadata",
+                                            "Content-Type": "application/json;odata=nometadata"
+                                          },
+                                          "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',trim(string(item()?['CallerSystem']))),'ConsumerKey',outputs('Compose_Discovered_Key')),'RegistryKey',trim(string(item()?['RegistryKey']))),'ConsumerName',trim(string(item()?['CallerSystem']))),'ConsumerType','DiscoveredCaller'),'ConsumerIdentifier',trim(string(item()?['CallerSystem']))),'OwnerEmail','dgsRegistry@nitda.gov.ng'),'ExpectedAuthentication',coalesce(first(body('Find_Active_Registry')?['value'])?['AuthenticationMode'],'Unknown')),'LastObservedUtc',coalesce(item()?['CompletedUtc'],utcNow())),'LifecycleStatus','Active'),'IsApproved',false),'ApprovedUtc',null)"
+                                        },
+                                        "host": {
+                                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                          "connection": "shared_sharepointonline-1",
+                                          "operationId": "HttpRequest"
+                                        }
+                                      },
+                                      "metadata": {
+                                        "operationMetadataId": "e6b1a2fb-3be5-43a1-a103-cfbbce440f85"
+                                      }
+                                    }
+                                  }
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "577f33c9-c125-4c1b-a7b8-c754dce1697f"
+                                }
+                              }
+                            },
+                            "else": {
+                              "actions": {
+                                "Skip_Inactive_Registry": {
+                                  "type": "Compose",
+                                  "inputs": {
+                                    "status": "Skipped",
+                                    "reason": "RegistryMissingOrInactive",
+                                    "registryKey": "@item()?['RegistryKey']"
+                                  },
+                                  "metadata": {
+                                    "operationMetadataId": "181085b5-a21c-47ee-afcd-cebf56f2c294"
+                                  }
+                                }
+                              }
+                            },
+                            "metadata": {
+                              "operationMetadataId": "c971f18a-5794-4dfa-9a33-32ede5f40246"
+                            }
+                          }
+                        },
+                        "else": {
+                          "actions": {
+                            "Skip_Unidentifiable_Caller": {
+                              "type": "Compose",
+                              "inputs": {
+                                "status": "Skipped",
+                                "reason": "CallerSystemMissingUnknownInvalidOrTooLong",
+                                "registryKey": "@item()?['RegistryKey']",
+                                "completedUtc": "@item()?['CompletedUtc']"
+                              },
+                              "metadata": {
+                                "operationMetadataId": "a2bd248f-657a-42fa-bfd3-4f6246070c36"
+                              }
+                            }
+                          }
+                        },
+                        "metadata": {
+                          "operationMetadataId": "9c39b02c-bd22-4bef-b915-134338f4250a"
+                        }
+                      }
+                    }
+                  }
+                },
+                "metadata": {
+                  "operationMetadataId": "f50a9eb8-a940-4f47-a836-a995ffd9d4e2"
+                }
+              },
+              "Compose_Final_Report_JSON": {
+                "type": "Compose",
+                "inputs": {
+                  "reportType": "DGO Power Automate Execution Report",
+                  "schemaVersion": "5.0.0",
+                  "flow": "08 - GOV - Discover and Register HTTP Consumers",
+                  "flowId": "@workflow()?['name']",
+                  "runId": "@workflow()?['run']?['name']",
+                  "environmentId": "@workflow()?['tags']?['environmentName']",
+                  "generatedAtUtc": "@utcNow()",
+                  "status": "@if(contains(string(result('Scope_Main')),'Failed'),'Failed',if(contains(string(result('Scope_Main')),'TimedOut'),'TimedOut','Succeeded'))",
+                  "details": {
+                    "discoveryWindowHours": 24,
+                    "executionRowsRetrieved": "@if(empty(body('Get_Recent_Executions')?['value']),0,length(body('Get_Recent_Executions')?['value']))",
+                    "maximumRowsPerRun": 5000,
+                    "consumerType": "DiscoveredCaller",
+                    "defaultOwnerEmail": "dgsRegistry@nitda.gov.ng",
+                    "approvalPolicy": "Discovery never grants approval",
+                    "registryPolicy": "Consumers are registered only for active registry records"
+                  },
+                  "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+                },
+                "metadata": {
+                  "operationMetadataId": "5048ea42-8f5f-47a3-82ed-fc348ec8df5a"
+                },
+                "runAfter": {
+                  "Scope_Main": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                }
+              },
+              "Compose_Final_Report_HTML": {
+                "type": "Compose",
+                "inputs": "@concat('<html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px\"><div style=\"max-width:900px;margin:auto;background:white;border-radius:12px;overflow:hidden\"><div style=\"background:#004578;color:white;padding:24px\"><h1>',outputs('Compose_Final_Report_JSON')?['flow'],'</h1></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Run ID:</b> ',outputs('Compose_Final_Report_JSON')?['runId'],'</p><pre style=\"white-space:pre-wrap;background:#f8fafc;padding:12px\">',string(outputs('Compose_Final_Report_JSON')?['details']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['runUrl'],'\">Open run</a></p></div></div></body></html>')",
+                "metadata": {
+                  "operationMetadataId": "c264565b-b356-4725-9f9e-3702834b618f"
+                },
+                "runAfter": {
+                  "Compose_Final_Report_JSON": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Send_Final_Report_Email": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                    "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] ',outputs('Compose_Final_Report_JSON')?['flow'],' | ',outputs('Compose_Final_Report_JSON')?['runId'])",
+                    "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                    "emailMessage/Attachments": [
+                      {
+                        "Name": "@concat(replace(workflow()?['name'],' ','_'),'_',workflow()?['run']?['name'],'_Report.json')",
+                        "ContentBytes": "@base64(string(outputs('Compose_Final_Report_JSON')))"
+                      }
+                    ],
+                    "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                    "connection": "shared_office365-1",
+                    "operationId": "SendEmailV2"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Final_Report_HTML": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "f345b57e-125d-41a0-b705-e7685309f26e"
+                }
+              },
+              "If_Discovery_Failed": {
+                "type": "If",
+                "expression": {
+                  "not": {
+                    "equals": [
+                      "@outputs('Compose_Final_Report_JSON')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "runAfter": {
+                  "Send_Final_Report_Email": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "actions": {
+                  "Terminate_Discovery_Failed": {
+                    "type": "Terminate",
+                    "inputs": {
+                      "runStatus": "Failed",
+                      "runError": {
+                        "code": "DGOConsumerDiscoveryFailed",
+                        "message": "@concat('HTTP consumer discovery ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')"
+                      }
+                    },
+                    "metadata": {
+                      "operationMetadataId": "7be97213-21db-4502-b5f9-923e5d08edd8"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_Discovery_Succeeded": {
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Succeeded"
+                      },
+                      "metadata": {
+                        "operationMetadataId": "c1d222f1-eaa5-4780-bea5-c01d3b1b45be"
+                      }
+                    }
+                  }
+                },
+                "metadata": {
+                  "operationMetadataId": "b3e65e67-9327-47f8-9e0f-bd8343f6b857"
+                }
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "82141871-fd17-48bd-8ff1-2dbff3b94306"
+            }
+          },
+          "allConnectionData": {
+            "Get_Recent_Executions": {
+              "connectionReference": {
+                "api": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "connection": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+                },
+                "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+              },
+              "referenceKey": "shared_sharepointonline-1"
+            },
+            "Find_Discovered_Consumer": {
+              "connectionReference": {
+                "api": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "connection": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+                },
+                "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+              },
+              "referenceKey": "shared_sharepointonline-1"
+            },
+            "Update_Discovered_Consumer": {
+              "connectionReference": {
+                "api": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "connection": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+                },
+                "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+              },
+              "referenceKey": "shared_sharepointonline-1"
+            },
+            "Create_Discovered_Consumer": {
+              "connectionReference": {
+                "api": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "connection": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+                },
+                "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+              },
+              "referenceKey": "shared_sharepointonline-1"
+            },
+            "Send_Final_Report_Email": {
+              "connectionReference": {
+                "api": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                },
+                "connection": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+                },
+                "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+              },
+              "referenceKey": "shared_office365-1"
+            },
+            "Find_Active_Registry": {
+              "connectionReference": {
+                "api": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "connection": {
+                  "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+                },
+                "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+              },
+              "referenceKey": "shared_sharepointonline-1"
+            }
+          },
+          "staticResults": {},
+          "isScopeNode": true,
+          "mslaNode": true
+        }
+      },
+      "Scope_08_GOV_Discover_and_Register_HTTP_Consumers_COMPLETE_UPDATED": {
+        "actions": {
+          "Scope_Main": {
+            "actions": {
+              "Get_Recent_Executions": {
+                "metadata": {
+                  "operationMetadataId": "85b1c1c0-f84f-4fe5-891d-27570989e55d"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowExecutionLedger'')/items?$select=RegistryKey,CallerSystem,CorrelationId,CompletedUtc&$filter=CompletedUtc ge datetime''',formatDateTime(addDays(utcNow(),-1),'yyyy-MM-ddTHH:mm:ssZ'),''' and CallerSystem ne null&$orderby=CompletedUtc asc&$top=5000')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Discover_Consumers": {
+                "foreach": "@coalesce(body('Get_Recent_Executions')?['value'],json('[]'))",
+                "actions": {
+                  "If_Identifiable_Caller": {
+                    "actions": {
+                      "Compose_Discovered_Key": {
+                        "metadata": {
+                          "operationMetadataId": "86ccc9b7-f995-4a5c-aae1-6b030d2d86e1"
+                        },
+                        "type": "Compose",
+                        "inputs": "@concat(trim(string(item()?['RegistryKey'])),'|',trim(string(item()?['CallerSystem'])))"
+                      },
+                      "Find_Active_Registry": {
+                        "runAfter": {
+                          "Compose_Discovered_Key": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "8b20bd65-c764-4580-a677-c1dd657b231b"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "GET",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,LifecycleStatus,AuthenticationMode&$filter=RegistryKey eq ''',replace(trim(string(item()?['RegistryKey'])),'''',''''''),''' and LifecycleStatus eq ''Active''&$top=1')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata"
+                            }
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "If_Active_Registry_Found": {
+                        "actions": {
+                          "Find_Discovered_Consumer": {
+                            "metadata": {
+                              "operationMetadataId": "d9f61320-2a55-4ed5-a33d-752cc13b6c8d"
+                            },
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                "parameters/method": "GET",
+                                "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items?$select=Id,IsApproved,ApprovedUtc,LifecycleStatus,LastObservedUtc&$filter=ConsumerKey eq ''',replace(outputs('Compose_Discovered_Key'),'''',''''''),'''&$top=1')",
+                                "parameters/headers": {
+                                  "Accept": "application/json;odata=nometadata"
+                                }
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                "connectionName": "shared_sharepointonline-1",
+                                "operationId": "HttpRequest"
+                              },
+                              "authentication": "@parameters('$authentication')"
+                            }
+                          },
+                          "Upsert_Discovered_Consumer": {
+                            "actions": {
+                              "Update_Discovered_Consumer": {
+                                "metadata": {
+                                  "operationMetadataId": "0ec18363-500e-4e3b-9444-6b12434fa3d1"
+                                },
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                    "parameters/method": "POST",
+                                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items(',string(first(body('Find_Discovered_Consumer')?['value'])?['Id']),')')",
+                                    "parameters/headers": {
+                                      "Accept": "application/json;odata=nometadata",
+                                      "Content-Type": "application/json;odata=nometadata",
+                                      "IF-MATCH": "*",
+                                      "X-HTTP-Method": "MERGE"
+                                    },
+                                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',trim(string(item()?['CallerSystem']))),'ConsumerKey',outputs('Compose_Discovered_Key')),'RegistryKey',trim(string(item()?['RegistryKey']))),'ConsumerName',trim(string(item()?['CallerSystem']))),'ConsumerType','DiscoveredCaller'),'ConsumerIdentifier',trim(string(item()?['CallerSystem']))),'OwnerEmail','dgsRegistry@nitda.gov.ng'),'ExpectedAuthentication',coalesce(first(body('Find_Active_Registry')?['value'])?['AuthenticationMode'],'Unknown')),'LastObservedUtc',coalesce(item()?['CompletedUtc'],utcNow())),'LifecycleStatus','Active'),'IsApproved',coalesce(first(body('Find_Discovered_Consumer')?['value'])?['IsApproved'],false)),'ApprovedUtc',if(equals(coalesce(first(body('Find_Discovered_Consumer')?['value'])?['IsApproved'],false),true),first(body('Find_Discovered_Consumer')?['value'])?['ApprovedUtc'],null))"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                    "connectionName": "shared_sharepointonline-1",
+                                    "operationId": "HttpRequest"
+                                  },
+                                  "authentication": "@parameters('$authentication')"
+                                }
+                              }
+                            },
+                            "runAfter": {
+                              "Find_Discovered_Consumer": [
+                                "Succeeded"
+                              ]
+                            },
+                            "else": {
+                              "actions": {
+                                "Create_Discovered_Consumer": {
+                                  "metadata": {
+                                    "operationMetadataId": "e6b1a2fb-3be5-43a1-a103-cfbbce440f85"
+                                  },
+                                  "type": "OpenApiConnection",
+                                  "inputs": {
+                                    "parameters": {
+                                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                      "parameters/method": "POST",
+                                      "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowConsumerRegistry')/items",
+                                      "parameters/headers": {
+                                        "Accept": "application/json;odata=nometadata",
+                                        "Content-Type": "application/json;odata=nometadata"
+                                      },
+                                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',trim(string(item()?['CallerSystem']))),'ConsumerKey',outputs('Compose_Discovered_Key')),'RegistryKey',trim(string(item()?['RegistryKey']))),'ConsumerName',trim(string(item()?['CallerSystem']))),'ConsumerType','DiscoveredCaller'),'ConsumerIdentifier',trim(string(item()?['CallerSystem']))),'OwnerEmail','dgsRegistry@nitda.gov.ng'),'ExpectedAuthentication',coalesce(first(body('Find_Active_Registry')?['value'])?['AuthenticationMode'],'Unknown')),'LastObservedUtc',coalesce(item()?['CompletedUtc'],utcNow())),'LifecycleStatus','Active'),'IsApproved',false),'ApprovedUtc',null)"
+                                    },
+                                    "host": {
+                                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                      "connectionName": "shared_sharepointonline-1",
+                                      "operationId": "HttpRequest"
+                                    },
+                                    "authentication": "@parameters('$authentication')"
+                                  }
+                                }
+                              }
+                            },
+                            "expression": {
+                              "and": [
+                                {
+                                  "greater": [
+                                    "@length(coalesce(body('Find_Discovered_Consumer')?['value'],json('[]')))",
+                                    0
+                                  ]
+                                }
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "577f33c9-c125-4c1b-a7b8-c754dce1697f"
+                            },
+                            "type": "If"
+                          }
+                        },
+                        "runAfter": {
+                          "Find_Active_Registry": [
+                            "Succeeded"
+                          ]
+                        },
+                        "else": {
+                          "actions": {
+                            "Skip_Inactive_Registry": {
+                              "metadata": {
+                                "operationMetadataId": "181085b5-a21c-47ee-afcd-cebf56f2c294"
+                              },
+                              "type": "Compose",
+                              "inputs": {
+                                "status": "Skipped",
+                                "reason": "RegistryMissingOrInactive",
+                                "registryKey": "@item()?['RegistryKey']"
+                              }
+                            }
+                          }
+                        },
+                        "expression": {
+                          "and": [
+                            {
+                              "greater": [
+                                "@length(coalesce(body('Find_Active_Registry')?['value'],json('[]')))",
+                                0
+                              ]
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c971f18a-5794-4dfa-9a33-32ede5f40246"
+                        },
+                        "type": "If"
+                      }
+                    },
+                    "else": {
+                      "actions": {
+                        "Skip_Unidentifiable_Caller": {
+                          "metadata": {
+                            "operationMetadataId": "a2bd248f-657a-42fa-bfd3-4f6246070c36"
+                          },
+                          "type": "Compose",
+                          "inputs": {
+                            "status": "Skipped",
+                            "reason": "CallerSystemMissingUnknownInvalidOrTooLong",
+                            "registryKey": "@item()?['RegistryKey']",
+                            "completedUtc": "@item()?['CompletedUtc']"
+                          }
+                        }
+                      }
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "greater": [
+                            "@length(trim(string(item()?['RegistryKey'])))",
+                            0
+                          ]
+                        },
+                        {
+                          "greater": [
+                            "@length(trim(string(item()?['CallerSystem'])))",
+                            0
+                          ]
+                        },
+                        {
+                          "not": {
+                            "equals": [
+                              "@toLower(trim(string(item()?['CallerSystem'])))",
+                              "unknown"
+                            ]
+                          }
+                        },
+                        {
+                          "lessOrEquals": [
+                            "@length(trim(string(item()?['CallerSystem'])))",
+                            255
+                          ]
+                        },
+                        {
+                          "equals": [
+                            "@contains(trim(string(item()?['CallerSystem'])),'|')",
+                            false
+                          ]
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "9c39b02c-bd22-4bef-b915-134338f4250a"
+                    },
+                    "type": "If"
+                  }
+                },
+                "runAfter": {
+                  "Get_Recent_Executions": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Foreach",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "f50a9eb8-a940-4f47-a836-a995ffd9d4e2"
+            },
+            "type": "Scope"
+          },
+          "Compose_Final_Report_JSON": {
+            "runAfter": {
+              "Scope_Main": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "5048ea42-8f5f-47a3-82ed-fc348ec8df5a"
+            },
+            "type": "Compose",
+            "inputs": {
+              "reportType": "DGO Power Automate Execution Report",
+              "schemaVersion": "5.0.0",
+              "flow": "08 - GOV - Discover and Register HTTP Consumers",
+              "flowId": "@workflow()?['name']",
+              "runId": "@workflow()?['run']?['name']",
+              "environmentId": "@workflow()?['tags']?['environmentName']",
+              "generatedAtUtc": "@utcNow()",
+              "status": "@if(contains(string(result('Scope_Main')),'Failed'),'Failed',if(contains(string(result('Scope_Main')),'TimedOut'),'TimedOut','Succeeded'))",
+              "details": {
+                "discoveryWindowHours": 24,
+                "executionRowsRetrieved": "@if(empty(body('Get_Recent_Executions')?['value']),0,length(body('Get_Recent_Executions')?['value']))",
+                "maximumRowsPerRun": 5000,
+                "consumerType": "DiscoveredCaller",
+                "defaultOwnerEmail": "dgsRegistry@nitda.gov.ng",
+                "approvalPolicy": "Discovery never grants approval",
+                "registryPolicy": "Consumers are registered only for active registry records"
+              },
+              "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+            }
+          },
+          "Compose_Final_Report_HTML": {
+            "runAfter": {
+              "Compose_Final_Report_JSON": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "c264565b-b356-4725-9f9e-3702834b618f"
+            },
+            "type": "Compose",
+            "inputs": "@concat('<html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px\"><div style=\"max-width:900px;margin:auto;background:white;border-radius:12px;overflow:hidden\"><div style=\"background:#004578;color:white;padding:24px\"><h1>',outputs('Compose_Final_Report_JSON')?['flow'],'</h1></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Run ID:</b> ',outputs('Compose_Final_Report_JSON')?['runId'],'</p><pre style=\"white-space:pre-wrap;background:#f8fafc;padding:12px\">',string(outputs('Compose_Final_Report_JSON')?['details']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['runUrl'],'\">Open run</a></p></div></div></body></html>')"
+          },
+          "Send_Final_Report_Email": {
+            "runAfter": {
+              "Compose_Final_Report_HTML": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "f345b57e-125d-41a0-b705-e7685309f26e"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] ',outputs('Compose_Final_Report_JSON')?['flow'],' | ',outputs('Compose_Final_Report_JSON')?['runId'])",
+                "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@concat(replace(workflow()?['name'],' ','_'),'_',workflow()?['run']?['name'],'_Report.json')",
+                    "ContentBytes": "@string(outputs('Compose_Final_Report_JSON'))"
+                  }
+                ],
+                "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "If_Discovery_Failed": {
+            "actions": {
+              "Terminate_Discovery_Failed": {
+                "metadata": {
+                  "operationMetadataId": "7be97213-21db-4502-b5f9-923e5d08edd8"
+                },
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Failed",
+                  "runError": {
+                    "code": "DGOConsumerDiscoveryFailed",
+                    "message": "@concat('HTTP consumer discovery ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Terminate_Discovery_Succeeded": {
+                  "metadata": {
+                    "operationMetadataId": "c1d222f1-eaa5-4780-bea5-c01d3b1b45be"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Compose_Final_Report_JSON')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b3e65e67-9327-47f8-9e0f-bd8343f6b857"
+            },
+            "type": "If"
+          },
+          "Create_Send_Final_Report_Email_Receipt": {
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PostItem"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "item/Title": "@concat('final-report:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                "item/MessageType": "final-report",
+                "item/RecipientEmail": "dgsRegistry@nitda.gov.ng",
+                "item/Reference": "@string(workflow()?['run']?['name'])",
+                "item/SentAtUtc": "@utcNow()",
+                "item/Status": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'sent','failed')",
+                "item/Attempts": 1,
+                "item/LastError": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Compose_Send_Final_Report_Email_Outcome": {
+            "runAfter": {
+              "Create_Send_Final_Report_Email_Receipt": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "type": "Compose",
+            "inputs": "@int(if(or(equals(actions('Send_Final_Report_Email')?['status'],'Failed'),equals(actions('Send_Final_Report_Email')?['status'],'TimedOut')),'send-failed','0'))"
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "82141871-fd17-48bd-8ff1-2dbff3b94306"
+        },
+        "type": "Scope"
+      },
+      "Create_Send_Execution_Report_Email_Receipt": {
+        "runAfter": {
+          "Send_Execution_Report_Email": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "PostItem"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+            "item/Title": "@concat('execution-report:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+            "item/MessageType": "execution-report",
+            "item/RecipientEmail": "dgsRegistry@nitda.gov.ng",
+            "item/Reference": "@string(workflow()?['run']?['name'])",
+            "item/SentAtUtc": "@utcNow()",
+            "item/Status": "@if(equals(actions('Send_Execution_Report_Email')?['status'],'Succeeded'),'sent','failed')",
+            "item/Attempts": 1,
+            "item/LastError": "@if(equals(actions('Send_Execution_Report_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Execution_Report_Email')?['error']?['message'],actions('Send_Execution_Report_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Execution_Report_Email')?['error']?['message'],actions('Send_Execution_Report_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Compose_Send_Execution_Report_Email_Outcome": {
+        "runAfter": {
+          "Create_Send_Execution_Report_Email_Receipt": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "type": "Compose",
+        "inputs": "@int(if(or(equals(actions('Send_Execution_Report_Email')?['status'],'Failed'),equals(actions('Send_Execution_Report_Email')?['status'],'TimedOut')),'send-failed','0'))"
+      }
+    },
+    "outputs": {}
+  }
+}

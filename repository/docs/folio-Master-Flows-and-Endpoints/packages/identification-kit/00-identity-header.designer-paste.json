@@ -1,0 +1,89 @@
+{
+  "nodeId": "Scope_Identity_Header",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Get_Dataset_Bindings": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getbytitle('Flow%20Configuration')/items?$select=Title,ConfigValue&$top=500&$filter=Title%20eq%20'ENVIRONMENT_CODE'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_SITE_URL'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_LIST_ID'%20or%20Title%20eq%20'DATASET_ATTACHMENTS_SITE_URL'%20or%20Title%20eq%20'DATASET_ATTACHMENTS_LIST_ID'%20or%20Title%20eq%20'DATASET_SCAN_LIBRARY_SITE_URL'%20or%20Title%20eq%20'DATASET_SCAN_LIBRARY_LIST_ID'%20or%20Title%20eq%20'DATASET_STATUS_TIMELINE_SITE_URL'%20or%20Title%20eq%20'DATASET_STATUS_TIMELINE_LIST_ID'%20or%20Title%20eq%20'DATASET_SUPPORT_CASES_SITE_URL'%20or%20Title%20eq%20'DATASET_SUPPORT_CASES_LIST_ID'%20or%20Title%20eq%20'DATASET_SEQUENCE_COUNTERS_SITE_URL'%20or%20Title%20eq%20'DATASET_SEQUENCE_COUNTERS_LIST_ID'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_SITE_URL'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_LIST_ID'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_MIRROR_SITE_URL'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_MIRROR_LIST_ID'%20or%20Title%20eq%20'DATASET_OPS_WORKING_REGISTER_SITE_URL'%20or%20Title%20eq%20'DATASET_OPS_WORKING_REGISTER_LIST_ID'%20or%20Title%20eq%20'DATASET_MINUTES_SITE_URL'%20or%20Title%20eq%20'DATASET_MINUTES_LIST_ID'%20or%20Title%20eq%20'DATASET_AI_TEXT_LOG_SITE_URL'%20or%20Title%20eq%20'DATASET_AI_TEXT_LOG_LIST_ID'%20or%20Title%20eq%20'DATASET_AUDIT_LOG_SITE_URL'%20or%20Title%20eq%20'DATASET_AUDIT_LOG_LIST_ID'%20or%20Title%20eq%20'DATASET_USER_DIRECTORY_SITE_URL'%20or%20Title%20eq%20'DATASET_USER_DIRECTORY_LIST_ID'%20or%20Title%20eq%20'DATASET_ORG_DIRECTORY_SITE_URL'%20or%20Title%20eq%20'DATASET_ORG_DIRECTORY_LIST_ID'%20or%20Title%20eq%20'DATASET_RECORD_LINKS_SITE_URL'%20or%20Title%20eq%20'DATASET_RECORD_LINKS_LIST_ID'%20or%20Title%20eq%20'DATASET_IDENTITY_MAP_SITE_URL'%20or%20Title%20eq%20'DATASET_IDENTITY_MAP_LIST_ID'%20or%20Title%20eq%20'DATASET_BRIEFS_SITE_URL'%20or%20Title%20eq%20'DATASET_BRIEFS_LIST_ID'%20or%20Title%20eq%20'DATASET_MEETINGS_SITE_URL'%20or%20Title%20eq%20'DATASET_MEETINGS_LIST_ID'%20or%20Title%20eq%20'DATASET_PROJECTS_SITE_URL'%20or%20Title%20eq%20'DATASET_PROJECTS_LIST_ID'%20or%20Title%20eq%20'DATASET_APPROVALS_SITE_URL'%20or%20Title%20eq%20'DATASET_APPROVALS_LIST_ID'%20or%20Title%20eq%20'DATASET_REGISTRY_FILES_SITE_URL'%20or%20Title%20eq%20'DATASET_REGISTRY_FILES_LIST_ID'%20or%20Title%20eq%20'DATASET_FILE_MOVEMENTS_SITE_URL'%20or%20Title%20eq%20'DATASET_FILE_MOVEMENTS_LIST_ID'",
+            "parameters/headers": {
+              "Accept": "application/json;odata=minimalmetadata"
+            }
+          }
+        },
+        "runAfter": {}
+      },
+      "Select_Dataset_Bindings": {
+        "type": "Select",
+        "inputs": {
+          "from": "@coalesce(body('Get_Dataset_Bindings')?['value'], json('[]'))",
+          "select": "@concat('\"', trim(string(item()?['Title'])), '\":\"', replace(trim(string(coalesce(item()?['ConfigValue'], ''))), '\"', ''), '\"')"
+        },
+        "runAfter": {
+          "Get_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Dataset_Bindings": {
+        "type": "Compose",
+        "inputs": "@json(concat('{', join(body('Select_Dataset_Bindings'), ','), '}'))",
+        "runAfter": {
+          "Select_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Environment_Prefix": {
+        "type": "Compose",
+        "inputs": "@if(equals(toLower(string(coalesce(outputs('Compose_Dataset_Bindings')?['ENVIRONMENT_CODE'], ''))), 'prd'), '', 'Z')",
+        "runAfter": {
+          "Compose_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Request_Context": {
+        "type": "Compose",
+        "inputs": {
+          "requestId": "@guid()",
+          "clientCorrelationId": "@substring(concat(replace(replace(trim(string(coalesce(triggerOutputs()?['headers']?['X-Correlation-ID'], triggerBody()?['requestId'], ''))), '<', ''), '>', ''), '                                                                '), 0, 64)",
+          "runName": "@workflow()?['run']?['name']",
+          "receivedAtUtc": "@utcNow()"
+        },
+        "runAfter": {
+          "Compose_Environment_Prefix": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Dataset_Bindings": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

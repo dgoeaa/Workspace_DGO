@@ -1,0 +1,265 @@
+{
+  "schema": "dgo-outstanding-sources/v1",
+  "purpose": "Every place this estate records work that is not finished, declared in one file so that npm run outstanding can total them. Until 2026-09-14 there were five such places and no command that knew about more than two: npm run readiness counted 48 items, npm run commission counted those plus the governance findings, and the other three were counted by nothing. A question as ordinary as 'how much is left' had no answer, and each source read as if it were the whole picture.",
+  "whyFederatedRatherThanMerged": "Merging them was the obvious move and it is the wrong one. The governance findings gate no pilot key, so folding them into a register whose every other row does would misrepresent both. The two audits are records — this estate does not rewrite a record to make it a task list, for the same reason docs/audits/ is exempt from every claim gate. And the pending-work register belongs to a workstream with its own owner. What was missing was never one register; it was one TOTAL. A source may keep its own shape, its own lifecycle and its own owner, and still be counted. Revised 2026-10-02: the pending-work register and the 2026-09-09 notification assessment were folded into the readiness register after both proved to be a second and third place holding the same notification work, with no way to close an entry in either. See 'retired'.",
+  "howToAddOne": "Add an entry here. tests/outstanding-sources.test.mjs fails when a register-shaped document exists under docs/ and is not declared, so a new register cannot quietly become a sixth place nobody counts.",
+  "sources": [
+    {
+      "id": "readiness",
+      "title": "Production readiness register",
+      "path": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+      "reader": "json-items",
+      "itemsAt": "items",
+      "idField": "id",
+      "titleField": "title",
+      "statusField": "status",
+      "ownerField": "owner",
+      "closedStatuses": [
+        "RESOLVED",
+        "ACCEPTED",
+        "DISCHARGED_UNTRACKABLE"
+      ],
+      "authority": "The register of record for commissioning. PLAN.md and closure-disposition.json are generated from it; npm run test:closure holds every document and npm run commission itself to it. Until 2026-09-24 the generated set was ACTION_PLAN.md, EXECUTION_RUNBOOK.md and IMPLEMENTATION_WALKTHROUGH.md, which PLAN.md replaced.",
+      "gatedBy": [
+        "npm run test:readiness",
+        "npm run test:closure"
+      ]
+    },
+    {
+      "id": "governance",
+      "title": "Governance estate position",
+      "path": "docs/folio-Master-Flows-and-Endpoints/reference/governance-estate-position.json",
+      "reader": "json-open-closed",
+      "openAt": "openFindings",
+      "closedAt": "closedFindings",
+      "idField": "id",
+      "titleField": "title",
+      "ownerField": "owner",
+      "authority": "The ten SharePoint lists that carry identity, RBAC and audit. Kept separate because the endpoint commissioning path does not touch them today — but the seven internal designer-paste packages that will serve the pilot keys all read DGO_UserDirectory and DGO_RoleCatalogue, so that separation is a fact about the currently deployed flows, not a permanent property.",
+      "gatedBy": [
+        "npm run test:governanceestate",
+        "npm run test:closure"
+      ]
+    },
+    {
+      "id": "flow-truth-review",
+      "title": "Flow-truth persistence review",
+      "path": "docs/folio-Master-Flows-and-Endpoints/audits/FLOW_TRUTH_PERSISTENCE_REVIEW.md",
+      "reader": "markdown-headings",
+      "headingPattern": "^###\\s+([BSC]\\d+(?:\\s*[–—-]\\s*[BSC]?\\d+)?)\\s+·\\s+(.+)$",
+      "allOpen": true,
+      "allOpenBecause": "A record is not edited to agree with the present, so no finding is ever closed in place. Until 2026-09-15 that meant all 29 stayed counted open: the rebuilt DGO_FLOW_TRUTH_PERSISTENCE package answered most of them, but tests/flow-truth-persistence.test.mjs asserted no finding by id, so nothing established WHICH. Something does now — see supersededBy. The default is still open; a finding leaves it only when the declaration names the assertion that answers it.",
+      "supersededBy": {
+        "path": "docs/folio-Master-Flows-and-Endpoints/audits/flow-truth-coverage.json",
+        "itemsAt": "findings",
+        "idField": "id",
+        "closedWhen": "covered",
+        "viaField": "via",
+        "wouldCloseField": "whatWouldCoverIt",
+        "because": "The rebuilt package is held to this finding by a named assertion in tests/flow-truth-persistence.test.mjs, which fails if the defect returns.",
+        "note": "This supersedes the PACKAGE defect each finding raises. It resolves nothing in the tenant: B1's three lists still do not exist, and the assertion that covers B1 is precisely that the package says so rather than pretending otherwise. tests/flow-truth-coverage.test.mjs holds the declaration to both documents it spans — every finding in the review is declared, and every assertion cited exists in the suite."
+      },
+      "authority": "A record. Includes two security findings, S1 and S2, which is why leaving them uncounted mattered.",
+      "gatedBy": [
+        "npm run test:flowtruth"
+      ],
+      "note": "The pattern allows a range head — C11–C12 covers two findings under one heading, and counting it once would under-report by one."
+    },
+    {
+      "id": "governance-status",
+      "title": "Governance status",
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/governance/GOVERNANCE-STATUS.md",
+      "counted": false,
+      "notCountedBecause": "Generated from governance-estate-position.json, which IS counted. Counting it too would double every governance finding."
+    },
+    {
+      "id": "what-was-done",
+      "title": "Governance — what was done",
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/governance/WHAT-WAS-DONE.md",
+      "counted": false,
+      "notCountedBecause": "A narrative of the same position file. Counted there."
+    },
+    {
+      "id": "execution-agent-brief",
+      "title": "Governance execution agent brief",
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/governance/EXECUTION-AGENT-BRIEF.md",
+      "counted": false,
+      "notCountedBecause": "WP-0 to WP-39 are work packages that decompose the governance runbook's steps. The work is counted as GOV findings; the packages are how it is handed to an agent."
+    },
+    {
+      "id": "explicit_execution_specification",
+      "title": "Live operations console execution specification",
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/live-operations-console/EXPLICIT_EXECUTION_SPECIFICATION.md",
+      "counted": false,
+      "notCountedBecause": "OP-001 to OP-014 are the notification remediation workstream, and every one of them is already counted as a P-item or an F-item. Counting them here would report the same tenant work twice. The console the specification drives is NOT in this repository — its own SHA256_MANIFEST.json declares six files and index.html, which is the console, is absent.",
+      "carriedBy": "docs/folio-Master-Flows-and-Endpoints/deployment/live-operations-console/coverage.json — maps each of the fourteen operations to the register entry that counts it and the runbook section that carries its steps. Held by tests/live-operations-coverage.test.mjs."
+    },
+    {
+      "id": "capability_assessment_r11.6",
+      "title": "Capability assessment R11.6",
+      "path": "docs/audits/CAPABILITY_ASSESSMENT_R11.6.md",
+      "counted": false,
+      "notCountedBecause": "Seven of its nine gaps were fixed and verified in 2026-08; the two that remain open, G-03 and G-04, are carried by the readiness register — G-04 as an item, G-03 as the rotation ITEM-22 closed. Counting them again would double them."
+    },
+    {
+      "id": "design_audit_brief_assessment",
+      "title": "Design audit brief assessment",
+      "path": "docs/audits/DESIGN_AUDIT_BRIEF_ASSESSMENT.md",
+      "counted": false,
+      "notCountedBecause": "Its live remnant is ITEM-57 in the readiness register — the archived design system, unreconciled, a decision for the agency. Counted there."
+    },
+    {
+      "id": "endpoint-flow-requirements",
+      "title": "Endpoints and flows the platforms require, and what the branch provides",
+      "path": "docs/folio-Master-Flows-and-Endpoints/reference/ENDPOINT_FLOW_REQUIREMENTS.md",
+      "counted": false,
+      "notCountedBecause": "A register and report at commit 72f2deb of which endpoints and flows each platform calls and what the branch provides. Its RN- and ITEM- ids are rows of config/notification-matrix.config.js and the readiness register, where they are tracked. Its F- and A- rows are findings and proposed actions that no one has accepted, so they are not items of record. Counting it would count the RN and ITEM rows twice."
+    },
+    {
+      "id": "module-rationalisation",
+      "title": "Module rationalisation: overlap, duplication and defects in the internal platform, and their disposition",
+      "path": "docs/architecture/MODULE_RATIONALISATION.md",
+      "counted": false,
+      "notCountedBecause": "A review of 18 October 2026 whose findings F-1 to F-24 were all accepted by the owner and carried out on 20 October 2026; §12 records each disposition. None is open, and none is a readiness item: the register of record is unchanged by it (§9)."
+    },
+    {
+      "id": "ux-essentials",
+      "title": "Folio Workspace essentials: execution plan",
+      "path": "docs/architecture/ESSENTIALS_PLAN.json",
+      "reader": "json-items",
+      "itemsAt": "items",
+      "idField": "id",
+      "titleField": "title",
+      "statusField": "status",
+      "ownerField": "owner",
+      "closedStatuses": [
+        "DONE",
+        "DROPPED"
+      ],
+      "authority": "The execution and tracking record for reducing the Workspace to its essentials (owner request, 2026-10-21). It carries out ESSENTIALS_MAP.md and LAYOUT_REVIEW.md. It gates no commissioning key, so it is counted beside the readiness register rather than folded into it.",
+      "gatedBy": [
+        "npm run test:uxplan"
+      ]
+    },
+    {
+      "id": "ux-essentials-plan-document",
+      "title": "Folio Workspace essentials: execution plan (document)",
+      "path": "docs/architecture/ESSENTIALS_PLAN.md",
+      "counted": false,
+      "notCountedBecause": "Generated from ESSENTIALS_PLAN.json, which is counted. Counting it too would double every item."
+    },
+    {
+      "id": "essentials-map",
+      "title": "Folio Workspace: essentials map and decommissioning candidates",
+      "path": "docs/architecture/ESSENTIALS_MAP.md",
+      "counted": false,
+      "notCountedBecause": "A review of 21 October 2026. Its findings E-1 to E-11 and decisions D-1 to D-7 are carried as items of ESSENTIALS_PLAN.json, which is counted."
+    },
+    {
+      "id": "layout-review",
+      "title": "Folio Workspace: layout review of the space above the content",
+      "path": "docs/architecture/LAYOUT_REVIEW.md",
+      "counted": false,
+      "notCountedBecause": "A review of 21 October 2026. Its findings L-1 to L-10 are carried as items of ESSENTIALS_PLAN.json, which is counted."
+    }
+  ],
+  "whyUncountedSourcesAreStillDeclared": "A document can be register-shaped and still not be a place work hides — because it RESTATES a counted source, or because it is a record whose live findings have since been taken up elsewhere. Those are declared here with counted:false and the reason, rather than left out. Leaving them out would mean the declaration could not be checked against the repository, and a silent exemption list is how a sixth register eventually appears: somebody adds a file, the gate is quiet, and nobody ever decides. Declared-and-uncounted is a decision on the record. npm run outstanding prints them so the judgement can be disagreed with.",
+  "retiredSources": {
+    "rule": "A declared source whose document is deleted is removed from `sources` and recorded here, with the document it was and where its subject went. It is not repointed at a surviving document: two declarations naming one path are two claims that one document is two sources, and the totals would double-count it the moment either became countable.",
+    "retiredUtc": "2026-09-24",
+    "why": "The thirty-six deployment documents became six. Every entry below was declared as register-shaped and deliberately not counted, so removing it changes no total — it removes a declaration about a document that no longer exists.",
+    "entries": [
+      {
+        "id": "agent_commissioning_directive",
+        "was": "docs/deployment/AGENT_COMMISSIONING_DIRECTIVE.md",
+        "subjectNowIn": "docs/deployment/PLAN.md"
+      },
+      {
+        "id": "commissioning_agent_brief",
+        "was": "docs/deployment/COMMISSIONING_AGENT_BRIEF.md",
+        "subjectNowIn": "docs/deployment/PLAN.md"
+      },
+      {
+        "id": "operator_walkthrough",
+        "was": "docs/deployment/OPERATOR_WALKTHROUGH.md",
+        "subjectNowIn": "docs/deployment/RUNBOOK.md"
+      },
+      {
+        "id": "closed-register",
+        "was": "docs/deployment/CLOSED.md",
+        "subjectNowIn": "docs/deployment/PLAN.md"
+      },
+      {
+        "id": "master-register",
+        "was": "docs/deployment/MASTER_REGISTER.md",
+        "subjectNowIn": "docs/deployment/PLAN.md"
+      }
+    ]
+  },
+  "retired": [
+    {
+      "id": "pending-work",
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/notification-instrument/tenant-execution/PENDING_WORK_REGISTER.md",
+      "retired": "2026-10-02",
+      "foldedInto": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+      "mapping": {
+        "P-01": "ITEM-71",
+        "P-02": "ITEM-71",
+        "P-03": "ITEM-67",
+        "P-04": "ITEM-50",
+        "P-05": "ITEM-66",
+        "P-06": "ITEM-48, ITEM-51",
+        "P-07": "ITEM-51",
+        "P-08": "ITEM-25, ITEM-51",
+        "P-09": "ITEM-70",
+        "P-10": "ITEM-71",
+        "P-11": "ITEM-68",
+        "P-12": "ITEM-52",
+        "P-13": "ITEM-38 to ITEM-42",
+        "P-14": "ITEM-71",
+        "P-15": "ITEM-71",
+        "P-16": "ITEM-71",
+        "P-17": "ITEM-71"
+      }
+    },
+    {
+      "id": "notification-audit",
+      "path": "docs/audits/NOTIFICATION_ESTATE_FULL_SCOPE_ASSESSMENT_2026-09-09.md",
+      "retired": "2026-10-02",
+      "foldedInto": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+      "mapping": {
+        "F-01": "ITEM-66",
+        "F-02": "ITEM-67",
+        "F-03": "ITEM-68",
+        "F-04": "ITEM-25, ITEM-51",
+        "F-05": "ITEM-69",
+        "F-06": "ITEM-50",
+        "F-07": "ITEM-70",
+        "F-08": "ITEM-52",
+        "F-09": "ITEM-50",
+        "F-10": "ITEM-66"
+      }
+    },
+    {
+      "id": "branch_consolidation_audit_2026-09-05",
+      "path": "docs/audits/BRANCH_CONSOLIDATION_AUDIT_2026-09-05.md",
+      "retired": "2026-10-02",
+      "foldedInto": null,
+      "why": "Dated audit retired in the 2026-10-02 clean-up; it was declared but not counted. See docs/governance/RETIRED_RECORDS.md."
+    },
+    {
+      "id": "branch_merge_audit_2026-09-11",
+      "path": "docs/audits/BRANCH_MERGE_AUDIT_2026-09-11.md",
+      "retired": "2026-10-02",
+      "foldedInto": null,
+      "why": "Dated audit retired in the 2026-10-02 clean-up; it was declared but not counted. See docs/governance/RETIRED_RECORDS.md."
+    },
+    {
+      "id": "04-findings-recommendations",
+      "path": "docs/audits/repository-hygiene/04-findings-recommendations.md",
+      "retired": "2026-10-02",
+      "foldedInto": null,
+      "why": "Dated audit retired in the 2026-10-02 clean-up; it was declared but not counted. See docs/governance/RETIRED_RECORDS.md."
+    }
+  ]
+}

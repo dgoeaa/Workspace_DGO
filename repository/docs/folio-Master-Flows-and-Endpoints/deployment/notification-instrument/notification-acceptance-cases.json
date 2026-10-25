@@ -1,0 +1,423 @@
+{
+  "schema": "nitda-notification-acceptance/v1",
+  "cases": [
+    {
+      "requirementId": "RN-001",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-002",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-003",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-004",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-005",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-006",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-007",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-008",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-009",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-010",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-011",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-012",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-013",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-014",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-015",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-016",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-017",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-018",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-019",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-020",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-021",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-022",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-023",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-024",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-025",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-026",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-027",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-028",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-029",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-030",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-031",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-032",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-034",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-035",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-036",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-037",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-038",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    },
+    {
+      "requirementId": "RN-039",
+      "status": "NOT_EXECUTED",
+      "evidence": [
+        "flow run",
+        "masked recipient",
+        "sender identity",
+        "message trace",
+        "audit or receipt"
+      ]
+    }
+  ]
+}

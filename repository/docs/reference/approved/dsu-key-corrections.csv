@@ -1,0 +1,11 @@
+Kind,From,To,Adopted,Rationale
+dsuKey,HRA,HRM,2026-09-08,Human Resource Management is the only human-resources unit in the approved departments list; the Internships rows are HR business.
+dsuKey,PATODGCEO,PA,2026-09-08,Personal Assistant to the DGCEO is DSU_KEY PA in the approved departments list.
+dsuKey,PADGCEO,PA,2026-09-08,Same unit as PATODGCEO; both spellings denote the Personal Assistant to the DGCEO.
+dsuKey,ODG,DGO,2026-09-08,The DG's Office is DSU_KEY DGO in the approved departments list.
+dsuKey,PRS,CCMR,2026-09-08,Public relations is the Corporate Communications and Media Relations Department.
+subcategory,Education lal Institutions,Educational Institutions,2026-09-08,Transcription error in the approved matrix; identical category, subcategory code EDU and responsible unit. Corrects to one row.
+row,Unclassifieds|,DGO,2026-09-08,Agency direction: DGO is the responsible unit. Supporting and informed units left blank deliberately.
+row,Sponsorship And Collaborations|PROPOSALS,DGO,2026-09-08,Agency direction: DGO is the responsible unit. Supporting and informed units left blank deliberately, including the DGO that stood in INFORMDSU1.
+rowUnit,GOV TO GOV|StakeHolder Engagements,SDO,2026-09-26,"Memo NITDA/HQ/NB/105 of 11 Sep 2026 (para. 3): the Stakeholder Management & Partnership Department mandate is absorbed into the Special Duties Directorate. Owner directed the move of SMP's category rows on 26 Sep 2026. Supporting and informed units kept."
+rowUnit,GOV TO GOV|Inter Agency Collaborations,SDO,2026-09-26,"Memo NITDA/HQ/NB/105 of 11 Sep 2026 (para. 3): the Stakeholder Management & Partnership Department mandate is absorbed into the Special Duties Directorate. Owner directed the move of SMP's category rows on 26 Sep 2026. Supporting and informed units kept."

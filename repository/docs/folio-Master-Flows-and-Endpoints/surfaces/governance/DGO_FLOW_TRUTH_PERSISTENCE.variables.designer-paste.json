@@ -1,0 +1,88 @@
+{
+  "nodeId": "Scope_Global_Flow_Truth_Persistence_Variables",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Initialize_variable_varStatusCode": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStatusCode",
+              "type": "integer",
+              "value": 500
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "d0000000-0000-4000-8000-000000000001"
+        }
+      },
+      "Initialize_variable_varErrors": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varErrors",
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "d0000000-0000-4000-8000-000000000002"
+        },
+        "runAfter": {
+          "Initialize_variable_varStatusCode": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varReceivedAtUtc": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varReceivedAtUtc",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "d0000000-0000-4000-8000-000000000003"
+        },
+        "runAfter": {
+          "Initialize_variable_varErrors": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varStartTicks": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStartTicks",
+              "type": "integer",
+              "value": "@ticks(utcNow())"
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "d0000000-0000-4000-8000-000000000004"
+        },
+        "runAfter": {
+          "Initialize_variable_varReceivedAtUtc": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

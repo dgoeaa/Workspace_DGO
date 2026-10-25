@@ -1,0 +1,2851 @@
+{
+  "nodeId": "Scope_Phase1_Complete_Flow",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Complete_Context": {
+        "type": "Compose",
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000019"
+        },
+        "inputs": {
+          "requestId": "@guid()",
+          "startedAtUtc": "@utcNow()",
+          "runName": "@workflow()?['run']?['name']",
+          "newLists": 8,
+          "plannedColumns": 188,
+          "configRows": 55,
+          "source": "docs/reference/identification/provisioning/identity-provisioning.json"
+        }
+      },
+      "Compose_New_Lists": {
+        "type": "Compose",
+        "runAfter": {
+          "Compose_Complete_Context": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000020"
+        },
+        "inputs": [
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "title": "DGO_RecordLinks",
+            "description": "Identification system (RECORD_LINKS, entity type LNK). Created by ID_Phase1_Complete."
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "title": "DGO_IdentityMap",
+            "description": "Identification system (IDENTITY_MAP, entity type MAP). Created by ID_Phase1_Complete."
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "title": "DGO_Briefs",
+            "description": "Identification system (BRIEFS, entity type BRF). Created by ID_Phase1_Complete."
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "title": "DGO_Meetings",
+            "description": "Identification system (MEETINGS, entity type MTG). Created by ID_Phase1_Complete."
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "title": "DGO_Projects",
+            "description": "Identification system (PROJECTS, entity type PRJ). Created by ID_Phase1_Complete."
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "title": "DGO_Approvals",
+            "description": "Identification system (APPROVALS, entity type APR). Created by ID_Phase1_Complete."
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "title": "DGO_RegistryFiles",
+            "description": "Identification system (REGISTRY_FILES, entity type REG). Created by ID_Phase1_Complete."
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "title": "DGO_FileMovements",
+            "description": "Identification system (FILE_MOVEMENTS, entity type EVT). Created by ID_Phase1_Complete."
+          }
+        ]
+      },
+      "Foreach_New_List": {
+        "type": "Foreach",
+        "foreach": "@outputs('Compose_New_Lists')",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "runAfter": {
+          "Compose_New_Lists": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000021"
+        },
+        "actions": {
+          "Check_List": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000001"
+            },
+            "inputs": {
+              "parameters": {
+                "dataset": "@items('Foreach_New_List')?['site']",
+                "parameters/method": "GET",
+                "parameters/uri": "@concat('_api/web/lists?$select=Id,Title&$filter=Title eq ''',replace(items('Foreach_New_List')?['title'],'''',''''''),'''&$top=1')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              }
+            }
+          },
+          "If_List_Missing": {
+            "type": "If",
+            "runAfter": {
+              "Check_List": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000002"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@length(coalesce(body('Check_List')?['value'],json('[]')))",
+                    0
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Create_List": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000003"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_New_List')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(json('{}'),'BaseTemplate',100),'Title',items('Foreach_New_List')?['title']),'Description',items('Foreach_New_List')?['description'])"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              },
+              "Configure_List": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Create_List": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000004"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_New_List')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_New_List')?['title'],'''',''''''),''')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'EnableAttachments',false),'EnableFolderCreation',false),'EnableVersioning',true),'MajorVersionLimit',100),'ForceCheckout',false),'Hidden',false)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              },
+              "Configure_Title_Field": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Configure_List": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000005"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_New_List')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_New_List')?['title'],'''',''''''),''')/fields/getByInternalNameOrTitle(''Title'')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(json('{}'),'Required',false)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          }
+        }
+      },
+      "Compose_Column_Plan": {
+        "type": "Compose",
+        "runAfter": {
+          "Foreach_New_List": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000022"
+        },
+        "inputs": [
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "SupersededBy",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SupersededBy\" StaticName=\"SupersededBy\" DisplayName=\"SupersededBy\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "VoidReason",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"VoidReason\" StaticName=\"VoidReason\" DisplayName=\"VoidReason\" Required=\"FALSE\" MaxLength=\"255\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "SourceLocator",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SourceLocator\" StaticName=\"SourceLocator\" DisplayName=\"SourceLocator\" Required=\"FALSE\" MaxLength=\"255\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "Direction",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"Direction\" StaticName=\"Direction\" DisplayName=\"Direction\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>In</CHOICE><CHOICE>Out</CHOICE><CHOICE>Internal</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "AttachmentHashSet",
+            "type": "Note",
+            "schemaXml": "<Field Type=\"Note\" Name=\"AttachmentHashSet\" StaticName=\"AttachmentHashSet\" DisplayName=\"AttachmentHashSet\" Required=\"FALSE\" NumLines=\"6\" RichText=\"FALSE\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Registry",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Attachments",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Attachments",
+            "column": "ParentKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ParentKey\" StaticName=\"ParentKey\" DisplayName=\"ParentKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Attachments",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Attachments",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Attachments",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Attachments",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Attachments",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "NITDA_Central_Registry",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "NITDA_Central_Registry",
+            "column": "ParentKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ParentKey\" StaticName=\"ParentKey\" DisplayName=\"ParentKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "NITDA_Central_Registry",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "NITDA_Central_Registry",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "NITDA_Central_Registry",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "NITDA_Central_Registry",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "NITDA_Central_Registry",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "SubjectKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SubjectKey\" StaticName=\"SubjectKey\" DisplayName=\"SubjectKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "Action",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Action\" StaticName=\"Action\" DisplayName=\"Action\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "ActorKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ActorKey\" StaticName=\"ActorKey\" DisplayName=\"ActorKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "RequestId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RequestId\" StaticName=\"RequestId\" DisplayName=\"RequestId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "RevAfter",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"RevAfter\" StaticName=\"RevAfter\" DisplayName=\"RevAfter\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "Process",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Process\" StaticName=\"Process\" DisplayName=\"Process\" Required=\"FALSE\" MaxLength=\"16\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "Portal Status Timeline",
+            "column": "ContractKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ContractKey\" StaticName=\"ContractKey\" DisplayName=\"ContractKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "column": "CaseRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CaseRef\" StaticName=\"CaseRef\" DisplayName=\"CaseRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Flow Telemetry",
+            "column": "RequestId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RequestId\" StaticName=\"RequestId\" DisplayName=\"RequestId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Flow Telemetry",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Flow Telemetry",
+            "column": "ClientCorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientCorrelationId\" StaticName=\"ClientCorrelationId\" DisplayName=\"ClientCorrelationId\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Flow Telemetry",
+            "column": "RegistryKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RegistryKey\" StaticName=\"RegistryKey\" DisplayName=\"RegistryKey\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "list": "Portal Flow Telemetry",
+            "column": "ContractKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ContractKey\" StaticName=\"ContractKey\" DisplayName=\"ContractKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "TaskRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"TaskRef\" StaticName=\"TaskRef\" DisplayName=\"TaskRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "ParentKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ParentKey\" StaticName=\"ParentKey\" DisplayName=\"ParentKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "AssigneeKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"AssigneeKey\" StaticName=\"AssigneeKey\" DisplayName=\"AssigneeKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "RoutedOrgKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RoutedOrgKey\" StaticName=\"RoutedOrgKey\" DisplayName=\"RoutedOrgKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "SupersededBy",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SupersededBy\" StaticName=\"SupersededBy\" DisplayName=\"SupersededBy\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "TaskRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"TaskRef\" StaticName=\"TaskRef\" DisplayName=\"TaskRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "ParentKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ParentKey\" StaticName=\"ParentKey\" DisplayName=\"ParentKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "AssigneeKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"AssigneeKey\" StaticName=\"AssigneeKey\" DisplayName=\"AssigneeKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "RoutedOrgKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RoutedOrgKey\" StaticName=\"RoutedOrgKey\" DisplayName=\"RoutedOrgKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "SupersededBy",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SupersededBy\" StaticName=\"SupersededBy\" DisplayName=\"SupersededBy\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO DIGITAL OPS",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO DIGITAL OPS",
+            "column": "ReferenceId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ReferenceId\" StaticName=\"ReferenceId\" DisplayName=\"ReferenceId\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO DIGITAL OPS",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "column": "ParentKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ParentKey\" StaticName=\"ParentKey\" DisplayName=\"ParentKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "column": "AuthorKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"AuthorKey\" StaticName=\"AuthorKey\" DisplayName=\"AuthorKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "SubjectKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SubjectKey\" StaticName=\"SubjectKey\" DisplayName=\"SubjectKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "Action",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Action\" StaticName=\"Action\" DisplayName=\"Action\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "ActorKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ActorKey\" StaticName=\"ActorKey\" DisplayName=\"ActorKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "RequestId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RequestId\" StaticName=\"RequestId\" DisplayName=\"RequestId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "RevAfter",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"RevAfter\" StaticName=\"RevAfter\" DisplayName=\"RevAfter\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "Process",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Process\" StaticName=\"Process\" DisplayName=\"Process\" Required=\"FALSE\" MaxLength=\"16\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "column": "ContractKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ContractKey\" StaticName=\"ContractKey\" DisplayName=\"ContractKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "SubjectKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SubjectKey\" StaticName=\"SubjectKey\" DisplayName=\"SubjectKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "Action",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Action\" StaticName=\"Action\" DisplayName=\"Action\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "ActorKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ActorKey\" StaticName=\"ActorKey\" DisplayName=\"ActorKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "RequestId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RequestId\" StaticName=\"RequestId\" DisplayName=\"RequestId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "RevAfter",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"RevAfter\" StaticName=\"RevAfter\" DisplayName=\"RevAfter\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "Process",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Process\" StaticName=\"Process\" DisplayName=\"Process\" Required=\"FALSE\" MaxLength=\"16\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "column": "ContractKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ContractKey\" StaticName=\"ContractKey\" DisplayName=\"ContractKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_DepartmentDirectory",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_DepartmentDirectory",
+            "column": "UnitKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"UnitKey\" StaticName=\"UnitKey\" DisplayName=\"UnitKey\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_DepartmentDirectory",
+            "column": "ParentKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ParentKey\" StaticName=\"ParentKey\" DisplayName=\"ParentKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_DepartmentDirectory",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "FromKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"FromKey\" StaticName=\"FromKey\" DisplayName=\"FromKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "ToKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ToKey\" StaticName=\"ToKey\" DisplayName=\"ToKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "LinkType",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"LinkType\" StaticName=\"LinkType\" DisplayName=\"LinkType\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>RELATES_TO</CHOICE><CHOICE>REPLIES_TO</CHOICE><CHOICE>ABOUT</CHOICE><CHOICE>DUPLICATE_OF</CHOICE><CHOICE>MERGED_INTO</CHOICE><CHOICE>SUPERSEDES</CHOICE><CHOICE>DERIVED_FROM</CHOICE><CHOICE>DEPENDS_ON</CHOICE><CHOICE>FILED_IN</CHOICE><CHOICE>DISCUSSED_AT</CHOICE><CHOICE>BRIEFS_ON</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "LinkMatchKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"LinkMatchKey\" StaticName=\"LinkMatchKey\" DisplayName=\"LinkMatchKey\" Required=\"FALSE\" MaxLength=\"255\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "EntityRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityRef\" StaticName=\"EntityRef\" DisplayName=\"EntityRef\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "EntryKind",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"EntryKind\" StaticName=\"EntryKind\" DisplayName=\"EntryKind\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>LOCATOR</CHOICE><CHOICE>ALIAS</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "Kind",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Kind\" StaticName=\"Kind\" DisplayName=\"Kind\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "System",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"System\" StaticName=\"System\" DisplayName=\"System\" Required=\"FALSE\" MaxLength=\"24\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "Environment",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"Environment\" StaticName=\"Environment\" DisplayName=\"Environment\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>prd</CHOICE><CHOICE>uat</CHOICE><CHOICE>dev</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "Container",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Container\" StaticName=\"Container\" DisplayName=\"Container\" Required=\"FALSE\" MaxLength=\"255\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "Value",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Value\" StaticName=\"Value\" DisplayName=\"Value\" Required=\"FALSE\" MaxLength=\"255\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "ValueLong",
+            "type": "Note",
+            "schemaXml": "<Field Type=\"Note\" Name=\"ValueLong\" StaticName=\"ValueLong\" DisplayName=\"ValueLong\" Required=\"FALSE\" NumLines=\"6\" RichText=\"FALSE\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "MatchKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"MatchKey\" StaticName=\"MatchKey\" DisplayName=\"MatchKey\" Required=\"FALSE\" MaxLength=\"255\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "Ambiguous",
+            "type": "Boolean",
+            "schemaXml": "<Field Type=\"Boolean\" Name=\"Ambiguous\" StaticName=\"Ambiguous\" DisplayName=\"Ambiguous\" Required=\"FALSE\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "ValidFromUtc",
+            "type": "DateTime",
+            "schemaXml": "<Field Type=\"DateTime\" Name=\"ValidFromUtc\" StaticName=\"ValidFromUtc\" DisplayName=\"ValidFromUtc\" Required=\"FALSE\" Format=\"DateTime\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "ValidToUtc",
+            "type": "DateTime",
+            "schemaXml": "<Field Type=\"DateTime\" Name=\"ValidToUtc\" StaticName=\"ValidToUtc\" DisplayName=\"ValidToUtc\" Required=\"FALSE\" Format=\"DateTime\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "column": "SupersededBy",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SupersededBy\" StaticName=\"SupersededBy\" DisplayName=\"SupersededBy\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "column": "SupersededBy",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SupersededBy\" StaticName=\"SupersededBy\" DisplayName=\"SupersededBy\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "column": "SupersededBy",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SupersededBy\" StaticName=\"SupersededBy\" DisplayName=\"SupersededBy\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "ParentKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ParentKey\" StaticName=\"ParentKey\" DisplayName=\"ParentKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "Decision",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"Decision\" StaticName=\"Decision\" DisplayName=\"Decision\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>Pending</CHOICE><CHOICE>Approved</CHOICE><CHOICE>Rejected</CHOICE><CHOICE>Returned</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "IdState",
+            "type": "Choice",
+            "schemaXml": "<Field Type=\"Choice\" Name=\"IdState\" StaticName=\"IdState\" DisplayName=\"IdState\" Required=\"FALSE\" Format=\"Dropdown\"><CHOICES><CHOICE>ACTIVE</CHOICE><CHOICE>ARCHIVED</CHOICE><CHOICE>MERGED</CHOICE><CHOICE>VOID</CHOICE></CHOICES></Field>",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "Rev",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"Rev\" StaticName=\"Rev\" DisplayName=\"Rev\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "CreatedByRequest",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CreatedByRequest\" StaticName=\"CreatedByRequest\" DisplayName=\"CreatedByRequest\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "RegistryFileRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RegistryFileRef\" StaticName=\"RegistryFileRef\" DisplayName=\"RegistryFileRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "CurrentHolder",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CurrentHolder\" StaticName=\"CurrentHolder\" DisplayName=\"CurrentHolder\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "SupersededBy",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SupersededBy\" StaticName=\"SupersededBy\" DisplayName=\"SupersededBy\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "ClientRequestHash",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ClientRequestHash\" StaticName=\"ClientRequestHash\" DisplayName=\"ClientRequestHash\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "EntityKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"EntityKey\" StaticName=\"EntityKey\" DisplayName=\"EntityKey\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "SubjectKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"SubjectKey\" StaticName=\"SubjectKey\" DisplayName=\"SubjectKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "RootKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootKey\" StaticName=\"RootKey\" DisplayName=\"RootKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "RootRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RootRef\" StaticName=\"RootRef\" DisplayName=\"RootRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "Action",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Action\" StaticName=\"Action\" DisplayName=\"Action\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "ActorKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ActorKey\" StaticName=\"ActorKey\" DisplayName=\"ActorKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "RequestId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RequestId\" StaticName=\"RequestId\" DisplayName=\"RequestId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "CorrelationId",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"CorrelationId\" StaticName=\"CorrelationId\" DisplayName=\"CorrelationId\" Required=\"FALSE\" MaxLength=\"36\" />",
+            "create": true,
+            "index": true
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "RevAfter",
+            "type": "Number",
+            "schemaXml": "<Field Type=\"Number\" Name=\"RevAfter\" StaticName=\"RevAfter\" DisplayName=\"RevAfter\" Required=\"FALSE\" Decimals=\"0\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "Process",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"Process\" StaticName=\"Process\" DisplayName=\"Process\" Required=\"FALSE\" MaxLength=\"16\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "ContractKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ContractKey\" StaticName=\"ContractKey\" DisplayName=\"ContractKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "FromOrgKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"FromOrgKey\" StaticName=\"FromOrgKey\" DisplayName=\"FromOrgKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "ToOrgKey",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"ToOrgKey\" StaticName=\"ToOrgKey\" DisplayName=\"ToOrgKey\" Required=\"FALSE\" MaxLength=\"40\" />",
+            "create": true,
+            "index": false
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_FileMovements",
+            "column": "MovementAction",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"MovementAction\" StaticName=\"MovementAction\" DisplayName=\"MovementAction\" Required=\"FALSE\" MaxLength=\"64\" />",
+            "create": true,
+            "index": false
+          }
+        ]
+      },
+      "Foreach_Planned_Column": {
+        "type": "Foreach",
+        "foreach": "@outputs('Compose_Column_Plan')",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "runAfter": {
+          "Compose_Column_Plan": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000023"
+        },
+        "actions": {
+          "Get_Existing_Field": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000006"
+            },
+            "inputs": {
+              "parameters": {
+                "dataset": "@items('Foreach_Planned_Column')?['site']",
+                "parameters/method": "GET",
+                "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields?$select=Id,InternalName,TypeAsString,Indexed&$filter=InternalName eq ''',items('Foreach_Planned_Column')?['column'],'''&$top=1')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              }
+            }
+          },
+          "Condition_Field_Missing": {
+            "type": "If",
+            "runAfter": {
+              "Get_Existing_Field": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000007"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@empty(first(coalesce(body('Get_Existing_Field')?['value'],json('[]'))))",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['create']",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Create_Field": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000008"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/createfieldasxml')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(json('{\"parameters\":{\"Options\":12}}'),'parameters',setProperty(json('{\"Options\":12}'),'SchemaXml',items('Foreach_Planned_Column')?['schemaXml']))"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Condition_Index_Needed": {
+            "type": "If",
+            "runAfter": {
+              "Condition_Field_Missing": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000009"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['index']",
+                    true
+                  ]
+                },
+                {
+                  "not": {
+                    "equals": [
+                      "@coalesce(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))?['Indexed'],false)",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Set_Field_Indexed": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000010"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/getByInternalNameOrTitle(''',items('Foreach_Planned_Column')?['column'],''')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(json('{}'),'Indexed',true)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Compose_Column_Result": {
+            "type": "Compose",
+            "runAfter": {
+              "Condition_Index_Needed": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000011"
+            },
+            "inputs": {
+              "list": "@items('Foreach_Planned_Column')?['list']",
+              "column": "@items('Foreach_Planned_Column')?['column']",
+              "existed": "@not(empty(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))))",
+              "create": "@coalesce(actions('Create_Field')?['status'],'not needed')",
+              "index": "@coalesce(actions('Set_Field_Indexed')?['status'],'not needed')",
+              "error": "@string(coalesce(body('Create_Field')?['message'],body('Set_Field_Indexed')?['message'],''))"
+            }
+          }
+        }
+      },
+      "Compose_Config_Plan": {
+        "type": "Compose",
+        "runAfter": {
+          "Foreach_Planned_Column": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000024"
+        },
+        "inputs": [
+          {
+            "Title": "ENVIRONMENT_CODE",
+            "ConfigValue": "prd",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_INTAKE_REGISTER_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_INTAKE_REGISTER_LIST_ID",
+            "ConfigValue": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_ATTACHMENTS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_ATTACHMENTS_LIST_ID",
+            "ConfigValue": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_SCAN_LIBRARY_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_SCAN_LIBRARY_LIST_ID",
+            "ConfigValue": "f553959f-d55b-4591-aa87-d61fb6f9eda9",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_STATUS_TIMELINE_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_STATUS_TIMELINE_LIST_ID",
+            "ConfigValue": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_SUPPORT_CASES_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_SUPPORT_CASES_LIST_ID",
+            "ConfigValue": "b984645b-8e3a-457f-a305-b95650fd3f23",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_SEQUENCE_COUNTERS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_SEQUENCE_COUNTERS_LIST_ID",
+            "ConfigValue": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_TELEMETRY_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_TELEMETRY_LIST_ID",
+            "ConfigValue": "726c210d-09d5-45d9-952d-7a506b644b13",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_TASK_QUEUE_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_TASK_QUEUE_LIST_ID",
+            "ConfigValue": "ee82725a-c408-45e2-a8e8-facf7a092047",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_TASK_QUEUE_MIRROR_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_TASK_QUEUE_MIRROR_LIST_ID",
+            "ConfigValue": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_OPS_WORKING_REGISTER_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_OPS_WORKING_REGISTER_LIST_ID",
+            "ConfigValue": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_MINUTES_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_MINUTES_LIST_ID",
+            "ConfigValue": "1932d687-e77a-4929-9047-a1f544c68a0b",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_AI_TEXT_LOG_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_AI_TEXT_LOG_LIST_ID",
+            "ConfigValue": "d46a2be7-eaca-4056-bc4f-a439eb59721a",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_CONFIGURATION_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_CONFIGURATION_LIST_ID",
+            "ConfigValue": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_AUDIT_LOG_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_AUDIT_LOG_LIST_ID",
+            "ConfigValue": "be0c7af1-b21d-4efe-8c30-53fc55598d95",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_USER_DIRECTORY_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_USER_DIRECTORY_LIST_ID",
+            "ConfigValue": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_ORG_DIRECTORY_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_ORG_DIRECTORY_LIST_ID",
+            "ConfigValue": "eed0ba42-ece1-40e2-bf66-79827de02766",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_ENDPOINT_REGISTRY_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_ENDPOINT_REGISTRY_LIST_ID",
+            "ConfigValue": "08c6e1c4-f2b1-4810-933d-69b4327fb6af",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_REGISTRY_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_REGISTRY_LIST_ID",
+            "ConfigValue": "d9a6eef7-cb58-497b-a478-9f526d4a9d8b",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_DEPENDENCIES_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FLOW_DEPENDENCIES_LIST_ID",
+            "ConfigValue": "f2cd5180-f1a0-4433-be2d-bc8ddfa0291c",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_RECORD_LINKS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_RECORD_LINKS_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupTitle": "DGO_RecordLinks"
+          },
+          {
+            "Title": "DATASET_IDENTITY_MAP_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_IDENTITY_MAP_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "lookupTitle": "DGO_IdentityMap"
+          },
+          {
+            "Title": "DATASET_BRIEFS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_BRIEFS_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupTitle": "DGO_Briefs"
+          },
+          {
+            "Title": "DATASET_MEETINGS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_MEETINGS_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupTitle": "DGO_Meetings"
+          },
+          {
+            "Title": "DATASET_PROJECTS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_PROJECTS_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupTitle": "DGO_Projects"
+          },
+          {
+            "Title": "DATASET_APPROVALS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_APPROVALS_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "lookupTitle": "DGO_Approvals"
+          },
+          {
+            "Title": "DATASET_REGISTRY_FILES_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_REGISTRY_FILES_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupTitle": "DGO_RegistryFiles"
+          },
+          {
+            "Title": "DATASET_FILE_MOVEMENTS_SITE_URL",
+            "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupSite": "",
+            "lookupTitle": ""
+          },
+          {
+            "Title": "DATASET_FILE_MOVEMENTS_LIST_ID",
+            "ConfigValue": "",
+            "lookupSite": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "lookupTitle": "DGO_FileMovements"
+          }
+        ]
+      },
+      "Foreach_Config_Row": {
+        "type": "Foreach",
+        "foreach": "@outputs('Compose_Config_Plan')",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "runAfter": {
+          "Compose_Config_Plan": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000025"
+        },
+        "actions": {
+          "Check_Config": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000012"
+            },
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "parameters/method": "GET",
+                "parameters/uri": "@concat('_api/web/lists(guid''9bc168c3-06e5-4d58-982b-0df06205fd35'')/items?$select=Id,Title&$filter=Title eq ''',items('Foreach_Config_Row')?['Title'],'''&$top=1')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              }
+            }
+          },
+          "If_Config_Missing": {
+            "type": "If",
+            "runAfter": {
+              "Check_Config": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000013"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@length(coalesce(body('Check_Config')?['value'],json('[]')))",
+                    0
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "If_Value_From_New_List": {
+                "type": "If",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000014"
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@empty(items('Foreach_Config_Row')?['lookupTitle'])",
+                          true
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "actions": {
+                  "Get_New_List_Id": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "b4000000-0000-4000-8000-000000000015"
+                    },
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "@items('Foreach_Config_Row')?['lookupSite']",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Config_Row')?['lookupTitle'],'''',''''''),''')?$select=Id')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      }
+                    }
+                  },
+                  "Create_Config_From_List": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Get_New_List_Id": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "b4000000-0000-4000-8000-000000000016"
+                    },
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists(guid'9bc168c3-06e5-4d58-982b-0df06205fd35')/items",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(json('{}'),'Title',items('Foreach_Config_Row')?['Title']),'ConfigValue',toLower(string(body('Get_New_List_Id')?['Id'])))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_Config": {
+                      "type": "OpenApiConnection",
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "b4000000-0000-4000-8000-000000000017"
+                      },
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists(guid'9bc168c3-06e5-4d58-982b-0df06205fd35')/items",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata",
+                            "Content-Type": "application/json;odata=nometadata"
+                          },
+                          "parameters/body": "@setProperty(setProperty(json('{}'),'Title',items('Foreach_Config_Row')?['Title']),'ConfigValue',items('Foreach_Config_Row')?['ConfigValue'])"
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Compose_Config_Result": {
+            "type": "Compose",
+            "runAfter": {
+              "If_Config_Missing": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000018"
+            },
+            "inputs": {
+              "title": "@items('Foreach_Config_Row')?['Title']",
+              "existed": "@greater(length(coalesce(body('Check_Config')?['value'],json('[]'))),0)",
+              "create": "@coalesce(actions('Create_Config')?['status'],actions('Create_Config_From_List')?['status'],'not needed')",
+              "error": "@string(coalesce(body('Create_Config')?['message'],body('Create_Config_From_List')?['message'],body('Get_New_List_Id')?['message'],''))"
+            }
+          }
+        }
+      },
+      "Compose_Complete_Report": {
+        "type": "Compose",
+        "runAfter": {
+          "Foreach_Config_Row": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000026"
+        },
+        "inputs": {
+          "context": "@outputs('Compose_Complete_Context')",
+          "completedAtUtc": "@utcNow()",
+          "lists": "@result('Foreach_New_List')",
+          "columns": "@result('Foreach_Planned_Column')",
+          "config": "@result('Foreach_Config_Row')"
+        }
+      },
+      "Send_Complete_Report": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_Complete_Report": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000027"
+        },
+        "inputs": {
+          "parameters": {
+            "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+            "emailMessage/Subject": "@concat('NITDA Folio | Phase 1 completion | ',outputs('Compose_Complete_Context')?['runName'])",
+            "emailMessage/Body": "@concat('<p>Phase 1 completion run ',outputs('Compose_Complete_Context')?['runName'],' finished at ',outputs('Compose_Complete_Report')?['completedAtUtc'],'.</p><p>8 lists, 188 planned columns, 55 Flow Configuration rows. The complete step-by-step record is attached.</p>')",
+            "emailMessage/Attachments": [
+              {
+                "Name": "@concat('phase1-completion-',outputs('Compose_Complete_Context')?['runName'],'.json')",
+                "ContentBytes": "@string(outputs('Compose_Complete_Report'))"
+              }
+            ],
+            "emailMessage/Importance": "Normal"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connection": "shared_office365",
+            "operationId": "SendEmailV2"
+          }
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "b4000000-0000-4000-8000-000000000028"
+    }
+  },
+  "allConnectionData": {
+    "Check_List": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_List": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Configure_List": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Configure_Title_Field": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Existing_Field": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Field": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Set_Field_Indexed": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Check_Config": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_New_List_Id": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Config_From_List": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Config": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Complete_Report": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

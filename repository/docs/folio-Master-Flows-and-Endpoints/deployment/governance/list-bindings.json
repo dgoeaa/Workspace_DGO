@@ -1,0 +1,16 @@
+{
+  "bindingVersion": "1.0.0",
+  "purpose": "GUIDs for the DGO HTTP flow governance lists, filled in the day they are provisioned. scripts/build-flow-truth-persistence.mjs reads this file: while a GUID is null it emits the list TITLE and marks the package not-paste-ready; the moment a GUID is present it emits the GUID and the package joins the estate's GUID-targeting convention.",
+  "why": "Every SharePoint action in all 265 deployed definitions targets its list by GUID and not one targets by title (scripts/verify-designer-paste.mjs checks exactly this). A list that has never been provisioned has no GUID, so the convention cannot be met until provisioning happens. Recording the gap here keeps it visible and mechanical instead of hidden in an artefact.",
+  "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+  "designSource": "docs/folio-Master-Flows-and-Endpoints/registers/http-flow-registry-spec.json",
+  "provisioningState": "Defined, not built. tests/http-flow-registry.test.mjs asserts none of the seven lists exists in the tenant capture of the target site.",
+  "lists": {
+    "DGO_HTTPFlowRegistry": null,
+    "DGO_HTTPFlowExecutionLedger": null
+  },
+  "libraries": {
+    "DGO_HTTPFlowArtefacts": null
+  },
+  "artefactLibraryNote": "The seven-list design carries no document library. Run artefacts (the truth record, the flow resource, the report, the governance record and the manifest) need one, so it is declared here as the eighth resource to provision. Its title is a proposal, not a capture."
+}

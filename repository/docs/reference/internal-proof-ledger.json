@@ -1,0 +1,69 @@
+{
+  "schema": "dgo-internal-proof-ledger/v1",
+  "decidedUtc": "2026-09-24",
+  "decision": "The internal platform and the Correspondence Gateway portal use SEPARATE proof ledgers. Taken by the platform owner on 2026-09-24, reversing an argument this repository made for sharing one list divided by a Purpose value.",
+  "whyItMatters": "A shared list is separated by a WHERE clause. A filter that is edited, generated wrongly, or omitted in a flow written later reads across the boundary, and only npm run test:proofidentity would notice. A separate list makes the boundary structural: there is nothing to cross.",
+  "listId": "444102d6-2c29-45cf-8b59-52774d7c4dd4",
+  "status": "PROVISIONED",
+  "whatIsBlocked": "One value. scripts/build-identification-phase4.mjs reads listId from this file and uses it the moment it is set: the proof mint (OTP_VERIFY__IP_OTP_VERIFY__4dbe6dde) writes there and every identification package reads there. Until then they use the shared ledger and its internal-session Purpose filter, which is the arrangement this decision supersedes. A GUID cannot be invented here; a package naming a list that does not exist fails at run time. (The DGO_* generator that read this file before 2026-10-06 is retired.)",
+  "listToProvision": {
+    "title": "DGO_SessionProofs",
+    "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+    "whyThatSite": "Internal identity already lives there — DGO_UserDirectory and DGO_RoleCatalogue are on the governance site, and a session proof is an identity artefact. The portal's ledger stays where it is, on Global_Digital_Documents_Centre.",
+    "columns": [
+      {
+        "internalName": "Title",
+        "type": "Text",
+        "required": true,
+        "holds": "the proof token itself, an opaque GUID"
+      },
+      {
+        "internalName": "Email",
+        "type": "Text",
+        "required": true,
+        "holds": "the directory address the proof was issued to; this is what the endpoints read the caller from"
+      },
+      {
+        "internalName": "Purpose",
+        "type": "Text",
+        "required": true,
+        "holds": "'internal-session'. Retained even with a separate list: it costs nothing and keeps the filter that makes the boundary checkable"
+      },
+      {
+        "internalName": "ExpiresAtUtc",
+        "type": "DateTime",
+        "required": true,
+        "holds": "when the proof dies. Four hours after issue, per AUTHENTICATION_CONTRACT.md §2a"
+      },
+      {
+        "internalName": "CreatedAtUtc",
+        "type": "DateTime",
+        "required": true,
+        "holds": "when it was issued"
+      },
+      {
+        "internalName": "Consumed",
+        "type": "Boolean",
+        "required": true,
+        "holds": "false on issue. Setting it true is how a single proof is revoked without a key rotation"
+      }
+    ],
+    "indexOn": [
+      "Title"
+    ],
+    "whyIndexTitle": "Every endpoint call does one lookup filtered on Title. Unindexed, that is a full-list scan on the hot path of every authenticated request in the estate."
+  },
+  "howToApplyIt": [
+    "1. Create the list above on the governance site with those six columns, and index Title.",
+    "2. Put its GUID in listId here.",
+    "3. npm run internalpaste && npm run flowvars — the eight internal packages rebuild against it.",
+    "4. Reinstall those eight packages per docs/deployment/RUNBOOK.md.",
+    "5. npm run test:proofidentity turns the AWAITING_PROVISIONING warning into a pass."
+  ],
+  "untilThen": "The internal flows read the portal's ledger filtered on Purpose eq 'internal-session', and every one of them carries that filter — npm run test:proofidentity asserts it on each. The separation holds today; it is one clause wide rather than structural, which is what this decision changes.",
+  "provisioned": {
+    "utc": "2026-10-07",
+    "by": "platform owner",
+    "evidence": "owner report, 7 October 2026: DGO_SessionProofs created on DGO_ECM_GOVERNANCE; list id from its list settings address (listedit.aspx?List={444102d6-2c29-45cf-8b59-52774d7c4dd4})"
+  }
+}

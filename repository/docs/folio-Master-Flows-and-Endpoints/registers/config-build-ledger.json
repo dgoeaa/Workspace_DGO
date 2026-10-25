@@ -1,0 +1,220 @@
+{
+  "schema": "folio-config-build-ledger/v1",
+  "builtUtc": "2026-10-22T08:43:39.556Z",
+  "commit": "08166eb13b9e78adf8ad913cd130ce73d1dace96",
+  "version": "2026.10.22-3",
+  "builds": {
+    "workspace": {
+      "label": "FOLIO-WORKSPACE v2026.10.22-3",
+      "file": "FOLIO-WORKSPACE-v2026.10.22-3-upload-to-site-root.zip",
+      "codeFingerprint": "1c83047aa45c4a79",
+      "configDigest": "f02b2b6ee6926d1e",
+      "files": 233,
+      "mailer": {
+        "file": "mailer.html",
+        "sha256": "3c45996030c86e2a"
+      }
+    },
+    "portal": {
+      "label": "FOLIO-PORTAL v2026.10.22-3",
+      "file": "FOLIO-PORTAL-v2026.10.22-3-upload-to-site-root.zip",
+      "codeFingerprint": "0cfa14c2a6e75a52",
+      "configDigest": "6b083d04e4d69866",
+      "files": 43
+    }
+  },
+  "note": "What the last delivered config files hold, per key: flow, workflow id and a SHA-256 digest of the URL. No URL is recorded. npm run config:drift compares the live flows with this; npm run config:rebuild writes new files and this record.",
+  "emptyByDecision": {
+    "workspace:AI_CHAT": "ITEM-88: AI flow not working; left out of the go-live build by decision",
+    "workspace:AI_DOC_ANALYSIS": "ITEM-88: AI flow not working; left out of the go-live build by decision",
+    "workspace:AI_EMAIL_ANALYSIS": "ITEM-88: AI flow not working; left out of the go-live build by decision"
+  },
+  "variants": {
+    "workspace": {
+      "FETCH_ALL": {
+        "flow": "IP_FETCH_ALL_BOOTSTRAP",
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "workflowId": "aa662769f13a4666bfadf3039cd8d247",
+        "digest": "bfcd348857a610feaab0a98016f6f1a6"
+      },
+      "DYNAMIC_ACTIONS": {
+        "flow": "IP_Dynamic_Global_Actions_Endpoint",
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+        "digest": "0ed6757a74b28945561d2a553c55ed58"
+      },
+      "USER_ADMIN": {
+        "flow": "IP_User_Admin_Endpoint",
+        "flowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+        "workflowId": "466cf7ea66c54240aaede85a5a500f1c",
+        "digest": "fd1fd70a00edf1d6849034f171575d3d"
+      },
+      "ACTIVITY_LIFECYCLE": {
+        "flow": "IP_Activity_Lifecycle_Endpoint",
+        "flowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+        "workflowId": "35fa90bfad8f4a639cc20882f1688149",
+        "digest": "c9d13b56ff0ce0fb90fc5e69651d4bbc"
+      },
+      "SINGLE_ASSIGNMENT": {
+        "flow": "Single_Task_Assignment",
+        "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+        "workflowId": "72acfc6a694f414f9fe39c939ead7f08",
+        "digest": "a27acbd1d11deed60f19f28d35876130"
+      },
+      "BULK_ASSIGNMENT": {
+        "flow": "BULK_OPS_DATA_RETRIEVAL_HTTP",
+        "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+        "workflowId": "a705e453f922457c95ca19f32731e4d7",
+        "digest": "6c20710f0aa992b65a274157a1199eb5"
+      },
+      "FETCH_ACTIVITIES": {
+        "flow": "IP_Get_Docs_Endpoint",
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "workflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+        "digest": "197b41999aa9576f051651465a640c0b"
+      },
+      "REFERENCE_DATA": {
+        "flow": "IP_Reference_Data_Endpoint",
+        "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+        "workflowId": "885fad5ec91f460490e8c772d5d10cb8",
+        "digest": "5be9bd0aa3e636bca754036c7ba032dc"
+      },
+      "GET_DOCS": {
+        "flow": "IP_Get_Docs_Endpoint",
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "workflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+        "digest": "197b41999aa9576f051651465a640c0b"
+      },
+      "FETCH_EMAIL_ATTACHMENTS": {
+        "flow": "IP_Retrieve_Email_Attachment_Endpoint",
+        "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+        "workflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+        "digest": "28e323a1eab247f37ec7c44dd40ba2a5"
+      },
+      "EMAIL": {
+        "flow": "IP_SEND_EMAIL",
+        "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+        "workflowId": "378b491ec39a4beca886ddec250e6961",
+        "digest": "99f2334b4dd91591b8fe7e0e91acec90"
+      },
+      "EMAIL_RELATED_TASK": {
+        "flow": "IP_Create__Task__for_received_Email_Endpoint",
+        "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+        "workflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+        "digest": "d3e549eeacff126aa3f4346fa019d250"
+      },
+      "OTP_GENERATE": {
+        "flow": "IP_OTP_GENERATE",
+        "flowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+        "workflowId": "741465e483714d48a07e336eb4571b89",
+        "digest": "872a412d297c0d88b497f6269474cb68"
+      },
+      "OTP_VERIFY": {
+        "flow": "IP_OTP_VERIFY",
+        "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "workflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+        "digest": "e229f0021b41dcbbb1c898a697e1135f"
+      },
+      "SUBSIDIARY_ACTIONS": {
+        "flow": "IP_Dynamic_Global_Actions_Endpoint",
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+        "digest": "0ed6757a74b28945561d2a553c55ed58"
+      },
+      "SCAN_INTAKE": {
+        "flow": "IP_SCAN_INTAKE",
+        "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+        "workflowId": "88401ce1f44148539c0da53c9491f8e6",
+        "digest": "b4a25a620452f41dc097df67aedc275a"
+      }
+    },
+    "portal": {
+      "SUBMISSION": {
+        "flow": "CG_Submission_Endpoint",
+        "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+        "workflowId": "1041ed37ce924e3c886d891f23e8142c",
+        "digest": "67057c8007c48f85b10f69999b63abc5"
+      },
+      "UPLOAD": {
+        "flow": "CG_Upload_Endpoint",
+        "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+        "workflowId": "62fe121e5a95416bb91275e43dd0e37e",
+        "digest": "6a7b91bd9ceccc93e839e9c355aabf92"
+      },
+      "STATUS": {
+        "flow": "CG_Portal_Status_Check_Endpoint",
+        "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+        "workflowId": "34dd28b4a5664927b66e581c74a0ab94",
+        "digest": "2039e56f70e9754a3a098f5711237936"
+      },
+      "SUPPORT": {
+        "flow": "CG_Portal_Support_Endpoint",
+        "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+        "workflowId": "052013da80724713a4285edee72ccb4a",
+        "digest": "b902a833f674d568d22fcb706d7c5cef"
+      },
+      "VERIFY": {
+        "flow": "CG_Portal_Verification_Endpoint",
+        "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+        "workflowId": "c0d58004c53348539d0d5aeaf49dcded",
+        "digest": "82c5618c2bd8e417bceb69a81fe7f4cb"
+      },
+      "VERIFY_CONFIRM": {
+        "flow": "CG_Portal_Verification_Confirmation_Endpoint",
+        "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+        "workflowId": "b270894ff410499ebbc090e32ffe899b",
+        "digest": "681d97929ddc7b3694aed19d7e2c7d49"
+      },
+      "WRITEBACK": {
+        "flow": "CG_Portal_Writeback_Endpoint",
+        "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+        "workflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+        "digest": "3c3a673cf7250dff46abef8d7285f4d9"
+      }
+    },
+    "mailer": {
+      "MAIL_SEND": {
+        "flow": "DGO_MAIL_SEND",
+        "flowId": "0fb53e16-fa57-41a9-9880-752c3a4d4749",
+        "workflowId": "3a5205a24a744b4cabd4b13ed050be22",
+        "digest": "deb2080d7b68864d51475aa77b42a9f2"
+      },
+      "MAIL_LOG": {
+        "flow": "DGO_MAIL_LOG",
+        "flowId": "98ce8b40-d386-4ec5-a277-1a35688fef4f",
+        "workflowId": "5a0e2c28505f43c7a358550c0cafbffd",
+        "digest": "7321c03f28a369265602c20faa931bbc"
+      },
+      "MAIL_DIRECTORY": {
+        "flow": "DGO_MAIL_DIRECTORY",
+        "flowId": "0cb4c4a8-578a-4017-90dc-b8f2ffb21cb8",
+        "workflowId": "c971261c310c41e191f0c97d9fa6a467",
+        "digest": "2f441f1b4c30e2ae64a7b5d833cfc21c"
+      },
+      "MAIL_TEMPLATES": {
+        "flow": "DGO_MAIL_TEMPLATES",
+        "flowId": "176f7af5-7ffc-41d0-910b-e17b5587ebbd",
+        "workflowId": "2fa5a114ee654215a7a284ccea1233ca",
+        "digest": "104109cf88990b910ee353fe81d6ef48"
+      },
+      "MAIL_PROVISION": {
+        "flow": "DGO_MAIL_PROVISION",
+        "flowId": "c5a0f936-40a5-4044-a383-2530468f8413",
+        "workflowId": "86e9880a615644f186bebe6708174dda",
+        "digest": "85dfa9e5a71bf2d41b8d38ce9d9296d7"
+      },
+      "MAIL_AUTH": {
+        "flow": "DGO_MAIL_AUTH",
+        "flowId": "7d90f8f0-fa91-4aed-899c-b2bce5b70694",
+        "workflowId": "2d31ee5c454a4cf09928ee0f619ad5fd",
+        "digest": "f18ca4da3a70404ec2014f29f4bebe59"
+      },
+      "MAIL_DATA": {
+        "flow": "DGO_MAIL_DATA",
+        "flowId": "d44a67e3-c55a-415a-afe9-ef50a4702117",
+        "workflowId": "718cc5c0cdd642648d2f0fdaca15e5c7",
+        "digest": "20f00e28debcf90705a4b528afbb1868"
+      }
+    }
+  }
+}

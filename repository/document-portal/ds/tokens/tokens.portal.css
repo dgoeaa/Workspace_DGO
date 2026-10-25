@@ -1,0 +1,14 @@
+/* Portal-only semantic tokens.
+   ---------------------------------------------------------------------------
+   Every other file in this directory is a byte-for-byte copy of
+   styles/dgo-design-system/tokens/, and tests/design-tokens.test.mjs fails the
+   build if that stops being true. This file is the sanctioned escape hatch.
+
+   It is empty for now. The five on-brand tokens it used to hold
+   (--dgo-color-fg-on-brand-muted/-soft/-faint, --dgo-color-border-on-brand-soft,
+   --dgo-color-surface-on-brand-veil) are part of the Portfolio package's core
+   semantic tier, so they moved to the shared tokens.semantic.css with the same values.
+
+   Add a token here only if the runtime genuinely has no use for it. If both
+   apps need it, add it to the shared semantic layer instead so they cannot
+   drift apart. */

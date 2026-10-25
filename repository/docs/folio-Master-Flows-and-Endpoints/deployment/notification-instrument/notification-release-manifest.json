@@ -1,0 +1,15 @@
+{
+  "release": "notification-remediation/1.0.0",
+  "state": "blocked",
+  "tenantApplied": true,
+  "criticalRowsClosed": 0,
+  "gates": [
+    "recipient correctness",
+    "service sender",
+    "regression protection",
+    "scheduled processing",
+    "live acceptance",
+    "rollback"
+  ],
+  "tenantAppliedAtUtc": "2026-10-18T19:30:00Z"
+}

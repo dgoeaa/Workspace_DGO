@@ -1,0 +1,168 @@
+{
+  "schema": "dgo-paste-ledger/v1",
+  "purpose": "What each flow in the tenant runs, by the fingerprint of the identification package pasted into it (scripts/lib/package-fingerprint.mjs). A package needs pasting only when it has no entry; it needs pasting again only when its fingerprint differs from its entry. Maintained by hand from evidence: an owner report (the package as published when the report was made) or a tenant export (the fingerprint of the exported scope, which the Folio Estate Console computes when the export is dropped into it). A fingerprint of null records a flow that runs a definition no package produced.",
+  "entries": [
+    {
+      "file": "SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json",
+      "fingerprint": "03f40cf476c41514",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Submission_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "SUPPORT__CG_Portal_Support_Endpoint__4873c936.paste.json",
+      "fingerprint": "19bd6079c1824a01",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Support_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "STATUS__CG_Portal_Status_Check_Endpoint__60042a2e.paste.json",
+      "fingerprint": "0ba3769c4e1c0e0e",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Status_Check_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "WRITEBACK__CG_Portal_Writeback_Endpoint__bde13d27.paste.json",
+      "fingerprint": "0e930e0542302708",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Writeback_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "UPLOAD__CG_Upload_Endpoint__df82e331.paste.json",
+      "fingerprint": "03185bfbd7c73e1b",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Upload_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "NOKEY__CG_Registry_Status_Notifier__8ebf6001.paste.json",
+      "fingerprint": "01c3862f3e093d0f",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Registry_Status_Notifier read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "NOKEY__CG_Portal_Daily_Sweep__f12aec6d.paste.json",
+      "fingerprint": "0c5dc0571cf14704",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Daily_Sweep read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "VERIFY__CG_Portal_Verification_Endpoint__ba47f79b.paste.json",
+      "fingerprint": "17563b6f606b9309",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Verification_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "VERIFY_CONFIRM__CG_Portal_Verification_Confirmation_Endpoint__f96e3448.paste.json",
+      "fingerprint": "04fbe6443076bb11",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: CG_Portal_Verification_Confirmation_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "SCAN_INTAKE__IP_SCAN_INTAKE__5504d7f9.paste.json",
+      "fingerprint": "18a45281eccc8809",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_SCAN_INTAKE read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "SINGLE_ASSIGNMENT__Single_Task_Assignment__3caf9458.paste.json",
+      "fingerprint": "1f2bfe10c2818109",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: Single_Task_Assignment read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "BULK_ASSIGNMENT__BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61.paste.json",
+      "fingerprint": "09d0a24052ba9814",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: BULK OPS DATA RETRIEVAL HTTP read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "FETCH_ALL__IP_FETCH_ALL_BOOTSTRAP__b79e6707.paste.json",
+      "fingerprint": "01c2a838617f7903",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_FETCH_ALL_BOOTSTRAP read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "DYNAMIC_ACTIONS__IP_Dynamic_Global_Actions_Endpoint__31c0aaf0.paste.json",
+      "fingerprint": "12b4e01076a45306",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Dynamic_Global_Actions_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555.paste.json",
+      "fingerprint": "14a350e305e01705",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Create__Task__for_received_Email_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "OTP_VERIFY__IP_OTP_VERIFY__4dbe6dde.paste.json",
+      "fingerprint": "1c6655ae8be15503",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_OTP_VERIFY read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "REFERENCE_DATA__IP_Reference_Data_Endpoint__9a4dea8e.paste.json",
+      "fingerprint": "178eac8c90727b19",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Reference_Data_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "GET_DOCS__IP_Get_Docs_Endpoint__28f6e62a.paste.json",
+      "fingerprint": "1a4ba31f5953e610",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Get_Docs_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "FETCH_EMAIL_ATTACHMENTS__IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3.paste.json",
+      "fingerprint": "1446a2b78727dc03",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Retrieve_Email_Attachment_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "EMAIL__IP_SEND_EMAIL__df59a69f.paste.json",
+      "fingerprint": "06cd604661d1921c",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_SEND_EMAIL read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "AI_DOC_ANALYSIS__AI_Document_Processing__fefa43c6.paste.json",
+      "fingerprint": "196182c15102a70c",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: AI_Document_Processing read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "OTP_GENERATE__IP_OTP_GENERATE__e5632336.paste.json",
+      "fingerprint": "07c6727ff971c701",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_OTP_GENERATE read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "NOKEY__Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8.paste.json",
+      "fingerprint": "19a978696dcfeb08",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: Folio_Incoming_Correspondence_Scan_Processing_Flow read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "USER_ADMIN__IP_User_Admin_Endpoint__e3e5c825.paste.json",
+      "fingerprint": "1e9cbb576cfeb11f",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_User_Admin_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "ACTIVITY_LIFECYCLE__IP_Activity_Lifecycle_Endpoint__b4db02d8.paste.json",
+      "fingerprint": "0d2de979ee3e0b15",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Activity_Lifecycle_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "NOKEY__AUTO_SCHEDULED_SWEEP__8c19b45c.paste.json",
+      "fingerprint": "15fe577f07aed414",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: AUTO_SCHEDULED_SWEEP read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    },
+    {
+      "file": "NOKEY__Folio_Failure_Watch__c38bfeaa.paste.json",
+      "fingerprint": "1342cf76e91fb70d",
+      "on": "2026-10-22",
+      "evidence": "npm run flows:update apply, 2026-10-22: Folio_Failure_Watch read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package"
+    }
+  ]
+}

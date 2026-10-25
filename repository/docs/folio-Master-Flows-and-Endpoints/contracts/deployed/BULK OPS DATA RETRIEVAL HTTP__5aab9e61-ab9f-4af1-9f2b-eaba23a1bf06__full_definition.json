@@ -1,0 +1,1248 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06.json",
+  "workflow_identity": {
+    "internal_name": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+    "tags": {
+      "flowDisplayName": "BULK OPS DATA RETRIEVAL HTTP"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Initialize_variable_varResponse": {
+        "runAfter": {},
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varResponse",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varStatusCode": {
+        "runAfter": {
+          "Initialize_variable_varResponse": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStatusCorde",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varInstanceBody": {
+        "runAfter": {
+          "Initialize_variable_varStatusCode": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varInstanceBody",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "Initialize_variable": {
+        "runAfter": {
+          "Initialize_variable_varInstanceBody": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varHTTPResponse",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "Scope_Flow_Data_Capture": {
+        "actions": {
+          "Send_Telemetry_Email": {
+            "runAfter": {
+              "Compose_Telemetry_Attachments": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "42a5603a-b347-4fea-9786-e5056dc747af"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                "emailMessage/Subject": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])} — Flow Run Record — @{workflow()?['run']?['name']}",
+                "emailMessage/Body": "<p class=\"editor-paragraph\">Automated flow run record capture.<br>Flow: @{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])}<br>Run: @{workflow()?['run']?['name']}<br>Outcome: @{outputs('Compose__Standard_Response_Revised')}</p>",
+                "emailMessage/Attachments": "@outputs('Compose_Telemetry_Attachments')",
+                "emailMessage/Importance": "Normal"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Compose_Telemetry_Attachments": {
+            "runAfter": {
+              "Compose_Flow_Run_Record_Schema": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "2da445b8-61f7-46ed-9be5-cc5e9cfb5eb9"
+            },
+            "type": "Compose",
+            "inputs": [
+              {
+                "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__flow_run_record.json",
+                "ContentBytes": "@{string(outputs('Compose_Flow_Run_Record'))}"
+              },
+              {
+                "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__flow_run_record_schema.json",
+                "ContentBytes": "@{string(outputs('Compose_Flow_Run_Record_Schema'))}"
+              },
+              {
+                "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__trigger_input_schema.json",
+                "ContentBytes": "@{string(\n        coalesce(\n          outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?['manual']?['inputs']?['schema'],\n          json('{}')\n        )\n    )}"
+              },
+              {
+                "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__full_definition.json",
+                "ContentBytes": "@{string(\n        coalesce(\n          outputs('Get_Flow_Definition')?['body']?['properties']?['definition'],\n          json('{}')\n        )\n    )}"
+              },
+              {
+                "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__varResponse.json",
+                "ContentBytes": "@{outputs('Compose__Standard_Response_Revised')}"
+              }
+            ]
+          },
+          "Compose_Flow_Run_Record_Schema": {
+            "runAfter": {
+              "Compose_Flow_Run_Record": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "afa2fc1f-bd79-4d27-ab66-da44be1145fa"
+            },
+            "type": "Compose",
+            "inputs": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "title": "flow_run_record",
+              "type": "object",
+              "required": [
+                "capture_metadata",
+                "workflow_identity",
+                "run_identity",
+                "trigger_record",
+                "request",
+                "design_definition",
+                "response_record",
+                "outcome",
+                "timing"
+              ],
+              "properties": {
+                "capture_metadata": {
+                  "type": "object",
+                  "properties": {
+                    "telemetry_kind": {
+                      "type": "string",
+                      "enum": [
+                        "flow_run_record"
+                      ]
+                    },
+                    "capture_version": {
+                      "type": "string"
+                    },
+                    "captured_at_utc": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "capture_scope": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "workflow_identity": {
+                  "type": "object",
+                  "properties": {
+                    "internal_name": {
+                      "type": "string"
+                    },
+                    "full_resource_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "object"
+                    },
+                    "run": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "run_identity": {
+                  "type": "object",
+                  "properties": {
+                    "run_name": {
+                      "type": "string"
+                    },
+                    "run_resource_id": {
+                      "type": "string"
+                    },
+                    "run_type": {
+                      "type": "string"
+                    },
+                    "environment_id": {
+                      "type": "string"
+                    },
+                    "run_url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                },
+                "trigger_record": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "start_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "end_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "scheduled_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "tracking_id": {
+                      "type": "string"
+                    },
+                    "client_tracking_id": {
+                      "type": "string"
+                    },
+                    "origin_history_name": {
+                      "type": "string"
+                    },
+                    "correlation": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "request": {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string"
+                    },
+                    "relative_path_parameters": {
+                      "type": "object"
+                    },
+                    "headers_redacted": {
+                      "type": "object"
+                    },
+                    "queries_redacted": {
+                      "type": "object"
+                    },
+                    "body": {}
+                  }
+                },
+                "design_definition": {
+                  "type": "object",
+                  "properties": {
+                    "get_flow_body": {
+                      "type": "object"
+                    },
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "provisioning_method": {
+                      "type": "string"
+                    },
+                    "created_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "last_modified_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "creator": {
+                      "type": "object"
+                    },
+                    "definition": {
+                      "type": "object"
+                    },
+                    "trigger_definition": {
+                      "type": "object"
+                    },
+                    "trigger_input_schema": {
+                      "type": "object"
+                    },
+                    "action_definitions": {
+                      "type": "object"
+                    },
+                    "connection_references": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "response_record": {
+                  "type": "object",
+                  "properties": {
+                    "action_status": {
+                      "type": "string"
+                    },
+                    "action_code": {
+                      "type": "string"
+                    },
+                    "action_start_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "action_end_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tracking_id": {
+                      "type": "string"
+                    },
+                    "client_tracking_id": {
+                      "type": "string"
+                    },
+                    "correlation": {
+                      "type": "object"
+                    },
+                    "status_code_sent": {
+                      "type": "integer"
+                    },
+                    "headers_sent": {
+                      "type": "object"
+                    },
+                    "body_sent": {},
+                    "raw_action_record": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "outcome": {
+                  "type": "object",
+                  "properties": {
+                    "flow_outcome": {
+                      "type": "string",
+                      "enum": [
+                        "Succeeded",
+                        "Failed"
+                      ]
+                    },
+                    "failed_action_count": {
+                      "type": "integer"
+                    },
+                    "first_failed_action": {
+                      "type": "object"
+                    },
+                    "all_scope_action_results": {
+                      "type": "array"
+                    }
+                  }
+                },
+                "timing": {
+                  "type": "object",
+                  "properties": {
+                    "trigger_start_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "captured_at_utc": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "total_elapsed_seconds": {
+                      "type": "number"
+                    },
+                    "total_elapsed_ms": {
+                      "type": "number"
+                    },
+                    "response_action_duration_ms": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "Compose_Flow_Run_Record": {
+            "runAfter": {
+              "Compose_Redacted_Headers": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "309327c3-0eb4-4715-ac6c-cc2180aed320"
+            },
+            "type": "Compose",
+            "inputs": {
+              "capture_metadata": {
+                "telemetry_kind": "flow_run_record",
+                "capture_version": "2.0.0",
+                "captured_at_utc": "@{utcNow()}",
+                "capture_scope": "Scope_Flow_Data_Capture"
+              },
+              "workflow_identity": {
+                "internal_name": "@{workflow()?['name']}",
+                "full_resource_id": "@{workflow()?['id']}",
+                "type": "@{workflow()?['type']}",
+                "location": "@{workflow()?['location']}",
+                "tags": "@coalesce(workflow()?['tags'], json('{}'))",
+                "run": "@coalesce(workflow()?['run'], json('{}'))"
+              },
+              "run_identity": {
+                "run_name": "@{workflow()?['run']?['name']}",
+                "run_resource_id": "@{workflow()?['run']?['id']}",
+                "run_type": "@{workflow()?['run']?['type']}",
+                "environment_id": "@{workflow()?['tags']?['environmentName']}",
+                "run_url": "@{concat('https://make.powerautomate.com/environments/', coalesce(workflow()?['tags']?['environmentName'], ''), '/flows/', workflow()?['name'], '/runs/', coalesce(workflow()?['run']?['name'], ''))}"
+              },
+              "trigger_record": {
+                "name": "@{trigger()?['name']}",
+                "start_time": "@{trigger()?['startTime']}",
+                "end_time": "@{trigger()?['endTime']}",
+                "scheduled_time": "@{trigger()?['scheduledTime']}",
+                "status": "@{trigger()?['status']}",
+                "code": "@{trigger()?['code']}",
+                "tracking_id": "@{trigger()?['trackingId']}",
+                "client_tracking_id": "@{trigger()?['clientTrackingId']}",
+                "origin_history_name": "@{trigger()?['originHistoryName']}",
+                "correlation": "@coalesce(trigger()?['correlation'], json('{}'))"
+              },
+              "request": {
+                "method": "@{triggerOutputs()?['method']}",
+                "relative_path_parameters": "@coalesce(triggerOutputs()?['relativePathParameters'], json('{}'))",
+                "headers_redacted": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))",
+                "queries_redacted": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))",
+                "body": "@triggerBody()"
+              },
+              "design_definition": {
+                "get_flow_body": "@coalesce(outputs('Get_Flow_Definition')?['body'], json('{}'))",
+                "display_name": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['displayName']}",
+                "state": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['state']}",
+                "provisioning_method": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['provisioningMethod']}",
+                "created_time": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['createdTime']}",
+                "last_modified_time": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['lastModifiedTime']}",
+                "creator": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['creator'], json('{}'))",
+                "definition": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition'], json('{}'))",
+                "trigger_definition": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers'], json('{}'))",
+                "trigger_input_schema": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?['manual']?['inputs']?['schema'], json('{}'))",
+                "action_definitions": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['actions'], json('{}'))",
+                "connection_references": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['connectionReferences'], json('{}'))"
+              },
+              "response_record": {
+                "action_status": "@{actions('Response')?['status']}",
+                "action_code": "@{actions('Response')?['code']}",
+                "action_start_time": "@{actions('Response')?['startTime']}",
+                "action_end_time": "@{actions('Response')?['endTime']}",
+                "tracking_id": "@{actions('Response')?['trackingId']}",
+                "client_tracking_id": "@{actions('Response')?['clientTrackingId']}",
+                "correlation": "@coalesce(actions('Response')?['correlation'], json('{}'))",
+                "status_code_sent": "@coalesce(actions('Response')?['inputs']?['statusCode'], 0)",
+                "headers_sent": "@coalesce(actions('Response')?['inputs']?['headers'], json('{}'))",
+                "body_sent": "@coalesce(actions('Response')?['inputs']?['body'], json('{}'))",
+                "raw_action_record": "@coalesce(actions('Response'), json('{}'))"
+              },
+              "outcome": {
+                "flow_outcome": "@if(equals(actions('Scope_Global')?['status'], 'Succeeded'), 'Succeeded', 'Failed')",
+                "failed_action_count": 0,
+                "first_failed_action": {},
+                "all_scope_action_results": "@coalesce(result('Scope_Global'), json('[]'))"
+              },
+              "timing": {
+                "trigger_start_time": "@{trigger()?['startTime']}",
+                "captured_at_utc": "@{utcNow()}",
+                "total_elapsed_seconds": "@div(sub(ticks(utcNow()), ticks(trigger()?['startTime'])), 10000000)",
+                "total_elapsed_ms": "@div(sub(ticks(utcNow()), ticks(trigger()?['startTime'])), 10000)",
+                "response_action_duration_ms": "@if(empty(coalesce(actions('Response')?['endTime'], '')), 0, div(sub(ticks(actions('Response')?['endTime']), ticks(actions('Response')?['startTime'])), 10000))"
+              }
+            }
+          },
+          "Compose_Redacted_Headers": {
+            "runAfter": {
+              "Compose_Redacted_Queries": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "4205b70a-5c50-4c3e-aa84-11d019784a05"
+            },
+            "type": "Compose",
+            "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)"
+          },
+          "Compose_Redacted_Queries": {
+            "runAfter": {
+              "Get_Flow_Definition": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "c04c907c-a73c-4d2e-b541-b569b007c6b3"
+            },
+            "type": "Compose",
+            "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)"
+          },
+          "Get_Flow_Definition": {
+            "metadata": {
+              "operationMetadataId": "6378c24d-5033-4dd5-ae51-23eba5b29eb8"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "environmentName": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1",
+                "flowName": "@workflow()?['name']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                "connectionName": "shared_flowmanagement-1",
+                "operationId": "GetFlow"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Global": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "dadf69de-af0f-4b18-9067-46c5a6f6bdf4"
+        },
+        "type": "Scope"
+      },
+      "Scope_Global": {
+        "actions": {
+          "Condition": {
+            "actions": {
+              "Compose_trigger_parameter_itemId": {
+                "type": "Compose",
+                "inputs": "@trim(triggerOutputs()?['queries']?['taskId'])"
+              },
+              "Compose_Parameter_value": {
+                "runAfter": {
+                  "Compose_trigger_parameter_itemId": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerOutputs()?['queries']?['taskId'], '')))"
+              },
+              "Scope_get_Documente_Details": {
+                "actions": {
+                  "Append_to_string_variable_varInstanceBody_Get_Document_Details": {
+                    "runAfter": {
+                      "Select_getDoc_Details": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "AppendToStringVariable",
+                    "inputs": {
+                      "name": "varInstanceBody",
+                      "value": "@body('Get_item_Document_Details')"
+                    }
+                  },
+                  "Compose_Doc_Details_Values": {
+                    "runAfter": {
+                      "Append_to_string_variable_varInstanceBody_Get_Document_Details": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "id": "@item()?['ID']",
+                      "title": "@coalesce(item()?['Title'], '')",
+                      "createdOn": "@item()?['Created']",
+                      "description": "@coalesce(item()?['Description'], '')",
+                      "status": "@coalesce(item()?['Status'], '')"
+                    }
+                  },
+                  "Select_getDoc_Details": {
+                    "metadata": {
+                      "operationMetadataId": "87164d06-74a6-4b92-910d-fd72a3bb2d40"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@body('Get_item_Document_Details')",
+                      "select": {
+                        "title": "@coalesce(item()?['Title'], '')",
+                        "createdOn": "@item()?['Created']",
+                        "assignedTo": "@coalesce(item()?['AssignedTo'], '')",
+                        "activityType": "@coalesce(item()?['Category0'], '')",
+                        "assignmentStatus": "@coalesce(item()?['AssignmentStatus'], '')",
+                        "status": "@coalesce(item()?['Status'], '')",
+                        "routed_x0020_To": "@coalesce(item()?['Routed_x0020_To'], '')",
+                        "description": "@coalesce(item()?['Description'], '')",
+                        "CC_x0027_dTo": "@coalesce(item()?['CC_x0027_dTo'], '')",
+                        "assigned": "@coalesce(item()?['Assigned'], '')",
+                        "attachmentLink": "@coalesce(item()?['AttachmentLink'], '')",
+                        "category": "@coalesce(item()?['Category0'], '')"
+                      }
+                    }
+                  },
+                  "Compose_Response_Get_Document_Deatils": {
+                    "runAfter": {
+                      "Compose_Doc_Details_Values": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@body('Select_getDoc_Details')"
+                  },
+                  "Append_to_string_variable_varResponse_Get_Documents_Details": {
+                    "runAfter": {
+                      "Compose_Response_Get_Document_Deatils": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "AppendToStringVariable",
+                    "inputs": {
+                      "name": "varResponse",
+                      "value": "@outputs('Compose_Response_Get_Document_Deatils')"
+                    }
+                  },
+                  "Set_variable_varStatusCode_Get_Document_Details": {
+                    "runAfter": {
+                      "Append_to_string_variable_varResponse_Get_Documents_Details": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varStatusCorde",
+                      "value": 200
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_item_Document_Details": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Scope"
+              },
+              "Get_item_Document_Details": {
+                "runAfter": {
+                  "Compose_Parameter_value": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+                    "id": "@outputs('Compose_Parameter_value')",
+                    "view": "2debf33a-4b3b-484c-91aa-18aaa8973a9b"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-2",
+                    "operationId": "GetItem"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Scope_Get_Document_not_found_response_1": {
+                "actions": {
+                  "Set_variable_varStatusCode_not_found_response_1": {
+                    "runAfter": {
+                      "Append_to_string_variable_varResponse__not_found_response_1": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varStatusCorde",
+                      "value": 404
+                    }
+                  },
+                  "Append_to_string_variable_varResponse__not_found_response_1": {
+                    "runAfter": {
+                      "Compose_Response__not_found_response_1": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "AppendToStringVariable",
+                    "inputs": {
+                      "name": "varResponse",
+                      "value": "@outputs('Compose_Response__not_found_response_1')"
+                    }
+                  },
+                  "Compose_Response__not_found_response_1": {
+                    "type": "Compose",
+                    "inputs": {
+                      "status": "false",
+                      "ok": "false",
+                      "message": "item with provided ID not found"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_item_Document_Details": [
+                    "TimedOut",
+                    "Failed",
+                    "Skipped"
+                  ]
+                },
+                "type": "Scope"
+              }
+            },
+            "else": {
+              "actions": {
+                "Scope_Get_Docs_Activities": {
+                  "actions": {
+                    "Compose_ODataQuery": {
+                      "metadata": {
+                        "operationMetadataId": "f31363e3-d49b-48d1-941f-5159eb69eb0b"
+                      },
+                      "type": "Compose",
+                      "inputs": "@concat(\r\n'/_api/web/lists/getbytitle(''', 'DGO DIGITAL OPS', ''')/items?',\r\n'$select=ID,Title,Created,Category0,AssignmentStatus,Status,Routed_x0020_To,AssignedTo,CC_x0027_dTo,Modified,Assigned,AttachmentLink,Description',\r\n'&$orderby=Created desc',\r\n'&$top=',\r\nstring(coalesce(triggerOutputs()?['queries']?['top'], 100)),\r\nif(empty(triggerOutputs()?['queries']?['status']), '', concat('&$filter=Status eq ''', triggerOutputs()?['queries']?['status'], ''''))\r\n)"
+                    },
+                    "Send_an_HTTP_request_to_SharePoint_get_Docs": {
+                      "runAfter": {
+                        "Compose_HTTP_Request_OData_Query_String_Optimized": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "7deda896-5baa-4e5a-b784-7edf0aaa0c54"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                          "parameters/method": "GET",
+                          "parameters/uri": "@outputs('Compose_ODataQuery')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata"
+                          }
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline-3",
+                          "operationId": "HttpRequest"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    },
+                    "Select_getDocs": {
+                      "runAfter": {
+                        "Append_to_string_variable_varInstanceBody_get_Docs": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "87164d06-74a6-4b92-910d-fd72a3bb2d40"
+                      },
+                      "type": "Select",
+                      "inputs": {
+                        "from": "@body('Send_an_HTTP_request_to_SharePoint_get_Docs')?['value']",
+                        "select": {
+                          "title": "@coalesce(item()?['Title'], '')",
+                          "createdOn": "@item()?['Created']",
+                          "assignedTo": "@coalesce(item()?['AssignedTo'], '')",
+                          "activityType": "@coalesce(item()?['Category0'], '')",
+                          "assignmentStatus": "@coalesce(item()?['AssignmentStatus'], '')",
+                          "status": "@coalesce(item()?['Status'], '')",
+                          "routed_x0020_To": "@coalesce(item()?['Routed_x0020_To'], '')",
+                          "description": "@coalesce(item()?['Description'], '')",
+                          "CC_x0027_dTo": "@coalesce(item()?['CC_x0027_dTo'], '')",
+                          "assigned": "@coalesce(item()?['Assigned'], '')",
+                          "attachmentLink": "@coalesce(item()?['AttachmentLink'], '')",
+                          "category": "@coalesce(item()?['Category0'], '')"
+                        }
+                      }
+                    },
+                    "Append_to_string_variable_varInstanceBody_get_Docs": {
+                      "runAfter": {
+                        "Send_an_HTTP_request_to_SharePoint_get_Docs": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "AppendToStringVariable",
+                      "inputs": {
+                        "name": "varInstanceBody",
+                        "value": "@body('Send_an_HTTP_request_to_SharePoint_get_Docs')"
+                      }
+                    },
+                    "Compose_HTTP_Request_OData_Query_String_Optimized": {
+                      "runAfter": {
+                        "Compose_ODataQuery": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "Compose",
+                      "inputs": "@concat(\r\n  '/_api/web/lists/getbytitle(''', 'DGO DIGITAL OPS', ''')/items?',\r\n  '$select=ID,Title,Created,AssignedTo,Category0,AssignmentStatus,Status,Routed_x0020_To,CC_x0027_dTo,Modified,Assigned,AttachmentLink,Description',\r\n  '&$orderby=ID desc,Created desc',\r\n  '&$top=',\r\n  string(coalesce(triggerOutputs()?['queries']?['top'], 100)),\r\n  if(\r\n    empty(triggerOutputs()?['queries']?['status']),\r\n    '',\r\n    concat('&$filter=Status eq ''', triggerOutputs()?['queries']?['status'], '''')\r\n  )\r\n)"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "0efb398b-9a7f-4791-9f4d-b1337759b01c"
+                  },
+                  "type": "Scope"
+                },
+                "Scope_Get_Docs_Response": {
+                  "actions": {
+                    "Set_variable_varStatusCode_Get_Docs": {
+                      "runAfter": {
+                        "Append_to_string_variable_varResponse_getDocs": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varStatusCorde",
+                        "value": 200
+                      }
+                    },
+                    "Append_to_string_variable_varResponse_getDocs": {
+                      "runAfter": {
+                        "Compose_Response_getDocs": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "AppendToStringVariable",
+                      "inputs": {
+                        "name": "varResponse",
+                        "value": "@outputs('Compose_Response_getDocs')"
+                      }
+                    },
+                    "Compose_Response_getDocs": {
+                      "type": "Compose",
+                      "inputs": "@body('Select_getDocs')"
+                    }
+                  },
+                  "runAfter": {
+                    "Scope_Get_Docs_Activities": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "Scope"
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@and(not(equals(trim(string(coalesce(triggerOutputs()?['queries']?['taskId'],''))),'')),or(and(startsWith(toUpper(trim(string(coalesce(triggerOutputs()?['queries']?['taskId'],'')))),'REQ-'),equals(length(trim(string(coalesce(triggerOutputs()?['queries']?['taskId'],'')))),7),isInt(substring(trim(string(coalesce(triggerOutputs()?['queries']?['taskId'],''))),4,3))),and(equals(length(trim(string(coalesce(triggerOutputs()?['queries']?['taskId'],'')))),3),isInt(trim(string(coalesce(triggerOutputs()?['queries']?['taskId'],'')))))))",
+                    true
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          },
+          "Scope_Finalize_Response_State": {
+            "actions": {
+              "Set_variable__varDurationMs": {
+                "runAfter": {
+                  "Set_variable_varCompletedAtUtc": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "d9fe8acd-9316-42f2-8e38-c0f60c351165"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "varDurationMs",
+                  "value": "@if(equals(coalesce(variables('varStartTicks'), 0), 0), 0, max(div(sub(ticks(variables('varCompletedAtUtc')), variables('varStartTicks')), 10000), 0))"
+                }
+              },
+              "Set_variable_varCompletedAtUtc": {
+                "metadata": {
+                  "operationMetadataId": "03ed97ec-68f5-4ef2-b1b6-a77ec85edc26"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "varCompletedAtUtc",
+                  "value": "@utcNow()"
+                }
+              },
+              "Set_variable_varStatusCode": {
+                "runAfter": {
+                  "Set_variable__varDurationMs": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "b670c80a-145e-4468-bea9-61e2e9716398"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "varStatusCode",
+                  "value": "@if(\n  or(\n    greater(coalesce(variables('varFailedCount'), 0), 0),\n    greater(length(coalesce(variables('varErrors'), json('[]'))), 0)\n  ),\n  400,\n  200\n)"
+                }
+              }
+            },
+            "runAfter": {
+              "Condition": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "cba07334-15b6-4135-9c7e-cc292e8f339b"
+            },
+            "type": "Scope"
+          },
+          "Compose__Standard_Response_Revised": {
+            "runAfter": {
+              "Scope_Finalize_Response_State": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "da80497d-c321-4fdf-97a2-c6a9cb2c0707"
+            },
+            "type": "Compose",
+            "inputs": {
+              "ok": "@less(variables('varStatusCode'), 400)",
+              "status": {
+                "http": "@variables('varStatusCode')",
+                "code": "@if(less(variables('varStatusCode'), 400), 'OK', concat('ERR', string(variables('varStatusCode'))))",
+                "message": "@if(less(variables('varStatusCode'), 400), 'Success', 'Failed')"
+              },
+              "request": {
+                "requestId": "@variables('varRequestId')",
+                "trackingId": "@if(empty(triggerBody()?['trackingId']), coalesce(triggerBody()?['trackingID'], ''), triggerBody()?['trackingId'])",
+                "action": "@if(empty(triggerBody()?['action']), 'emailtotaskassignment', triggerBody()?['action'])",
+                "operation": "@if(empty(triggerBody()?['operation']), 'create', triggerBody()?['operation'])",
+                "mode": "single",
+                "requestedBy": "@if(empty(triggerBody()?['userEmail']), coalesce(triggerBody()?['NewActivityTask']?['CreatedBy'], 'unknown'), triggerBody()?['userEmail'])",
+                "source": "@if(empty(triggerBody()?['source']), 'http', triggerBody()?['source'])"
+              },
+              "timing": {
+                "receivedAtUtc": "@if(empty(variables('varReceivedAtUtc')), variables('varCompletedAtUtc'), variables('varReceivedAtUtc'))",
+                "completedAtUtc": "@variables('varCompletedAtUtc')",
+                "durationMs": "@variables('varDurationMs')"
+              },
+              "data": "@variables('varData')",
+              "errors": "@variables('varErrors')",
+              "meta": {
+                "ts": "@variables('varCompletedAtUtc')",
+                "runId": "@workflow()?['run']?['name']",
+                "flowName": "@workflow()?['name']",
+                "contractVersion": "2026-03-23.5"
+              }
+            }
+          },
+          "Compose_Response": {
+            "runAfter": {
+              "Compose__Standard_Response_Revised": [
+                "Succeeded"
+              ]
+            },
+            "type": "Compose",
+            "inputs": "@variables('varResponse')"
+          },
+          "Response": {
+            "runAfter": {
+              "Compose_Allowed_Origin_BULK_OPS_DATA_RETRIEVAL_HTTP": [
+                "Succeeded"
+              ]
+            },
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": "@variables('varStatusCorde')",
+              "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "@outputs('Compose_Allowed_Origin_BULK_OPS_DATA_RETRIEVAL_HTTP')",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID",
+                "Vary": "Origin"
+              },
+              "body": "@outputs('Compose_Response')"
+            }
+          },
+          "Get_Allowed_Origins_BULK_OPS_DATA_RETRIEVAL_HTTP": {
+            "runAfter": {
+              "Compose_Response": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000305"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                "$filter": "startswith(Title,'ALLOWED_ORIGIN')",
+                "$top": 20
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "GetItems"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Select_Allowed_Origins_BULK_OPS_DATA_RETRIEVAL_HTTP": {
+            "runAfter": {
+              "Get_Allowed_Origins_BULK_OPS_DATA_RETRIEVAL_HTTP": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000306"
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(outputs('Get_Allowed_Origins_BULK_OPS_DATA_RETRIEVAL_HTTP')?['body/value'],json('[]'))",
+              "select": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+            }
+          },
+          "Compose_Request_Origin_BULK_OPS_DATA_RETRIEVAL_HTTP": {
+            "runAfter": {
+              "Select_Allowed_Origins_BULK_OPS_DATA_RETRIEVAL_HTTP": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000307"
+            },
+            "type": "Compose",
+            "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['Origin'],triggerOutputs()?['headers']?['origin'],'')))"
+          },
+          "Compose_Allowed_Origin_BULK_OPS_DATA_RETRIEVAL_HTTP": {
+            "runAfter": {
+              "Compose_Request_Origin_BULK_OPS_DATA_RETRIEVAL_HTTP": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000308"
+            },
+            "type": "Compose",
+            "inputs": "@if(contains(coalesce(body('Select_Allowed_Origins_BULK_OPS_DATA_RETRIEVAL_HTTP'),json('[]')),outputs('Compose_Request_Origin_BULK_OPS_DATA_RETRIEVAL_HTTP')),outputs('Compose_Request_Origin_BULK_OPS_DATA_RETRIEVAL_HTTP'),string(coalesce(first(coalesce(body('Select_Allowed_Origins_BULK_OPS_DATA_RETRIEVAL_HTTP'),json('[]'))),'')))"
+          }
+        },
+        "runAfter": {
+          "Initialize_variable_varFailedCount": [
+            "Succeeded"
+          ]
+        },
+        "type": "Scope"
+      },
+      "Initialize_variable_varReceivedAtUtc": {
+        "runAfter": {
+          "Initialize_variable": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varReceivedAtUtc",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varStartTicks": {
+        "runAfter": {
+          "Initialize_variable_varReceivedAtUtc": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStartTicks",
+              "type": "integer",
+              "value": "@ticks(utcNow())"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varErrors": {
+        "runAfter": {
+          "Initialize_variable_varStartTicks": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varErrors",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varData": {
+        "runAfter": {
+          "Initialize_variable_varErrors": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varData",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varDurationMs": {
+        "runAfter": {
+          "Initialize_variable_varData": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varDurationMs",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varCompletedAtUtc": {
+        "runAfter": {
+          "Initialize_variable_varDurationMs": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varCompletedAtUtc",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varStatusCode_1": {
+        "runAfter": {
+          "Initialize_variable_varCompletedAtUtc": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c8b3436d-2978-4ee7-93f6-6e37d07bb847"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStatusCode",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varRequestId": {
+        "runAfter": {
+          "Initialize_variable_varStatusCode_1": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varRequestId",
+              "type": "string",
+              "value": "@guid()"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varFailedCount": {
+        "runAfter": {
+          "Initialize_variable_varRequestId": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varFailedCount",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

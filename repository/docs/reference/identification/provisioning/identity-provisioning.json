@@ -1,0 +1,2316 @@
+{
+  "generatedFrom": "docs/reference/identification/identifier-catalogue.json",
+  "specVersion": "1.2.7",
+  "rule": "B2: every column is added optional and non-unique. Required and enforce-unique are switched on in Phase 6.",
+  "lists": [
+    {
+      "datasetKey": "INTAKE_REGISTER",
+      "title": "Portal Registry",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+      "create": false,
+      "entityType": "REC",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SupersededBy",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "VoidReason",
+          "type": "Text",
+          "max": 255,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SourceLocator",
+          "type": "Text",
+          "max": 255,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Direction",
+          "type": "Choice",
+          "choices": [
+            "In",
+            "Out",
+            "Internal"
+          ],
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "AttachmentHashSet",
+          "type": "Note",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [
+        "SubmittedAtUtc"
+      ],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "ATTACHMENTS",
+      "title": "Portal Attachments",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listGuid": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+      "create": false,
+      "entityType": "ATT",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ParentKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "SCAN_LIBRARY",
+      "title": "NITDA_Central_Registry",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listGuid": "f553959f-d55b-4591-aa87-d61fb6f9eda9",
+      "create": false,
+      "entityType": "ATT",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ParentKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "STATUS_TIMELINE",
+      "title": "Portal Status Timeline",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+      "create": false,
+      "entityType": "EVT",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SubjectKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Action",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ActorKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RequestId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RevAfter",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Process",
+          "type": "Text",
+          "max": 16,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ContractKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "SUPPORT_CASES",
+      "title": "Portal Support Cases",
+      "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listGuid": "b984645b-8e3a-457f-a305-b95650fd3f23",
+      "create": false,
+      "entityType": "CAS",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CaseRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        },
+        {
+          "name": "CaseRef",
+          "required": false,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "SEQUENCE_COUNTERS",
+      "title": "Portal Sequence Counters",
+      "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+      "create": false,
+      "entityType": null,
+      "note": "No new column. Counter rows for TASK and FILE are created by the first claim of each year (identification kit).",
+      "addColumns": [],
+      "indexExisting": [],
+      "phase6": []
+    },
+    {
+      "datasetKey": "FLOW_TELEMETRY",
+      "title": "Portal Flow Telemetry",
+      "site": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+      "create": false,
+      "entityType": null,
+      "note": null,
+      "addColumns": [
+        {
+          "name": "RequestId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientCorrelationId",
+          "type": "Text",
+          "max": 64,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RegistryKey",
+          "type": "Text",
+          "max": 64,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ContractKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": []
+    },
+    {
+      "datasetKey": "TASK_QUEUE",
+      "title": "Global Tracking Queue",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "create": false,
+      "entityType": "TSK",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "TaskRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ParentKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "AssigneeKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RoutedOrgKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SupersededBy",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        },
+        {
+          "name": "TaskRef",
+          "required": false,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "TASK_QUEUE_MIRROR",
+      "title": "DEV_OPS_Global_Tracking_Queue",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
+      "create": false,
+      "entityType": "TSK",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "TaskRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ParentKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "AssigneeKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RoutedOrgKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SupersededBy",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        },
+        {
+          "name": "TaskRef",
+          "required": false,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "OPS_WORKING_REGISTER",
+      "title": "DGO DIGITAL OPS",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+      "create": false,
+      "entityType": "REC",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ReferenceId",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "MINUTES",
+      "title": "Task_Comments",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "1932d687-e77a-4929-9047-a1f544c68a0b",
+      "create": false,
+      "entityType": "MIN",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ParentKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "AuthorKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "AI_TEXT_LOG",
+      "title": "AI TEXT DATA LOG",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "d46a2be7-eaca-4056-bc4f-a439eb59721a",
+      "create": false,
+      "entityType": "EVT",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SubjectKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Action",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ActorKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RequestId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RevAfter",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Process",
+          "type": "Text",
+          "max": 16,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ContractKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "FLOW_CONFIGURATION",
+      "title": "Flow Configuration",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+      "create": false,
+      "entityType": null,
+      "note": "Receives the ENVIRONMENT_CODE and DATASET_* rows.",
+      "addColumns": [],
+      "indexExisting": [],
+      "phase6": []
+    },
+    {
+      "datasetKey": "AUDIT_LOG",
+      "title": "DGO_AuditLog",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": "be0c7af1-b21d-4efe-8c30-53fc55598d95",
+      "create": false,
+      "entityType": "EVT",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SubjectKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Action",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ActorKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RequestId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RevAfter",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Process",
+          "type": "Text",
+          "max": 16,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ContractKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "USER_DIRECTORY",
+      "title": "DGO_UserDirectory",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+      "create": false,
+      "entityType": "USR",
+      "note": "No new column. UserId must hold the Entra object ID; the verifier lists rows whose UserId is not a GUID.",
+      "addColumns": [],
+      "indexExisting": [],
+      "phase6": []
+    },
+    {
+      "datasetKey": "ORG_DIRECTORY",
+      "title": "DGO_DepartmentDirectory",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": "eed0ba42-ece1-40e2-bf66-79827de02766",
+      "create": false,
+      "entityType": "ORG",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "UnitKey",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ParentKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "ENDPOINT_REGISTRY",
+      "title": "DGO_EndpointRegistry",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": "08c6e1c4-f2b1-4810-933d-69b4327fb6af",
+      "create": false,
+      "entityType": null,
+      "note": "No new column.",
+      "addColumns": [],
+      "indexExisting": [],
+      "phase6": []
+    },
+    {
+      "datasetKey": "FLOW_REGISTRY",
+      "title": "DGO_HTTPFlowRegistry",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "create": false,
+      "entityType": null,
+      "note": "Provisioned by the governance registry provisioner (npm run test:governanceregistryprovisioner); not by this plan.",
+      "addColumns": [],
+      "indexExisting": [],
+      "phase6": []
+    },
+    {
+      "datasetKey": "FLOW_DEPENDENCIES",
+      "title": "DGO_HTTPFlowDependencies",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "create": false,
+      "entityType": null,
+      "note": "Provisioned by the governance registry provisioner; not by this plan.",
+      "addColumns": [],
+      "indexExisting": [],
+      "phase6": []
+    },
+    {
+      "datasetKey": "RECORD_LINKS",
+      "title": "DGO_RecordLinks",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "create": true,
+      "entityType": "LNK",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "FromKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ToKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "LinkType",
+          "type": "Choice",
+          "choices": [
+            "RELATES_TO",
+            "REPLIES_TO",
+            "ABOUT",
+            "DUPLICATE_OF",
+            "MERGED_INTO",
+            "SUPERSEDES",
+            "DERIVED_FROM",
+            "DEPENDS_ON",
+            "FILED_IN",
+            "DISCUSSED_AT",
+            "BRIEFS_ON"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "LinkMatchKey",
+          "type": "Text",
+          "max": 255,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        },
+        {
+          "name": "LinkMatchKey",
+          "required": false,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "IDENTITY_MAP",
+      "title": "DGO_IdentityMap",
+      "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "create": true,
+      "entityType": "MAP",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "EntityRef",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "EntryKind",
+          "type": "Choice",
+          "choices": [
+            "LOCATOR",
+            "ALIAS"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Kind",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "System",
+          "type": "Text",
+          "max": 24,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Environment",
+          "type": "Choice",
+          "choices": [
+            "prd",
+            "uat",
+            "dev"
+          ],
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Container",
+          "type": "Text",
+          "max": 255,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Value",
+          "type": "Text",
+          "max": 255,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ValueLong",
+          "type": "Note",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "MatchKey",
+          "type": "Text",
+          "max": 255,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Ambiguous",
+          "type": "Boolean",
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ValidFromUtc",
+          "type": "DateTime",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ValidToUtc",
+          "type": "DateTime",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        },
+        {
+          "name": "MatchKey",
+          "required": false,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "BRIEFS",
+      "title": "DGO_Briefs",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "create": true,
+      "entityType": "BRF",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SupersededBy",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "MEETINGS",
+      "title": "DGO_Meetings",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "create": true,
+      "entityType": "MTG",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SupersededBy",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "PROJECTS",
+      "title": "DGO_Projects",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "create": true,
+      "entityType": "PRJ",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SupersededBy",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "APPROVALS",
+      "title": "DGO_Approvals",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "create": true,
+      "entityType": "APR",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ParentKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Decision",
+          "type": "Choice",
+          "choices": [
+            "Pending",
+            "Approved",
+            "Rejected",
+            "Returned"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "REGISTRY_FILES",
+      "title": "DGO_RegistryFiles",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listGuid": null,
+      "create": true,
+      "entityType": "REG",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "IdState",
+          "type": "Choice",
+          "choices": [
+            "ACTIVE",
+            "ARCHIVED",
+            "MERGED",
+            "VOID"
+          ],
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Rev",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CreatedByRequest",
+          "type": "Text",
+          "max": 36,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RegistryFileRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CurrentHolder",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SupersededBy",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ClientRequestHash",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        },
+        {
+          "name": "RegistryFileRef",
+          "required": false,
+          "enforceUnique": true
+        }
+      ]
+    },
+    {
+      "datasetKey": "FILE_MOVEMENTS",
+      "title": "DGO_FileMovements",
+      "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listGuid": null,
+      "create": true,
+      "entityType": "EVT",
+      "note": null,
+      "addColumns": [
+        {
+          "name": "EntityKey",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "SubjectKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RootRef",
+          "type": "Text",
+          "max": 20,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Action",
+          "type": "Text",
+          "max": 64,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ActorKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RequestId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "CorrelationId",
+          "type": "Text",
+          "max": 36,
+          "indexed": true,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "RevAfter",
+          "type": "Number",
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "Process",
+          "type": "Text",
+          "max": 16,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ContractKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "FromOrgKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "ToOrgKey",
+          "type": "Text",
+          "max": 40,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        },
+        {
+          "name": "MovementAction",
+          "type": "Text",
+          "max": 64,
+          "indexed": false,
+          "required": false,
+          "enforceUnique": false
+        }
+      ],
+      "indexExisting": [],
+      "phase6": [
+        {
+          "name": "EntityKey",
+          "required": true,
+          "enforceUnique": true
+        }
+      ]
+    }
+  ],
+  "flowConfiguration": {
+    "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+    "list": "Flow Configuration",
+    "rows": [
+      {
+        "Title": "ENVIRONMENT_CODE",
+        "ConfigValue": "prd",
+        "note": "prd in production; uat or dev elsewhere. If missing, the kit issues Z-prefixed references."
+      },
+      {
+        "Title": "DATASET_INTAKE_REGISTER_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+      },
+      {
+        "Title": "DATASET_INTAKE_REGISTER_LIST_ID",
+        "ConfigValue": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667"
+      },
+      {
+        "Title": "DATASET_ATTACHMENTS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+      },
+      {
+        "Title": "DATASET_ATTACHMENTS_LIST_ID",
+        "ConfigValue": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e"
+      },
+      {
+        "Title": "DATASET_SCAN_LIBRARY_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+      },
+      {
+        "Title": "DATASET_SCAN_LIBRARY_LIST_ID",
+        "ConfigValue": "f553959f-d55b-4591-aa87-d61fb6f9eda9"
+      },
+      {
+        "Title": "DATASET_STATUS_TIMELINE_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+      },
+      {
+        "Title": "DATASET_STATUS_TIMELINE_LIST_ID",
+        "ConfigValue": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd"
+      },
+      {
+        "Title": "DATASET_SUPPORT_CASES_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre"
+      },
+      {
+        "Title": "DATASET_SUPPORT_CASES_LIST_ID",
+        "ConfigValue": "b984645b-8e3a-457f-a305-b95650fd3f23"
+      },
+      {
+        "Title": "DATASET_SEQUENCE_COUNTERS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre"
+      },
+      {
+        "Title": "DATASET_SEQUENCE_COUNTERS_LIST_ID",
+        "ConfigValue": "d95409a4-2b48-4d34-9f60-da5d27db862d"
+      },
+      {
+        "Title": "DATASET_FLOW_TELEMETRY_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre"
+      },
+      {
+        "Title": "DATASET_FLOW_TELEMETRY_LIST_ID",
+        "ConfigValue": "726c210d-09d5-45d9-952d-7a506b644b13"
+      },
+      {
+        "Title": "DATASET_TASK_QUEUE_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_TASK_QUEUE_LIST_ID",
+        "ConfigValue": "ee82725a-c408-45e2-a8e8-facf7a092047"
+      },
+      {
+        "Title": "DATASET_TASK_QUEUE_MIRROR_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_TASK_QUEUE_MIRROR_LIST_ID",
+        "ConfigValue": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf"
+      },
+      {
+        "Title": "DATASET_OPS_WORKING_REGISTER_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_OPS_WORKING_REGISTER_LIST_ID",
+        "ConfigValue": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3"
+      },
+      {
+        "Title": "DATASET_MINUTES_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_MINUTES_LIST_ID",
+        "ConfigValue": "1932d687-e77a-4929-9047-a1f544c68a0b"
+      },
+      {
+        "Title": "DATASET_AI_TEXT_LOG_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_AI_TEXT_LOG_LIST_ID",
+        "ConfigValue": "d46a2be7-eaca-4056-bc4f-a439eb59721a"
+      },
+      {
+        "Title": "DATASET_FLOW_CONFIGURATION_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_FLOW_CONFIGURATION_LIST_ID",
+        "ConfigValue": "9bc168c3-06e5-4d58-982b-0df06205fd35"
+      },
+      {
+        "Title": "DATASET_AUDIT_LOG_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_AUDIT_LOG_LIST_ID",
+        "ConfigValue": "be0c7af1-b21d-4efe-8c30-53fc55598d95"
+      },
+      {
+        "Title": "DATASET_USER_DIRECTORY_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_USER_DIRECTORY_LIST_ID",
+        "ConfigValue": "3d591f5b-3f2f-409c-983a-a77b5c174834"
+      },
+      {
+        "Title": "DATASET_ORG_DIRECTORY_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_ORG_DIRECTORY_LIST_ID",
+        "ConfigValue": "eed0ba42-ece1-40e2-bf66-79827de02766"
+      },
+      {
+        "Title": "DATASET_ENDPOINT_REGISTRY_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_ENDPOINT_REGISTRY_LIST_ID",
+        "ConfigValue": "08c6e1c4-f2b1-4810-933d-69b4327fb6af"
+      },
+      {
+        "Title": "DATASET_FLOW_REGISTRY_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_FLOW_REGISTRY_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_FLOW_DEPENDENCIES_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_FLOW_DEPENDENCIES_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_RECORD_LINKS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_RECORD_LINKS_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_IDENTITY_MAP_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "Title": "DATASET_IDENTITY_MAP_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_BRIEFS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_BRIEFS_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_MEETINGS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_MEETINGS_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_PROJECTS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_PROJECTS_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_APPROVALS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+      },
+      {
+        "Title": "DATASET_APPROVALS_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_REGISTRY_FILES_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+      },
+      {
+        "Title": "DATASET_REGISTRY_FILES_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      },
+      {
+        "Title": "DATASET_FILE_MOVEMENTS_SITE_URL",
+        "ConfigValue": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+      },
+      {
+        "Title": "DATASET_FILE_MOVEMENTS_LIST_ID",
+        "ConfigValue": "(set after the list is created)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,491 @@
+{
+ "what": "Summary of the Phase 2 claim test report (ID_Phase2_Claim_Test, run 08584104848238817597193178493CU00). This run used the paste from commit ee76b383, before the connector retry policy was set to none (commit 7c032ff8).",
+ "runName": "08584104848238817597193178493CU00",
+ "startedAtUtc": "2026-10-04T13:54:23.2076155Z",
+ "completedAtUtc": "2026-10-04T14:09:22.9858113Z",
+ "result": {
+  "claims": 20,
+  "succeeded": 20,
+  "failed": 0,
+  "numbers": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20
+  ],
+  "distinct": true,
+  "gapFree": true,
+  "createdCounterRow": 1,
+  "succeededOnAttempt": {
+   "1": 1,
+   "2": 19,
+   "3": 0,
+   "4": 0,
+   "5": 0
+  }
+ },
+ "reading": [
+  "Iteration with number 1 created the ZTST-2026 row on attempt 1 in about 1 second.",
+  "The other 19 read the counter before that row existed, tried to create it, and were refused (Title is enforce-unique). No second row was created: a second create would have returned number 1 again, and no claim did.",
+  "Those 19 refused creates were retried by the connector default retry policy for 10 to 15 minutes. The retries spread the 19 second attempts over 13:54 to 14:09 UTC, so each took the next number with almost no contention. Two pairs overlapped (numbers 5 and 6, 17 and 18) and still got distinct numbers.",
+  "The criterion (20 distinct, gap-free numbers) is met. The concurrent IF-MATCH claim path was barely exercised, and the run took 15 minutes. Both are effects of the connector retries that commit 7c032ff8 removed."
+ ],
+ "claims": [
+  {
+   "iteration": 10,
+   "ok": true,
+   "number": 1,
+   "reference": "ZTST-2026-00001",
+   "succeededOnAttempt": 1,
+   "attempt1": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T13:54:23.2076155Z",
+    "endTime": "2026-10-04T13:54:24.1679577Z"
+   },
+   "attempt2": {
+    "status": "Skipped",
+    "startTime": "2026-10-04T13:54:24.4857784Z",
+    "endTime": "2026-10-04T13:54:24.4864995Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 3,
+   "ok": true,
+   "number": 2,
+   "reference": "ZTST-2026-00002",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2535559Z",
+    "endTime": "2026-10-04T14:04:32.6839514Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:04:32.7200566Z",
+    "endTime": "2026-10-04T14:04:35.6717083Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 14,
+   "ok": true,
+   "number": 3,
+   "reference": "ZTST-2026-00003",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2651812Z",
+    "endTime": "2026-10-04T14:04:50.9572627Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:04:51.0654236Z",
+    "endTime": "2026-10-04T14:04:55.3520055Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 2,
+   "ok": true,
+   "number": 4,
+   "reference": "ZTST-2026-00004",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2854498Z",
+    "endTime": "2026-10-04T14:05:13.7639558Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:05:13.7866004Z",
+    "endTime": "2026-10-04T14:05:15.8589999Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 9,
+   "ok": true,
+   "number": 5,
+   "reference": "ZTST-2026-00005",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2279394Z",
+    "endTime": "2026-10-04T14:05:27.7211869Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:05:27.7429645Z",
+    "endTime": "2026-10-04T14:05:29.7357302Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 13,
+   "ok": true,
+   "number": 6,
+   "reference": "ZTST-2026-00006",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2411286Z",
+    "endTime": "2026-10-04T14:05:27.543422Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:05:27.5668215Z",
+    "endTime": "2026-10-04T14:05:31.6002026Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 19,
+   "ok": true,
+   "number": 7,
+   "reference": "ZTST-2026-00007",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2518283Z",
+    "endTime": "2026-10-04T14:06:13.7247179Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:06:13.7515595Z",
+    "endTime": "2026-10-04T14:06:15.6972877Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 7,
+   "ok": true,
+   "number": 8,
+   "reference": "ZTST-2026-00008",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2531465Z",
+    "endTime": "2026-10-04T14:06:16.6429225Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:06:16.6654495Z",
+    "endTime": "2026-10-04T14:06:19.5635831Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 8,
+   "ok": true,
+   "number": 9,
+   "reference": "ZTST-2026-00009",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2532937Z",
+    "endTime": "2026-10-04T14:06:38.9080716Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:06:38.9308634Z",
+    "endTime": "2026-10-04T14:06:42.8185953Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 15,
+   "ok": true,
+   "number": 10,
+   "reference": "ZTST-2026-00010",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2651562Z",
+    "endTime": "2026-10-04T14:06:45.2887639Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:06:45.3119113Z",
+    "endTime": "2026-10-04T14:06:47.2020569Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 20,
+   "ok": true,
+   "number": 11,
+   "reference": "ZTST-2026-00011",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2858812Z",
+    "endTime": "2026-10-04T14:07:31.8582031Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:07:31.8811255Z",
+    "endTime": "2026-10-04T14:07:35.9547178Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 16,
+   "ok": true,
+   "number": 12,
+   "reference": "ZTST-2026-00012",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2407703Z",
+    "endTime": "2026-10-04T14:07:44.4531872Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:07:44.4737332Z",
+    "endTime": "2026-10-04T14:07:48.4944147Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 1,
+   "ok": true,
+   "number": 13,
+   "reference": "ZTST-2026-00013",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2415473Z",
+    "endTime": "2026-10-04T14:07:50.7634953Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:07:50.780963Z",
+    "endTime": "2026-10-04T14:07:52.8273092Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 4,
+   "ok": true,
+   "number": 14,
+   "reference": "ZTST-2026-00014",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2199071Z",
+    "endTime": "2026-10-04T14:07:58.4051152Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:07:58.423631Z",
+    "endTime": "2026-10-04T14:08:02.770409Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 17,
+   "ok": true,
+   "number": 15,
+   "reference": "ZTST-2026-00015",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.3509567Z",
+    "endTime": "2026-10-04T14:08:04.9680265Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:08:04.9870847Z",
+    "endTime": "2026-10-04T14:08:06.92381Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 5,
+   "ok": true,
+   "number": 16,
+   "reference": "ZTST-2026-00016",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.265254Z",
+    "endTime": "2026-10-04T14:08:19.5854718Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:08:19.6056621Z",
+    "endTime": "2026-10-04T14:08:23.5863956Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 12,
+   "ok": true,
+   "number": 17,
+   "reference": "ZTST-2026-00017",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2548139Z",
+    "endTime": "2026-10-04T14:08:39.5971796Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:08:39.6171018Z",
+    "endTime": "2026-10-04T14:08:42.8100529Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 6,
+   "ok": true,
+   "number": 18,
+   "reference": "ZTST-2026-00018",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2413533Z",
+    "endTime": "2026-10-04T14:08:41.5318379Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:08:41.5576485Z",
+    "endTime": "2026-10-04T14:08:44.5147626Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 18,
+   "ok": true,
+   "number": 19,
+   "reference": "ZTST-2026-00019",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2464485Z",
+    "endTime": "2026-10-04T14:09:06.4483384Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:09:06.4705724Z",
+    "endTime": "2026-10-04T14:09:10.5666519Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  },
+  {
+   "iteration": 11,
+   "ok": true,
+   "number": 20,
+   "reference": "ZTST-2026-00020",
+   "succeededOnAttempt": 2,
+   "attempt1": {
+    "status": "Failed",
+    "startTime": "2026-10-04T13:54:23.2531232Z",
+    "endTime": "2026-10-04T14:09:12.7198733Z"
+   },
+   "attempt2": {
+    "status": "Succeeded",
+    "startTime": "2026-10-04T14:09:12.7483485Z",
+    "endTime": "2026-10-04T14:09:16.7849837Z"
+   },
+   "attempts3to5": [
+    "Skipped",
+    "Skipped",
+    "Skipped"
+   ]
+  }
+ ]
+}

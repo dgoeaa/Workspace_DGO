@@ -1,0 +1,77 @@
+{
+  "$id": "https://ecm.nitda.gov.ng/schemas/create-task.aligned.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Create Task request (single or bulk), aligned 2026-10-02",
+  "description": "Proposed single contract for 'Deployed - Create Task' (b9d07010) and 'Deployed Bulk Task Assignment_Create Task' (122bb363). Declares only fields either flow reads, plus NewActivityTask.Classification (proposed, finding C-7). Legacy spellings stay accepted (additionalProperties) and are listed in x-legacy-aliases so the flow can coalesce them. See docs/folio-Master-Flows-and-Endpoints/audits/SCAN_INTAKE_AND_CREATE_TASK_FLOW_REVIEW_2026-10-02.md.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["NewActivityTask"],
+  "anyOf": [
+    { "required": ["Selected"], "properties": { "Selected": { "required": ["ID"] } } },
+    { "required": ["SelectedItems"], "properties": { "SelectedItems": { "minItems": 1 } } }
+  ],
+  "properties": {
+    "action": { "type": "string", "enum": ["singleassignment", "bulkassignment"] },
+    "operation": { "type": "string", "enum": ["create", "reassign"], "default": "create" },
+    "AssignmentType": { "type": "string", "enum": ["singleassignment", "bulkassignment"] },
+    "source": { "type": "string", "default": "http" },
+    "requestId": { "type": "string" },
+    "trackingId": { "type": "string" },
+    "userEmail": { "type": "string", "format": "email", "description": "Initiator; written to the task's AssignedBy." },
+    "supportEmail": { "type": "string", "format": "email" },
+    "Priority": { "type": "string", "description": "Root fallback for NewActivityTask.Priority." },
+    "Selected": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ID": { "type": ["integer", "string"], "description": "DDOPS document item ID (list 1f1cb303)." },
+        "RefIDD": { "type": "string" },
+        "Title": { "type": "string" }
+      }
+    },
+    "SelectedItems": {
+      "type": "array",
+      "items": { "$ref": "#/properties/Selected" }
+    },
+    "NewActivityTask": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["AssignedTo"],
+      "properties": {
+        "ActivityID": { "type": ["integer", "string"] },
+        "Title": { "type": "string" },
+        "StartDate": { "type": "string", "format": "date-time" },
+        "TaskDueDate": { "type": "string", "format": "date-time" },
+        "AckDue": { "type": "string", "format": "date-time" },
+        "Priority": { "type": "string", "enum": ["High", "Medium", "Low"] },
+        "Classification": { "type": "string", "enum": ["Public Access", "Restricted", "Secret"] },
+        "Category": { "type": "string" },
+        "CategoryCode": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "SubCategory": { "type": "string" },
+        "SubCategoryCode": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "PrimaryDSU": { "type": "string" },
+        "AssignedTo": { "type": "string", "minLength": 3, "description": "Email or semicolon-separated emails." },
+        "AssignedToTitle": { "type": "string" },
+        "SupportAssignedTo": { "type": "string" },
+        "SupportDSU": { "type": "string" },
+        "CopyTo": { "type": "string" },
+        "AttachmentLink": { "type": "string", "format": "uri" },
+        "Comments": { "type": "string" },
+        "CreatedBy": { "type": "string" }
+      }
+    }
+  },
+  "x-legacy-aliases": {
+    "NewActivityTask.SupportAssignedTo": ["NewActivityTask.supportingAssignedTo"],
+    "NewActivityTask.AckDue": ["NewActivityTask.AcknolwedgementDueBy"],
+    "NewActivityTask.TaskDueDate": ["NewActivityTask.TaskDue"],
+    "trackingId": ["trackingID"],
+    "action": ["AssignmentType", "mode"]
+  },
+  "x-unread-legacy-fields": [
+    "mode", "method", "id", "device",
+    "NewActivityTask.Timeline", "NewActivityTask.SupportAssignedToTitle", "NewActivityTask.SupportDSUKey",
+    "NewActivityTask.AssignedDSU", "NewActivityTask.PreReferenceID", "NewActivityTask.Categorization",
+    "NewActivityTask.Description", "NewActivityTask.Status"
+  ]
+}

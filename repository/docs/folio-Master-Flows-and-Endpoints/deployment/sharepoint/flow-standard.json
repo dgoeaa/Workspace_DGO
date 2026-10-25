@@ -1,0 +1,363 @@
+{
+  "standardVersion": "1.0.0",
+  "purpose": "The build standard the legacy flows already follow, written down. Derived from the 57 deployed definitions rather than invented - every rule below is something a majority of the estate already does, and the counts are in the conformance report.",
+  "provenance": "Read out of docs/folio-Master-Flows-and-Endpoints/contracts/deployed/ on 2026-08-19. scripts/verify-flow-standard.mjs measures conformance; it does not enforce it, because a standard applied retroactively as a gate turns every legacy flow red on the day it is written.",
+  "portalFlows": [
+    "Portal_UBMISSION_ECM_DOCS",
+    "SUBMISSION_ECM_DOCS_PORTAL",
+    "Portal_UPLOAD_ECM_DOCS",
+    "UPLOAD_ECM_DOCS_PORTAL",
+    "Portal_Upload_HTTP",
+    "Portal_ECM_DOCS_SUPPORT",
+    "Portal_ECM_DOCS_STATUS",
+    "Portal_Status_Enquiry",
+    "Portal_Verify",
+    "Portal_Verify_Confirm",
+    "ECM_DOCS_INTAKE"
+  ],
+  "checks": [
+    {
+      "id": "vars.core",
+      "weight": 2,
+      "kind": "variables",
+      "title": "Standard variable set initialised",
+      "allOf": [
+        "varStatusCode",
+        "varData",
+        "varErrors"
+      ],
+      "why": "Every flow reports its outcome through the same three variables, which is what lets one response envelope serve all of them."
+    },
+    {
+      "id": "vars.timing",
+      "weight": 1,
+      "kind": "variables",
+      "title": "Timing variables initialised",
+      "allOf": [
+        "varReceivedAtUtc",
+        "varCompletedAtUtc",
+        "varDurationMs"
+      ],
+      "why": "The envelope and the run record both report timing; computing it once at the top is what keeps them agreeing."
+    },
+    {
+      "id": "scope.global",
+      "weight": 2,
+      "kind": "topLevelAction",
+      "title": "Scope_Global wraps the work",
+      "anyOf": [
+        "Scope_Global"
+      ],
+      "why": "One scope to attach a catch to. Without it the failure path has to be repeated on every branch."
+    },
+    {
+      "id": "scope.catch",
+      "weight": 2,
+      "kind": "catchScope",
+      "title": "A catch scope on runAfter Failed",
+      "why": "An HTTP-triggered flow that faults without a catch returns a platform error page to the caller instead of the envelope.",
+      "detect": "any Scope action whose runAfter includes Failed, whatever it is named",
+      "namedInConformingFlows": [
+        "Scope_Data_Retrieval_Catch",
+        "Scope_Global_Catch",
+        "Scope_Provision_Catch",
+        "Scope_Feed_Catch",
+        "Scope_Task_Processing_Catch",
+        "Scope_INIT_ERROR"
+      ]
+    },
+    {
+      "id": "response.envelope",
+      "weight": 3,
+      "kind": "substring",
+      "title": "The standard response envelope",
+      "anyOf": [
+        "Compose__Standard_Response_Revised",
+        "Compose_Response"
+      ],
+      "why": "ok, status{http,code,message}, request{...}, timing{...}, data, errors, meta. core/contracts.js unwraps exactly this shape; a flow answering any other shape has to be special-cased in the client."
+    },
+    {
+      "id": "response.action",
+      "weight": 1,
+      "kind": "action",
+      "title": "A Response action returns it",
+      "anyOf": [
+        "Response",
+        "Response_Feed",
+        "Response_Submission",
+        "Response_Feed_Failed"
+      ],
+      "why": "A request-triggered flow that never responds leaves the caller waiting for its timeout."
+    },
+    {
+      "id": "telemetry.capture",
+      "weight": 2,
+      "kind": "topLevelAction",
+      "title": "Scope_Flow_Data_Capture",
+      "anyOf": [
+        "Scope_Flow_Data_Capture"
+      ],
+      "why": "The observability harness: a versioned run record with its own JSON Schema, the trigger schema, the full definition and the response, captured on every run."
+    },
+    {
+      "id": "telemetry.record",
+      "weight": 1,
+      "kind": "action",
+      "title": "A versioned flow_run_record is composed",
+      "anyOf": [
+        "Compose_Flow_Run_Record"
+      ],
+      "why": "capture_version 2.0.0, with capture_metadata, workflow_identity, run_identity, trigger_record, request, design_definition, response_record, outcome and timing."
+    },
+    {
+      "id": "redaction.headers",
+      "weight": 2,
+      "kind": "action",
+      "title": "Headers redacted before capture",
+      "anyOf": [
+        "Compose_Redacted_Headers"
+      ],
+      "why": "Authorization, Cookie, x-api-key and Ocp-Apim-Subscription-Key are blanked before the request is recorded. Without it the telemetry becomes the leak."
+    },
+    {
+      "id": "redaction.queries",
+      "weight": 2,
+      "kind": "action",
+      "title": "Query string redacted before capture",
+      "anyOf": [
+        "Compose_Redacted_Queries"
+      ],
+      "why": "sig and code are blanked. sig is the trigger credential; code is the one-time password. This estate got that right before anything else did."
+    }
+  ],
+  "responseEnvelope": {
+    "shape": {
+      "ok": "boolean",
+      "status": {
+        "http": "int",
+        "code": "'OK' or 'ERR<http>'",
+        "message": "'Success' or 'Failed'"
+      },
+      "request": {
+        "requestId": "",
+        "trackingId": "",
+        "action": "",
+        "operation": "",
+        "mode": "",
+        "requestedBy": "",
+        "source": ""
+      },
+      "timing": {
+        "receivedAtUtc": "",
+        "completedAtUtc": "",
+        "durationMs": 0
+      },
+      "data": "the payload",
+      "errors": "array",
+      "meta": {
+        "ts": ""
+      }
+    },
+    "note": "Collections may also appear at the top level beside data - Fetch_Tasks returns tasks, and core/data-loader.js reads a collection by alias. Adding one is within the standard; replacing the envelope is not."
+  },
+  "redaction": {
+    "headers": [
+      "Authorization",
+      "Cookie",
+      "x-api-key",
+      "Ocp-Apim-Subscription-Key"
+    ],
+    "queries": [
+      "sig",
+      "code"
+    ],
+    "note": "This is stricter than the repository-side redaction in scripts/redact-signed-urls.ps1, which did not cover code. Aligned in that script rather than left divergent."
+  },
+  "telemetryAttachments": [
+    "<Flow>__<RunId>__flow_run_record.json",
+    "<Flow>__<RunId>__trigger_input_schema.json",
+    "<Flow>__<RunId>__full_definition.json",
+    "<Flow>__<RunId>__varResponse.json"
+  ],
+  "telemetrySink": {
+    "today": "sharepoint",
+    "portalFlows": "Create_Flow_Telemetry inside Scope_Flow_Data_Capture writes one row per run to Portal Flow Telemetry (Global_Digital_Documents_Centre, 726c210d-09d5-45d9-952d-7a506b644b13), per DECISIONS.md D2 as revised 2026-08-19.",
+    "legacy": "Send_Telemetry_Email ships the four attachments. That is how every definition in docs/reference/foundational/flows/definitions/ came to exist - they are captured attachments, and their filenames are this convention. Email is not queryable, which is what Portal Flow Telemetry was provisioned to fix."
+  },
+  "remedies": {
+    "scope.catch": {
+      "title": "Add a catch scope",
+      "how": "Add a Scope named Scope_<Purpose>_Catch as a peer of the work scope, then set its 'Configure run after' to Failed, Skipped and Timed out - all three, not just Failed.",
+      "add": [
+        {
+          "name": "Set_variable_varStatusCode_Catch",
+          "value": 500
+        },
+        {
+          "name": "Append_to_array_variable_varErrors_Catch",
+          "value": "@{concat('Unhandled failure in ', workflow()?['name'], ' run ', workflow()?['run']?['name'])}"
+        }
+      ],
+      "why": "An HTTP-triggered flow that faults without a catch returns a platform error page to the caller instead of the envelope. On a public endpoint that page is also an information disclosure."
+    },
+    "redaction.headers": {
+      "title": "Redact headers before capture",
+      "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Headers, running after Compose_Redacted_Queries.",
+      "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)",
+      "why": "Without it the observability harness becomes the leak.",
+      "wireInto": {
+        "action": "Compose_Flow_Run_Record",
+        "underKey": "request",
+        "pair": {
+          "key": "headers_redacted",
+          "value": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))"
+        },
+        "note": "Same: an unconsumed Compose redacts nothing. Compose_Flow_Run_Record must also be moved to run after Compose_Redacted_Headers, or it composes before the value exists."
+      }
+    },
+    "redaction.queries": {
+      "title": "Redact the query string before capture",
+      "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Queries. Place it first in that scope, immediately after Get_Flow_Definition.",
+      "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)",
+      "why": "sig is the trigger credential and code is the one-time password. On the verification flows this is the difference between telemetry and a log of every OTP issued.",
+      "wireInto": {
+        "action": "Compose_Flow_Run_Record",
+        "underKey": "request",
+        "pair": {
+          "key": "queries_redacted",
+          "value": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))"
+        },
+        "note": "Adding the Compose without this leaves it inert: the run record captures no query string at all, and the conformance check still passes. The rule is about what reaches telemetry, not about an action existing."
+      }
+    },
+    "vars.timing": {
+      "title": "Initialise the timing variables",
+      "how": "Four more Initialize variable actions, alongside the core set.",
+      "add": [
+        {
+          "name": "Initialize_variable_varRequestId",
+          "type": "String",
+          "value": "@guid()"
+        },
+        {
+          "name": "Initialize_variable_varReceivedAtUtc",
+          "type": "String",
+          "value": "@utcNow()"
+        },
+        {
+          "name": "Initialize_variable_varStartTicks",
+          "type": "Integer",
+          "value": "@ticks(utcNow())"
+        },
+        {
+          "name": "Initialize_variable_varCompletedAtUtc",
+          "type": "String",
+          "value": ""
+        },
+        {
+          "name": "Initialize_variable_varDurationMs",
+          "type": "Integer",
+          "value": 0
+        }
+      ],
+      "alsoAdd": {
+        "name": "Scope_Finalize_Response_State",
+        "where": "Inside Scope_Global, after the work and before the envelope",
+        "actions": [
+          {
+            "name": "Set_variable_varCompletedAtUtc",
+            "value": "@utcNow()"
+          },
+          {
+            "name": "Set_variable_varDurationMs",
+            "value": "@div(sub(ticks(utcNow()), variables('varStartTicks')), 10000)"
+          }
+        ]
+      },
+      "why": "The envelope and the run record both report timing. Computing it once is what keeps them agreeing."
+    },
+    "scope.global": {
+      "title": "Wrap the work in Scope_Global",
+      "how": "Add a Scope named Scope_Global and move every existing action except the Initialize variable actions inside it.",
+      "why": "One place to attach a catch. Without it the failure path has to be repeated on every branch, which is why the flows missing this are the same flows missing a catch."
+    },
+    "telemetry.capture": {
+      "title": "Add Scope_Flow_Data_Capture",
+      "how": "Add a Scope named Scope_Flow_Data_Capture as a top-level peer of Scope_Global, with 'Configure run after' set to Succeeded, Failed, Skipped and Timed out - it must run whatever happened.",
+      "why": "The observability harness twenty-three flows already carry. Adding it is what makes this flow visible in the same way as the rest of the estate."
+    },
+    "telemetry.record": {
+      "title": "Compose the versioned run record",
+      "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Flow_Run_Record.",
+      "copyFrom": "Any conforming flow - Fetch_Tasks_POST is the cleanest. Copy Compose_Flow_Run_Record verbatim; it reads only workflow(), trigger(), the redaction composes and the standard variables, so it is portable between flows unchanged.",
+      "why": "capture_version 2.0.0, with its draft-07 schema alongside. Copying rather than rewriting is the point - a second dialect of the record is worse than none."
+    },
+    "vars.core": {
+      "title": "Initialise the standard variable set",
+      "how": "Three Initialize variable actions at the very top of the flow, before Scope_Global.",
+      "add": [
+        {
+          "name": "Initialize_variable_varStatusCode",
+          "type": "Integer",
+          "value": 200
+        },
+        {
+          "name": "Initialize_variable_varData",
+          "type": "Object",
+          "value": {}
+        },
+        {
+          "name": "Initialize_variable_varErrors",
+          "type": "Array",
+          "value": []
+        }
+      ],
+      "why": "One response envelope can only serve every flow if every flow reports its outcome the same way."
+    },
+    "response.envelope": {
+      "title": "Answer through the standard envelope",
+      "how": "Add a Compose named Compose__Standard_Response_Revised as the last action inside Scope_Global, before the Response.",
+      "inputs": {
+        "ok": "@less(variables('varStatusCode'), 400)",
+        "status": {
+          "http": "@variables('varStatusCode')",
+          "code": "@if(less(variables('varStatusCode'), 400), 'OK', concat('ERR', string(variables('varStatusCode'))))",
+          "message": "@if(less(variables('varStatusCode'), 400), 'Success', 'Failed')"
+        },
+        "request": {
+          "requestId": "@if(empty(trim(coalesce(triggerBody()?['requestId'], ''))), variables('varRequestId'), triggerBody()?['requestId'])",
+          "trackingId": "@coalesce(triggerBody()?['trackingId'], triggerBody()?['trackingID'], '')",
+          "action": "@coalesce(triggerBody()?['action'], '')",
+          "operation": "@coalesce(triggerBody()?['operation'], '')",
+          "mode": "@coalesce(triggerBody()?['mode'], '')",
+          "requestedBy": "@coalesce(triggerBody()?['userEmail'], triggerBody()?['requestedBy'], 'anonymous')",
+          "source": "@coalesce(triggerBody()?['source'], 'portal')"
+        },
+        "timing": {
+          "receivedAtUtc": "@variables('varReceivedAtUtc')",
+          "completedAtUtc": "@variables('varCompletedAtUtc')",
+          "durationMs": "@variables('varDurationMs')"
+        },
+        "data": "@variables('varData')",
+        "errors": "@variables('varErrors')",
+        "meta": {
+          "ts": "@variables('varCompletedAtUtc')"
+        }
+      },
+      "why": "core/contracts.js unwraps exactly this shape. A flow answering anything else has to be special-cased in the client, which is how one-off shapes accumulate."
+    },
+    "response.action": {
+      "title": "Return the envelope",
+      "how": "Add a Response action as the last action inside Scope_Global.",
+      "inputs": {
+        "statusCode": "@variables('varStatusCode')",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "@outputs('Compose__Standard_Response_Revised')"
+      },
+      "why": "A request-triggered flow that never responds leaves the caller waiting for its timeout."
+    }
+  }
+}

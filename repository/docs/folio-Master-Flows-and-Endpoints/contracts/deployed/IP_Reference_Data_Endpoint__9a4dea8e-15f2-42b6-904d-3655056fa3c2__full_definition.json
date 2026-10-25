@@ -1,0 +1,1361 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/IP_Reference_Data_Endpoint__9a4dea8e-15f2-42b6-904d-3655056fa3c2.json",
+  "workflow_identity": {
+    "internal_name": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+    "tags": {
+      "flowDisplayName": "IP_Reference_Data_Endpoint"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "undefined",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Initialize_Lookups_ReceivedAt": {
+        "runAfter": {},
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varReceivedAtUtc",
+              "type": "String",
+              "value": "@utcNow()"
+            }
+          ]
+        }
+      },
+      "Initialize_Lookups_StartTicks": {
+        "runAfter": {
+          "Initialize_Lookups_ReceivedAt": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStartTicks",
+              "type": "Integer",
+              "value": "@ticks(utcNow())"
+            }
+          ]
+        }
+      },
+      "Initialize_Lookups_CompletedAt": {
+        "runAfter": {
+          "Initialize_Lookups_StartTicks": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varCompletedAtUtc",
+              "type": "String",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "Initialize_Lookups_Duration": {
+        "runAfter": {
+          "Initialize_Lookups_CompletedAt": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varDurationMs",
+              "type": "Integer",
+              "value": 0
+            }
+          ]
+        }
+      },
+      "Initialize_Lookups_Status": {
+        "runAfter": {
+          "Initialize_Lookups_Duration": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStatusCode",
+              "type": "Integer",
+              "value": 500
+            }
+          ]
+        }
+      },
+      "Initialize_Lookups_RequestId": {
+        "runAfter": {
+          "Initialize_Lookups_Status": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varRequestId",
+              "type": "String",
+              "value": "@if(empty(trim(string(coalesce(triggerOutputs()?['headers']?['X-Correlation-ID'],triggerOutputs()?['headers']?['x-correlation-id'],triggerBody()?['payload']?['requestId'],triggerBody()?['requestId'],'')))),guid(),trim(string(coalesce(triggerOutputs()?['headers']?['X-Correlation-ID'],triggerOutputs()?['headers']?['x-correlation-id'],triggerBody()?['payload']?['requestId'],triggerBody()?['requestId']))))"
+            }
+          ]
+        }
+      },
+      "Initialize_Lookups_Data": {
+        "runAfter": {
+          "Initialize_Lookups_RequestId": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varData",
+              "type": "Object",
+              "value": {}
+            }
+          ]
+        }
+      },
+      "Initialize_Lookups_Errors": {
+        "runAfter": {
+          "Initialize_Lookups_Data": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varErrors",
+              "type": "Array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Scope_Global": {
+        "actions": {
+          "Scope_Lookups_Fetch": {
+            "actions": {
+              "Scope_Global_Lookups": {
+                "actions": {
+                  "Compose_Lookups_Caller": {
+                    "type": "Compose",
+                    "inputs": "@toLower(trim(string(if(empty(triggerBody()?['payload']?['userEmail']),coalesce(triggerBody()?['userEmail'],''),triggerBody()?['payload']?['userEmail']))))"
+                  },
+                  "Get_Lookups_Directory_User": {
+                    "runAfter": {
+                      "Compose_Lookups_Caller": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "table": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+                        "$filter": "@concat('Email eq ''',replace(outputs('Compose_Lookups_Caller'),'''',''''''),''' and Status eq ''active''')",
+                        "$top": 2
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Compose_Lookups_Role": {
+                    "runAfter": {
+                      "Get_Lookups_Directory_User": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@toLower(trim(string(coalesce(first(body('Get_Lookups_Directory_User')?['value'])?['Role'],''))))"
+                  },
+                  "Get_Lookups_Role_Permissions": {
+                    "runAfter": {
+                      "Compose_Lookups_Role": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "table": "f675598b-271d-4200-8d75-2597aad4057f",
+                        "$filter": "@concat('RoleId eq ''',replace(outputs('Compose_Lookups_Role'),'''',''''''),''' and Active eq 1')",
+                        "$top": 2
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Compose_Lookups_Permissions_Array": {
+                    "runAfter": {
+                      "Get_Lookups_Role_Permissions": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@if(empty(first(body('Get_Lookups_Role_Permissions')?['value'])?['PermissionsJson']),json('[]'),json(string(first(body('Get_Lookups_Role_Permissions')?['value'])?['PermissionsJson'])))"
+                  },
+                  "Compose_Lookups_Routes_Array": {
+                    "runAfter": {
+                      "Compose_Lookups_Permissions_Array": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@if(empty(first(body('Get_Lookups_Role_Permissions')?['value'])?['AllowedRoutesJson']),json('[]'),json(string(first(body('Get_Lookups_Role_Permissions')?['value'])?['AllowedRoutesJson'])))"
+                  },
+                  "Compose_Lookups_Permitted": {
+                    "runAfter": {
+                      "Compose_Lookups_Routes_Array": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@and(equals(length(coalesce(body('Get_Lookups_Directory_User')?['value'],json('[]'))),1),equals(length(coalesce(body('Get_Lookups_Role_Permissions')?['value'],json('[]'))),1),or(contains(outputs('Compose_Lookups_Routes_Array'),'*'),contains(outputs('Compose_Lookups_Routes_Array'),'lookups')),contains(outputs('Compose_Lookups_Permissions_Array'),'user:view'))"
+                  },
+                  "Condition_Lookups_Authorised": {
+                    "actions": {
+                      "Get_Lookup_Users": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "table": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+                            "$filter": "Status eq 'active'",
+                            "$orderby": "FullName asc",
+                            "$top": 500
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Get_Lookup_Categories": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                            "table": "f64c8b65-c921-46e9-8814-a8cef61f6016",
+                            "$orderby": "Title asc",
+                            "$top": 500
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Get_Lookup_Departments": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                            "table": "8aab9c4e-001f-4e32-862c-8a50e750f04e",
+                            "$orderby": "Title asc",
+                            "$top": 200
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Select_Lookup_Users": {
+                        "runAfter": {
+                          "Get_Lookup_Users": [
+                            "Succeeded"
+                          ],
+                          "Get_Lookup_Categories": [
+                            "Succeeded"
+                          ],
+                          "Get_Lookup_Departments": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@coalesce(body('Get_Lookup_Users')?['value'],json('[]'))",
+                          "select": {
+                            "UserId": "@item()?['UserId']",
+                            "FullName": "@item()?['FullName']",
+                            "Email": "@item()?['Email']",
+                            "Directorate": "@item()?['Directorate']",
+                            "Department": "@item()?['Department']",
+                            "Role": "@item()?['Role']",
+                            "Persona": "@item()?['Persona']",
+                            "Status": "@item()?['Status']",
+                            "AccessScope": "@item()?['AccessScope']",
+                            "PilotCohort": "@item()?['PilotCohort']"
+                          }
+                        }
+                      },
+                      "Select_Lookup_Categories": {
+                        "runAfter": {
+                          "Select_Lookup_Users": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@coalesce(body('Get_Lookup_Categories')?['value'],json('[]'))",
+                          "select": {
+                            "ID": "@item()?['ID']",
+                            "Title": "@item()?['Title']",
+                            "Category": "@item()?['Category']",
+                            "Subcategory": "@item()?['Subcategory']",
+                            "DSU_KEY": "@item()?['DSU_KEY']",
+                            "Priority": "@item()?['Priority']",
+                            "Timeline": "@item()?['Timeline']"
+                          }
+                        }
+                      },
+                      "Select_Lookup_Departments": {
+                        "runAfter": {
+                          "Select_Lookup_Categories": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@coalesce(body('Get_Lookup_Departments')?['value'],json('[]'))",
+                          "select": {
+                            "ID": "@item()?['ID']",
+                            "Title": "@item()?['Title']",
+                            "DSU_KEY": "@item()?['DSU_KEY']",
+                            "DSU_Email": "@item()?['DSU_Email']",
+                            "DSU_HeadEmail": "@item()?['DSU_HeadEmail']",
+                            "DSU_HeadTitle": "@item()?['DSU_HeadTitle']"
+                          }
+                        }
+                      },
+                      "Set_Lookups_Success_Data": {
+                        "runAfter": {
+                          "Select_Lookup_Departments": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "varData",
+                          "value": {
+                            "code": "LOOKUPS_RETRIEVED",
+                            "counts": {
+                              "users": "@length(body('Select_Lookup_Users'))",
+                              "categories": "@length(body('Select_Lookup_Categories'))",
+                              "departments": "@length(body('Select_Lookup_Departments'))"
+                            },
+                            "limits": {
+                              "users": 500,
+                              "categories": 500,
+                              "departments": 200
+                            },
+                            "users": "@body('Select_Lookup_Users')",
+                            "categories": "@body('Select_Lookup_Categories')",
+                            "departments": "@body('Select_Lookup_Departments')"
+                          }
+                        }
+                      },
+                      "Set_Lookups_Success_Status": {
+                        "runAfter": {
+                          "Set_Lookups_Success_Data": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "varStatusCode",
+                          "value": 200
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_temp_fix_caller": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {
+                        "Set_Lookups_Denied_Data": {
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varData",
+                            "value": {
+                              "code": "@if(empty(outputs('Compose_Lookups_Caller')),'INVALID_REQUEST',if(equals(length(coalesce(body('Get_Lookups_Directory_User')?['value'],json('[]'))),0),'UNAUTHENTICATED','FORBIDDEN'))",
+                              "message": "@if(empty(outputs('Compose_Lookups_Caller')),'userEmail is required.',if(equals(length(coalesce(body('Get_Lookups_Directory_User')?['value'],json('[]'))),0),'The caller is not active or registered.','The caller is not authorised to retrieve lookup data.'))"
+                            }
+                          }
+                        },
+                        "Set_Lookups_Denied_Status": {
+                          "runAfter": {
+                            "Set_Lookups_Denied_Data": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varStatusCode",
+                            "value": "@if(empty(outputs('Compose_Lookups_Caller')),400,if(equals(length(coalesce(body('Get_Lookups_Directory_User')?['value'],json('[]'))),0),401,403))"
+                          }
+                        },
+                        "Append_Lookups_Denied_Error": {
+                          "runAfter": {
+                            "Set_Lookups_Denied_Status": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "AppendToArrayVariable",
+                          "inputs": {
+                            "name": "varErrors",
+                            "value": {
+                              "scope": "Lookups",
+                              "stage": "authorisation",
+                              "status": "failed",
+                              "code": "@if(empty(outputs('Compose_Lookups_Caller')),'INVALID_REQUEST',if(equals(length(coalesce(body('Get_Lookups_Directory_User')?['value'],json('[]'))),0),'UNAUTHENTICATED','FORBIDDEN'))",
+                              "message": "@if(empty(outputs('Compose_Lookups_Caller')),'userEmail is required.',if(equals(length(coalesce(body('Get_Lookups_Directory_User')?['value'],json('[]'))),0),'The caller is not active or registered.','The caller is not authorised to retrieve lookup data.'))",
+                              "trackedAtUtc": "@utcNow()"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@outputs('Compose_temp_fix_caller')",
+                            true
+                          ]
+                        },
+                        {
+                          "equals": [
+                            "@outputs('Compose_temp_fix_permtted')",
+                            true
+                          ]
+                        }
+                      ]
+                    },
+                    "type": "If"
+                  },
+                  "Compose_temp_fix_permtted": {
+                    "runAfter": {
+                      "Compose_actual_expressions_Condition_Lookups_Authorised": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": true
+                  },
+                  "Compose_temp_fix_caller": {
+                    "runAfter": {
+                      "Compose_temp_fix_permtted": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": true
+                  },
+                  "Compose_actual_expressions_Condition_Lookups_Authorised": {
+                    "runAfter": {
+                      "Compose_Lookups_Permitted": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": [
+                      {
+                        "caller": "@not(empty(outputs('Compose_Lookups_Caller')))",
+                        "permitted": "@outputs('Compose_Lookups_Permitted')"
+                      }
+                    ]
+                  }
+                },
+                "type": "Scope"
+              },
+              "Scope_Catch_Lookups": {
+                "actions": {
+                  "Set_Lookups_Catch_Status": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varStatusCode",
+                      "value": 500
+                    }
+                  },
+                  "Set_Lookups_Catch_Data": {
+                    "runAfter": {
+                      "Set_Lookups_Catch_Status": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varData",
+                      "value": {
+                        "code": "LOOKUPS_PROCESSING_FAILED",
+                        "message": "Lookups could not be completed."
+                      }
+                    }
+                  },
+                  "Append_Lookups_Catch_Error": {
+                    "runAfter": {
+                      "Set_Lookups_Catch_Data": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "varErrors",
+                      "value": {
+                        "scope": "Lookups",
+                        "stage": "processing",
+                        "status": "failed",
+                        "code": "LOOKUPS_PROCESSING_FAILED",
+                        "message": "Lookups processing failed or timed out.",
+                        "trackedAtUtc": "@utcNow()"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Scope_Global_Lookups": [
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "type": "Scope"
+              },
+              "Scope_Finalize_Lookups": {
+                "actions": {
+                  "Set_Lookups_CompletedAt": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varCompletedAtUtc",
+                      "value": "@utcNow()"
+                    }
+                  },
+                  "Set_Lookups_DurationMs": {
+                    "runAfter": {
+                      "Set_Lookups_CompletedAt": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varDurationMs",
+                      "value": "@max(div(sub(ticks(variables('varCompletedAtUtc')),variables('varStartTicks')),10000),0)"
+                    }
+                  },
+                  "Get_Allowed_Origins_Lookups": {
+                    "runAfter": {
+                      "Set_Lookups_DurationMs": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                        "$filter": "startswith(Title,'ALLOWED_ORIGIN')",
+                        "$top": 100
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Select_Allowed_Origins_Lookups": {
+                    "runAfter": {
+                      "Get_Allowed_Origins_Lookups": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(body('Get_Allowed_Origins_Lookups')?['value'],json('[]'))",
+                      "select": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+                    }
+                  },
+                  "Compose_Request_Origin_Lookups": {
+                    "runAfter": {
+                      "Select_Allowed_Origins_Lookups": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['Origin'],triggerOutputs()?['headers']?['origin'],'')))"
+                  },
+                  "Compose_Allowed_Origin_Lookups": {
+                    "runAfter": {
+                      "Compose_Request_Origin_Lookups": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@if(and(not(empty(outputs('Compose_Request_Origin_Lookups'))),contains(body('Select_Allowed_Origins_Lookups'),outputs('Compose_Request_Origin_Lookups'))),outputs('Compose_Request_Origin_Lookups'),'')"
+                  },
+                  "Compose_Lookups_Standard_Response": {
+                    "runAfter": {
+                      "Compose_Allowed_Origin_Lookups": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "ok": "@less(int(variables('varStatusCode')),400)",
+                      "status": {
+                        "http": "@int(variables('varStatusCode'))",
+                        "code": "@string(coalesce(variables('varData')?['code'],if(less(int(variables('varStatusCode')),400),'OK','INTERNAL_ERROR')))",
+                        "message": "@if(less(int(variables('varStatusCode')),400),'Request completed successfully.','Request could not be completed.')"
+                      },
+                      "request": {
+                        "requestId": "@variables('varRequestId')",
+                        "trackingId": "@trim(string(coalesce(triggerBody()?['payload']?['trackingId'],triggerBody()?['trackingId'],'')))",
+                        "action": "lookups",
+                        "operation": "read",
+                        "source": "@trim(string(coalesce(triggerBody()?['payload']?['source'],triggerBody()?['source'],'portal')))"
+                      },
+                      "timing": {
+                        "receivedAtUtc": "@variables('varReceivedAtUtc')",
+                        "completedAtUtc": "@variables('varCompletedAtUtc')",
+                        "durationMs": "@variables('varDurationMs')"
+                      },
+                      "data": "@variables('varData')",
+                      "errors": "@variables('varErrors')",
+                      "meta": {
+                        "runId": "@workflow()?['run']?['name']",
+                        "flowName": "@workflow()?['name']",
+                        "contractVersion": "2026-09-18.2"
+                      }
+                    }
+                  },
+                  "Compose_Lookups_Telemetry": {
+                    "runAfter": {
+                      "Compose_Lookups_Standard_Response": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "capture_metadata": {
+                        "telemetry_kind": "flow_run_record",
+                        "capture_version": "3.0.0",
+                        "captured_at_utc": "@utcNow()"
+                      },
+                      "workflow_identity": {
+                        "internal_name": "@workflow()?['name']",
+                        "run_name": "@workflow()?['run']?['name']"
+                      },
+                      "request": {
+                        "requestId": "@variables('varRequestId')",
+                        "caller": "@outputs('Compose_Lookups_Caller')"
+                      },
+                      "response": {
+                        "statusCode": "@variables('varStatusCode')",
+                        "errorCount": "@length(coalesce(variables('varErrors'),json('[]')))"
+                      },
+                      "timing": {
+                        "receivedAtUtc": "@variables('varReceivedAtUtc')",
+                        "completedAtUtc": "@variables('varCompletedAtUtc')",
+                        "durationMs": "@variables('varDurationMs')"
+                      }
+                    }
+                  },
+                  "Create_Lookups_Telemetry": {
+                    "runAfter": {
+                      "Compose_Lookups_Telemetry": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                        "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                        "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                        "item/RunId": "@workflow()?['run']?['name']",
+                        "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+                        "item/CompletedAtUtc": "@variables('varCompletedAtUtc')",
+                        "item/Outcome": "@if(less(int(variables('varStatusCode')),400),'Succeeded','Failed')",
+                        "item/DurationMs": "@variables('varDurationMs')",
+                        "item/ErrorMessage": "@string(variables('varErrors'))",
+                        "item/RunRecordJson": "@string(outputs('Compose_Lookups_Telemetry'))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "PostItem"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Response_Lookups": {
+                    "runAfter": {
+                      "Create_Lookups_Telemetry": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "type": "Response",
+                    "kind": "Http",
+                    "inputs": {
+                      "statusCode": "@variables('varStatusCode')",
+                      "headers": {
+                        "Content-Type": "application/json",
+                        "Cache-Control": "no-store",
+                        "X-Content-Type-Options": "nosniff",
+                        "Access-Control-Allow-Origin": "@outputs('Compose_Allowed_Origin_Lookups')",
+                        "Access-Control-Allow-Methods": "POST, OPTIONS",
+                        "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID",
+                        "Vary": "Origin",
+                        "X-Correlation-ID": "@variables('varRequestId')"
+                      },
+                      "body": "@outputs('Compose_Lookups_Standard_Response')"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Scope_Global_Lookups": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ],
+                  "Scope_Catch_Lookups": [
+                    "Succeeded",
+                    "Skipped"
+                  ]
+                },
+                "type": "Scope"
+              }
+            },
+            "type": "Scope"
+          },
+          "Scope_Flow_Data_Capture": {
+            "actions": {
+              "Compose_Redacted_Queries": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000251"
+                },
+                "type": "Compose",
+                "inputs": "@setProperty(setProperty(coalesce(triggerOutputs()?['queries'], json('{}')), 'sig', '***REDACTED***'), 'code', '***REDACTED***')"
+              },
+              "Compose_Redacted_Headers": {
+                "runAfter": {
+                  "Compose_Redacted_Queries": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000252"
+                },
+                "type": "Compose",
+                "inputs": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(coalesce(triggerOutputs()?['headers'], json('{}')), 'Authorization', '***REDACTED***'), 'Cookie', '***REDACTED***'), 'x-api-key', '***REDACTED***'), 'Ocp-Apim-Subscription-Key', '***REDACTED***'), 'x-ms-igw-external-uri', '***REDACTED***'), 'x-ms-igw-raw-target', '***REDACTED***')"
+              },
+              "Get_Flow_Definition": {
+                "runAfter": {
+                  "Compose_Redacted_Headers": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000253"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "environmentName": "@coalesce(workflow()?['tags']?['environmentName'], 'Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1')",
+                    "flowName": "@workflow()?['name']"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                    "connectionName": "shared_flowmanagement",
+                    "operationId": "GetFlow"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Compose_Flow_Run_Record": {
+                "runAfter": {
+                  "Get_Flow_Definition": [
+                    "Succeeded",
+                    "Failed",
+                    "Skipped",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000254"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "capture_metadata": {
+                    "telemetry_kind": "flow_run_record",
+                    "capture_version": "2.1.0",
+                    "contract_version": "2026-08-21.1",
+                    "captured_at_utc": "@{utcNow()}",
+                    "capture_scope": "Scope_Flow_Data_Capture"
+                  },
+                  "workflow_identity": {
+                    "internal_name": "@{workflow()?['name']}",
+                    "display_name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])}",
+                    "full_resource_id": "@{workflow()?['id']}",
+                    "type": "@{workflow()?['type']}",
+                    "location": "@{workflow()?['location']}",
+                    "tags": "@coalesce(workflow()?['tags'], json('{}'))"
+                  },
+                  "run_identity": {
+                    "run_name": "@{workflow()?['run']?['name']}",
+                    "run_resource_id": "@{workflow()?['run']?['id']}",
+                    "run_type": "@{workflow()?['run']?['type']}",
+                    "environment_id": "@{workflow()?['tags']?['environmentName']}",
+                    "run_url": "@{concat('https://make.powerautomate.com/environments/', coalesce(workflow()?['tags']?['environmentName'], ''), '/flows/', coalesce(workflow()?['name'], ''), '/runs/', coalesce(workflow()?['run']?['name'], ''))}"
+                  },
+                  "trigger_record": {
+                    "name": "@{trigger()?['name']}",
+                    "start_time": "@{trigger()?['startTime']}",
+                    "end_time": "@{trigger()?['endTime']}",
+                    "scheduled_time": "@{trigger()?['scheduledTime']}",
+                    "status": "@{trigger()?['status']}",
+                    "code": "@{trigger()?['code']}",
+                    "tracking_id": "@{trigger()?['trackingId']}",
+                    "client_tracking_id": "@{trigger()?['clientTrackingId']}",
+                    "origin_history_name": "@{trigger()?['originHistoryName']}",
+                    "correlation": "@coalesce(trigger()?['correlation'], json('{}'))"
+                  },
+                  "request": {
+                    "method": "@{triggerOutputs()?['method']}",
+                    "relative_path_parameters": "@coalesce(triggerOutputs()?['relativePathParameters'], json('{}'))",
+                    "headers_redacted": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))",
+                    "queries_redacted": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))",
+                    "caller": "@coalesce(outputs('Compose_Lookups_Caller'), json('{}'))",
+                    "body": "@triggerBody()"
+                  },
+                  "design_definition": {
+                    "endpoint": "Lookups",
+                    "display_name": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['displayName']}",
+                    "state": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['state']}",
+                    "provisioning_method": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['provisioningMethod']}",
+                    "created_time": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['createdTime']}",
+                    "last_modified_time": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['lastModifiedTime']}",
+                    "creator": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['creator'], json('{}'))",
+                    "definition": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition'], json('{}'))",
+                    "trigger_definition": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers'], json('{}'))",
+                    "trigger_input_schema": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?['manual']?['inputs']?['schema'], json('{}'))",
+                    "action_definitions": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['actions'], json('{}'))",
+                    "connection_references": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['connectionReferences'], json('{}'))"
+                  },
+                  "Response_Lookups_record": {
+                    "action_status": "@{actions('Response_Lookups')?['status']}",
+                    "action_code": "@{actions('Response_Lookups')?['code']}",
+                    "action_start_time": "@{actions('Response_Lookups')?['startTime']}",
+                    "action_end_time": "@{actions('Response_Lookups')?['endTime']}",
+                    "tracking_id": "@{actions('Response_Lookups')?['trackingId']}",
+                    "client_tracking_id": "@{actions('Response_Lookups')?['clientTrackingId']}",
+                    "correlation": "@coalesce(actions('Response_Lookups')?['correlation'], json('{}'))",
+                    "status_code_sent": "@int(coalesce(variables('varStatusCode'), actions('Response_Lookups')?['inputs']?['statusCode'], 500))",
+                    "headers_sent": "@coalesce(actions('Response_Lookups')?['inputs']?['headers'], json('{}'))",
+                    "body_sent": "@coalesce(actions('Response_Lookups')?['inputs']?['body'], json('{}'))"
+                  },
+                  "outcome": {
+                    "flow_outcome": "@if(less(int(coalesce(variables('varStatusCode'), 500)), 400), 'Succeeded', 'Failed')",
+                    "error_count": "@length(coalesce(variables('varErrors'), json('[]')))",
+                    "errors": "@coalesce(variables('varErrors'), json('[]'))",
+                    "all_scope_action_results": "@coalesce(result('Scope_Lookups_Fetch'), json('[]'))"
+                  },
+                  "timing": {
+                    "trigger_start_time": "@{trigger()?['startTime']}",
+                    "received_at_utc": "@{variables('varReceivedAtUtc')}",
+                    "completed_at_utc": "@{variables('varCompletedAtUtc')}",
+                    "captured_at_utc": "@{utcNow()}",
+                    "duration_ms": "@variables('varDurationMs')",
+                    "total_elapsed_ms": "@div(sub(ticks(utcNow()), ticks(trigger()?['startTime'])), 10000)",
+                    "total_elapsed_seconds": "@div(sub(ticks(utcNow()), ticks(trigger()?['startTime'])), 10000000)",
+                    "Response_Lookups_action_duration_ms": "@if(empty(coalesce(actions('Response_Lookups')?['endTime'], '')), 0, div(sub(ticks(actions('Response_Lookups')?['endTime']), ticks(actions('Response_Lookups')?['startTime'])), 10000))"
+                  }
+                }
+              },
+              "Compose_Flow_Run_Record_Schema": {
+                "runAfter": {
+                  "Compose_Flow_Run_Record": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000255"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "title": "flow_run_record",
+                  "type": "object",
+                  "required": [
+                    "capture_metadata",
+                    "workflow_identity",
+                    "run_identity",
+                    "trigger_record",
+                    "request",
+                    "design_definition",
+                    "Response_Lookups_record",
+                    "outcome",
+                    "timing"
+                  ],
+                  "properties": {
+                    "capture_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "telemetry_kind": {
+                          "type": "string",
+                          "enum": [
+                            "flow_run_record"
+                          ]
+                        },
+                        "capture_version": {
+                          "type": "string"
+                        },
+                        "contract_version": {
+                          "type": "string"
+                        },
+                        "captured_at_utc": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "capture_scope": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "workflow_identity": {
+                      "type": "object",
+                      "properties": {
+                        "internal_name": {
+                          "type": "string"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "full_resource_id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "location": {
+                          "type": "string"
+                        },
+                        "tags": {
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "run_identity": {
+                      "type": "object",
+                      "properties": {
+                        "run_name": {
+                          "type": "string"
+                        },
+                        "run_resource_id": {
+                          "type": "string"
+                        },
+                        "run_type": {
+                          "type": "string"
+                        },
+                        "environment_id": {
+                          "type": "string"
+                        },
+                        "run_url": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "trigger_record": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "start_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "end_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "scheduled_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "tracking_id": {
+                          "type": "string"
+                        },
+                        "client_tracking_id": {
+                          "type": "string"
+                        },
+                        "origin_history_name": {
+                          "type": "string"
+                        },
+                        "correlation": {
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "request": {
+                      "type": "object",
+                      "properties": {
+                        "method": {
+                          "type": "string"
+                        },
+                        "relative_path_parameters": {
+                          "type": "object"
+                        },
+                        "headers_redacted": {
+                          "type": "object"
+                        },
+                        "queries_redacted": {
+                          "type": "object"
+                        },
+                        "caller": {
+                          "type": "object"
+                        },
+                        "body": {}
+                      }
+                    },
+                    "design_definition": {
+                      "type": "object",
+                      "properties": {
+                        "endpoint": {
+                          "type": "string"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "provisioning_method": {
+                          "type": "string"
+                        },
+                        "created_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "last_modified_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "creator": {
+                          "type": "object"
+                        },
+                        "definition": {
+                          "type": "object"
+                        },
+                        "trigger_definition": {
+                          "type": "object"
+                        },
+                        "trigger_input_schema": {
+                          "type": "object"
+                        },
+                        "action_definitions": {
+                          "type": "object"
+                        },
+                        "connection_references": {
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "Response_Lookups_record": {
+                      "type": "object",
+                      "properties": {
+                        "action_status": {
+                          "type": "string"
+                        },
+                        "action_code": {
+                          "type": "string"
+                        },
+                        "action_start_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "action_end_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "tracking_id": {
+                          "type": "string"
+                        },
+                        "client_tracking_id": {
+                          "type": "string"
+                        },
+                        "correlation": {
+                          "type": "object"
+                        },
+                        "status_code_sent": {
+                          "type": "integer"
+                        },
+                        "headers_sent": {
+                          "type": "object"
+                        },
+                        "body_sent": {}
+                      }
+                    },
+                    "outcome": {
+                      "type": "object",
+                      "properties": {
+                        "flow_outcome": {
+                          "type": "string",
+                          "enum": [
+                            "Succeeded",
+                            "Failed"
+                          ]
+                        },
+                        "error_count": {
+                          "type": "integer"
+                        },
+                        "errors": {
+                          "type": "array"
+                        },
+                        "all_scope_action_results": {
+                          "type": "array"
+                        }
+                      }
+                    },
+                    "timing": {
+                      "type": "object",
+                      "properties": {
+                        "trigger_start_time": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "received_at_utc": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "completed_at_utc": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "captured_at_utc": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "duration_ms": {
+                          "type": "number"
+                        },
+                        "total_elapsed_ms": {
+                          "type": "number"
+                        },
+                        "total_elapsed_seconds": {
+                          "type": "number"
+                        },
+                        "Response_Lookups_action_duration_ms": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "Create_Flow_Telemetry": {
+                "runAfter": {
+                  "Compose_Flow_Run_Record_Schema": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000256"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                    "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+                    "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+                    "item/RunId": "@workflow()?['run']?['name']",
+                    "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+                    "item/CompletedAtUtc": "@variables('varCompletedAtUtc')",
+                    "item/Outcome": "@if(less(int(coalesce(variables('varStatusCode'), 500)), 400), 'Succeeded', 'Failed')",
+                    "item/DurationMs": "@variables('varDurationMs')",
+                    "item/ErrorMessage": "@string(coalesce(variables('varErrors'), json('[]')))",
+                    "item/RunRecordJson": "@string(outputs('Compose_Flow_Run_Record'))"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "PostItem"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Get_item_Flow_Telemetry": {
+                "runAfter": {
+                  "Create_Flow_Telemetry": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000257"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                    "id": "@body('Create_Flow_Telemetry')?['ID']"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItem"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Compose_Telemetry_Attachments": {
+                "runAfter": {
+                  "Get_item_Flow_Telemetry": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000258"
+                },
+                "type": "Compose",
+                "inputs": [
+                  {
+                    "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__flow_run_record.json",
+                    "ContentBytes": "@{base64(string(outputs('Compose_Flow_Run_Record')))}"
+                  },
+                  {
+                    "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__flow_run_record_schema.json",
+                    "ContentBytes": "@{base64(string(outputs('Compose_Flow_Run_Record_Schema')))}"
+                  },
+                  {
+                    "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__trigger_input_schema.json",
+                    "ContentBytes": "@{base64(string(coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?['manual']?['inputs']?['schema'], json('{}'))))}"
+                  },
+                  {
+                    "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__full_definition.json",
+                    "ContentBytes": "@{base64(string(coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition'], json('{}'))))}"
+                  },
+                  {
+                    "Name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'], 'Flow')}__@{workflow()?['run']?['name']}__sharepoint_item.json",
+                    "ContentBytes": "@{base64(string(coalesce(body('Get_item_Flow_Telemetry'), json('{}'))))}"
+                  }
+                ]
+              },
+              "Send_Telemetry_Email": {
+                "runAfter": {
+                  "Compose_Telemetry_Attachments": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000259"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                    "emailMessage/Subject": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])} — Flow Run Record — @{workflow()?['run']?['name']}",
+                    "emailMessage/Body": "<p class=\"editor-paragraph\">Automated flow run record capture.<br>Flow: @{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])}<br>Run: @{workflow()?['run']?['name']}<br>Outcome: @{if(less(int(coalesce(variables('varStatusCode'), 500)), 400), 'Succeeded', 'Failed')}<br>Duration (ms): @{variables('varDurationMs')}</p>",
+                    "emailMessage/Attachments": "@outputs('Compose_Telemetry_Attachments')",
+                    "emailMessage/Importance": "Normal"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                    "connectionName": "shared_office365",
+                    "operationId": "SendEmailV2"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Lookups_Fetch": [
+                "Succeeded",
+                "TimedOut",
+                "Skipped",
+                "Failed"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000250"
+            },
+            "type": "Scope"
+          }
+        },
+        "runAfter": {
+          "Initialize_Lookups_Errors": [
+            "Succeeded"
+          ]
+        },
+        "type": "Scope"
+      }
+    }
+  }
+}

@@ -1,0 +1,991 @@
+{
+ "retired": "2026-10-02",
+ "lastCommitHoldingThem": "80a7f7e",
+ "custodyArchive": "ECM_DOCS_DEV-retired-records-2026-10-02.zip (held by the repository owner)",
+ "files": [
+  {
+   "path": "artifacts/matched-flow-packages/2026-09-24/README.md",
+   "sha256": "8ec759b10ed4d74ffd82a7b889ff2d98cb0be312f6d399d00be261429acc27c9",
+   "size_bytes": 670,
+   "why": "Release or packaging artifact; rebuilt by its generator when needed."
+  },
+  {
+   "path": "docs/admin-centre/source-1.0/01_Admin_Centre_Design_Documentation.docx",
+   "sha256": "f94b4ae98f0bf3a5cbb8e4a8dc3d05916d505a56591bc477ac7b408406c0d9ac",
+   "size_bytes": 41978,
+   "why": "Snapshot of Admin Centre 1.0 source; superseded by tools/admin-centre."
+  },
+  {
+   "path": "docs/admin-centre/source-1.0/02_Admin_Centre_Developer_Guide.docx",
+   "sha256": "f77962ff026fda985251596743017e07901929705be267d935296f5fd5297d70",
+   "size_bytes": 40851,
+   "why": "Snapshot of Admin Centre 1.0 source; superseded by tools/admin-centre."
+  },
+  {
+   "path": "docs/admin-centre/source-1.0/03_Admin_Centre_Provisioning_and_Configuration_Guide.docx",
+   "sha256": "06c6a17c5eec10b5519d60ee4ef1d36fd0d0f0a9d3c37953fcebd36830333f39",
+   "size_bytes": 42103,
+   "why": "Snapshot of Admin Centre 1.0 source; superseded by tools/admin-centre."
+  },
+  {
+   "path": "docs/admin-centre/source-1.0/04_Admin_Centre_User_Guides.docx",
+   "sha256": "b436d64a09100a1289eee77449ac384851b65970a184be50b8de10f64c7f9dd9",
+   "size_bytes": 41372,
+   "why": "Snapshot of Admin Centre 1.0 source; superseded by tools/admin-centre."
+  },
+  {
+   "path": "docs/admin-centre/source-1.0/MANIFEST.json",
+   "sha256": "034738fb53a0b6b4967cf7126e978717d891d8dfb3339ba36f8168c2e5c344ec",
+   "size_bytes": 961,
+   "why": "Snapshot of Admin Centre 1.0 source; superseded by tools/admin-centre."
+  },
+  {
+   "path": "docs/admin-centre/source-1.0/README.md",
+   "sha256": "8f3fd7a1afcc9754cea28ca74f0cd639e806912fdf1a47f115e9fc5959ef603b",
+   "size_bytes": 672,
+   "why": "Snapshot of Admin Centre 1.0 source; superseded by tools/admin-centre."
+  },
+  {
+   "path": "docs/archive/dgo-ops/.gitignore",
+   "sha256": "f5b5057e85c7773c2f67016f6df2701487b1d48f4fa4a16c9571d13f9124beb3",
+   "size_bytes": 129,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/aud_activityhubp_20260728_151904/activityhubp_rpt.html",
+   "sha256": "7197e453a4c89720e0874d190d4478028433b9a27f03f0d47158a9fd4bfbc3d9",
+   "size_bytes": 23630,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/aud_activityhubp_20260728_151904/activityhubp_state.json",
+   "sha256": "cbc3a74c292c9db959f77c339a74c82838967456e550648608255b7ad8d57ee1",
+   "size_bytes": 145553,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/aud_activityhubp_20260728_151904/activityhubp_sum.json",
+   "sha256": "990dd3b58c1cf6a21c1799cc6a503c516a6116181fcde24f9363812ca7688dc3",
+   "size_bytes": 15697,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/README.md",
+   "sha256": "df99910ebf65b1ace586ebcb0d97ddf3933a648ca2903184bf282788b90d3cef",
+   "size_bytes": 1370,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/config.example.js",
+   "sha256": "420a766570936f01bc5a881df6214bac3f314b51c03f88ed513d1978671650c3",
+   "size_bytes": 1100,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/index.html",
+   "sha256": "d238592a708329be3b4c08e33c6fdce25274074324893b1bd878f5bc23456ac1",
+   "size_bytes": 1967,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/api/client.js",
+   "sha256": "b02cf5c95831990edd8c2d48fff1f91ca618b5c393c707c0df701f7664a6a2a6",
+   "size_bytes": 1112,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/controllers/actions.js",
+   "sha256": "f10279b3191f14b3d52ada7eda01d4f79d4d7b1cc3a566f7bd2803a0a392cf79",
+   "size_bytes": 10423,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/core/config.js",
+   "sha256": "9a606a447c0414b09a102bb4f3cb7c403bef6f55f28b865d172dca7c87fefd48",
+   "size_bytes": 2332,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/core/router.js",
+   "sha256": "d712b7fa74fc660907ae2bf95f1291db7cd25d484186f167c5ff149b3f9a27f2",
+   "size_bytes": 931,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/core/store.js",
+   "sha256": "88eabf51b258515c8bed510b11feff51f4cb7c6751b9f36d7233d5a82435292d",
+   "size_bytes": 2878,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/data/demo.js",
+   "sha256": "32b51c258061f633a4ba21193dabc6b2bd14e88eb036fd0c8d6605146e6a1b2d",
+   "size_bytes": 3934,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/events/bindings.js",
+   "sha256": "a7ce6340444017ac4e6ecf416edee0c79ac4dc8d4d0fc2135fd102b819ffab07",
+   "size_bytes": 991,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/main.js",
+   "sha256": "5df6111f100cf300d106919e90a74e572bb1bd57a90e3df524032706119b390a",
+   "size_bytes": 1068,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/ai.js",
+   "sha256": "1718684a8e0cf8b70717e617933d1eacea4b63503386307945e6ac4db279abe3",
+   "size_bytes": 328,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/approvals.js",
+   "sha256": "09c1c8782c56bd5920b4ac1c7ccbd9be1f23e3ed4a9af2c46bde3a5efbb4d0e4",
+   "size_bytes": 991,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/bootstrap.js",
+   "sha256": "2f6535b123e48cdcf1afad1d823d148edc865c55e433254021278cb641877a70",
+   "size_bytes": 1270,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/briefs.js",
+   "sha256": "4c8db1f280d17ff2da52e86872fc115bb727a94fddfdee1c6b1c3764593095b3",
+   "size_bytes": 1916,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/correspondence.js",
+   "sha256": "7cd115659e2711d421f55e7647375aafd1505094da1f6bc81365c4322a582326",
+   "size_bytes": 2343,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/decisions.js",
+   "sha256": "b73b1d47f701eb089a1d84298963709ee1a1cca3ee58958bea66d023693398f5",
+   "size_bytes": 1059,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/inbox.js",
+   "sha256": "0f5263ca6df82addfd3615fbe41da2fabbeec3c9ebb90e505f00d5953a6001c1",
+   "size_bytes": 1694,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/kpi.js",
+   "sha256": "7c6b71af3039c3f4d76106edab00013ebc66f183d14193cb9762029654cc0661",
+   "size_bytes": 457,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/meetings.js",
+   "sha256": "c2be7159abc6be9d3037b738f31a73e70acfede10c0c4b8ca548b1de5e72a64b",
+   "size_bytes": 1867,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/minutes.js",
+   "sha256": "8e34dc43c6b658e4d5092b3a7da3d2760ba008373496b7b41b0dbbb403d0eae4",
+   "size_bytes": 1967,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/ops.js",
+   "sha256": "40dd742b36616d0ef4953f2efaee9fc4bf39cfecc44688002efdf40154224a89",
+   "size_bytes": 1686,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/projects.js",
+   "sha256": "5795772137f214c6ecbd326ab077fc06a4305c6a88d974ed76ca3606c9430f1e",
+   "size_bytes": 818,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/services/tasks.js",
+   "sha256": "2ee77c55050a284b1d9a6989c93e9a9a0ea075cfb8300d12a99f52a17c9ccbe3",
+   "size_bytes": 1844,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/utils/dom.js",
+   "sha256": "8efd118764a25cb673d7f549955bc71fd809a3c9490965790ce0a4d5a7541f97",
+   "size_bytes": 152,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/utils/fn.js",
+   "sha256": "3e031be6241f7e6e5adc8849bb3efcf4fcea923108d69180ddeecda8fe263dcf",
+   "size_bytes": 848,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/utils/toast.js",
+   "sha256": "feea5092136730b3ade340820fbe253ec8f80562294a57734d5dc6eba8e85047",
+   "size_bytes": 359,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/components/modals.js",
+   "sha256": "49cdf2b161a4ecf1dd988750d5d042557f8551a6bc57544d9411dc096831f568",
+   "size_bytes": 19736,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/components/ui.js",
+   "sha256": "d81aebd32068a3dcd303dd115903b6a9e9c90f76b1b756255f26de72e417e3be",
+   "size_bytes": 3151,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/header.js",
+   "sha256": "3ac8a9f6fca446d8a71d716ecff77559ab9191bf5b465cd887ac847cc591c847",
+   "size_bytes": 1242,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/layout.js",
+   "sha256": "fe05f08ce704bd005558b7ad5f852278d29dc336a058935ea4a9f2b573afabc6",
+   "size_bytes": 1894,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/admin.js",
+   "sha256": "b1b7706dc91c0d69b365ec2bbea5998f971855e035e2c9ae325a02067d00ce22",
+   "size_bytes": 1425,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/ai.js",
+   "sha256": "8d9a443f0ec49c8d0aa6e31a2d0af27f1664f9b58652e6e09bf049e5d4948d39",
+   "size_bytes": 1293,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/approvals.js",
+   "sha256": "e2c3beebf5506bfa5c38a07664ec3ed03cce6a257bb0d03a069e4aed890d155a",
+   "size_bytes": 1985,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/audit.js",
+   "sha256": "7352067c2428eeeb985241dfa5fd4e446f247a4103fea82d7a2f1228acfe7fad",
+   "size_bytes": 1401,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/briefs.js",
+   "sha256": "366525d20fc7c614b57e3bda147c01a3fd3b161e7fb3637e7db12a459a83f34d",
+   "size_bytes": 2242,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/dashboard.js",
+   "sha256": "56e7102bae6a926602d449f6d5da8fc56dd62035ad92700e5198394b4285a494",
+   "size_bytes": 2472,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/decisions.js",
+   "sha256": "ed46a08ed5a9830e5cc906e2b4a7e2bff7e27b1df803cab1c0ba81dee9ba6515",
+   "size_bytes": 1476,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/directory.js",
+   "sha256": "dd9c090206d91f12355aa8e1880d3c1b588778f42e6ce1272977e3d238e64de5",
+   "size_bytes": 1346,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/inbox.js",
+   "sha256": "2d853a01306fa011919d9f0c45f1a55927fc0c1cd48d3bb0b4ee122252aa10ec",
+   "size_bytes": 3495,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/inward.js",
+   "sha256": "9a81849e05e1a8068dac3a47085d39292adb813e3ae07b19f37657e6f2313e59",
+   "size_bytes": 2161,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/kpi.js",
+   "sha256": "c43097bfd86204cb59581c42d052bf7cc78da181455e1dcdbdb38f4a2865db8b",
+   "size_bytes": 1253,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/meetings.js",
+   "sha256": "2760eda669f0c50e8a1ca7973b847f77a5543282b142c614827fdc9c0aa94b49",
+   "size_bytes": 2614,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/minutes.js",
+   "sha256": "3af47756c40a4744820089a694c7075c63545e1336bedf862e3b344450c504aa",
+   "size_bytes": 2191,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/notfound.js",
+   "sha256": "aec6fae304e42967b4480fde625fb08a35b977dbdf915d27ffc87a807bf959cf",
+   "size_bytes": 190,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/notifications.js",
+   "sha256": "d96aa4368c81a1b6ac2986aa201df71db04bf00626ba42d1798c98bfaae95cf4",
+   "size_bytes": 1738,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/outward.js",
+   "sha256": "283c988bfef6ae589550c4b817049c2ff0a36494c1516d3855b92f5e2cff2df6",
+   "size_bytes": 2115,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/projects.js",
+   "sha256": "9e68b72e5f1a5a6492cc4324852e666f4441b84263534d8832eaa033a1d95627",
+   "size_bytes": 2368,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/reports.js",
+   "sha256": "92e2359445c62b4d8f3c724bc2ceb5f8c017efcafc05507ba1f9341d52a2e044",
+   "size_bytes": 942,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/pages/tasks.js",
+   "sha256": "d3b586ee17944d169b2c8bf9f9ba4095a3c6c74ee07e3c82979295e91822e62f",
+   "size_bytes": 2267,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/router.js",
+   "sha256": "723f3465adb9d2e981761e6fc1e07ccad2f4fbf7632cba87facc4ea0d745c8e0",
+   "size_bytes": 1980,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/js/views/sidebar.js",
+   "sha256": "999380ac21058fa51af4a06e275a5f1a412f835a2339d3989acdaeddab63b7aa",
+   "size_bytes": 3235,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/htdocs/powerAutomateClient.js",
+   "sha256": "dac8f37aa6cb87001a77de91806396539391efe248c9182093dbe917f7f26f96",
+   "size_bytes": 1389,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/ECM_ActivityHub_Portal/precision_auditor_v3.py",
+   "sha256": "8bef1d49a90abf6146bfe97ed8af8312b5e4a37e59b18960df0270c3e56d58c3",
+   "size_bytes": 11743,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/CHANGELOG.md",
+   "sha256": "edf295a6b417b2bdca47cb428318b3f5c90ba1683cb4c1e1d4b292e73ccb7d88",
+   "size_bytes": 6606,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/CONTRIBUTING.md",
+   "sha256": "1a4eadcad215bab99c7cf1d083016e33d28050d4f8a1e6e078aec9cbaa19861b",
+   "size_bytes": 12608,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/GOVERNANCE.md",
+   "sha256": "982493d5d9a611daad95c005c86981e3ff7c7a60a5e40147b1e8c7f786fb8929",
+   "size_bytes": 9438,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/README.md",
+   "sha256": "31733da43ff517aa5ebdaff129e71c7b03e6a5606d965b693ba523311541cb02",
+   "size_bytes": 10894,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/assets/icons/sprite.svg",
+   "sha256": "becd80d4fb0a9a94cf11997c7eb538ae082d37e0be143c8d5a1b47a67b838a22",
+   "size_bytes": 8017,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/assets/logo/nitda-endorsed.svg",
+   "sha256": "3f65c5b9180b34b2bf346d5a284273554e1026642cf556a0fab3211dfbeee33b",
+   "size_bytes": 890,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/docs/01-tokens.md",
+   "sha256": "c3b3133ecdf355dfe1396f8ea71927f67c4ff12669a5a291ee73a7da804813e2",
+   "size_bytes": 11638,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/docs/components/command-palette.md",
+   "sha256": "88b545a061c261578250cc8bf0b73f393d54d84d4febd279a5707138f48254c3",
+   "size_bytes": 33538,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/docs/components/switch.md",
+   "sha256": "7562a350d77abffc08da449756bacc1eecfef3c973d8803f895277b0ebfc5712",
+   "size_bytes": 15632,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/legacy-v1/README.md",
+   "sha256": "cf151f72c5cb1032c7f721a22ce2caadbe692c68a555869828787edc29c0f6a5",
+   "size_bytes": 5213,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/legacy-v1/components.css",
+   "sha256": "5bf942140941bc081a6b5d5f422f145c53927a1df62baad924acfe00aa37ede1",
+   "size_bytes": 16982,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/legacy-v1/tokens.css",
+   "sha256": "1be35479f691e38c1dbce23a1918b6c0f745cfe7e76fcb65ef79442b6c2c8b51",
+   "size_bytes": 10226,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/styles/components.css",
+   "sha256": "f0c9e0e641e04fa7bf545e8bbfec22a871aad7ebbfc67467f7b755f2494dc2b9",
+   "size_bytes": 39333,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/styles/components/command-palette.css",
+   "sha256": "ff6cddd59c2ed09f16ea6a5fb56d064ebf037bded89085d5513f16ffebe57179",
+   "size_bytes": 11685,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/styles/layout.css",
+   "sha256": "84a3c4686b0a53666fcde3eceb7861c224c8a1af9ac8e6f1da6df13f30ba4b08",
+   "size_bytes": 3252,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/styles/reset.css",
+   "sha256": "4378b202f44bc05f69abbff5cc20cf6f3f1b18551f6c0df5fdcd49f35dafae49",
+   "size_bytes": 1152,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.component.css",
+   "sha256": "d94ae4a79888097afb71a4ffe5433a115b04b8d720ef0ecbeea76823fa327d35",
+   "size_bytes": 5786,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.density.css",
+   "sha256": "9fc3ded4c2802878c7292f08233a98e54def2c43ef016c3873b841bb1dfd7d8a",
+   "size_bytes": 1285,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.enhanced.css",
+   "sha256": "77f3e301ea8222726947db3fd5305bfebaf47ca817b2ebacde0de5e0f453c102",
+   "size_bytes": 1094,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.primitive.css",
+   "sha256": "2832cde866d657df070570deb1a6e3b57e5687d9f380f979f1fc86676da05dc2",
+   "size_bytes": 8731,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.semantic.css",
+   "sha256": "4bae3911a11c09f529ebaec9bffb75778bbc58ade4234cab94711f8555f8dfc8",
+   "size_bytes": 6781,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.theme-dark.css",
+   "sha256": "e5eed11e51d14bc2a20a00cde3feca1527733af3877924afd72971d86a1ca2bc",
+   "size_bytes": 3096,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.theme-hc.css",
+   "sha256": "b81ec9463163c33f84ce8274be73e262145e53e3a294ff5590940f3fe55ca13d",
+   "size_bytes": 2575,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/design-system/tokens/tokens.theme-light.css",
+   "sha256": "fd0c6c1fb18d32fad05aeb639193d241791790451d6ed97ce1516aa6e144addf",
+   "size_bytes": 753,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/.htaccess",
+   "sha256": "59b59bd8b2282ac46993c3f4b9a535ce19c516ef8d96f4fcb86f82bc341fa080",
+   "size_bytes": 509,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/ADMINdashboard.html",
+   "sha256": "6075c781739bce6cf490e0cd24d482805eb28603d7f442897efec9a8e677a47e",
+   "size_bytes": 20382,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/index.html",
+   "sha256": "bc89cc2faa2d8709ad00260a64d89dacd4be8d6c32cab60d4a57b7ac82ec8eb7",
+   "size_bytes": 16278,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/submit.html",
+   "sha256": "22d17592505bd55373c2b07325096c8eb37bda89e5fe1f501e3a44802158793c",
+   "size_bytes": 24895,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/support.html",
+   "sha256": "2f223a4baa648e1a7873bea150253db6d89f0582247e0fd494b68073689c4f38",
+   "size_bytes": 17160,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/digitaldocs.page.gd/htdocs/track.html",
+   "sha256": "134c11cf4cbbae9d284cf5be366e7d5b3d90daf41dba6e561a6ba77d7363f9da",
+   "size_bytes": 19085,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/docs-root/CLEAN_PACKAGE_MANIFEST.json",
+   "sha256": "37e76e67535feaad427602a28f1f6ff976cf0c4330af64518d58ba24ff54dd6e",
+   "size_bytes": 1986,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/docs-root/CONTRIBUTING.md",
+   "sha256": "0dbe0f764a55e36c342d9945375f059eba59d9b2461ae725665291cdbe3853a7",
+   "size_bytes": 2578,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/docs-root/README.md",
+   "sha256": "25a6cfaefcc78e070aa9aa993e5ea77cde9251300dfa9f52e3bcaa884a31476d",
+   "size_bytes": 7585,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/.htaccess",
+   "sha256": "4c319d6d89c70800b5b12f1871954a16214ef55cdc9560d9748f6804505124ee",
+   "size_bytes": 522,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/ADMINdashboard.html",
+   "sha256": "994d27d179d31eb743c4d1e64330325eb962e0103126c31806d7b51d0cb00b62",
+   "size_bytes": 11039,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/brand.css",
+   "sha256": "51da868c8da17ec8e0e31f63e2e92048d29576e2f5cce7e20240084345f010e7",
+   "size_bytes": 2005,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/index.html",
+   "sha256": "7154578dcf8be2cb2065dbcb277242fcdeed4452eb08350279508b719695be58",
+   "size_bytes": 9759,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/landing.html",
+   "sha256": "43d1765ce1c73634750a335f8368aa27f36e48dcba4202b5986eeffd6f0a5034",
+   "size_bytes": 7568,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/submit.html",
+   "sha256": "0e5fab207003b911415e8bb8f66dd3b9d8155813b05c118e199b73fcc83ca8d4",
+   "size_bytes": 19809,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/support.html",
+   "sha256": "8951a34799667b1af8be8345a840835a756dcc8915dd0d0f9278d79df9cf5122",
+   "size_bytes": 14597,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/intelhub.page.gd/htdocs/track.html",
+   "sha256": "06d90450cb16635cbb797bf995ac2ce37742790ee56a3d897516c9147933e8fa",
+   "size_bytes": 15812,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/manifests/CLEAN_PACKAGE_MANIFEST.json",
+   "sha256": "37e76e67535feaad427602a28f1f6ff976cf0c4330af64518d58ba24ff54dd6e",
+   "size_bytes": 1986,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/templates/Bulk_NITDA.html",
+   "sha256": "310dfea9a6747e19f6be65eba4332004f0669f9a0cffb986648b381a75bdc754",
+   "size_bytes": 18846,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/templates/EmailTask_NITDA.html",
+   "sha256": "3fe791738488a321f5bf10f17557f93851b0c0a38cb4b60efed80276bbdd81c5",
+   "size_bytes": 22927,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/templates/Single_Task_NITDA.html",
+   "sha256": "c1a471c594d1e172208e0c5766d5493f37f16f33ef65ae4186b3b2dbd81e1c78",
+   "size_bytes": 27002,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/templates/app-shell/support.js",
+   "sha256": "505f94e08eeccbc87acc6fcc6a47dd9f51fcd74a8d28ab58eb7eb784f7b92efe",
+   "size_bytes": 53975,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/archive/dgo-ops/templates/index.html",
+   "sha256": "bcc3ed41dbc75255249f7e728455bd305e8ae1f95990c7912738fa7d06e1396d",
+   "size_bytes": 9452,
+   "why": "Archived copy of an earlier project or design system; the live code is under core/, modules/, styles/ and document-portal/."
+  },
+  {
+   "path": "docs/audits/BRANCH_CONSOLIDATION_AUDIT_2026-09-05.md",
+   "sha256": "c21dee505eaacc41b9d77707416bd0009d661c051d38b8a7fbdafaad0bb47b08",
+   "size_bytes": 50202,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/BRANCH_MERGE_AUDIT_2026-09-11.md",
+   "sha256": "439c2d25f4e8f20aeae64df633331489928f8627460caadf98ddf0968506179f",
+   "size_bytes": 13496,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/FRONTEND_REVIEW_ASSESSMENT.md",
+   "sha256": "c92adc1d54d93ea3786261875c8daa12ccacc1b77b6825a65582ebc326c44596",
+   "size_bytes": 35948,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/INDEPENDENT_PILOT_READINESS_ASSESSMENT_2026-09-23.md",
+   "sha256": "e60ed73d0ef7bf7585724b303b5c534f0a38a6ef24a338bda3a869d1b3e2a7f1",
+   "size_bytes": 60610,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/INDEX.md",
+   "sha256": "3625482311f160d79e519595793ce7ed5f0709ca91cb0fd84fd2876c1f360aa1",
+   "size_bytes": 15761,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/NOTIFICATION_ESTATE_EVIDENCE_REGISTER_2026-09-02.md",
+   "sha256": "fcac3d6b409078119791d246478b2b868a931f74d3a0ce5feff2e6469cb01ffb",
+   "size_bytes": 14897,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/NOTIFICATION_ESTATE_EXECUTION_SUMMARY_2026-09-02.md",
+   "sha256": "f5ee362488367c2f1d8744bdc65f665f212e14226e7d846475569c8656869bd5",
+   "size_bytes": 6171,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/NOTIFICATION_ESTATE_FULL_SCOPE_ASSESSMENT_2026-09-09.md",
+   "sha256": "6d3320dabe92e35d383fedaef0e439535acfd40a38e75f3e4c16b002bd03b0b8",
+   "size_bytes": 19935,
+   "why": "Findings folded into the readiness register (ITEM-66 to ITEM-71); see docs/deployment/OUTSTANDING_SOURCES.json."
+  },
+  {
+   "path": "docs/audits/OPERATIONAL_READINESS_AUDIT.md",
+   "sha256": "fff11a372d313511fda6f266e78c77fef3db69769a4dbf25fd3c64e8235259da",
+   "size_bytes": 50421,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/PILOT_READINESS_REVIEW_2026-09-23.html",
+   "sha256": "fc39487c0e582765a771de4868e4f0850073f9477971e2c99060d5e2ee18948e",
+   "size_bytes": 50018,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/REFERENCE_SNAPSHOT_REVIEW.md",
+   "sha256": "61751dbee1e85e355c35141153d6518d1fc2bea5ee1cb7f5b964518ab4e6e83d",
+   "size_bytes": 13182,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/REPOSITORY_AUDIT.md",
+   "sha256": "16f5ebaab38027ae22dd81f978ebda6d6e43d3059ea121220b15fb2bfe7fb6f1",
+   "size_bytes": 16431,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/design-audit-brief/ai-input.md",
+   "sha256": "b21a2d491105dbc0a706bc2a54f0270a76378d95a83460a642a5adb448fde6f8",
+   "size_bytes": 43306,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/design-audit-brief/integrity-manifest.json",
+   "sha256": "c393b239c95242684c683b2838aa8230e5e3bbd24e2ccfde8e6eef8fe6ee89f5",
+   "size_bytes": 2198,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/design-audit-brief/verification-report.txt",
+   "sha256": "fb9dfb25a8b0151d35013016e4c281e318258f79e6f6cbd3d6f9935395262442",
+   "size_bytes": 853,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/flow-usage-analysis-2026-09-26.xlsx",
+   "sha256": "bca806c73e1092f403c29de2206c03a12c3f677b5adcbf4cf89bb2eacf611b66",
+   "size_bytes": 141206,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/pending-pr-merge-2026-09-30.md",
+   "sha256": "a02e0232817dade39248de447a7cf57851669ebc9e2132857a61abe4958076c6",
+   "size_bytes": 5951,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/repository-hygiene/00-provenance.md",
+   "sha256": "9896a99a3ce23881837bdf9348e2f7e0d90f83e33588fd7fb10039a075d5faf2",
+   "size_bytes": 1213,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/repository-hygiene/01-inventory.md",
+   "sha256": "07af44faf80b68631a0855198288e81e7eb12227c4d20f40e31a4d46d0db279a",
+   "size_bytes": 11200,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/repository-hygiene/02-reference-graph.md",
+   "sha256": "e8086c935e9d75c5480604c2ef25ed9304e7840daff731f526849249d51e039a",
+   "size_bytes": 13867,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/repository-hygiene/03-duplicates-obsolescence.md",
+   "sha256": "de3a8ae8f7bd0af05c2b882337929adb3d0a7162f3cfe84ce5a349fc4f6e091f",
+   "size_bytes": 19698,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/repository-hygiene/04-findings-recommendations.md",
+   "sha256": "37383ccb2be35fadc3c8db7314acb561eef00359c1bb3969c2ddab6679e338c2",
+   "size_bytes": 25580,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/audits/repository-hygiene/README.md",
+   "sha256": "7a867d103c43779e28fde4585d8ba890a3bf98953131e6903f7ccefa7810a912",
+   "size_bytes": 2362,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/deployment/notification-instrument/tenant-execution/PENDING_WORK_REGISTER.md",
+   "sha256": "b4dfc55c0afbfc8ca6d238b989ec4f593dd9937c62ef57923fe24c70a527697b",
+   "size_bytes": 3616,
+   "why": "Folded into the readiness register (ITEM-66 to ITEM-71); see docs/deployment/OUTSTANDING_SOURCES.json."
+  },
+  {
+   "path": "docs/forensic/dd2e909/01-architecture.md",
+   "sha256": "cd0c6cbfdb135c571f155868fe858665241a0583fd1f310bd6065a27c3753150",
+   "size_bytes": 17065,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/02-security.md",
+   "sha256": "ba2c72f9d66a8a830538c8832335dafa9142d25f95a2e86847ffb97febe594cf",
+   "size_bytes": 19663,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/03-build-deploy.md",
+   "sha256": "55f2a18a93f2fa5d98086b73fe5f065c65044c9a0e5bea2dbb62028e8a7454f0",
+   "size_bytes": 14243,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/04-report.md",
+   "sha256": "04896f9f836eb22d1fe1fece281626b73efd277e943a03031d9b7c2ca26bc85d",
+   "size_bytes": 23420,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/05-activityhub-addendum.md",
+   "sha256": "8b2601ea18d82abb3b187ca84d70eb22a8ebf8bd1eb63965ac6b2856778c8e49",
+   "size_bytes": 11602,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/01-architecture.mmd",
+   "sha256": "f84399b7be2efb3209828dc59d167ff4ca713b2016b2a271a008fa4e4553fa0b",
+   "size_bytes": 4068,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/02-trust-boundaries.mmd",
+   "sha256": "c4f3ecdcb0fa432ff93e2934124fb5e6c58dd822ca85ce90b2d56ca4ff95ef91",
+   "size_bytes": 3820,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/03-build-deploy.mmd",
+   "sha256": "fb619a0743f52f1358fa97e0f031740abe5546cd350a8f1af7ce444953b525ff",
+   "size_bytes": 3366,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/04-fork-comparison.mmd",
+   "sha256": "b50e06a14aa59eb285fd32ecc399a33006066b5cbc05155a9015541fc50fbd81",
+   "size_bytes": 3316,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/05-cloudflare-pilot-architecture.mmd",
+   "sha256": "000f804d5fd76281ecaed9dea60bb22cb9d52ccd79c569ccaa3daf05d617dd23",
+   "size_bytes": 1087,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/06-power-automate-cutover-sequence.mmd",
+   "sha256": "ba032662ddd78d4ca27de372d8103bf0245cab43fbcaeda5d03c6265c0393736",
+   "size_bytes": 823,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/07-auth-request-flow.mmd",
+   "sha256": "ce40538214924e233c48abd9b1cfc64c50c945f272c870c1db609f1c24cf4e02",
+   "size_bytes": 864,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/forensic/dd2e909/diagrams/08-evidence-storage-zones.mmd",
+   "sha256": "8fab6210877b1df49657fa92b32b4c98a6ada7f5b129bdaabf0230e6e2faa539",
+   "size_bytes": 1220,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/ADJUDICATION-R4-and-DIRECTIVE-R4A.md",
+   "sha256": "3ff35cf7158a50e09865b413d3e0ba2a5100036255c8d01a1364b75714f2b9dd",
+   "size_bytes": 10216,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/ADJUDICATION-repo-audit-execution.md",
+   "sha256": "0dbd4be7df5d6a6517f3fdae353df3f6991f69ebef4f7fa6f025dfefb570290d",
+   "size_bytes": 4690,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/CLOSURE-R4A-and-DIRECTIVE-R4B.md",
+   "sha256": "7219ed7aab828fb9502fd0ce7aaebbf8c1b55dcc71440378e6c9c5d8cdac38e9",
+   "size_bytes": 7978,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/EXEC-BRIEF-R2-remediation.md",
+   "sha256": "887efa445ee8e80bba68acef692fcda77443980286ff4057f0f3ebd95a61ba3a",
+   "size_bytes": 17666,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/EXEC-BRIEF-R3-closing.md",
+   "sha256": "d92f4f2848bd19d7bfbdbf47d974806eefcdbd834883aaaddc4b868c74095f1c",
+   "size_bytes": 15751,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/EXEC-BRIEF-R4-terminal.md",
+   "sha256": "86fe7bc1861321b5789af629782830774c737c04c360d4bb59371675084f3eda",
+   "size_bytes": 11966,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/EXEC-DIRECTIVE-mobile-shell.md",
+   "sha256": "42a023f2ea1df51a4c1d26dc3ebe6204ca2c36291f65eeccbfd08bd9c68c8bcd",
+   "size_bytes": 15038,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/INDEX.md",
+   "sha256": "7b972e02e843461bd64a9e5fbab715e4cf1cc4bd46d79855b0112ec5a60070d4",
+   "size_bytes": 6643,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/REPORT-R3-execution.md",
+   "sha256": "8906b0acc85c1d640e5a51d0e7d26b576496420ef3ffabe18c99923b410026bc",
+   "size_bytes": 44794,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/REVIEW-R3-closing.md",
+   "sha256": "25826004d94490a2e80d53208d0b795287886443a1c96210fd5e82130b9eb723",
+   "size_bytes": 9006,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/handoff/REVIEW-repo-consolidation-audit.md",
+   "sha256": "7b4f45b99dffa901e9dcc279b70e324ae07160e1f26a1d6bcbb95f70531417a0",
+   "size_bytes": 5414,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/proposals/DOCUMENTATION_SET.md",
+   "sha256": "ee9beb9906d53972edea4667c98b2039ba2b5e2ab8b1bcabe08ddc010818e29e",
+   "size_bytes": 35142,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/proposals/README.md",
+   "sha256": "821b45cfbaa1238a2379b92e267742ac3c9ad4e6bc59da971c40ab96d684dcd1",
+   "size_bytes": 3309,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/proposals/SYSTEM_FILE_TREE.md",
+   "sha256": "43626f5a89a51f4a0deda25eadc32e326edc68a2b8da58d6568749313d587bcf",
+   "size_bytes": 50282,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  },
+  {
+   "path": "docs/proposals/documentation-register.json",
+   "sha256": "548a38d0f006098212d19ef2bf042b95b574431130a5ca188e8257a219de71c6",
+   "size_bytes": 62297,
+   "why": "Dated audit, forensic report, handoff or proposal; its conclusions are carried in the current registers and docs."
+  }
+ ]
+}

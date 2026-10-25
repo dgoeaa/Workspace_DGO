@@ -1,0 +1,52 @@
+{
+  "purpose": "Contract keys that do not resolve to an exported flow definition, accepted as the state on 2026-09-15. This list may only shrink.",
+  "why": "GOV-06. The exported definitions and the tenant register share no identifier — docs/folio-Master-Flows-and-Endpoints/registers/flow-definition-map.json records idOverlap: 0 — so the two corpora are joined on normalised display name, which the map itself calls evidence rather than proof. A key lands here when no exported definition carries a name the register recognises for the workflow that serves it. That is a gap in what this repository holds, not proof the flow is missing from the tenant.",
+  "howToRemove": "Export the flow from the tenant into docs/folio-Master-Flows-and-Endpoints/contracts/deployed/ under the name the register knows, run npm run reconcile:definitions, then delete the row. The row must go in the same commit: a key that resolves while still listed here fails this test.",
+  "doNotAddToPass": "A new row means a definition stopped resolving. Find out why — usually a rename on one side of a display-name join — rather than recording the loss.",
+  "remedyInFlight": "DGO_HTTPFlowRegistry.WorkflowId (Text, indexed) was added to docs/folio-Master-Flows-and-Endpoints/registers/http-flow-registry-spec.json on 2026-09-10 to close GOV-06 blocker 1. It is not yet provisioned to any tenant. Once a registry row carries both identifiers, this join stops depending on display names and this baseline can be retired rather than shrunk.",
+  "unresolvedKeys": [
+    {
+      "key": "FETCH_ALL",
+      "registerNames": [
+        "FETCH_ALL",
+        "IP_FETCH_ALL_ENDPOINT"
+      ]
+    }
+  ],
+  "ambiguousDefinitions": [],
+  "sharedDefinitions": [
+    {
+      "definition": "AI_Document_Processing",
+      "keys": [
+        "AI_CHAT",
+        "AI_DOC_ANALYSIS",
+        "AI_EMAIL_ANALYSIS"
+      ],
+      "note": "One flow serves these keys: registers/flow-adoption.json adopts a single flow for them (2026-10-05), and the endpoint register's current configuration names that flow for each."
+    },
+    {
+      "definition": "IP_Dynamic_Global_Actions_Endpoint",
+      "keys": [
+        "DYNAMIC_ACTIONS",
+        "SUBSIDIARY_ACTIONS"
+      ],
+      "note": "One flow serves these keys: registers/flow-adoption.json adopts a single flow for them (2026-10-05), and the endpoint register's current configuration names that flow for each."
+    },
+    {
+      "definition": "IP_Get_Docs_Endpoint",
+      "keys": [
+        "FETCH_ACTIVITIES",
+        "GET_DOCS"
+      ],
+      "note": "One flow serves these keys: registers/flow-adoption.json adopts a single flow for them (2026-10-05), and the endpoint register's current configuration names that flow for each."
+    },
+    {
+      "definition": "IP_OTP_VERIFY",
+      "keys": [
+        "OTP_GENERATE",
+        "OTP_VERIFY"
+      ],
+      "note": "One flow serves these keys: registers/flow-adoption.json adopts a single flow for them (2026-10-05), and the endpoint register's current configuration names that flow for each. The separate generate and verify flows are retired."
+    }
+  ]
+}

@@ -1,0 +1,902 @@
+{
+  "nodeId": "Scope_Global_Flow_Truth_Persistence",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Host_Inputs": {
+        "type": "Compose",
+        "inputs": {
+          "contractVersion": "1.0.0",
+          "redactedHeaders": "@coalesce(outputs('Compose_Redacted_Headers'),json('{}'))",
+          "redactedQueries": "@coalesce(outputs('Compose_Redacted_Queries'),json('{}'))",
+          "inventory": "@coalesce(outputs('Compose_Extraction_Result'),json('{}'))",
+          "governance": "@coalesce(outputs('Compose_Governance_Record'),json('{}'))",
+          "flowResource": "@coalesce(outputs('Get_Current_Flow_Definition')?['body'],json('{}'))",
+          "htmlReport": "@coalesce(outputs('Compose_Enterprise_Branded_HTML_Report'),'')",
+          "registryProcessingStatus": "@coalesce(actions('Scope_Flow_Registry_Processing')?['status'],'NotRun')",
+          "reportingStatus": "@coalesce(actions('Scope_Reporting')?['status'],'NotRun')",
+          "statusCode": "@int(coalesce(variables('varStatusCode'),0))",
+          "errors": "@coalesce(variables('varErrors'),json('[]'))",
+          "receivedAtUtc": "@coalesce(variables('varReceivedAtUtc'),'')",
+          "startTicks": "@int(coalesce(variables('varStartTicks'),0))"
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000001"
+        }
+      },
+      "Compose_Persistence_Identity": {
+        "type": "Compose",
+        "inputs": {
+          "schemaVersion": "2.0",
+          "recordType": "DGOHTTPFlowTruthIdentity",
+          "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+          "registryList": "DGO_HTTPFlowRegistry",
+          "ledgerList": "DGO_HTTPFlowExecutionLedger",
+          "artefactLibrary": "DGO_HTTPFlowArtefacts",
+          "environmentId": "@coalesce(workflow()?['tags']?['environmentName'],'UnknownEnvironment')",
+          "flowId": "@coalesce(workflow()?['name'],'UnknownFlow')",
+          "flowDisplayName": "@coalesce(workflow()?['tags']?['flowDisplayName'],coalesce(workflow()?['name'],'UnknownFlow'))",
+          "runId": "@coalesce(workflow()?['run']?['name'],'UnknownRun')",
+          "correlationId": "@coalesce(workflow()?['run']?['name'],'UnknownRun')",
+          "registryKey": "@concat(coalesce(workflow()?['tags']?['environmentName'],'UnknownEnvironment'),'|',coalesce(workflow()?['name'],'UnknownFlow'))",
+          "executionKey": "@concat(coalesce(workflow()?['tags']?['environmentName'],'UnknownEnvironment'),'|',coalesce(workflow()?['name'],'UnknownFlow'),'|',coalesce(workflow()?['run']?['name'],'UnknownRun'))",
+          "artefactFolderPath": "@concat('/DGO_HTTPFlowArtefacts/',coalesce(workflow()?['tags']?['environmentName'],'UnknownEnvironment'),'/',coalesce(workflow()?['name'],'UnknownFlow'),'/',coalesce(workflow()?['run']?['name'],'UnknownRun'))",
+          "capturedUtc": "@utcNow()"
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000002"
+        },
+        "runAfter": {
+          "Compose_Host_Inputs": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Run_Timing": {
+        "type": "Compose",
+        "inputs": {
+          "startedUtc": "@if(empty(outputs('Compose_Host_Inputs')?['receivedAtUtc']),outputs('Compose_Persistence_Identity')?['capturedUtc'],outputs('Compose_Host_Inputs')?['receivedAtUtc'])",
+          "completedUtc": "@utcNow()",
+          "startTicks": "@outputs('Compose_Host_Inputs')?['startTicks']"
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000003"
+        },
+        "runAfter": {
+          "Compose_Persistence_Identity": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Run_Outcome": {
+        "type": "Compose",
+        "inputs": {
+          "statusCode": "@outputs('Compose_Host_Inputs')?['statusCode']",
+          "succeeded": "@and(greaterOrEquals(outputs('Compose_Host_Inputs')?['statusCode'],200),less(outputs('Compose_Host_Inputs')?['statusCode'],400))",
+          "outcome": "@if(and(greaterOrEquals(outputs('Compose_Host_Inputs')?['statusCode'],200),less(outputs('Compose_Host_Inputs')?['statusCode'],400)),'Succeeded','Failed')",
+          "durationMs": "@if(equals(outputs('Compose_Run_Timing')?['startTicks'],0),0,max(0,div(sub(ticks(utcNow()),outputs('Compose_Run_Timing')?['startTicks']),10000)))",
+          "errorCount": "@length(coalesce(outputs('Compose_Host_Inputs')?['errors'],json('[]')))",
+          "registryProcessingStatus": "@outputs('Compose_Host_Inputs')?['registryProcessingStatus']",
+          "reportingStatus": "@outputs('Compose_Host_Inputs')?['reportingStatus']",
+          "flowsNotFoundCount": "@int(coalesce(outputs('Compose_Host_Inputs')?['inventory']?['flowsNotFoundCount'],0))",
+          "requiresOwnerReview": "@greater(int(coalesce(outputs('Compose_Host_Inputs')?['inventory']?['flowsNotFoundCount'],0)),0)",
+          "lifecycleStatus": "@coalesce(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['state'],'Unknown')",
+          "flowDisplayName": "@coalesce(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['displayName'],outputs('Compose_Persistence_Identity')?['flowDisplayName'])"
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000004"
+        },
+        "runAfter": {
+          "Compose_Run_Timing": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Capture_Policy": {
+        "type": "Compose",
+        "inputs": {
+          "policySource": "docs/folio-Master-Flows-and-Endpoints/registers/http-flow-registry-spec.json — configSeeds CaptureHeaders, CaptureRequestBody",
+          "captureHeaders": false,
+          "captureRequestBody": false,
+          "headers": "@outputs('Compose_Host_Inputs')?['redactedHeaders']",
+          "queries": "@outputs('Compose_Host_Inputs')?['redactedQueries']",
+          "requestBody": "WITHHELD-BY-POLICY",
+          "triggerOutputs": "WITHHELD-BY-POLICY",
+          "redactedValue": "***REDACTED***",
+          "note": "Headers and queries are the host redaction actions output; the raw trigger body and raw trigger outputs are not read by this scope."
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000005"
+        },
+        "runAfter": {
+          "Compose_Run_Outcome": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Get_Existing_Ledger_Record": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "table": "DGO_HTTPFlowExecutionLedger",
+            "$filter": "@concat('ExecutionKey eq ''',replace(outputs('Compose_Persistence_Identity')?['executionKey'],'''',''''''),'''')",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "GetItems"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000029"
+        },
+        "runAfter": {
+          "Compose_Capture_Policy": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Condition_Ledger_Record_Already_Exists": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(coalesce(body('Get_Existing_Ledger_Record')?['value'],json('[]')))",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Compose_Idempotent_Replay_Result": {
+            "type": "Compose",
+            "inputs": {
+              "status": "AlreadyPersisted",
+              "succeeded": true,
+              "idempotentReplay": true,
+              "registryKey": "@outputs('Compose_Persistence_Identity')?['registryKey']",
+              "executionKey": "@outputs('Compose_Persistence_Identity')?['executionKey']",
+              "existingItemId": "@first(coalesce(body('Get_Existing_Ledger_Record')?['value'],json('[]')))?['ID']",
+              "completedUtc": "@utcNow()"
+            },
+            "metadata": {
+              "operationMetadataId": "c0000000-0000-4000-8000-000000000024"
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000026"
+        },
+        "else": {
+          "actions": {
+            "Scope_Persist_New_Ledger_Record": {
+              "type": "Scope",
+              "actions": {
+                "Compose_Flow_Truth_Record": {
+                  "type": "Compose",
+                  "inputs": {
+                    "schemaVersion": "2.0",
+                    "recordType": "DGOHTTPFlowTruthRecord",
+                    "packageVersion": "1.0.0",
+                    "captureMode": "GovernedRedacted",
+                    "capturePolicy": "@outputs('Compose_Capture_Policy')",
+                    "identity": "@outputs('Compose_Persistence_Identity')",
+                    "timing": "@outputs('Compose_Run_Timing')",
+                    "outcome": "@outputs('Compose_Run_Outcome')",
+                    "workflowIdentity": {
+                      "name": "@workflow()?['name']",
+                      "id": "@workflow()?['id']",
+                      "type": "@workflow()?['type']",
+                      "environmentName": "@coalesce(workflow()?['tags']?['environmentName'],'UnknownEnvironment')",
+                      "flowDisplayName": "@coalesce(workflow()?['tags']?['flowDisplayName'],'')",
+                      "runId": "@coalesce(workflow()?['run']?['name'],'UnknownRun')"
+                    },
+                    "inventory": "@outputs('Compose_Host_Inputs')?['inventory']",
+                    "governance": "@outputs('Compose_Host_Inputs')?['governance']",
+                    "flowResource": "@outputs('Compose_Host_Inputs')?['flowResource']",
+                    "errors": "@outputs('Compose_Host_Inputs')?['errors']",
+                    "credentialContainment": {
+                      "requestBodyCaptured": false,
+                      "requestHeadersCaptured": false,
+                      "hostRedactionApplied": true,
+                      "signedUrlsExcluded": true,
+                      "redactedValue": "***REDACTED***"
+                    },
+                    "capturedUtc": "@outputs('Compose_Persistence_Identity')?['capturedUtc']"
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000006"
+                  }
+                },
+                "Compose_Flow_Truth_Record_String": {
+                  "type": "Compose",
+                  "inputs": "@string(outputs('Compose_Flow_Truth_Record'))",
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000007"
+                  },
+                  "runAfter": {
+                    "Compose_Flow_Truth_Record": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Capture_Budget": {
+                  "type": "Compose",
+                  "inputs": {
+                    "characterCount": "@length(outputs('Compose_Flow_Truth_Record_String'))",
+                    "limitCharacters": 4000000,
+                    "truncated": "@greater(length(outputs('Compose_Flow_Truth_Record_String')),4000000)",
+                    "countedIn": "characters"
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000008"
+                  },
+                  "runAfter": {
+                    "Compose_Flow_Truth_Record_String": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Persisted_Record_String": {
+                  "type": "Compose",
+                  "inputs": "@substring(outputs('Compose_Flow_Truth_Record_String'),0,min(length(outputs('Compose_Flow_Truth_Record_String')),4000000))",
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000009"
+                  },
+                  "runAfter": {
+                    "Compose_Capture_Budget": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Create_Run_Folder_Tolerant": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "table": "DGO_HTTPFlowArtefacts",
+                      "folderPath": "@outputs('Compose_Persistence_Identity')?['artefactFolderPath']"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "CreateNewFolder"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000010"
+                  },
+                  "runAfter": {
+                    "Compose_Persisted_Record_String": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Create_Run_Record_File": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "folderPath": "@outputs('Compose_Persistence_Identity')?['artefactFolderPath']",
+                      "name": "flow-truth-record.json",
+                      "body": "@outputs('Compose_Persisted_Record_String')"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "CreateFile"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000013"
+                  },
+                  "runAfter": {
+                    "Create_Run_Folder_Tolerant": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Create_Flow_Resource_File": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "folderPath": "@outputs('Compose_Persistence_Identity')?['artefactFolderPath']",
+                      "name": "flow-resource.json",
+                      "body": "@string(outputs('Compose_Host_Inputs')?['flowResource'])"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "CreateFile"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000014"
+                  },
+                  "runAfter": {
+                    "Create_Run_Folder_Tolerant": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Create_Html_Report_File": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "folderPath": "@outputs('Compose_Persistence_Identity')?['artefactFolderPath']",
+                      "name": "flow-truth-report.html",
+                      "body": "@outputs('Compose_Host_Inputs')?['htmlReport']"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "CreateFile"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000015"
+                  },
+                  "runAfter": {
+                    "Create_Run_Folder_Tolerant": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Create_Governance_Record_File": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "folderPath": "@outputs('Compose_Persistence_Identity')?['artefactFolderPath']",
+                      "name": "governance-record.json",
+                      "body": "@string(outputs('Compose_Host_Inputs')?['governance'])"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "CreateFile"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000016"
+                  },
+                  "runAfter": {
+                    "Create_Run_Folder_Tolerant": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Integrity_Manifest": {
+                  "type": "Compose",
+                  "inputs": {
+                    "schemaVersion": "2.0",
+                    "recordType": "DGOHTTPFlowTruthIntegrityManifest",
+                    "executionKey": "@outputs('Compose_Persistence_Identity')?['executionKey']",
+                    "registryKey": "@outputs('Compose_Persistence_Identity')?['registryKey']",
+                    "capturedUtc": "@utcNow()",
+                    "integrityMethod": "SharePoint ETag and byte size as returned at write time, plus list versioning on the two governance lists. No content digest is computed.",
+                    "capture": "@outputs('Compose_Capture_Budget')",
+                    "folderPath": "@outputs('Compose_Persistence_Identity')?['artefactFolderPath']",
+                    "files": [
+                      {
+                        "name": "flow-truth-record.json",
+                        "contentType": "application/json",
+                        "path": "@coalesce(outputs('Create_Run_Record_File')?['body/Path'],'')",
+                        "etag": "@coalesce(outputs('Create_Run_Record_File')?['body/ETag'],'')",
+                        "sizeBytes": "@coalesce(outputs('Create_Run_Record_File')?['body/Size'],0)",
+                        "url": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Run_Record_File')?['body/Path'],''),' ','%20'))"
+                      },
+                      {
+                        "name": "flow-resource.json",
+                        "contentType": "application/json",
+                        "path": "@coalesce(outputs('Create_Flow_Resource_File')?['body/Path'],'')",
+                        "etag": "@coalesce(outputs('Create_Flow_Resource_File')?['body/ETag'],'')",
+                        "sizeBytes": "@coalesce(outputs('Create_Flow_Resource_File')?['body/Size'],0)",
+                        "url": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Flow_Resource_File')?['body/Path'],''),' ','%20'))"
+                      },
+                      {
+                        "name": "flow-truth-report.html",
+                        "contentType": "text/html",
+                        "path": "@coalesce(outputs('Create_Html_Report_File')?['body/Path'],'')",
+                        "etag": "@coalesce(outputs('Create_Html_Report_File')?['body/ETag'],'')",
+                        "sizeBytes": "@coalesce(outputs('Create_Html_Report_File')?['body/Size'],0)",
+                        "url": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Html_Report_File')?['body/Path'],''),' ','%20'))"
+                      },
+                      {
+                        "name": "governance-record.json",
+                        "contentType": "application/json",
+                        "path": "@coalesce(outputs('Create_Governance_Record_File')?['body/Path'],'')",
+                        "etag": "@coalesce(outputs('Create_Governance_Record_File')?['body/ETag'],'')",
+                        "sizeBytes": "@coalesce(outputs('Create_Governance_Record_File')?['body/Size'],0)",
+                        "url": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Governance_Record_File')?['body/Path'],''),' ','%20'))"
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000017"
+                  },
+                  "runAfter": {
+                    "Create_Run_Record_File": [
+                      "Succeeded"
+                    ],
+                    "Create_Flow_Resource_File": [
+                      "Succeeded"
+                    ],
+                    "Create_Html_Report_File": [
+                      "Succeeded"
+                    ],
+                    "Create_Governance_Record_File": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Create_Integrity_Manifest_File": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "folderPath": "@outputs('Compose_Persistence_Identity')?['artefactFolderPath']",
+                      "name": "integrity-manifest.json",
+                      "body": "@string(outputs('Compose_Integrity_Manifest'))"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "CreateFile"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000018"
+                  },
+                  "runAfter": {
+                    "Compose_Integrity_Manifest": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Create_Ledger_Item": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "table": "DGO_HTTPFlowExecutionLedger",
+                      "item/Title": "@concat(outputs('Compose_Persistence_Identity')?['flowDisplayName'],' | ',outputs('Compose_Persistence_Identity')?['runId'])",
+                      "item/ExecutionKey": "@outputs('Compose_Persistence_Identity')?['executionKey']",
+                      "item/RegistryKey": "@outputs('Compose_Persistence_Identity')?['registryKey']",
+                      "item/FlowId": "@outputs('Compose_Persistence_Identity')?['flowId']",
+                      "item/EnvironmentId": "@outputs('Compose_Persistence_Identity')?['environmentId']",
+                      "item/RunId": "@outputs('Compose_Persistence_Identity')?['runId']",
+                      "item/CorrelationId": "@outputs('Compose_Persistence_Identity')?['correlationId']",
+                      "item/StartedUtc": "@formatDateTime(outputs('Compose_Run_Timing')?['startedUtc'],'yyyy-MM-ddTHH:mm:ssZ')",
+                      "item/CompletedUtc": "@formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ')",
+                      "item/DurationMs": "@outputs('Compose_Run_Outcome')?['durationMs']",
+                      "item/Outcome": "@outputs('Compose_Run_Outcome')?['outcome']",
+                      "item/HttpStatusCode": "@outputs('Compose_Run_Outcome')?['statusCode']",
+                      "item/CallerSystem": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['callerSystem'],'DGO ECM Platform')",
+                      "item/ErrorCode": "@if(outputs('Compose_Run_Outcome')?['succeeded'],'',string(outputs('Compose_Run_Outcome')?['statusCode']))",
+                      "item/ErrorMessage": "@substring(string(coalesce(outputs('Compose_Host_Inputs')?['errors'],json('[]'))),0,min(length(string(coalesce(outputs('Compose_Host_Inputs')?['errors'],json('[]')))),60000))",
+                      "item/ExecutionMetadataJson": "@substring(string(json(concat('{\"artefacts\":',string(outputs('Compose_Integrity_Manifest')),',\"capture\":',string(outputs('Compose_Capture_Budget')),'}'))),0,min(length(string(json(concat('{\"artefacts\":',string(outputs('Compose_Integrity_Manifest')),',\"capture\":',string(outputs('Compose_Capture_Budget')),'}')))),60000))"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "PostItem"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000012"
+                  },
+                  "runAfter": {
+                    "Create_Integrity_Manifest_File": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Get_Current_Registry_Item": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                      "table": "DGO_HTTPFlowRegistry",
+                      "$filter": "@concat('RegistryKey eq ''',replace(outputs('Compose_Persistence_Identity')?['registryKey'],'''',''''''),'''')",
+                      "$top": 1
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "GetItems"
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000019"
+                  },
+                  "runAfter": {
+                    "Create_Ledger_Item": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Registry_Rollup": {
+                  "type": "Compose",
+                  "inputs": {
+                    "exists": "@greater(length(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]'))),0)",
+                    "itemId": "@first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['ID']",
+                    "totalExecutions": "@add(int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['TotalExecutions'],0)),1)",
+                    "successfulExecutions": "@add(int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['SuccessfulExecutions'],0)),if(outputs('Compose_Run_Outcome')?['succeeded'],1,0))",
+                    "failedExecutions": "@add(int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['FailedExecutions'],0)),if(outputs('Compose_Run_Outcome')?['succeeded'],0,1))",
+                    "consecutiveFailures": "@if(outputs('Compose_Run_Outcome')?['succeeded'],0,add(int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['ConsecutiveFailures'],0)),1))",
+                    "averageDurationMs": "@div(add(mul(int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['AverageDurationMs'],0)),int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['TotalExecutions'],0))),outputs('Compose_Run_Outcome')?['durationMs']),add(int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['TotalExecutions'],0)),1))",
+                    "recordVersion": "@add(int(coalesce(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['RecordVersion'],0)),1)",
+                    "isCompliant": "@and(outputs('Compose_Run_Outcome')?['succeeded'],and(equals(outputs('Compose_Run_Outcome')?['errorCount'],0),not(outputs('Compose_Run_Outcome')?['requiresOwnerReview'])))"
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000011"
+                  },
+                  "runAfter": {
+                    "Get_Current_Registry_Item": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Condition_Registry_Item_Exists": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@outputs('Compose_Registry_Rollup')?['exists']",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Update_Current_Registry_Item": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                          "table": "DGO_HTTPFlowRegistry",
+                          "item/Title": "@outputs('Compose_Persistence_Identity')?['flowDisplayName']",
+                          "item/RegistryKey": "@outputs('Compose_Persistence_Identity')?['registryKey']",
+                          "item/FlowId": "@outputs('Compose_Persistence_Identity')?['flowId']",
+                          "item/EnvironmentId": "@outputs('Compose_Persistence_Identity')?['environmentId']",
+                          "item/FlowName": "@outputs('Compose_Run_Outcome')?['flowDisplayName']",
+                          "item/SystemName": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['systemName'],'DGO ECM Platform')",
+                          "item/BusinessProcess": "@substring(string(coalesce(outputs('Compose_Host_Inputs')?['governance']?['businessProcess'],'')),0,min(length(string(coalesce(outputs('Compose_Host_Inputs')?['governance']?['businessProcess'],''))),60000))",
+                          "item/FlowDescription": "@substring(string(coalesce(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['definitionSummary'],'')),0,min(length(string(coalesce(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['definitionSummary'],''))),60000))",
+                          "item/TechnicalOwnerEmail": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['technicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                          "item/BusinessOwnerEmail": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['businessOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                          "item/SupportEmail": "'dgsRegistry@nitda.gov.ng'",
+                          "item/HttpMethod": "@coalesce(outputs('Compose_Host_Inputs')?['inventory']?['httpMethod'],'Unknown')",
+                          "item/AuthenticationMode": "@coalesce(outputs('Compose_Host_Inputs')?['inventory']?['authenticationMode'],'Unknown')",
+                          "item/DataClassification": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['dataClassification'],'Restricted')",
+                          "item/Criticality": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['criticality'],'Unclassified')",
+                          "item/LifecycleStatus": "@outputs('Compose_Run_Outcome')?['lifecycleStatus']",
+                          "item/DefinitionVersion": "@coalesce(string(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['definition']?['contentVersion']),'Unknown')",
+                          "item/LastRegisteredUtc": "@formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ')",
+                          "item/LastSeenUtc": "@formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ')",
+                          "item/LastSuccessfulCallUtc": "@if(outputs('Compose_Run_Outcome')?['succeeded'],formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ'),coalesce(string(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['LastSuccessfulCallUtc']),''))",
+                          "item/LastFailureUtc": "@if(outputs('Compose_Run_Outcome')?['succeeded'],coalesce(string(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['LastFailureUtc']),''),formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ'))",
+                          "item/TotalExecutions": "@outputs('Compose_Registry_Rollup')?['totalExecutions']",
+                          "item/SuccessfulExecutions": "@outputs('Compose_Registry_Rollup')?['successfulExecutions']",
+                          "item/FailedExecutions": "@outputs('Compose_Registry_Rollup')?['failedExecutions']",
+                          "item/ConsecutiveFailures": "@outputs('Compose_Registry_Rollup')?['consecutiveFailures']",
+                          "item/AverageDurationMs": "@outputs('Compose_Registry_Rollup')?['averageDurationMs']",
+                          "item/IsCompliant": "@outputs('Compose_Registry_Rollup')?['isCompliant']",
+                          "item/ComplianceIssues": "@substring(string(coalesce(outputs('Compose_Host_Inputs')?['governance'],json('{}'))),0,min(length(string(coalesce(outputs('Compose_Host_Inputs')?['governance'],json('{}')))),60000))",
+                          "item/RecordVersion": "@outputs('Compose_Registry_Rollup')?['recordVersion']",
+                          "item/ResponseContractJson": "@substring(string(json(concat('{\"artefacts\":',string(outputs('Compose_Integrity_Manifest')),'}'))),0,min(length(string(json(concat('{\"artefacts\":',string(outputs('Compose_Integrity_Manifest')),'}')))),60000))",
+                          "id": "@outputs('Compose_Registry_Rollup')?['itemId']"
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "PatchItem"
+                        }
+                      },
+                      "metadata": {
+                        "operationMetadataId": "c0000000-0000-4000-8000-000000000020"
+                      }
+                    }
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000022"
+                  },
+                  "else": {
+                    "actions": {
+                      "Create_Current_Registry_Item": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "table": "DGO_HTTPFlowRegistry",
+                            "item/Title": "@outputs('Compose_Persistence_Identity')?['flowDisplayName']",
+                            "item/RegistryKey": "@outputs('Compose_Persistence_Identity')?['registryKey']",
+                            "item/FlowId": "@outputs('Compose_Persistence_Identity')?['flowId']",
+                            "item/EnvironmentId": "@outputs('Compose_Persistence_Identity')?['environmentId']",
+                            "item/FlowName": "@outputs('Compose_Run_Outcome')?['flowDisplayName']",
+                            "item/SystemName": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['systemName'],'DGO ECM Platform')",
+                            "item/BusinessProcess": "@substring(string(coalesce(outputs('Compose_Host_Inputs')?['governance']?['businessProcess'],'')),0,min(length(string(coalesce(outputs('Compose_Host_Inputs')?['governance']?['businessProcess'],''))),60000))",
+                            "item/FlowDescription": "@substring(string(coalesce(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['definitionSummary'],'')),0,min(length(string(coalesce(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['definitionSummary'],''))),60000))",
+                            "item/TechnicalOwnerEmail": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['technicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "item/BusinessOwnerEmail": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['businessOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "item/SupportEmail": "'dgsRegistry@nitda.gov.ng'",
+                            "item/HttpMethod": "@coalesce(outputs('Compose_Host_Inputs')?['inventory']?['httpMethod'],'Unknown')",
+                            "item/AuthenticationMode": "@coalesce(outputs('Compose_Host_Inputs')?['inventory']?['authenticationMode'],'Unknown')",
+                            "item/DataClassification": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['dataClassification'],'Restricted')",
+                            "item/Criticality": "@coalesce(outputs('Compose_Host_Inputs')?['governance']?['criticality'],'Unclassified')",
+                            "item/LifecycleStatus": "@outputs('Compose_Run_Outcome')?['lifecycleStatus']",
+                            "item/DefinitionVersion": "@coalesce(string(outputs('Compose_Host_Inputs')?['flowResource']?['properties']?['definition']?['contentVersion']),'Unknown')",
+                            "item/LastRegisteredUtc": "@formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ')",
+                            "item/LastSeenUtc": "@formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ')",
+                            "item/LastSuccessfulCallUtc": "@if(outputs('Compose_Run_Outcome')?['succeeded'],formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ'),coalesce(string(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['LastSuccessfulCallUtc']),''))",
+                            "item/LastFailureUtc": "@if(outputs('Compose_Run_Outcome')?['succeeded'],coalesce(string(first(coalesce(body('Get_Current_Registry_Item')?['value'],json('[]')))?['LastFailureUtc']),''),formatDateTime(outputs('Compose_Run_Timing')?['completedUtc'],'yyyy-MM-ddTHH:mm:ssZ'))",
+                            "item/TotalExecutions": "@outputs('Compose_Registry_Rollup')?['totalExecutions']",
+                            "item/SuccessfulExecutions": "@outputs('Compose_Registry_Rollup')?['successfulExecutions']",
+                            "item/FailedExecutions": "@outputs('Compose_Registry_Rollup')?['failedExecutions']",
+                            "item/ConsecutiveFailures": "@outputs('Compose_Registry_Rollup')?['consecutiveFailures']",
+                            "item/AverageDurationMs": "@outputs('Compose_Registry_Rollup')?['averageDurationMs']",
+                            "item/IsCompliant": "@outputs('Compose_Registry_Rollup')?['isCompliant']",
+                            "item/ComplianceIssues": "@substring(string(coalesce(outputs('Compose_Host_Inputs')?['governance'],json('{}'))),0,min(length(string(coalesce(outputs('Compose_Host_Inputs')?['governance'],json('{}')))),60000))",
+                            "item/RecordVersion": "@outputs('Compose_Registry_Rollup')?['recordVersion']",
+                            "item/ResponseContractJson": "@substring(string(json(concat('{\"artefacts\":',string(outputs('Compose_Integrity_Manifest')),'}'))),0,min(length(string(json(concat('{\"artefacts\":',string(outputs('Compose_Integrity_Manifest')),'}')))),60000))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "PostItem"
+                          }
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000021"
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Compose_Registry_Rollup": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Compose_Persistence_Receipt": {
+                  "type": "Compose",
+                  "inputs": {
+                    "status": "Persisted",
+                    "succeeded": true,
+                    "idempotentReplay": false,
+                    "registryKey": "@outputs('Compose_Persistence_Identity')?['registryKey']",
+                    "executionKey": "@outputs('Compose_Persistence_Identity')?['executionKey']",
+                    "outcome": "@outputs('Compose_Run_Outcome')?['outcome']",
+                    "durationMs": "@outputs('Compose_Run_Outcome')?['durationMs']",
+                    "ledgerItemId": "@coalesce(outputs('Create_Ledger_Item')?['body/ID'],0)",
+                    "registryOperation": "@if(outputs('Compose_Registry_Rollup')?['exists'],'Updated','Created')",
+                    "truncated": "@outputs('Compose_Capture_Budget')?['truncated']",
+                    "artefacts": {
+                      "runRecordUrl": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Run_Record_File')?['body/Path'],''),' ','%20'))",
+                      "flowResourceUrl": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Flow_Resource_File')?['body/Path'],''),' ','%20'))",
+                      "htmlReportUrl": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Html_Report_File')?['body/Path'],''),' ','%20'))",
+                      "governanceRecordUrl": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Governance_Record_File')?['body/Path'],''),' ','%20'))",
+                      "integrityManifestUrl": "@concat('https://nitdanigeria.sharepoint.com',replace(coalesce(outputs('Create_Integrity_Manifest_File')?['body/Path'],''),' ','%20'))"
+                    },
+                    "persistedUtc": "@utcNow()"
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c0000000-0000-4000-8000-000000000023"
+                  },
+                  "runAfter": {
+                    "Condition_Registry_Item_Exists": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              },
+              "metadata": {
+                "operationMetadataId": "c0000000-0000-4000-8000-000000000025"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Get_Existing_Ledger_Record": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Persistence_Failure": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Persistence_Failure_Record": {
+            "type": "Compose",
+            "inputs": {
+              "status": "PersistenceFailed",
+              "succeeded": false,
+              "idempotentReplay": false,
+              "registryKey": "@outputs('Compose_Persistence_Identity')?['registryKey']",
+              "executionKey": "@outputs('Compose_Persistence_Identity')?['executionKey']",
+              "failedActions": "@result('Scope_Persist_New_Ledger_Record')",
+              "failedUtc": "@utcNow()"
+            },
+            "metadata": {
+              "operationMetadataId": "c0000000-0000-4000-8000-000000000027"
+            }
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000028"
+        },
+        "runAfter": {
+          "Condition_Ledger_Record_Already_Exists": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Final_Persistence_Result": {
+        "type": "Compose",
+        "inputs": "@if(greater(length(coalesce(body('Get_Existing_Ledger_Record')?['value'],json('[]'))),0),outputs('Compose_Idempotent_Replay_Result'),if(equals(actions('Condition_Ledger_Record_Already_Exists')?['status'],'Succeeded'),outputs('Compose_Persistence_Receipt'),outputs('Compose_Persistence_Failure_Record')))",
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000030"
+        },
+        "runAfter": {
+          "Condition_Ledger_Record_Already_Exists": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ],
+          "Scope_Persistence_Failure": [
+            "Succeeded",
+            "Skipped"
+          ]
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "c0000000-0000-4000-8000-000000000031"
+    }
+  },
+  "allConnectionData": {
+    "Get_Existing_Ledger_Record": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Run_Folder_Tolerant": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Run_Record_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Flow_Resource_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Html_Report_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Governance_Record_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Integrity_Manifest_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Ledger_Item": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Current_Registry_Item": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Update_Current_Registry_Item": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Current_Registry_Item": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

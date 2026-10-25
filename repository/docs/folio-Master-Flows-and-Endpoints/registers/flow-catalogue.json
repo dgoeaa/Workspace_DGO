@@ -1,0 +1,313 @@
+{
+ "note": "The plain-English catalogue of the Folio flows, printed by the handover packs (npm run handover) and read by the Central Administration Centre, which watches every flow in it. Group and purpose are written here; the trigger was read from the tenant on 2026-10-20. expectedState is Started unless stated.",
+ "flows": [
+  {
+   "name": "CG_Submission_Endpoint",
+   "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+   "group": "Document Portal",
+   "purpose": "Receives a submission from the public, issues its NITDA-YYYY-NNNNN reference and e-mails the acknowledgement.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "CG_Upload_Endpoint",
+   "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+   "group": "Document Portal",
+   "purpose": "Stores the attachments of a submission, refusing any upload without a valid ticket.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "CG_Portal_Status_Check_Endpoint",
+   "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+   "group": "Document Portal",
+   "purpose": "Answers a submitter's tracking request with the record's current status.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "CG_Portal_Support_Endpoint",
+   "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+   "group": "Document Portal",
+   "purpose": "Opens a support case (CASE-XXXXXX) from the Portal and links it to the record it concerns.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "CG_Portal_Writeback_Endpoint",
+   "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+   "group": "Document Portal",
+   "purpose": "Adds a submitter's note to their record and its status timeline.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "CG_Portal_Verification_Endpoint",
+   "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+   "group": "Document Portal",
+   "purpose": "Sends a verification code to a submitter's e-mail address.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "CG_Portal_Verification_Confirmation_Endpoint",
+   "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+   "group": "Document Portal",
+   "purpose": "Checks the verification code and locks out repeated wrong attempts.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "CG_Registry_Status_Notifier",
+   "flowId": "8ebf6001-89cd-49c9-a9b6-4dedb9a5768b",
+   "group": "Scheduled and event-driven",
+   "purpose": "When a Portal record's status changes, e-mails the submitter the outcome.",
+   "trigger": "SharePoint item changed"
+  },
+  {
+   "name": "CG_Portal_Daily_Sweep",
+   "flowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+   "group": "Scheduled and event-driven",
+   "purpose": "Daily housekeeping of Portal records, recorded in telemetry.",
+   "trigger": "Schedule: daily at 08:00"
+  },
+  {
+   "name": "AUTO_SCHEDULED_SWEEP",
+   "flowId": "8c19b45c-4174-4d2f-9429-ffd08dd1a5ae",
+   "group": "Scheduled and event-driven",
+   "purpose": "Working days at 08:45 WAT: one digest per officer of unacknowledged and overdue tasks, task reminders, support-case notices and alerts for messages that could not be delivered. Staff digests go to the registry mailbox until staff notifications are switched on.",
+   "trigger": "Schedule: 08:45, Monday to Friday (WAT)"
+  },
+  {
+   "name": "IP_FETCH_ALL_BOOTSTRAP",
+   "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+   "group": "Folio Workspace",
+   "purpose": "Loads an officer's working data when the Workspace opens: documents, tasks, approvals, reference lists and the registry inbox, scoped to the officer's role.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_Get_Docs_Endpoint",
+   "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+   "group": "Folio Workspace",
+   "purpose": "Returns documents and activities for the Workspace's document views.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_Reference_Data_Endpoint",
+   "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+   "group": "Folio Workspace",
+   "purpose": "Returns the reference lists the Workspace's forms use.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_Retrieve_Email_Attachment_Endpoint",
+   "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+   "group": "Folio Workspace",
+   "purpose": "Retrieves the attachments of e-mails in the registry inbox.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_Dynamic_Global_Actions_Endpoint",
+   "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+   "group": "Folio Workspace",
+   "purpose": "Carries out governed changes to records: task updates, dispatch, comments, reminders and related actions.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "Single_Task_Assignment",
+   "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+   "group": "Folio Workspace",
+   "purpose": "Assigns a document to an officer as a task and e-mails the assignment notice.",
+   "trigger": "HTTP request",
+   "note": "Last run 10 Oct 2026 01:30 UTC: it created TASK-2026-00002 and sent the assignment notice, but is marked Failed because its reply to the caller timed out. That definition was replaced at 16:22 UTC the same day; the current one has not run since. Check the run history after the first assignment after go-live."
+  },
+  {
+   "name": "BULK OPS DATA RETRIEVAL HTTP",
+   "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+   "group": "Folio Workspace",
+   "purpose": "Assigns several documents in one operation and reports any that failed.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_Create__Task__for_received_Email_Endpoint",
+   "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+   "group": "Folio Workspace",
+   "purpose": "Raises a task from an e-mail received in the registry inbox.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "AI_Document_Processing",
+   "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+   "group": "Folio Workspace",
+   "purpose": "AI analysis of documents, e-mails and chat. AI is switched off in the Workspace by decision (ITEM-88).",
+   "trigger": "HTTP request",
+   "note": "Runs only when AI analysis is switched on in the Workspace; it is off by decision (ITEM-88). Last run 8 Oct 2026, cancelled."
+  },
+  {
+   "name": "Folio_Incoming_Correspondence_Scan_Processing_Flow",
+   "flowId": "197527c8-e76c-4f7d-81b8-3cb5c88b1c6c",
+   "group": "Scheduled and event-driven",
+   "purpose": "Turns each scan saved to /E-DOCUMENT STATION into a registry record and notifies dgs@nitda.gov.ng (\"New E-Scan\").",
+   "trigger": "OneDrive file created"
+  },
+  {
+   "name": "Folio_Failure_Watch",
+   "flowId": "c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6",
+   "group": "Scheduled and event-driven",
+   "purpose": "Hourly on working days: reports newly failed notices to the registry and records the failure count per group for System Health.",
+   "trigger": "Schedule: hourly 07:00-18:00, Monday to Friday (WAT)"
+  },
+  {
+   "name": "IP_OTP_VERIFY",
+   "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+   "group": "Folio Workspace",
+   "purpose": "Verifies a staff member's sign-in code and issues the session proof every governed call carries.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_OTP_GENERATE",
+   "flowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+   "group": "Folio Workspace",
+   "purpose": "Sends a one-time sign-in code to a staff member's work e-mail.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_User_Admin_Endpoint",
+   "flowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+   "group": "Folio Workspace",
+   "purpose": "Adds, changes and disables staff access and roles (User Administration).",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_Activity_Lifecycle_Endpoint",
+   "flowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+   "group": "Folio Workspace",
+   "purpose": "Records activities and routes them to SIWES, NYSC or the archive.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_SCAN_INTAKE",
+   "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+   "group": "Folio Workspace",
+   "purpose": "Registers a document deposited at the registry counter from the Workspace's Scan Intake screen.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "IP_SEND_EMAIL",
+   "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+   "group": "Folio Workspace",
+   "purpose": "Sends e-mail for the Workspace (staff notices, responses dispatched through the Correspondence Email Desk) and writes a delivery receipt.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "DGSO INCOMING AI PROCESSING",
+   "flowId": "b6d92bae-591e-fa1e-52eb-b350cad988a7",
+   "group": "Scheduled and event-driven",
+   "purpose": "The former library intake. Replaced by the scan processing flow and turned off by design on 16 October 2026 (ITEM-80).",
+   "trigger": "OneDrive file created",
+   "note": "Off by design since 16 Oct 2026 (ITEM-80).",
+   "expectedState": "Stopped"
+  },
+  {
+   "name": "01 - GOV - Provision HTTP Flow Registry",
+   "flowId": "17a85efb-1ed2-45c9-a602-2ad6f8bb7ead",
+   "group": "Governance flow registry",
+   "purpose": "Creates and validates the seven HTTP flow registry lists, their settings and views, and e-mails a provisioning report.",
+   "trigger": "Manual (Run button)"
+  },
+  {
+   "name": "02 - GOV - Register HTTP Flow Truth",
+   "flowId": "651ae389-eeed-4bf0-9799-67bd964ebe71",
+   "group": "Governance flow registry",
+   "purpose": "Records a flow's contract and definition fingerprint in the registry.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "03 - GOV - Record HTTP Flow Execution",
+   "flowId": "0545e19a-c34a-45db-bd11-27b87a34973e",
+   "group": "Governance flow registry",
+   "purpose": "Writes a flow run to the execution ledger.",
+   "trigger": "HTTP request",
+   "note": "Runs on request; not yet needed."
+  },
+  {
+   "name": "04 - GOV - Audit HTTP Flow Registry",
+   "flowId": "3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b",
+   "group": "Governance flow registry",
+   "purpose": "Nightly audit of the registry for stale, failing or non-compliant flows.",
+   "trigger": "Schedule: daily at 02:00 (WAT)"
+  },
+  {
+   "name": "05 - GOV - Retire HTTP Flow",
+   "flowId": "493b4ab7-8f63-4fab-8121-746c2cac7f98",
+   "group": "Governance flow registry",
+   "purpose": "Retires a flow from the registry.",
+   "trigger": "HTTP request",
+   "note": "Runs on request; not yet needed."
+  },
+  {
+   "name": "06 - GOV - Registry Exception Notification",
+   "flowId": "87a74d7e-7435-4e34-baa1-7e759ebf5565",
+   "group": "Governance flow registry",
+   "purpose": "Hourly: e-mails open governance exceptions.",
+   "trigger": "Schedule: hourly"
+  },
+  {
+   "name": "07 - GOV - Consumer HTTP Self-Registration Template",
+   "flowId": "c6a011c5-7b11-4241-82ae-a45b88ebf276",
+   "group": "Governance flow registry",
+   "purpose": "The template a consuming system uses to register itself with the registry.",
+   "trigger": "HTTP request",
+   "note": "A template; runs on request; not yet needed."
+  },
+  {
+   "name": "08 - GOV - Discover and Register HTTP Consumers",
+   "flowId": "f5e7679f-ca1b-4216-8a6e-bb6c044ed06f",
+   "group": "Governance flow registry",
+   "purpose": "Nightly discovery and registration of the systems that call HTTP flows.",
+   "trigger": "Schedule: daily at 03:00"
+  },
+  {
+   "name": "DGO_MAIL_AUTH",
+   "flowId": "7d90f8f0-fa91-4aed-899c-b2bce5b70694",
+   "group": "Correspondence Mailer",
+   "purpose": "Operator sign-in: codes, 12-hour sessions and the operator list.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "DGO_MAIL_DATA",
+   "flowId": "d44a67e3-c55a-415a-afe9-ef50a4702117",
+   "group": "Correspondence Mailer",
+   "purpose": "Mailings, their results and the Activity reports.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "DGO_MAIL_DIRECTORY",
+   "flowId": "0cb4c4a8-578a-4017-90dc-b8f2ffb21cb8",
+   "group": "Correspondence Mailer",
+   "purpose": "The directory of institutions and addressees.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "DGO_MAIL_LOG",
+   "flowId": "98ce8b40-d386-4ec5-a277-1a35688fef4f",
+   "group": "Correspondence Mailer",
+   "purpose": "The send log and its export.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "DGO_MAIL_PROVISION",
+   "flowId": "c5a0f936-40a5-4044-a383-2530468f8413",
+   "group": "Correspondence Mailer",
+   "purpose": "Creates the Mailer's SharePoint lists and library.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "DGO_MAIL_SEND",
+   "flowId": "0fb53e16-fa57-41a9-9880-752c3a4d4749",
+   "group": "Correspondence Mailer",
+   "purpose": "Sends each personalised letter with its attachments.",
+   "trigger": "HTTP request"
+  },
+  {
+   "name": "DGO_MAIL_TEMPLATES",
+   "flowId": "176f7af5-7ffc-41d0-910b-e17b5587ebbd",
+   "group": "Correspondence Mailer",
+   "purpose": "Letter templates and the signatory.",
+   "trigger": "HTTP request"
+  }
+ ]
+}

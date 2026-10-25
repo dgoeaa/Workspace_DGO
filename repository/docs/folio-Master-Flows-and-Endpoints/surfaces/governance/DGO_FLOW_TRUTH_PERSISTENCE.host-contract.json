@@ -1,0 +1,68 @@
+{
+  "contractVersion": "1.0.0",
+  "package": "DGO_FLOW_TRUTH_PERSISTENCE.designer-paste.json",
+  "purpose": "What the host flow must already contain before this scope is pasted into it. Every entry is a SAVE-time dependency: the designer refuses a definition that references an action it cannot find.",
+  "actions": {
+    "Compose_Redacted_Headers": "Trigger headers with every secret-bearing header blanked, including x-ms-igw-external-uri and x-ms-igw-raw-target.",
+    "Compose_Redacted_Queries": "Trigger query parameters with sig and code blanked.",
+    "Compose_Extraction_Result": "The endpoint and flow inventory this run assembled.",
+    "Compose_Governance_Record": "The governance assessment for this run.",
+    "Get_Current_Flow_Definition": "The Power Automate flow resource for the flow being recorded.",
+    "Compose_Enterprise_Branded_HTML_Report": "The rendered HTML report for this run.",
+    "Scope_Flow_Registry_Processing": "The scope whose status is recorded (status only — its result() is not read).",
+    "Scope_Reporting": "The scope whose status is recorded (status only — its result() is not read)."
+  },
+  "variables": {
+    "varStatusCode": "integer — the run outcome the estate response envelope reports.",
+    "varErrors": "array — the run error collection.",
+    "varReceivedAtUtc": "string — ISO 8601 instant the run was received.",
+    "varStartTicks": "integer — ticks(utcNow()) captured at the top of the run."
+  },
+  "reads": "All eight actions are read exactly once, in Compose_Host_Inputs, with a coalesce fallback. Rename one in the host and there is one action to edit here.",
+  "notRead": {
+    "triggerBody()": "CaptureRequestBody=false in the registry design configuration seeds.",
+    "triggerOutputs()": "Carries the unredacted trigger headers, including x-ms-igw-external-uri and its sig token.",
+    "result('Scope_Flow_Registry_Processing')": "Unbounded, unredacted, and only the status is needed. The status is read instead.",
+    "result('Scope_Reporting')": "Same."
+  },
+  "provisioning": {
+    "state": "BLOCKED-ON-PROVISIONING",
+    "site": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+    "resources": [
+      {
+        "title": "DGO_HTTPFlowRegistry",
+        "kind": "List",
+        "guid": null,
+        "uniqueKey": "RegistryKey",
+        "indexed": [
+          "RegistryKey",
+          "FlowId",
+          "EnvironmentId",
+          "FlowName",
+          "LastSeenUtc"
+        ]
+      },
+      {
+        "title": "DGO_HTTPFlowExecutionLedger",
+        "kind": "List",
+        "guid": null,
+        "uniqueKey": "ExecutionKey",
+        "indexed": [
+          "ExecutionKey",
+          "RegistryKey",
+          "FlowId",
+          "RunId",
+          "StartedUtc",
+          "Outcome"
+        ]
+      },
+      {
+        "title": "DGO_HTTPFlowArtefacts",
+        "kind": "DocumentLibrary",
+        "guid": null,
+        "uniqueKey": null,
+        "indexed": []
+      }
+    ]
+  }
+}

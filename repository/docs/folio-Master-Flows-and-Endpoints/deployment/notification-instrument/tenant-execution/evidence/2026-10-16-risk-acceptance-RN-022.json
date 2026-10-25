@@ -1,0 +1,13 @@
+{
+  "requirementId": "RN-022",
+  "residualRisk": "An approved response is not dispatched to its recipients by the platform: DISPATCH_OUTBOUND has no implementation.",
+  "affectedAudience": "correspondents who are owed a response",
+  "consequence": "Approved responses must be sent by hand; nothing in the platform proves they went out.",
+  "compensatingControl": "Officers send approved responses through the Correspondence Email Desk (IP_SEND_EMAIL, which writes an outbox receipt) or by hand, and record the dispatch on the record.",
+  "riskOwner": "Office of the Director-General/CEO (dgsregistry@nitda.gov.ng)",
+  "acceptanceAuthority": "Office of the Director-General/CEO (dgsregistry@nitda.gov.ng)",
+  "acceptedAtUtc": "2026-10-16T22:30:00Z",
+  "reviewAtUtc": "2027-01-16T00:00:00Z",
+  "plannedClosureRelease": "the release that implements DISPATCH_OUTBOUND",
+  "status": "ACCEPTED"
+}

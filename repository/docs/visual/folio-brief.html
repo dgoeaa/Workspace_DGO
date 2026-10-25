@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en-GB" data-platform="dgo-ops">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="brand/dgo-mark.svg">
+<link rel="stylesheet" href="brand/brand.css">
+<script src="brand/brand.js"></script>
+<title>DGO Digital Operations Folio</title>
+<style>
+/* Layout: a registry file jacket — a dark green cover, then paper "minute sheets" the reader turns, each stamped with its docket reference. */
+:root{
+  /* Every colour and face is a brand token from brand/brand.css, which also carries the dark
+     and high-contrast themes, so this page states none of its own (npm run test:brand). */
+  --paper:var(--bk-ground); --sheet:var(--bk-surface); --ink:var(--bk-ink); --muted:var(--bk-ink-soft); --rule:var(--bk-rule);
+  /* The cover is the jacket: dark green in every theme, so it names the palette steps directly. */
+  --cover:var(--dgo-green-800); --cover-2:var(--dgo-green-700); --on-cover:var(--dgo-green-50); --on-cover-muted:var(--dgo-green-200);
+  --green:var(--bk-brand); --green-soft:var(--bk-brand-soft); --brass:var(--bk-accent); --brass-soft:color-mix(in srgb, var(--bk-accent) 16%, transparent);
+  --ok:var(--bk-ok); --warn:var(--bk-warn);
+  --f-display:var(--bk-font-display); --f-body:var(--bk-font-body); --f-mono:var(--bk-font-mono);
+}
+*{box-sizing:border-box}
+.cover-lockup{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.cover-lockup .cover-logo{height:40px;width:auto;display:block}
+body{background:var(--paper);color:var(--ink);font:17px/1.6 var(--f-body);margin:0}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;line-height:1.08;margin:0}
+p{margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+.mono{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
+.lede{max-width:62ch;color:var(--muted);font-size:18.5px}
+a{color:var(--green)}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+
+/* Cover */
+.cover{background:radial-gradient(1200px 500px at 85% -10%,var(--cover-2),transparent 60%),var(--cover);color:var(--on-cover);padding-block:56px 64px;position:relative;overflow:hidden}
+.cover .mono{color:var(--on-cover-muted)}
+.cover-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.cover h1{font-size:clamp(40px,6.4vw,78px);font-weight:800;letter-spacing:-.02em;margin-block:18px 20px}
+.cover h1 em{font-style:normal;color:var(--brass)}
+.cover p.lede{color:var(--on-cover-muted)}
+.stamp{display:inline-flex;gap:10px;align-items:center;border:1.5px solid var(--on-cover-muted);border-radius:4px;padding:6px 10px}
+.stamp b{color:var(--brass);font-weight:500}
+.converge{width:100%;height:auto;max-width:100%}
+.converge text{font-family:var(--f-mono);font-size:11px;fill:var(--on-cover-muted);letter-spacing:.05em}
+.converge .flow{stroke-dasharray:6 8;animation:dash 2.4s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-56}}
+.tally{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px}
+.tally div{min-width:0}
+.tally b{display:block;font:800 34px/1 var(--f-display);color:var(--on-cover);font-variant-numeric:tabular-nums}
+.tally span{font-size:13.5px;color:var(--on-cover-muted)}
+
+/* Index strip */
+.index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sheet);border-bottom:1px solid var(--rule)}
+.index .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+.index a{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:4px;white-space:nowrap}
+.index a:hover{background:var(--green-soft);color:var(--green)}
+
+/* Sheets */
+section.sheet{padding-block:72px;border-bottom:1px solid var(--rule)}
+.docket{display:flex;gap:14px;align-items:baseline;margin-bottom:14px;color:var(--brass)}
+.docket .mono{color:var(--brass)}
+.sheet h2{font-size:clamp(30px,4.2vw,48px);font-weight:800;letter-spacing:-.015em;margin-bottom:16px;max-width:20ch}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.two>*{min-width:0}
+
+/* Promise */
+.promise{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:40px;border-top:2px solid var(--ink)}
+.promise div{padding:22px 22px 6px 0;border-right:1px solid var(--rule)}
+.promise div+div{padding-left:22px}
+.promise div:last-child{border-right:0}
+.promise h3{font-size:22px;margin-bottom:8px}
+.promise p{color:var(--muted);font-size:16px}
+blockquote.principle{margin:44px 0 0;padding:26px 28px;background:var(--brass-soft);border-radius:6px;font:italic 21px/1.5 var(--f-body);max-width:none}
+blockquote.principle cite{display:block;margin-top:10px;font:normal 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* Doors */
+.doors{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px}
+.door{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.door svg{width:44px;height:44px}
+.door .ch{font:600 12px var(--f-mono);color:var(--brass);letter-spacing:.08em}
+.door h3{font-size:20px}
+.door p{font-size:15px;color:var(--muted)}
+.door .via{margin-top:auto;font:12px var(--f-mono);color:var(--green)}
+.one-record{margin-top:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:16px;color:var(--muted)}
+.one-record code{font-family:var(--f-mono);font-size:13px;background:var(--green-soft);color:var(--green);padding:3px 8px;border-radius:4px}
+
+/* Journey */
+.rail{display:flex;gap:0;margin-top:36px;overflow-x:auto;padding-bottom:6px}
+.stop{flex:1 0 96px;display:flex;flex-direction:column;align-items:center;gap:10px;background:none;border:0;cursor:pointer;color:var(--muted);font:inherit;position:relative;padding:0 4px}
+.stop::before{content:"";position:absolute;top:15px;left:0;right:0;height:2px;background:var(--rule)}
+.stop:first-child::before{left:50%}.stop:last-child::before{right:50%}
+.stop i{position:relative;width:32px;height:32px;border-radius:50%;background:var(--sheet);border:2px solid var(--rule);display:grid;place-items:center;font:500 12px var(--f-mono);font-style:normal;color:var(--muted);transition:all .25s}
+.stop span{font:600 13.5px var(--f-display);text-align:center}
+.stop.on i{background:var(--green);border-color:var(--green);color:var(--sheet)}
+.stop.on span{color:var(--ink)}
+.stop.past i{border-color:var(--green);color:var(--green)}
+.station{margin-top:28px;display:grid;grid-template-columns:1.2fr 1fr;gap:28px;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:28px}
+.station>*{min-width:0}
+.station h3{font-size:28px;margin-bottom:10px}
+.station .who{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{font:500 12px var(--f-mono);padding:4px 9px;border-radius:999px;background:var(--green-soft);color:var(--green)}
+.chip.brass{background:var(--brass-soft);color:var(--brass)}
+.minute{border-left:3px solid var(--brass);padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:12px}
+.minute .mono{color:var(--muted)}
+.minute ul{margin:0;padding-left:18px;font-size:15.5px}
+.minute li+li{margin-top:6px}
+.controls{display:flex;gap:10px;margin-top:18px}
+.btn{font:600 14px var(--f-display);padding:9px 16px;border-radius:6px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--green);border-color:var(--green);color:var(--sheet)}
+
+/* Rooms */
+.roles{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;align-items:center}
+.roles .mono{color:var(--muted);margin-right:6px}
+.role{font:600 13.5px var(--f-display);padding:7px 13px;border-radius:999px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.role[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.wings{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.wing{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px}
+.wing h3{font-size:18px;margin-bottom:4px}
+.wing>p{font-size:14.5px;color:var(--muted);margin-bottom:14px}
+.room{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;padding:10px 0;border-top:1px dashed var(--rule);transition:opacity .25s}
+.room b{font:600 15px var(--f-display)}
+.room small{grid-column:2;font-size:13.5px;color:var(--muted);line-height:1.45}
+.room .dot{width:9px;height:9px;border-radius:50%;background:var(--green);margin-top:6px;grid-row:span 2}
+.room.off{opacity:.28}
+.room.off .dot{background:var(--rule)}
+.rolenote{margin-top:16px;font-size:15px;color:var(--muted);min-height:1.6em}
+
+/* Spine */
+.stack{display:flex;flex-direction:column;gap:10px}
+.layer{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;padding:16px 18px;border-radius:8px;background:var(--sheet);border:1px solid var(--rule)}
+.layer>*{min-width:0}
+.layer .mono{color:var(--brass)}
+.layer.gov{background:var(--cover);border-color:var(--cover);color:var(--on-cover)}
+.layer.gov .mono{color:var(--brass)}
+.layer.gov p{color:var(--on-cover-muted)}
+.layer p{font-size:15px;color:var(--muted)}
+.layer h4{font-size:17px;margin-bottom:2px}
+.vows{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.vow{padding:16px;border-top:2px solid var(--green)}
+.vow h4{font-size:17px;margin-bottom:6px}
+.vow p{font-size:15px;color:var(--muted)}
+
+/* Portal mock */
+.device{background:var(--sheet);border:1px solid var(--rule);border-radius:14px;overflow:hidden;box-shadow:var(--bk-shadow-lift)}
+.device .bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--rule);align-items:center}
+.device .bar i{width:9px;height:9px;border-radius:50%;background:var(--rule)}
+.device .bar span{margin-left:10px;font:12px var(--f-mono);color:var(--muted)}
+.device .body{padding:22px}
+.steps{display:flex;gap:6px;margin-bottom:18px}
+.steps div{flex:1;height:5px;border-radius:3px;background:var(--rule)}
+.steps div.done{background:var(--green)}
+.field{border:1px solid var(--rule);border-radius:6px;padding:10px 12px;font-size:14.5px;margin-bottom:10px;display:flex;justify-content:space-between;gap:10px}
+.field span{color:var(--muted)}
+.receipt{margin-top:14px;border:1.5px dashed var(--brass);border-radius:8px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.receipt b{font:500 16px var(--f-mono);color:var(--brass)}
+.tabs3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.tabs3 div{border-top:2px solid var(--ink);padding-top:10px}
+.tabs3 h4{font-size:16px;margin-bottom:4px}
+.tabs3 p{font-size:14.5px;color:var(--muted)}
+
+/* Bench */
+.bench{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:34px}
+.tool{grid-column:span 2;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.tool.wide{grid-column:span 3}
+.tool.full{grid-column:1/-1}
+.tool .big{font:800 40px/1 var(--f-display);color:var(--green);font-variant-numeric:tabular-nums}
+.tool h3{font-size:18px}
+.tool p{font-size:14.5px;color:var(--muted)}
+.compare{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:6px}
+.compare th,.compare td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule)}
+.compare th{font:500 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* Conditions */
+.conds{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:34px;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--sheet)}
+.cond{padding:22px;border-right:1px solid var(--rule)}
+.cond:last-child{border-right:0}
+.cond svg{width:36px;height:36px;margin-bottom:10px}
+.cond h4{font-size:17px;margin-bottom:6px}
+.cond p{font-size:14.5px;color:var(--muted)}
+.themes{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.swatch{flex:1 1 150px;border-radius:8px;padding:14px;font:500 12px var(--f-mono);border:1px solid var(--rule)}
+.swatch.l{background:var(--bk-surface);color:var(--bk-ink)}
+.swatch.d{background:var(--bk-hdr-bg);color:var(--bk-hdr-fg)}
+.swatch.h{background:black;color:white;border:2px solid yellow}
+
+/* Promises by audience */
+.aud{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:22px}
+.card .mono{color:var(--brass)}
+.card h3{font-size:19px;margin-block:8px}
+.card p{font-size:15px;color:var(--muted)}
+
+/* Road */
+.road{margin-top:34px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:r}
+.leg{position:relative;padding:18px 18px 18px 0;border-top:3px solid var(--rule)}
+.leg.lit{border-top-color:var(--green)}
+.leg h4{font-size:17px;margin-bottom:6px}
+.leg p{font-size:14.5px;color:var(--muted)}
+.leg .mono{color:var(--muted);display:block;margin-bottom:6px}
+.leg.lit .mono{color:var(--green)}
+.closing{background:var(--cover);color:var(--on-cover);padding-block:64px}
+.closing h2{font-size:clamp(28px,4vw,46px);max-width:22ch;margin-bottom:16px}
+.closing p{color:var(--on-cover-muted);max-width:62ch}
+.closing .mono{color:var(--brass)}
+
+@media (max-width:900px){
+  .cover-grid,.two,.station{grid-template-columns:1fr}
+  .doors,.conds{grid-template-columns:1fr 1fr}
+  .cond:nth-child(2){border-right:0}.cond:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+  .wings,.aud{grid-template-columns:1fr 1fr}
+  .bench{grid-template-columns:1fr 1fr}.tool,.tool.wide{grid-column:span 1}.tool.full{grid-column:1/-1}
+  .road{grid-template-columns:1fr 1fr}
+  .promise{grid-template-columns:1fr}.promise div{border-right:0;border-bottom:1px solid var(--rule);padding-left:0!important}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .doors,.wings,.aud,.bench,.road,.conds,.vows,.tabs3{grid-template-columns:1fr}
+  .cond{border-right:0;border-bottom:1px solid var(--rule)}
+  .layer{grid-template-columns:1fr;gap:6px}
+  section.sheet{padding-block:52px}
+}
+@media (prefers-reduced-motion:reduce){.converge .flow{animation:none}*{transition:none!important}}
+</style>
+</head>
+
+<header class="cover">
+  <div class="wrap cover-grid">
+    <div>
+      <div class="cover-lockup">
+        <img class="cover-logo" src="brand/nitda-lockup-digital-white.png" alt="National Information Technology Development Agency" width="544" height="254">
+        <span class="bk-sub bk-sub--reverse" data-bk-sub><span class="bk-sub__word" aria-hidden="true">DG<svg class="bk-sub__o" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle class="ring" cx="28" cy="28" r="20"/><circle class="dot" cx="28" cy="28" r="6.5"/></svg></span><span class="bk-sub__name" aria-hidden="true"><span>Digital</span><span>Ops</span></span><span class="bk-sub__sr">DGO Digital Ops</span><!--/bk-sub--></span>
+      </div>
+      <span class="stamp mono">NITDA · Office of the DG/CEO <b>FOLIO</b></span>
+      <h1>Every matter, from the moment it arrives to the day it is <em>archived</em>.</h1>
+      <p class="lede">DGO Digital Operations is the Agency's single governed lifecycle for correspondence, registry minutes, assignments, approvals and dispatch. This folio walks the whole platform as it stands today, one sheet at a time.</p>
+      <div class="tally">
+        <div><b>4</b><span>intake channels, one record</span></div>
+        <div><b>29</b><span>workspaces</span></div>
+        <div><b>6</b><span>roles, 13 permissions</span></div>
+        <div><b>0</b><span>runtime dependencies</span></div>
+      </div>
+    </div>
+    <svg class="converge" viewBox="0 0 480 360" role="img" aria-label="Four intake channels flowing into one correspondence record, then through to archive">
+      <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#6FAE8E"/><stop offset="1" stop-color="#E0AE4E"/></linearGradient></defs>
+      <g fill="none" stroke="url(#g)" stroke-width="2">
+        <path class="flow" d="M70 50 C 200 50, 180 180, 250 180"/>
+        <path class="flow" d="M70 130 C 170 130, 190 180, 250 180"/>
+        <path class="flow" d="M70 230 C 170 230, 190 180, 250 180"/>
+        <path class="flow" d="M70 310 C 200 310, 180 180, 250 180"/>
+        <path class="flow" d="M330 180 L 440 180"/>
+      </g>
+      <g fill="#022819" stroke="#6FAE8E" stroke-width="1.5">
+        <circle cx="60" cy="50" r="10"/><circle cx="60" cy="130" r="10"/><circle cx="60" cy="230" r="10"/><circle cx="60" cy="310" r="10"/>
+      </g>
+      <text x="20" y="28">A · PUBLIC PORTAL</text>
+      <text x="20" y="108">B · CUSTOMER EMAIL</text>
+      <text x="20" y="208">C · REGISTRY SCAN</text>
+      <text x="20" y="288">D · DG/CEO OUTGOING</text>
+      <rect x="250" y="140" width="80" height="80" rx="6" fill="#E0AE4E"/>
+      <rect x="258" y="152" width="50" height="4" rx="2" fill="#033F2A"/>
+      <rect x="258" y="162" width="64" height="3" rx="1.5" fill="#033F2A" opacity=".6"/>
+      <rect x="258" y="170" width="58" height="3" rx="1.5" fill="#033F2A" opacity=".6"/>
+      <rect x="258" y="178" width="62" height="3" rx="1.5" fill="#033F2A" opacity=".6"/>
+      <rect x="258" y="196" width="36" height="14" rx="3" fill="none" stroke="#033F2A" stroke-width="1.5"/>
+      <text x="252" y="245" style="fill:var(--on-cover)">ONE RECORD</text>
+      <rect x="440" y="164" width="30" height="32" rx="3" fill="none" stroke="#A4CCB7" stroke-width="1.5"/>
+      <path d="M440 174 H470" stroke="#A4CCB7" stroke-width="1.5"/>
+      <text x="420" y="220">ARCHIVE</text>
+    </svg>
+  </div>
+</header>
+
+<nav class="index" aria-label="Folio sections">
+  <div class="wrap">
+    <a href="#promise">The promise</a><a href="#doors">Four doors</a><a href="#journey">The journey</a><a href="#rooms">The rooms</a><a href="#spine">The spine</a><a href="#portal">Public face</a><a href="#bench">Engineering bench</a><a href="#conditions">Built for here</a><a href="#people">For whom</a><a href="#road">The road</a>
+  </div>
+</nav>
+
+<main>
+<section class="sheet" id="promise"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 1 · The promise</span></div>
+  <h2>What began as a tracker is now the Agency's operating record.</h2>
+  <p class="lede">The platform started as a way to follow correspondence through the DG's office. It has grown into a full operating estate: a staff platform with 29 workspaces, a public portal, executive briefing and meeting management, an administration suite, and a flow engineering bench. Three ideas hold it together.</p>
+  <div class="promise">
+    <div><h3>One record</h3><p>A letter handed in at the counter, an email to customer service, a portal submission and a DG directive all become the same correspondence record. The channel is a field, not a separate system.</p></div>
+    <div><h3>One owner per action</h3><p>Every step that changes a record belongs to exactly one workspace. An action nobody owns is refused before it runs, so the process cannot drift from what was agreed.</p></div>
+    <div><h3>One trail</h3><p>Each change is audited, receipted and safe to retry. Work entered offline is queued and sent when the connection returns. Nothing is lost between hands.</p></div>
+  </div>
+  <blockquote class="principle">"The platform must be judged by whether a user can receive or locate a matter from any ingestion source, register it, minute it, assign it, track it, review it, dispatch it, close it and archive it without confusion."<cite>The product definition's own test</cite></blockquote>
+</div></section>
+
+<section class="sheet" id="doors"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 2 · Four doors</span></div>
+  <h2>However a matter reaches NITDA, it enters the same way.</h2>
+  <p class="lede">Four intake channels were designed to converge. None of them has its own process. They differ only in who starts the record and what they attach to it.</p>
+  <div class="doors">
+    <article class="door">
+      <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--green)"><rect x="6" y="8" width="32" height="24" rx="3"/><path d="M6 14h32M16 38h12M22 32v6"/></svg>
+      <span class="ch">CHANNEL A</span><h3>Public portal</h3>
+      <p>Citizens, companies and MDAs submit letters in four guided steps and get a tracking reference and receipt.</p>
+      <span class="via">channel: Portal</span>
+    </article>
+    <article class="door">
+      <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--green)"><rect x="6" y="10" width="32" height="24" rx="3"/><path d="M6 12l16 12 16-12"/></svg>
+      <span class="ch">CHANNEL B</span><h3>Customer service email</h3>
+      <p>The mailbox is read into the platform. Any email can become a task with its sender, subject and history attached.</p>
+      <span class="via">email → task</span>
+    </article>
+    <article class="door">
+      <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--green)"><path d="M10 6h18l8 8v24H10z"/><path d="M28 6v8h8M4 24h36"/></svg>
+      <span class="ch">CHANNEL C</span><h3>Registry scan</h3>
+      <p>Paper handed in at the counter is scanned and deposited straight to the document library. The record carries the link from its first moment.</p>
+      <span class="via">channel: Registry</span>
+    </article>
+    <article class="door">
+      <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--green)"><path d="M8 34l28-24M26 10h10v10"/><circle cx="12" cy="30" r="5"/></svg>
+      <span class="ch">CHANNEL D</span><h3>DG/CEO outgoing</h3>
+      <p>Letters, directives, approvals and minutes that leave the DG's office are tracked out, dispatched and closed like everything else.</p>
+      <span class="via">internal origination</span>
+    </article>
+  </div>
+  <p class="one-record">Documents live in SharePoint. The platform holds the metadata and a link, so the file and the record can never part company. <code>one correspondence record</code></p>
+</div></section>
+
+<section class="sheet" id="journey"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 3 · The journey</span></div>
+  <h2>Follow one letter through the building.</h2>
+  <p class="lede">Select a stage, or step through. At each one you see which workspace owns the step, who acts, and what the record gains.</p>
+  <div class="rail" id="rail" role="tablist" aria-label="Lifecycle stages"></div>
+  <div class="station" id="station" role="tabpanel" aria-live="polite"></div>
+  <div class="controls"><button class="btn" id="prev" type="button">Previous stage</button><button class="btn primary" id="next" type="button">Next stage</button></div>
+</div></section>
+
+<section class="sheet" id="rooms"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 4 · The rooms</span></div>
+  <h2>Twenty-nine workspaces, and each person sees their own.</h2>
+  <p class="lede">The workspaces fall into three wings. Choose a role to see the building from that person's side. A route someone cannot open shows an explicit reason, never a blank page.</p>
+  <div class="roles" id="roles"><span class="mono">View as</span></div>
+  <p class="rolenote" id="rolenote"></p>
+  <div class="wings" id="wings"></div>
+</div></section>
+
+<section class="sheet" id="spine"><div class="wrap two">
+  <div>
+    <div class="docket"><span class="mono">Sheet 5 · The governance spine</span></div>
+    <h2>Accountability is built into the structure.</h2>
+    <p class="lede">Four layers, and data flows down through them. The governance layer sits between every screen and every system of record, so no workspace can change a record without passing through it.</p>
+    <div class="vows" style="margin-top:30px">
+      <div class="vow"><h4>Owned actions</h4><p>An action that is not declared and owned throws instead of executing.</p></div>
+      <div class="vow"><h4>Audited</h4><p>Every attempt is logged with its full detail. The operator sees a plain message, never raw error text.</p></div>
+      <div class="vow"><h4>Idempotent</h4><p>A double-click or a retry never creates a second task or a second dispatch.</p></div>
+      <div class="vow"><h4>Receipted</h4><p>The receipt ledger records what the back end confirmed, not what the screen assumed.</p></div>
+    </div>
+  </div>
+  <div class="stack" aria-label="Runtime layers">
+    <div class="layer"><span class="mono">Presentation</span><div><h4>Shell and workspaces</h4><p>Web-component shell, hash router, lazy-loaded workspaces, three themes.</p></div></div>
+    <div class="layer gov"><span class="mono">Governance</span><div><h4>Action authority</h4><p>Ownership, audit log, idempotency, receipt ledger, offline queue, one-time-code step-up.</p></div></div>
+    <div class="layer"><span class="mono">Integration</span><div><h4>Endpoint registry</h4><p>Contract resolution, redaction, retry, de-duplication and queueing for every call.</p></div></div>
+    <div class="layer"><span class="mono">Back end</span><div><h4>Power Automate and SharePoint</h4><p>25 contract keys, document libraries, and identity by one-time code.</p></div></div>
+    <p class="mono" style="color:var(--muted);margin-top:8px">A proof, not a claim: 108 governance assertions run without a browser in about a second.</p>
+  </div>
+</div></section>
+
+<section class="sheet" id="portal"><div class="wrap two">
+  <div>
+    <div class="docket"><span class="mono">Sheet 6 · The public face</span></div>
+    <h2>The Intelligent Portal gives the public a front door to the Agency.</h2>
+    <p class="lede">Anyone writing to NITDA can submit, track and get help without visiting an office or phoning the registry. It is a progressive web app: it installs, it works through a patchy connection, and it deploys on any static host.</p>
+    <div class="tabs3">
+      <div><h4>Submit</h4><p>Four steps: type, sender, document, review. Drafts autosave. Receipt printed on completion.</p></div>
+      <div><h4>Track</h4><p>Reference plus email reads the live registry: lifecycle stepper, acknowledgement meter, full timeline.</p></div>
+      <div><h4>Support</h4><p>Searchable answers, contact channels, portal status and a case desk that returns a reference instantly.</p></div>
+    </div>
+  </div>
+  <div class="device" aria-label="Illustration of the portal submission receipt">
+    <div class="bar"><i></i><i></i><i></i><span>portal · submit</span></div>
+    <div class="body">
+      <div class="steps"><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div></div>
+      <p class="mono" style="color:var(--muted);margin-bottom:10px">Step 4 of 4 · Review</p>
+      <div class="field"><span>Correspondence type</span>Letter to the DG/CEO</div>
+      <div class="field"><span>Sender</span>Example Ltd, Abuja</div>
+      <div class="field"><span>Document</span>request-letter.pdf · 412 KB</div>
+      <div class="receipt"><div><span class="mono" style="color:var(--muted)">Tracking reference</span><br><b>NITDA-PRT-2026-0000</b></div><span class="chip">Received</span></div>
+      <p class="mono" style="color:var(--muted);margin-top:12px;font-size:11px">Illustration · sample values</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="sheet" id="bench"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 7 · The engineering bench</span></div>
+  <h2>The Agency can run and maintain the platform in-house.</h2>
+  <p class="lede">A platform the Agency depends on has to be operable by its own IT department. Alongside the workspaces sits a full set of instruments for seeing, testing and repairing the connections underneath.</p>
+  <div class="bench">
+    <div class="tool wide"><h3>Admin Suite</h3><p>One interface replacing five screens and a drawer of standalone consoles: endpoint estate, flow catalogue, commissioning, capsule registry, people and platform settings.</p></div>
+    <div class="tool wide"><h3>Endpoint Console</h3><p>Every contract key on both sides of the wire, with its state, its probe result and what calls it. Wiring is a configuration task done here, not a code change.</p></div>
+    <div class="tool"><span class="big">50</span><h3>Flow Workbench</h3><p>Every flow catalogued: 679 trigger fields and 5,786 actions, each tied to the hash of its source definition. Inspect, compose, validate and send.</p></div>
+    <div class="tool"><span class="big">1</span><h3>Operator HUD</h3><p>What has loaded, what is waiting to send, and how to refresh it, on one screen for whoever is on duty.</p></div>
+    <div class="tool"><span class="big">4</span><h3>Readiness commands</h3><p>Commission, readiness, outstanding and trigger-auth checks report the estate's true position from the repository itself.</p></div>
+    <div class="tool full">
+      <h3>Capsule registry: an option for stronger custody of flow addresses</h3>
+      <p>A small standard-library service that holds each signed flow address and hands the browser only an alias. Adopting it is a deployment choice, with its own server and backup regime.</p>
+      <div style="overflow-x:auto"><table class="compare">
+        <thead><tr><th></th><th>Direct call (today)</th><th>Capsule registry</th></tr></thead>
+        <tbody>
+          <tr><td>Where the signature ends up</td><td>Every browser</td><td>The registry only</td></tr>
+          <tr><td>Version history per endpoint</td><td>None</td><td>Retained, with rollback</td></tr>
+          <tr><td>Disable an endpoint</td><td>Redeploy</td><td>Immediate</td></tr>
+          <tr><td>Record of who invoked what</td><td>None</td><td>An audit row per call</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sheet" id="conditions"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 8 · Built for here</span></div>
+  <h2>Designed for how the Agency actually works.</h2>
+  <p class="lede">Unreliable power and connectivity, mixed devices, and a small in-house team were treated as design inputs from the start.</p>
+  <div class="conds">
+    <div class="cond"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--brass)"><path d="M4 14a20 20 0 0 1 28 0M9 19a13 13 0 0 1 18 0M14 24a6 6 0 0 1 8 0"/><path d="M4 4l28 28"/></svg><h4>Offline durable</h4><p>Actions taken without a connection are queued in the browser and sent, once, when it returns.</p></div>
+    <div class="cond"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--brass)"><rect x="5" y="7" width="26" height="22" rx="3"/><path d="M11 14l4 4-4 4M18 22h7"/></svg><h4>Zero build</h4><p>No bundler, no framework, nothing from a CDN. Edit a file, refresh the page. Any web server can host it.</p></div>
+    <div class="cond"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--brass)"><path d="M6 10h24M6 18h16M6 26h20"/><circle cx="28" cy="22" r="4"/></svg><h4>Configuration over code</h4><p>Routes, roles, endpoints, ownership and workflow visibility live in declarative configuration files.</p></div>
+    <div class="cond"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--brass)"><circle cx="18" cy="9" r="3"/><path d="M8 15h20M18 15v16M12 31l6-9 6 9"/></svg><h4>Accessible</h4><p>Skip link, landmarks, live regions, focus-trapped drawers, and a forced-colours high-contrast theme.</p></div>
+  </div>
+  <div class="themes" aria-label="The three themes">
+    <div class="swatch l">LIGHT · comfortable / compact</div>
+    <div class="swatch d">DARK · comfortable / compact</div>
+    <div class="swatch h">HIGH CONTRAST · forced colours</div>
+  </div>
+</div></section>
+
+<section class="sheet" id="people"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 9 · For whom</span></div>
+  <h2>What each part of the Agency gains.</h2>
+  <div class="aud">
+    <article class="card"><span class="mono">DG/CEO</span><h3>Decisions without the paper chase</h3><p>A correspondence and decision hub showing what waits on the DG, what has been decided and where each item goes next. Briefs and meeting outcomes arrive in the same place.</p></article>
+    <article class="card"><span class="mono">Office of the DG</span><h3>Minutes that stay attached</h3><p>Registry minutes, assignments and follow-ups are recorded against the matter itself. An enquiry is answered by looking it up, not by asking around.</p></article>
+    <article class="card"><span class="mono">Heads of department</span><h3>Workload you can see</h3><p>Acknowledgement queues, deadlines, FastTrack escalation of late work and approvals, with a record of who confirmed what and when.</p></article>
+    <article class="card"><span class="mono">Staff</span><h3>One list of my work</h3><p>My Work collects every task routed to a person, whatever channel it came from, with an assistant that answers "where has this got to?" from records they may see.</p></article>
+    <article class="card"><span class="mono">The public and MDAs</span><h3>A receipt and a reference</h3><p>Submissions acknowledged immediately and trackable at any hour, which cuts calls and visits to the registry.</p></article>
+    <article class="card"><span class="mono">Audit and IT</span><h3>Evidence by default</h3><p>An audit log, a receipt ledger and closure evidence in the archive. The in-house team can run the estate with its own instruments.</p></article>
+  </div>
+</div></section>
+
+<section class="sheet" id="road"><div class="wrap">
+  <div class="docket"><span class="mono">Sheet 10 · The road to live</span></div>
+  <h2>Going live is a configuration step. The code is done.</h2>
+  <p class="lede">What stands between the platform and production sits in the tenant and with decision-makers. Each remaining item names the person who can close it.</p>
+  <div class="road">
+    <div class="leg lit"><span class="mono">Built</span><h4>Platform and portal</h4><p>Workspaces, governance spine, portal and bench in place, guarded by an automated quality gate.</p></div>
+    <div class="leg lit"><span class="mono">Piloted</span><h4>Wired and exercised</h4><p>Endpoints wired against the tenant and the pilot commissioning pass completed.</p></div>
+    <div class="leg"><span class="mono">Next</span><h4>Switch identity on</h4><p>Authentication is fully provisioned and deliberately off. Activation is one setting plus two one-time-code flows. No identity provider tenant is needed.</p></div>
+    <div class="leg"><span class="mono">Then</span><h4>Production acceptance</h4><p>Formal evidence, security sign-off and governance closure through the production readiness register.</p></div>
+  </div>
+</div></section>
+</main>
+
+<footer class="closing"><div class="wrap">
+  <span class="mono">End of folio</span>
+  <h2 style="margin-top:14px">One record, one owner for each step, and a trail anyone can follow.</h2>
+  <p>DGO Digital Operations gives NITDA a single place where every matter can be received, minuted, assigned, tracked, decided, dispatched and archived. Its accountability comes from the structure of the system, and the Agency's own people can run it.</p>
+</div></footer>
+
+<script>
+const STAGES=[
+ {k:"Intake",t:"A matter arrives",d:"From the portal, the mailbox, the registry counter or the DG's own office. Whichever door it used, it becomes one correspondence record with its document linked.",ws:["Registry Scan Intake","Correspondence","Correspondence Email Desk"],who:["Registry clerk","Customer service","Public submitter"],gain:["A tracking reference","The channel it came from","Document link in SharePoint"]},
+ {k:"Register",t:"It is entered in the registry",d:"The registry gives the matter its place: category, priority and a searchable entry that anyone entitled can find again.",ws:["Registry","Lookup"],who:["Registry officer","Operator"],gain:["Category and priority","Registry entry","Searchable by reference"]},
+ {k:"Minute",t:"The DG's office minutes it",d:"The traditional registry minute, in digital form. Instructions are written against the matter, where they stay.",ws:["DGCEO Decision Hub","Comments"],who:["DG/CEO","Executive Assistant"],gain:["Minute on the record","Decision recorded","Next destination named"]},
+ {k:"Assign",t:"Work goes to the right desk",d:"One task or a batch at once, routed to departments and people using the Agency's organisational structure.",ws:["Single Assignment","Bulk Assignment"],who:["Operator","Director"],gain:["Assignee and deadline","Routing through the org chart","Notification sent"]},
+ {k:"Acknowledge",t:"Receipt is confirmed",d:"The assignee confirms they have the task. Nobody can later say it never reached them.",ws:["Acknowledgment Queue","My Work"],who:["Head of department","Staff"],gain:["Who confirmed, and when","Clock starts"]},
+ {k:"Track",t:"Progress is visible",d:"Every task shows where it stands and how long it has left. Late or near-late work surfaces on FastTrack with what has been done about it.",ws:["Tracking & Monitoring","FastTrack SLA","Assistant"],who:["Director","Executive","Staff"],gain:["Status history","Deadline position","Escalation record"]},
+ {k:"Approve",t:"It is reviewed and decided",d:"Drafts and responses go for approval. Briefs and submissions are decided in the same flow. Meeting actions become tracked tasks.",ws:["Approvals","Briefs & Submissions","Meetings"],who:["Director","DG/CEO"],gain:["Approval or return","Decision owner","Meeting actions as tasks"]},
+ {k:"Dispatch",t:"The response goes out",d:"Only completed work is eligible. Letters can be written, checked and sent by email with a record of everything that left.",ws:["Dispatch","Correspondence Email Desk"],who:["Operator","Director"],gain:["Dispatch record","Proof of sending"]},
+ {k:"Archive",t:"The matter is closed for good",d:"Closure keeps the evidence of how it was closed, so the file can be defended years later.",ws:["Archive Evidence","Reports","Statistics"],who:["Registry officer","Executive"],gain:["Closure evidence","Reporting and statistics"]}
+];
+let cur=0;
+const rail=document.getElementById('rail'),st=document.getElementById('station');
+STAGES.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='stop';b.setAttribute('role','tab');b.innerHTML=`<i>${i+1}</i><span>${s.k}</span>`;b.onclick=()=>show(i);rail.appendChild(b)});
+function show(i){cur=i;const s=STAGES[i];[...rail.children].forEach((b,j)=>{b.classList.toggle('on',j===i);b.classList.toggle('past',j<i);b.setAttribute('aria-selected',j===i)});
+st.innerHTML=`<div><span class="mono" style="color:var(--brass)">Stage ${i+1} of ${STAGES.length}</span><h3 style="margin-top:8px">${s.t}</h3><p style="color:var(--muted)">${s.d}</p><div class="who">${s.who.map(w=>`<span class="chip brass">${w}</span>`).join('')}</div></div>
+<div class="minute"><span class="mono">Owning workspaces</span><div class="who" style="margin:0">${s.ws.map(w=>`<span class="chip">${w}</span>`).join('')}</div><span class="mono">The record gains</span><ul>${s.gain.map(g=>`<li>${g}</li>`).join('')}</ul></div>`;
+document.getElementById('prev').disabled=i===0;document.getElementById('next').disabled=i===STAGES.length-1;}
+document.getElementById('prev').onclick=()=>show(Math.max(0,cur-1));
+document.getElementById('next').onclick=()=>show(Math.min(STAGES.length-1,cur+1));
+show(0);
+
+const OPS=['home','orchestrator','acknowledgment','single-assignment','bulk-assignment','response-tracking','fasttrack','lookup','scan-intake','correspondence','briefs','meetings','projects','activities'];
+const WINGS=[
+ {n:"Operations",d:"Where matters are received, assigned and worked.",r:[
+  ['home','Home','Your starting view of the day'],['scan-intake','Registry Scan Intake','Paper to record at the counter'],['registry','Registry','The digital registry and minutes'],['correspondence','Correspondence','Create and follow official letters'],['correspondence-email','Email Desk','Write, check and send letters by email'],['single-assignment','Assignment','Route single or bulk tasks'],['orchestrator','My Work','Tasks routed to you'],['acknowledgment','Acknowledgment Queue','Confirm receipt'],['activities','Activities','Departmental activity log']]},
+ {n:"Executive & oversight",d:"Where decisions are made and progress is judged.",r:[
+  ['executive','DGCEO Decision Hub','What waits on the DG/CEO'],['approvals','Approvals','Review and decide'],['briefs','Briefs & Submissions','Decision packs and ministerial submissions'],['meetings','Meetings','Requests, and actions turned into tasks'],['projects','Projects','Owners, status and KPIs'],['response-tracking','Tracking & Monitoring','Where every task stands'],['fasttrack','FastTrack SLA','Late and near-late work'],['dispatch','Dispatch','Send and close'],['archive','Archive Evidence','Close for good, with proof']]},
+ {n:"Insight & administration",d:"Where the estate is understood and kept running.",r:[
+  ['reports','Reports','Standing reports'],['statistics','Statistics','Volumes and trends'],['lookup','Lookup','Find any reference'],['assistant','Assistant','Ask where work has got to'],['user-admin','User Admin','People, roles, access'],['settings','Settings','Personal and platform settings'],['diagnostics','Diagnostics','Live posture and health'],['operator-hud','Operator HUD','What has loaded and is queued'],['admin-suite','Admin Suite','Endpoints, flows, commissioning']]}
+];
+const ROLES={
+ all:{n:"Everyone",note:"All workspaces across the three wings.",a:null},
+ systemAdmin:{n:"System admin",note:"Every workspace.",a:null},
+ executive:{n:"Executive",note:"Decision, oversight and insight, without the operational desks.",a:['home','executive','response-tracking','approvals','reports','statistics','lookup','assistant','archive','briefs','meetings','projects']},
+ director:{n:"Director",note:"The operational desks plus approvals, dispatch, reports and statistics.",a:[...OPS,'approvals','dispatch','reports','statistics','assistant']},
+ operator:{n:"Operator",note:"The operational desks plus the registry, comments and the email desk.",a:[...OPS,'registry','correspondence-email','assistant']},
+ userAdmin:{n:"User admin",note:"People and platform health only.",a:['home','settings','user-admin','diagnostics','operator-hud']},
+ viewer:{n:"Viewer",note:"Read-only views of progress and reporting.",a:['home','response-tracking','reports','statistics','lookup']}
+};
+const roles=document.getElementById('roles'),wings=document.getElementById('wings'),note=document.getElementById('rolenote');
+wings.innerHTML=WINGS.map(w=>`<div class="wing"><h3>${w.n}</h3><p>${w.d}</p>${w.r.map(([id,n,s])=>`<div class="room" data-id="${id}"><span class="dot"></span><b>${n}</b><small>${s}</small></div>`).join('')}</div>`).join('');
+Object.entries(ROLES).forEach(([k,r])=>{const b=document.createElement('button');b.type='button';b.className='role';b.textContent=r.n;b.setAttribute('aria-pressed',k==='all');b.onclick=()=>pick(k);b.dataset.k=k;roles.appendChild(b)});
+function pick(k){const r=ROLES[k];roles.querySelectorAll('.role').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));
+ let n=0;wings.querySelectorAll('.room').forEach(el=>{const on=!r.a||r.a.includes(el.dataset.id);el.classList.toggle('off',!on);if(on)n++});
+ note.textContent=`${r.n}: ${r.note} ${n} of 27 shown here.`}
+pick('all');
+</script>

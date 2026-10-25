@@ -1,0 +1,808 @@
+{
+  "schema": "dgo-flow-trigger-auth/v1",
+  "generatedBy": "scripts/audit-trigger-auth.mjs",
+  "readFrom": "docs/folio-Master-Flows-and-Endpoints/contracts/deployed",
+  "whatThisIs": "The triggerAuthenticationType each exported definition carries on each Request trigger, recorded verbatim. This file asserts no interpretation of the values; it exists so a change to any flow’s posture is a visible diff rather than a silent one.",
+  "asserted": {
+    "flow": "ECM_DOCS_INTAKE",
+    "internalName": "df7ddff1-9275-4f23-acf6-e169525f4e2f",
+    "auth": "Tenant",
+    "method": "POST",
+    "why": "the single sanctioned crossing into the internal platform (DECISIONS.md D6)"
+  },
+  "scope": {
+    "whatThisIs": "The live estate: the endpoint keys in endpoint-register.json → current_configuration, and the physical flows behind them. Every count named `counts` below is over this set.",
+    "wiredContractKeys": 26,
+    "wiredEndpointsResolved": 26,
+    "corpusRequestTriggers": 27,
+    "wiredAnsweringEveryVerb": 3,
+    "wiredWithNoRequestSchema": 17,
+    "wiredWithASchemaThatRejectsNothing": 9,
+    "wiredAcceptingEffectivelyAnyBody": 26,
+    "reads": "26 of 26 wired endpoints accept effectively any body: 17 carry no request schema and 9 carry one that rejects nothing. 0 demand at least one field.",
+    "note": "corpusCounts sweeps every Request trigger in docs/folio-Master-Flows-and-Endpoints/contracts/deployed, which is the retained historical corpus as well as the live estate. It is kept so a change anywhere is still visible, and it is NOT the platform’s posture. Quote `counts`."
+  },
+  "counts": {
+    "All": 25,
+    "Tenant": 1
+  },
+  "corpusCounts": {
+    "(absent from the export)": 1,
+    "All": 25,
+    "Tenant": 1
+  },
+  "endpointPosture": {
+    "whatThisIs": "Per CONTRACT KEY rather than per exported definition. The 32-hex trigger id in endpoint-workflow-ids.json joins to nothing — full_resource_id is null in every export — so these are resolved by the internal register’s attributed definition files and by the portal register’s dashed internal name.",
+    "answeringEveryVerb": 5,
+    "withNoRequestSchema": 19,
+    "withASchemaThatAcceptsUnknownFields": 9,
+    "withASchemaRequiringNoField": 9,
+    "withASchemaThatRejectsNothing": 9,
+    "acceptingEffectivelyAnyBody": 28,
+    "ofEndpointsMeasured": 28,
+    "reads": "28 of 28 endpoints accept effectively any body: 19 carry no request schema and 9 carry one that rejects nothing. 0 demand at least one field. 0 refuse an unknown property.",
+    "whyTwoSchemaNumbers": "A declared schema is not a validating one. additionalProperties lets an unknown field through; required: [] lets a body through carrying nothing at all. Counting only the first says how porous a trigger is to extra input and nothing about whether it demands any. withASchemaThatRejectsNothing is the intersection: a schema that refuses no request that reaches it.",
+    "unread": 0,
+    "endpoints": [
+      {
+        "key": "FETCH_ACTIVITIES",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Get_Docs_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "SUBSIDIARY_ACTIONS",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Dynamic_Global_Actions_Endpoint",
+        "method": "ANY VERB — no method declared",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "FETCH_ALL",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_FETCH_ALL_BOOTSTRAP",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "REFERENCE_DATA",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Reference_Data_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "GET_DOCS",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Get_Docs_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "FETCH_EMAIL_ATTACHMENTS",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Retrieve_Email_Attachment_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "SINGLE_ASSIGNMENT",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "Single_Task_Assignment",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 12,
+          "required": 0,
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "BULK_ASSIGNMENT",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "BULK OPS DATA RETRIEVAL HTTP",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "DYNAMIC_ACTIONS",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Dynamic_Global_Actions_Endpoint",
+        "method": "ANY VERB — no method declared",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "EMAIL",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_SEND_EMAIL",
+        "method": "ANY VERB — no method declared",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "DISPATCH_OUTBOUND",
+        "surface": "internal",
+        "wired": false,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Dynamic_Global_Actions_Endpoint",
+        "method": "ANY VERB — no method declared",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "ARCHIVE_REFERENCE",
+        "surface": "internal",
+        "wired": false,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Dynamic_Global_Actions_Endpoint",
+        "method": "ANY VERB — no method declared",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "EMAIL_RELATED_TASK",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Create",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 13,
+          "required": 0,
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "AI_DOC_ANALYSIS",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "AI_Document_Processing",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "AI_EMAIL_ANALYSIS",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "AI_Document_Processing",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "AI_CHAT",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "AI_Document_Processing",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "OTP_GENERATE",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_OTP_VERIFY",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "OTP_VERIFY",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_OTP_VERIFY",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "SCAN_INTAKE",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_SCAN_INTAKE",
+        "method": "PUT",
+        "triggerAuthenticationType": "Tenant",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "USER_ADMIN",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_User_Admin_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 44,
+          "required": 0,
+          "additionalProperties": null
+        }
+      },
+      {
+        "key": "ACTIVITY_LIFECYCLE",
+        "surface": "internal",
+        "wired": true,
+        "resolvedBy": "internal-flow-register definitions",
+        "definitions": 1,
+        "flow": "IP_Activity_Lifecycle_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 44,
+          "required": 0,
+          "additionalProperties": null
+        }
+      },
+      {
+        "key": "STATUS",
+        "surface": "portal",
+        "wired": true,
+        "resolvedBy": "portal-endpoint-workflow-ids internalName",
+        "definitions": 1,
+        "flow": "CG_Portal_Status_Check_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      },
+      {
+        "key": "VERIFY",
+        "surface": "portal",
+        "wired": true,
+        "resolvedBy": "portal-endpoint-workflow-ids internalName",
+        "definitions": 1,
+        "flow": "CG_Portal_Verification_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 9,
+          "required": 0,
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "VERIFY_CONFIRM",
+        "surface": "portal",
+        "wired": true,
+        "resolvedBy": "portal-endpoint-workflow-ids internalName",
+        "definitions": 1,
+        "flow": "CG_Portal_Verification_Confirmation_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 6,
+          "required": 0,
+          "additionalProperties": null
+        }
+      },
+      {
+        "key": "WRITEBACK",
+        "surface": "portal",
+        "wired": true,
+        "resolvedBy": "portal-endpoint-workflow-ids internalName",
+        "definitions": 1,
+        "flow": "CG_Portal_Writeback_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 6,
+          "required": 0,
+          "additionalProperties": null
+        }
+      },
+      {
+        "key": "SUBMISSION",
+        "surface": "portal",
+        "wired": true,
+        "resolvedBy": "portal-endpoint-workflow-ids internalName",
+        "definitions": 1,
+        "flow": "CG_Submission_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 6,
+          "required": 0,
+          "additionalProperties": null
+        }
+      },
+      {
+        "key": "SUPPORT",
+        "surface": "portal",
+        "wired": true,
+        "resolvedBy": "portal-endpoint-workflow-ids internalName",
+        "definitions": 1,
+        "flow": "CG_Portal_Support_Endpoint",
+        "method": "POST",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": true,
+          "type": "object",
+          "properties": 13,
+          "required": 0,
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "UPLOAD",
+        "surface": "portal",
+        "wired": true,
+        "resolvedBy": "portal-endpoint-workflow-ids internalName",
+        "definitions": 1,
+        "flow": "CG_Upload_Endpoint",
+        "method": "PUT",
+        "triggerAuthenticationType": "All",
+        "requestSchema": {
+          "declared": false
+        }
+      }
+    ]
+  },
+  "flows": [
+    {
+      "flow": "01 - GOV - Provision HTTP Flow Registry",
+      "internalName": "17a85efb-1ed2-45c9-a602-2ad6f8bb7ead",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": null,
+      "triggerAuthenticationType": null,
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 0,
+        "required": 0,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "02 - GOV - Register HTTP Flow Truth",
+      "internalName": "651ae389-eeed-4bf0-9799-67bd964ebe71",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 12,
+        "required": 3,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "03 - GOV - Record HTTP Flow Execution",
+      "internalName": "0545e19a-c34a-45db-bd11-27b87a34973e",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 12,
+        "required": 6,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "05 - GOV - Retire HTTP Flow",
+      "internalName": "493b4ab7-8f63-4fab-8121-746c2cac7f98",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 4,
+        "required": 3,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "07 - GOV - Consumer HTTP Self-Registration Template",
+      "internalName": "c6a011c5-7b11-4241-82ae-a45b88ebf276",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 3,
+        "required": 0,
+        "additionalProperties": true
+      }
+    },
+    {
+      "flow": "AI_Document_Processing",
+      "internalName": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "BULK OPS DATA RETRIEVAL HTTP",
+      "internalName": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "CG_Portal_Status_Check_Endpoint",
+      "internalName": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "CG_Portal_Support_Endpoint",
+      "internalName": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 13,
+        "required": 0,
+        "additionalProperties": true
+      }
+    },
+    {
+      "flow": "CG_Portal_Verification_Confirmation_Endpoint",
+      "internalName": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 6,
+        "required": 0,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "CG_Portal_Verification_Endpoint",
+      "internalName": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 9,
+        "required": 0,
+        "additionalProperties": true
+      }
+    },
+    {
+      "flow": "CG_Portal_Writeback_Endpoint",
+      "internalName": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 6,
+        "required": 0,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "CG_Submission_Endpoint",
+      "internalName": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "exportedAtUtc": "2026-09-03T05:03:23.8941985Z",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 6,
+        "required": 0,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "CG_Upload_Endpoint",
+      "internalName": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "exportedAtUtc": "2026-09-04T03:24:03.539428Z",
+      "trigger": "manual",
+      "method": "PUT",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_Activity_Lifecycle_Endpoint",
+      "internalName": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 44,
+        "required": 0,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "IP_Create",
+      "internalName": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+      "exportedAtUtc": "2026-10-06T20:59:08.6010995Z",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 13,
+        "required": 0,
+        "additionalProperties": true
+      }
+    },
+    {
+      "flow": "IP_Dynamic_Global_Actions_Endpoint",
+      "internalName": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "exportedAtUtc": "2026-10-07T02:26:28.8637818Z",
+      "trigger": "manual",
+      "method": null,
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_FETCH_ALL_BOOTSTRAP",
+      "internalName": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_Get_Docs_Endpoint",
+      "internalName": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_OTP_GENERATE",
+      "internalName": "e5632336-641f-4b9b-bd93-99185b5eb975",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 14,
+        "required": 0,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "IP_OTP_VERIFY",
+      "internalName": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_Reference_Data_Endpoint",
+      "internalName": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_Retrieve_Email_Attachment_Endpoint",
+      "internalName": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_SCAN_INTAKE",
+      "internalName": "5504d7f9-cc96-470c-be79-217582faf415",
+      "exportedAtUtc": "2026-09-04T03:23:47.5107703Z",
+      "trigger": "manual",
+      "method": "PUT",
+      "triggerAuthenticationType": "Tenant",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_SEND_EMAIL",
+      "internalName": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": null,
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": false
+      }
+    },
+    {
+      "flow": "IP_User_Admin_Endpoint",
+      "internalName": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 44,
+        "required": 0,
+        "additionalProperties": null
+      }
+    },
+    {
+      "flow": "Single_Task_Assignment",
+      "internalName": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "exportedAtUtc": "2026-10-01",
+      "trigger": "manual",
+      "method": "POST",
+      "triggerAuthenticationType": "All",
+      "requestSchema": {
+        "declared": true,
+        "type": "object",
+        "properties": 12,
+        "required": 0,
+        "additionalProperties": true
+      }
+    }
+  ]
+}

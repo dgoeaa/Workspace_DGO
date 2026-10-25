@@ -1,0 +1,47 @@
+{
+  "recordVersion": "1.0.0",
+  "what": "Two packages were supplied for the EMAIL contract key. They are the same flow, saved twice eight minutes apart under two names and two flow ids. One is adopted; the other is recorded here so it is not adopted later by someone who finds it and cannot tell.",
+  "capturedUtc": "2026-09-24",
+  "candidates": [
+    {
+      "package": "IP_SEND_EMAIL_20260905184716.zip",
+      "sha256": "048f82ee4d2ef56974e6c68cf3f2c3f4a63035b900165902e7a668af0eee67c9",
+      "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "displayName": "IP_SEND_EMAIL",
+      "clientLastModifiedTime": "2026-09-02T05:35:58.5027998Z",
+      "verdict": "ADOPTED",
+      "why": "It is the flow the EMAIL key is wired to. docs/flows/registers/endpoint-register.json maps DGO_ENDPOINT_EMAIL to workflow 378b491ec39a4beca886ddec250e6961, and the tenant reading of 2026-09-18 resolves that workflow to this flow id. Both sources agree, and this package is already in the repository inside the matched-flow-packages archive with this same sha256."
+    },
+    {
+      "package": "IP_DGO_SEND_EXTERNAL_CORRESPONDENCE_20260902055400.zip",
+      "sha256": "18e678e64f03fa459015d313df2e6100574b9daa4e367b940ab71672e58cf597",
+      "flowId": "faceec58-fa79-4de5-87b6-6376faff8a1a",
+      "displayName": "IP_DGO_SEND_EXTERNAL_CORRESPONDENCE",
+      "clientLastModifiedTime": "2026-09-02T05:43:50.1521626Z",
+      "verdict": "NOT_ADOPTED",
+      "why": "Functionally identical to the adopted package and wired to nothing. Its flow id appears in no endpoint register entry, in no tenant reading, and nowhere in this repository. Adopting it alongside the other would create exactly the hazard ITEM-60 recorded: a package that looks authoritative and names a flow no endpoint resolves to."
+    }
+  ],
+  "howTheyWereCompared": {
+    "method": "Every action in both definitions was compared by name and by serialised inputs, then the whole definition tree was walked field by field, then the connector maps were hashed.",
+    "actionsEachSide": 70,
+    "actionNamesOnlyInOne": 0,
+    "sharedActionsThatDiffer": 0,
+    "connectorMapsIdentical": true,
+    "theOnlyDifferences": [
+      "definition.metadata.clientLastModifiedTime — 05:43:50 against 05:35:58 on 2026-09-02, eight minutes apart",
+      "definition.metadata.connectionKeySavedTimeKey — the same eight minutes",
+      "properties.displayName"
+    ],
+    "reads": "Nothing that executes differs. The two are one flow saved twice."
+  },
+  "whatThisEstablishes": [
+    "That EMAIL needs one package, not two, and that it is IP_SEND_EMAIL (df59a69f).",
+    "That IP_DGO_SEND_EXTERNAL_CORRESPONDENCE is a duplicate rather than a successor: it is the EARLIER save by eight minutes and its body is identical, so there is nothing in it to adopt.",
+    "That the EMAIL gap in docs/reference/contract-key-flow-map.json is closed — the key now has a named flow from the same source as the other twenty-three."
+  ],
+  "whatItExplicitlyDoesNotEstablish": [
+    "That IP_SEND_EMAIL is correct. It carries triggerAuthenticationType All and declares no request schema, like most of this estate, and its caller is now read from the proof ledger only because this repository changed it — the deployed flow still reads the request body until the package is installed.",
+    "Why the duplicate exists. Eight minutes apart with an identical body reads like a rename that created a copy instead, but that is a reading of two timestamps, not evidence."
+  ]
+}

@@ -1,0 +1,429 @@
+{
+  "schema": "dgo-flow-alignment-report/v2",
+  "generatedAt": "2026-08-09",
+  "title": "Internal Platform & Document Portal — request/response alignment against the live-tenant probe, with remediation",
+  "method": "Every row cross-references the documented wire contract in docs/folio-Master-Flows-and-Endpoints/contracts/INTERNAL_PLATFORM_FLOWS.md (itself traced to client call sites) against the actual live Power Automate response captured in the two probe transcripts committed to main. A row is ALIGNED only when the probed response's shape matches what the documented client code reads; MISALIGNED when it demonstrably does not; PARTIAL when the probe did not exercise enough of the contract to judge; BROKEN when the flow itself failed (5xx); DEAD_CODE when the flow answers correctly but no client code calls it; NOT_PROBED when the transcripts contain no result for that key. `actionable.owner` follows docs/folio-Master-Flows-and-Endpoints/contracts/ALIGNMENT_FINDINGS.md's vocabulary (that file was named REMEDIATION_PLAN.md until 2026-09-24): flow (fix belongs to the Power Automate estate), decision (two valid designs exist, a person must choose), verification-gap (the probe didn't test enough to judge), documentation (no defect, a doc is stale), or none (no action).",
+  "sources": [
+    { "file": "docs/folio-Master-Flows-and-Endpoints/contracts/transcripts/INTERNAL_PLATFORM-transcript_probe-mskv094z.json", "runId": "probe-mskv094z", "at": "2026-08-08T21:29:55.271Z", "app": "platform", "resultCount": 19 },
+    { "file": "docs/folio-Master-Flows-and-Endpoints/contracts/transcripts/DOCUMENTS_PORTAL_transcript_endpoint-check-portal-probe-mskul63e.json", "runId": "probe-mskul63e", "at": "2026-08-08T21:03:59.016Z", "app": "portal", "resultCount": 5 }
+  ],
+  "legend": {
+    "ALIGNED": "Probed response shape matches the documented contract the client reads.",
+    "PARTIAL": "Reachable and envelope-shaped, but the probe did not exercise enough of the documented contract (no `expect` declared, or a synthetic operation/action the real client never sends) to judge field-level alignment.",
+    "MISALIGNED": "Probed response demonstrably does not match what the documented client code reads — a missing field, wrong status code, wrong envelope, or a materially different shape than a sibling endpoint with the same documented contract.",
+    "BROKEN": "The flow was reached and answered 5xx — failed inside itself, independent of contract shape.",
+    "DEAD_CODE": "The flow answers correctly when probed directly, but no module in the current client codebase calls it under this operation name.",
+    "NOT_PROBED": "No result for this key exists in either transcript."
+  },
+  "counts": {
+    "platform": { "ALIGNED": 8, "PARTIAL": 2, "MISALIGNED": 5, "BROKEN": 2, "DEAD_CODE": 2, "NOT_PROBED": 1 },
+    "portal": { "MISALIGNED": 5, "NOT_PROBED": 1 },
+    "total": { "ALIGNED": 8, "PARTIAL": 2, "MISALIGNED": 10, "BROKEN": 2, "DEAD_CODE": 2, "NOT_PROBED": 2 }
+  },
+  "rows": [
+    {
+      "id": "FETCH_ALL", "app": "platform", "physicalFlow": "FETCH_ALL", "httpMethod": "POST",
+      "documentedRequest": "{action:'fetchAll', payload:{force, requestedAt}}",
+      "documentedResponse": "envelope.data carrying any of docs/tasks/emails/users/categories/departments/approvals — the boot call; users presence sets runtime.directory.served",
+      "probe": { "status": 401, "ms": 10445, "state": "signature", "ok": false, "reached": true, "why": "401 — the trigger signature is wrong or has been regenerated", "responseKeys": ["error"], "dataKeys": null, "missing": null },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "critical",
+      "findings": [
+        "Request never reaches processing — trigger signature is rejected before any contract comparison is possible.",
+        "Client falls back to FETCH_ACTIVITIES per core/data-loader.js, so `users` never arrives and runtime.directory.served stays false.",
+        "Direct, live confirmation that the bootstrap-systemAdmin fail-open documented in docs/architecture/AUTH_RBAC_GUIDE.md §4.1/§9 (finding G-04) is presently open on this tenant, not merely theoretical."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "critical",
+        "steps": [
+          "Regenerate the FETCH_ALL manual-trigger signature in Power Automate.",
+          "Redeploy the corrected URL into the packaged bundle's window.DGO_CONFIG.endpoints.FETCH_ALL.",
+          "Confirm the flow still returns a `users` collection per FLOW-BUILD-PLAN.md Wave 0.3."
+        ],
+        "verify": "npm run verify:endpoints -- --only FETCH_ALL returns 200 with users present; then #/diagnostics shows runtime.directory.served: true in a real session."
+      }
+    },
+    {
+      "id": "GET_DOCS", "app": "platform", "physicalFlow": "GET_DOCS", "httpMethod": "POST",
+      "documentedRequest": "{action:'getDocs', payload:{}}",
+      "documentedResponse": "envelope.data.docs[] (core/data-loader.js reads only `docs`)",
+      "probe": { "status": 200, "ms": 5089, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","docs","data","errors","meta"], "dataKeys": ["docs","count"], "missing": [] },
+      "verdict": "ALIGNED", "confidence": "direct", "severity": "info",
+      "findings": [
+        "dataKeys exactly matches what the client reads: `docs` present, plus a bonus `count` the client does not require but tolerates.",
+        "Full standard envelope present."
+      ],
+      "actionable": { "owner": "none", "priority": "none", "steps": ["No action — keep as regression baseline."], "verify": "Re-probe periodically; any change in dataKeys is itself a finding." }
+    },
+    {
+      "id": "REFERENCE_DATA", "app": "platform", "physicalFlow": "REFERENCE_DATA", "httpMethod": "POST",
+      "documentedRequest": "{action:'lookups', payload:{}}",
+      "documentedResponse": "envelope.data.{users[], categories[], departments[]}",
+      "probe": { "status": 200, "ms": 38997, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": ["users","usersCount","categories","categoriesCount","departments","departmentsCount","count"], "missing": [] },
+      "verdict": "ALIGNED", "confidence": "direct", "severity": "info",
+      "findings": [
+        "All three documented collections present, plus per-collection counts the client does not require but tolerates.",
+        "Slowest read in the run at 39.0s — well past the endpoint's 15s default client timeout budget in config/fetch-policy.config.js, though FETCH_ALL/FETCH_ACTIVITIES carry a raised 90000ms contract-level ceiling that would cover it; REFERENCE_DATA itself declares no such override, so a 39s answer against the platform's real ~15s policy would time out client-side even though the flow itself is aligned."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "low",
+        "steps": [ "Investigate the 39s response time — likely an unindexed SharePoint lookup.", "As a stopgap, add a raised timeoutMs override for REFERENCE_DATA in config/fetch-policy.config.js so the client doesn't abandon a request the flow would have answered." ],
+        "verify": "Re-probe and confirm sub-15s, or confirm the client-side override lets a 39s answer complete without erroring."
+      }
+    },
+    {
+      "id": "FETCH_ACTIVITIES", "app": "platform", "physicalFlow": "SUBSIDIARY_ACTIONS (shared)", "httpMethod": "POST",
+      "documentedRequest": "{action:'LIST-ACTIVITIES', payload:{force, requestedAt}}",
+      "documentedResponse": "envelope.data collection under any of activities/docs/items/records/value",
+      "probe": { "status": 200, "ms": 13408, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": null },
+      "verdict": "ALIGNED", "confidence": "partial", "severity": "info",
+      "findings": [
+        "Envelope reached and well-formed.",
+        "The probe table declares no `expect` list for this key, so the tool never checked which collection alias `data` actually carries — field-level alignment with the documented reader is UNVERIFIED by this transcript, not merely unstated."
+      ],
+      "actionable": {
+        "owner": "verification-gap", "priority": "low",
+        "steps": [ "Add expect: ['activities'] (or whichever alias is authoritative) to this key in scripts/lib/endpoint-probes.mjs." ],
+        "verify": "Re-run the probe; `missing` should populate (or come back empty) instead of null."
+      }
+    },
+    {
+      "id": "FETCH_EMAIL_ATTACHMENTS", "app": "platform", "physicalFlow": "FETCH_EMAIL_ATTACHMENTS", "httpMethod": "POST",
+      "documentedRequest": "{action:'fetchEmailAttachments', payload:{id, referenceId}}",
+      "documentedResponse": "array, or {value|attachments|data:[]} — read directly by modules/activities.js, not further normalised",
+      "probe": { "status": 400, "ms": 787, "state": "refused", "ok": true, "reached": true, "why": "400 — the flow is live and validating its input", "responseKeys": ["error"], "dataKeys": null, "missing": null },
+      "verdict": "ALIGNED", "confidence": "direct", "severity": "info",
+      "findings": [
+        "400 against a deliberately incomplete probe body is the documented pass condition — the flow validates rather than fail-opening.",
+        "The success-path response shape (the array/value/attachments alias) remains unobserved by this probe; only the validation behaviour is confirmed."
+      ],
+      "actionable": { "owner": "verification-gap", "priority": "low", "steps": [ "Run a targeted manual probe against a real activity id + referenceId with known attachments to observe the success-path shape at least once." ], "verify": "Response contains an array (or one of the documented aliases) with usable attachment rows." }
+    },
+    {
+      "id": "SUBSIDIARY_ACTIONS", "app": "platform", "physicalFlow": "SUBSIDIARY_ACTIONS", "httpMethod": "POST",
+      "documentedRequest": "contract action fixed to 'INIT'; real routing lives in payload.operation (ACKNOWLEDGE / CREATESUPPORTREQUEST are the only two routes any client module actually sends)",
+      "documentedResponse": "not independently specified per route beyond the standard envelope",
+      "probe": { "status": 200, "ms": 6605, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": null },
+      "verdict": "PARTIAL", "confidence": "partial", "severity": "info",
+      "findings": [
+        "The probe exercised GET_BOOTSTRAP (per scripts/lib/endpoint-probes.mjs), one of the 15 route keys declared in config/endpoints.config.js but never constructed by any current module.",
+        "Neither of the two routes real client code actually sends — ACKNOWLEDGE, CREATESUPPORTREQUEST — was exercised by this probe entry; see the portal-side CREATESUPPORTREQUEST-shaped result for the closest real evidence.",
+        "Confirms only that the physical flow answers something for an unused route; says nothing about ACKNOWLEDGE or CREATESUPPORTREQUEST specifically."
+      ],
+      "actionable": {
+        "owner": "verification-gap", "priority": "medium",
+        "steps": [ "Add dedicated probe entries for ACKNOWLEDGE and CREATESUPPORTREQUEST — the two routes core/acknowledgement-service.js and core/support-service.js actually send — in place of/alongside the unused GET_BOOTSTRAP probe." ],
+        "verify": "Re-run; confirm each route returns the fields the respective client service reads."
+      }
+    },
+    {
+      "id": "DYNAMIC_ACTIONS", "app": "platform", "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS", "httpMethod": "POST",
+      "documentedRequest": "contract action fixed to 'dynamicGlobalAction'; real routing is split across FOUR different discriminator conventions in payload — see INTERNAL_PLATFORM_FLOWS.md Part 4",
+      "documentedResponse": "standard envelope; no single documented data shape since ~40 operations share this flow",
+      "probe": { "status": 200, "ms": 9844, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": null },
+      "verdict": "PARTIAL", "confidence": "partial", "severity": "info",
+      "findings": [
+        "Probe sent operation:'noop' — a synthetic discriminator no client module ever sends.",
+        "None of the four real conventions documented (payload.action CRUD sync, payload.operation via WriteManager, the activity-lifecycle 3-step sequence, or the declared-only governed-action set) were exercised by this probe.",
+        "Reachability and envelope shape confirmed; nothing about any real operation's response shape is confirmed by this entry."
+      ],
+      "actionable": {
+        "owner": "verification-gap", "priority": "medium",
+        "steps": [ "Add at least one probe per real discriminator convention (INTERNAL_PLATFORM_FLOWS.md Part 4): one payload.action CRUD-sync sample, one payload.operation/WriteManager sample, one activity-lifecycle step." ],
+        "verify": "Re-run against the tenant; cross-check each result against the matching Part 4 subsection."
+      }
+    },
+    {
+      "id": "SINGLE_ASSIGNMENT", "app": "platform", "physicalFlow": "SINGLE_ASSIGNMENT", "httpMethod": "POST",
+      "documentedRequest": "flat body — operation, mode, source, device, AssignmentType, NewActivityTask{30 PascalCase fields}, Selected, payload{task,selection,assignment}",
+      "documentedResponse": "not independently declared by the probe table",
+      "probe": { "status": 502, "ms": 4462, "state": "flow error", "ok": false, "reached": true, "why": "502 — the flow was reached and failed inside itself", "responseKeys": ["error"], "dataKeys": null, "missing": null },
+      "verdict": "BROKEN", "confidence": "direct, with a caveat", "severity": "high",
+      "findings": [
+        "Flow reached and crashed — not a validation refusal (400), a genuine 5xx.",
+        "CAVEAT: the probe body ({action:'singleassignment', operation:'create', userEmail}) is far smaller than the documented real payload (NewActivityTask alone carries ~30 required-shaped fields). The 502 may stem from the flow dereferencing a field the minimal probe body omits, rather than from a defect present against the full real payload. This transcript cannot distinguish the two causes — flagged here rather than resolved."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "high",
+        "steps": [
+          "Pull the Power Automate run history for this failed request to find the internal exception.",
+          "Before concluding it's a flow defect, re-probe with the FULL documented payload (INTERNAL_PLATFORM_FLOWS.md Part 3.1), not the minimal probe body — isolates whether this is a null-handling gap on an optional-looking field or a genuine defect.",
+          "Fix whichever the re-probe isolates."
+        ],
+        "verify": "Re-probe with the full documented payload shape; expect 200/400, not 502."
+      }
+    },
+    {
+      "id": "BULK_ASSIGNMENT", "app": "platform", "physicalFlow": "BULK_ASSIGNMENT", "httpMethod": "POST",
+      "documentedRequest": "nested — payload{schema, source, ids[], category, assignedTo, ccRecipients[], priority, ...}",
+      "documentedResponse": "selectedCount, assignedTo, assignedToTitle, assignmentType, category, categoryCode, subCategory, subCategoryCode, priority, ackDue, taskDue, copyTo, tasksCreated, docsUpdated, notificationsSent, failed, summaryText",
+      "probe": { "status": 400, "ms": 5623, "state": "refused", "ok": true, "reached": true, "why": "400 — the flow is live and validating its input", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": ["selectedCount","assignedTo","assignedToTitle","assignmentType","category","categoryCode","subCategory","subCategoryCode","priority","ackDue","taskDue","copyTo","tasksCreated","docsUpdated","notificationsSent","failed","summaryText"], "missing": [] },
+      "verdict": "ALIGNED", "confidence": "direct", "severity": "info",
+      "findings": [
+        "Every documented response field is present, field-for-field, even on the diagnostic 400 path — the strongest field-level alignment evidence in the whole run."
+      ],
+      "actionable": { "owner": "none", "priority": "none", "steps": ["No action — keep as regression baseline."], "verify": "Re-probe periodically; any change in dataKeys is itself a finding." }
+    },
+    {
+      "id": "BULK_ASSIGNMENT_DIRECT", "app": "platform", "physicalFlow": "BULK_ASSIGNMENT_DIRECT", "httpMethod": "POST",
+      "documentedRequest": "identical contract shape to BULK_ASSIGNMENT, per config/endpoints.config.js (same action, same body shape, separate URL)",
+      "documentedResponse": "documented as identical to BULK_ASSIGNMENT",
+      "probe": { "status": 400, "ms": 599, "state": "refused", "ok": true, "reached": true, "why": "400 — the flow is live and validating its input", "responseKeys": ["error"], "dataKeys": null, "missing": null },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "medium",
+      "findings": [
+        "Two contracts documented as identical diverge in practice: BULK_ASSIGNMENT's 400 carries a 17-field diagnostic body; BULK_ASSIGNMENT_DIRECT's 400 carries a bare {error}.",
+        "Not a client defect — a behavioural drift between two flows the documentation treats as one contract. Worth reconciling on the flow side or documenting the split explicitly."
+      ],
+      "actionable": {
+        "owner": "decision", "priority": "medium",
+        "steps": [ "Either bring this flow's 400 response up to BULK_ASSIGNMENT's 17-field diagnostic body, or explicitly document in INTERNAL_PLATFORM_FLOWS.md and config/endpoints.config.js that the two are deliberately different." ],
+        "verify": "Re-probe both, diff dataKeys — either they match, or the documentation now explains why not."
+      }
+    },
+    {
+      "id": "EMAIL", "app": "platform", "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS (shared)", "httpMethod": "POST",
+      "documentedRequest": "payload.operation:'sendCorrespondenceEmail', payload.email:{to,cc,bcc,subject,html,text,classification,templateId,attachments[]}",
+      "documentedResponse": "standard envelope; client reads only res.requestId if present",
+      "probe": { "status": 200, "ms": 9835, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": null },
+      "verdict": "ALIGNED", "confidence": "partial", "severity": "info",
+      "findings": [
+        "Envelope reached and well-formed against a minimal probe body ({action:'dispatchEmail'}) that does not exercise the real email{} shape — field-level alignment beyond the envelope is unverified."
+      ],
+      "actionable": { "owner": "verification-gap", "priority": "low", "steps": [ "Add expect: ['requestId'] (or whatever the flow actually returns) to this key in scripts/lib/endpoint-probes.mjs." ], "verify": "Re-probe, confirm `missing` is populated or empty rather than unchecked." }
+    },
+    {
+      "id": "EMAIL_RELATED_TASK", "app": "platform", "physicalFlow": "EMAIL_RELATED_TASK", "httpMethod": "POST",
+      "documentedRequest": "payload{schema:'dgo-email-task-payload/v2', referenceId, title, assignedTo, category, email{...}, ...}",
+      "documentedResponse": "not independently declared by the probe table",
+      "probe": { "status": 400, "ms": 11356, "state": "refused", "ok": true, "reached": true, "why": "400 — the flow is live and validating its input", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": ["selectedCount","assignedTo","assignedToTitle","assignmentType","category","categoryCode","subCategory","subCategoryCode","priority","ackDue","taskDue","copyTo","tasksCreated","docsUpdated","notificationsSent"], "missing": [] },
+      "verdict": "ALIGNED", "confidence": "direct", "severity": "info",
+      "findings": [
+        "dataKeys is a subset of BULK_ASSIGNMENT's diagnostic field list — confirms INTERNAL_PLATFORM_FLOWS.md Part 6.2's prediction that this flow shares a response-composition template with BULK_ASSIGNMENT, even though the two have unrelated request shapes."
+      ],
+      "actionable": { "owner": "none", "priority": "none", "steps": ["No action — keep as regression baseline."], "verify": "Re-probe periodically; any change in dataKeys is itself a finding." }
+    },
+    {
+      "id": "AI_EMAIL_ANALYSIS", "app": "platform", "physicalFlow": "AI_EMAIL_ANALYSIS", "httpMethod": "POST",
+      "documentedRequest": "DECLARED, NOT VERIFIED against a specific call site — action:'aiAnalyseEmail'",
+      "documentedResponse": "not documented",
+      "probe": { "status": 400, "ms": 636, "state": "refused", "ok": true, "reached": true, "why": "400 — the flow is live and validating its input", "responseKeys": ["error"], "dataKeys": null, "missing": null },
+      "verdict": "ALIGNED", "confidence": "direct", "severity": "info",
+      "findings": [
+        "Flow is live and validates input as expected; no documented response shape exists yet to compare against."
+      ],
+      "actionable": {
+        "owner": "documentation", "priority": "low",
+        "steps": [ "Grep the codebase for a real caller of this contract beyond config/source-routing.config.js's LegacyEndpointMap entry.", "If none exists, mark the contract orphaned in INTERNAL_PLATFORM_FLOWS.md rather than 'declared, not verified'." ],
+        "verify": "Either a call site is found and documented, or the contract is explicitly marked unused."
+      }
+    },
+    {
+      "id": "AI_DOC_ANALYSIS", "app": "platform", "physicalFlow": "AI_DOC_ANALYSIS", "httpMethod": "POST",
+      "documentedRequest": "payload.operation:'classify', referenceId, subject, remarks (correspondence-triage caller)",
+      "documentedResponse": "standard envelope, unwrapped via data.result ?? data.analysis ?? data.message ?? data",
+      "probe": { "status": 200, "ms": 1726, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["current_date","event_name","inviting_organization","event_date","event_time","location","invitee_role","ai_summary","strategic_value","justification","accept_url","decline_url","delegate_url"], "dataKeys": null, "missing": null },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "medium",
+      "findings": [
+        "No ok/status/data/errors/request/timing/meta envelope at all — every other endpoint in this run returns the envelope; this one does not.",
+        "Response fields (event_name, accept_url, decline_url, delegate_url, ...) look like a fixed meeting-invitation analysis sample rather than anything derived from the probe's correspondence-classification input — raises the question of whether this flow reads its input at all.",
+        "Tolerated at runtime only because core/contracts.js#assertEnvelope falls back to the whole raw object when `data` is absent, and unwrapActionResponse then falls through to the same raw object — functional by accident of a lenient client, not by contract."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "medium",
+        "steps": [
+          "Wrap the response in the standard envelope, with the analysis under `data`.",
+          "Confirm the flow's AI step actually reads referenceId/subject/remarks from the trigger body rather than returning a fixed sample regardless of input."
+        ],
+        "verify": "Re-probe twice with two different subject/remarks values and confirm the response differs; confirm responseKeys now includes the envelope."
+      }
+    },
+    {
+      "id": "AI_CHAT", "app": "platform", "physicalFlow": "AI_CHAT", "httpMethod": "POST",
+      "documentedRequest": "payload{messages[], scoped:true, context}",
+      "documentedResponse": "top-level reply|message string, or a bare string, unwrapped via data.result ?? data.analysis ?? data.message ?? data",
+      "probe": { "status": 502, "ms": 1586, "state": "flow error", "ok": false, "reached": true, "why": "502 — the flow was reached and failed inside itself", "responseKeys": ["error"], "dataKeys": null, "missing": null },
+      "verdict": "BROKEN", "confidence": "direct", "severity": "medium",
+      "findings": [
+        "Flow reached and crashed against a trivial probe message — the assistant feature is non-functional on this tenant as probed."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "medium",
+        "steps": [ "Pull the Power Automate run history for the 502 against a trivial `message`.", "Fix and redeploy." ],
+        "verify": "Re-probe, confirm 200 with a populated reply/message."
+      }
+    },
+    {
+      "id": "OTP_GENERATE", "app": "platform", "physicalFlow": "OTP_GENERATE", "httpMethod": "POST",
+      "documentedRequest": "two shapes on the same contract: sign-in {operation:'requestOtp', email} vs step-up {operation:'<calling feature>', actor, purpose, refs, payloadDigest, ttlSeconds}",
+      "documentedResponse": "{sent, expiresAt} per docs/folio-Master-Flows-and-Endpoints/contracts/IDENTITY.md",
+      "probe": { "status": 200, "ms": 2827, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","confidence","request","timing","data","results","errors","meta"], "dataKeys": null, "missing": null },
+      "verdict": "MISALIGNED", "confidence": "inferred + one direct finding", "severity": "critical",
+      "findings": [
+        "DIRECT: response envelope carries two fields not in the documented standard envelope — `confidence` and `results` — on every OTP_* and portal VERIFY/VERIFY_CONFIRM response. A real, undocumented deviation across the whole OTP family.",
+        "INFERRED (not directly checked by this probe entry, which declares no `expect`): this endpoint is the identical physical flow the portal's VERIFY probe hits, which explicitly reports `missing:['sent']` against the same {action, userEmail} request family. By that shared-flow evidence, `sent` is very likely absent here too — carried as an inference, not a direct reading of this transcript entry."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "critical", "sameFixAs": "VERIFY",
+        "steps": [ "Implement IDENTITY.md §1: consistent response regardless of directory match, code stored hashed with expiry, answer {sent, expiresAt}.", "Document or drop the undocumented confidence/results envelope fields." ],
+        "verify": "Add expect:['sent'] to this key in scripts/lib/endpoint-probes.mjs, re-probe, confirm sent present."
+      }
+    },
+    {
+      "id": "OTP_VERIFY", "app": "platform", "physicalFlow": "OTP_VERIFY", "httpMethod": "POST",
+      "documentedRequest": "two shapes: sign-in {operation:'verifyOtp', email, code} vs step-up {operation:'<calling feature>', requestId, otp, actor, refs, payloadDigest}",
+      "documentedResponse": "{ok, token|verification|proof, expiresAt, claims:{preferred_username, name, roles[]}} per IDENTITY.md",
+      "probe": { "status": 200, "ms": 2207, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","confidence","request","timing","data","results","errors","meta"], "dataKeys": null, "missing": null },
+      "verdict": "MISALIGNED", "confidence": "inferred + one direct finding", "severity": "critical",
+      "findings": [
+        "DIRECT: same undocumented `confidence`/`results` envelope fields as OTP_GENERATE.",
+        "INFERRED via the portal's VERIFY_CONFIRM probe on the same physical flow, which explicitly reports `missing:['verification']`. By that shared-flow evidence, no usable proof (`token`/`verification`/`proof`) is likely returned here either.",
+        "If the inference holds, Wave 3 auth enforcement (docs/architecture/AUTH_RBAC_GUIDE.md §7) cannot function today: core/otp-identity.js#submitCode throws 'That code was not accepted' when none of token/verification/proof is present."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "critical", "sameFixAs": "VERIFY_CONFIRM",
+        "steps": [ "Implement IDENTITY.md \u00a72, less the one part of it WDL cannot do. INT-005 asks for a constant-time compare; the language has no bitwise operators, so `equals()` cannot be made constant-time and this step must not instruct anyone to try (open item 19). The protection is the lifecycle: five-minute expiry, single use, five-attempt cap, then the challenge is consumed. Then: resolve claims.roles from DGO_UserDirectory, and mint the token by whatever signing primitive the estate settles on \u2014 an HMAC is named here as the intent, and WDL provides no keyed-hash function, so the mechanism is an open decision rather than a step to follow.", "Return {ok, token, expiresAt, claims:{preferred_username, name, roles}}." ],
+        "verify": "Re-probe with a real generated-and-entered code (not 000000); confirm token/claims.roles present. Then run npm run test:auth with AuthConfig.enabled:true in a disposable test config."
+      }
+    },
+    {
+      "id": "DISPATCH_OUTBOUND", "app": "platform", "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS (via DYNAMIC_ACTIONS)", "httpMethod": "POST",
+      "documentedRequest": "payload.operation:'dispatchOutbound' — registered ObsidianActionAliases entry",
+      "documentedResponse": "standard envelope",
+      "probe": { "status": 200, "ms": 9807, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": null, "via": "DYNAMIC_ACTIONS" },
+      "verdict": "DEAD_CODE", "confidence": "direct", "severity": "low",
+      "findings": [
+        "Flow-side: reachable and answers cleanly when invoked directly under this operation name — no misalignment on the flow.",
+        "Client-side: zero callers of this operation anywhere in core/, modules/, or shared/. modules/dispatch.js sends a differently-named operation ('dispatch') through the same physical flow instead — see the DYNAMIC_ACTIONS row. A flow built strictly to answer 'dispatchOutbound' would never be reached by the shipping client."
+      ],
+      "actionable": {
+        "owner": "decision", "priority": "low",
+        "steps": [ "Either wire modules/dispatch.js to send operation:'dispatchOutbound' (retiring the ad hoc 'dispatch'), or retire this ObsidianActionAliases entry and document 'dispatch' as the real contract." ],
+        "verify": "After the decision, grep for callers of whichever name is kept; update INTERNAL_PLATFORM_FLOWS.md Part 9 to match."
+      }
+    },
+    {
+      "id": "ARCHIVE_REFERENCE", "app": "platform", "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS (via DYNAMIC_ACTIONS)", "httpMethod": "POST",
+      "documentedRequest": "payload.operation:'archiveReference' — registered ObsidianActionAliases entry",
+      "documentedResponse": "standard envelope",
+      "probe": { "status": 200, "ms": 10652, "state": "answered", "ok": true, "reached": true, "why": "answered", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": null, "via": "DYNAMIC_ACTIONS" },
+      "verdict": "DEAD_CODE", "confidence": "direct", "severity": "low",
+      "findings": [
+        "Flow-side: reachable and answers cleanly — no misalignment on the flow.",
+        "Client-side: modules/archive.js never makes any network call at all. core/archive.js#ArchiveService.archiveReference runs entirely against the in-memory core/entity-store.js. This operation is provisioned and live on the flow side, and entirely unreachable from the shipping UI."
+      ],
+      "actionable": {
+        "owner": "decision", "priority": "low",
+        "steps": [ "Either make archiving a real governed write (call this operation from modules/archive.js after the local archive succeeds), or confirm client-local archiving is deliberate and mark this contract unused." ],
+        "verify": "Perform a real archive action in a test session and confirm, via network inspector, whether a request now fires."
+      }
+    },
+    {
+      "id": "SCAN_INTAKE", "app": "platform", "physicalFlow": "SCAN_INTAKE", "httpMethod": "PUT",
+      "documentedRequest": "raw bytes, metadata in X-DGO-Filename/X-DGO-Sha256/X-DGO-Size headers",
+      "documentedResponse": "{referenceId, attachmentLink, stored, depositedBy, depositedAt, sha256, bytes}",
+      "probe": null,
+      "verdict": "NOT_PROBED", "confidence": "n/a", "severity": "info",
+      "findings": [
+        "Absent from the transcript — consistent with docs/deployment/RUNBOOK.md's own statement that this is the one genuinely unbuilt flow. Not a probe gap; an expected absence."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "none",
+        "steps": [ "Build per FLOW-BUILD-PLAN.md Wave 4.2 and INTERNAL_PLATFORM_FLOWS.md Part 10." ],
+        "verify": "npm run verify:endpoints -- --only SCAN_INTAKE once a URL is configured."
+      }
+    },
+    {
+      "id": "STATUS", "app": "portal", "physicalFlow": "STATUS", "httpMethod": "POST",
+      "documentedRequest": "{referenceId, email} or {referenceId, verification} once a proof is held",
+      "documentedResponse": "404 (byte-identical for unknown reference / wrong email / expired proof) OR 200 {record} for a genuine match — document-portal/README.md's anti-oracle contract",
+      "probe": { "status": 200, "ms": 12394, "state": "answered", "ok": true, "reached": true, "why": "answered without record — the flow is live, but its response does not carry what the platform reads", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": ["record"] },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "critical",
+      "findings": [
+        "Probed with a reference (__DGO_PROBE__) that is unknown by construction — document-portal/README.md requires this to answer a byte-identical 404. It answered 200 instead.",
+        "The uniform-denial / anti-oracle property the portal's own documentation calls a security-critical control is not implemented on the live flow.",
+        "The probe tool has no explicit fail state for 'wrong status vs. documented', so this surfaces only as 'answered without record' — easy to miss without cross-reading the portal's own contract."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "critical",
+        "steps": [ "Make the flow answer a byte-identical 404 for unknown reference, wrong email, and expired/replayed proof.", "Once VERIFY/VERIFY_CONFIRM are fixed, resolve the caller's address from the proof rather than the request body on a verified lookup." ],
+        "verify": "Re-probe with an unknown reference → expect 404. Submit one real test correspondence, then probe STATUS with its real pair → expect 200 with record."
+      }
+    },
+    {
+      "id": "SUBMISSION", "app": "portal", "physicalFlow": "SUBMISSION", "httpMethod": "POST",
+      "documentedRequest": "{subject, category, description, senderEmail, sender:{name}, attachments:[{name,size,sha256}], verification?}",
+      "documentedResponse": "{referenceId, uploads:[{ticket, name}]}",
+      "probe": { "status": 200, "ms": 3772, "state": "answered", "ok": true, "reached": true, "why": "answered without uploads — the flow is live, but its response does not carry what the platform reads", "responseKeys": ["trackingId","status","createdAt","message","submittedBy","submittedAt","attachmentsCount","referenceId"], "dataKeys": null, "missing": ["uploads"] },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "high",
+      "findings": [
+        "responseKeys match the OLD, deprecated trackingId/base64 contract (trackingId, submittedBy, submittedAt, attachmentsCount) that docs/deployment/RUNBOOK.md §4.1 already flagged as needing a rebuild — this is live confirmation the rebuild has not happened.",
+        "`referenceId` is present (good — the client's primary read succeeds) but `uploads` is entirely absent, so no upload ticket is ever issued.",
+        "Practical effect: any citizen submission that declares an attachment has no ticket to redeem it against — the file can never actually be deposited."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "high",
+        "steps": [ "Rebuild to the ticket-based contract in document-portal/README.md: return {referenceId, uploads:[{ticket, name}]}.", "Keep minting referenceId in the NITDA-YYYY-<sequence> shape — that part is already correct." ],
+        "verify": "Re-probe with a payload declaring an attachment; confirm uploads is present and non-empty. Then exercise UPLOAD with a real ticket."
+      }
+    },
+    {
+      "id": "SUPPORT", "app": "portal", "physicalFlow": "SUPPORT", "httpMethod": "POST",
+      "documentedRequest": "{email, subject, message}",
+      "documentedResponse": "{caseRef}",
+      "probe": { "status": 200, "ms": 7772, "state": "answered", "ok": true, "reached": true, "why": "answered without caseRef — the flow is live, but its response does not carry what the platform reads", "responseKeys": ["ok","status","request","timing","data","errors","meta"], "dataKeys": null, "missing": ["caseRef"] },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "medium",
+      "findings": [
+        "Standard envelope present (unlike SUBMISSION's flat legacy shape) but the one field the client reads, `caseRef`, is absent.",
+        "A citizen filing a helpdesk case receives no case number to reference later."
+      ],
+      "actionable": { "owner": "flow", "priority": "medium", "steps": [ "Return {caseRef} in the response — a CASE- prefixed reference per document-portal/README.md." ], "verify": "Re-probe, confirm caseRef present." }
+    },
+    {
+      "id": "VERIFY", "app": "portal", "physicalFlow": "OTP_GENERATE (shared with the platform)", "httpMethod": "POST",
+      "documentedRequest": "{email} — reuses the platform's OTP_GENERATE flow per FLOW-BUILD-PLAN.md §4.4",
+      "documentedResponse": "{sent, expiresAt}",
+      "probe": { "status": 200, "ms": 3157, "state": "answered", "ok": true, "reached": true, "why": "answered without sent — the flow is live, but its response does not carry what the platform reads", "responseKeys": ["ok","status","confidence","request","timing","data","results","errors","meta"], "dataKeys": null, "missing": ["sent"] },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "critical",
+      "findings": [
+        "This is the DIRECT evidence behind OTP_GENERATE's inferred verdict above — same physical flow, `sent` explicitly declared missing here.",
+        "Same undocumented `confidence`/`results` envelope fields observed on the platform side."
+      ],
+      "actionable": { "owner": "flow", "priority": "critical", "sameFixAs": "OTP_GENERATE", "steps": [ "Same fix as OTP_GENERATE — one physical flow, two contract names." ], "verify": "Re-probe VERIFY directly; confirm sent present." }
+    },
+    {
+      "id": "VERIFY_CONFIRM", "app": "portal", "physicalFlow": "OTP_VERIFY (shared with the platform)", "httpMethod": "POST",
+      "documentedRequest": "{email, code} — reuses the platform's OTP_VERIFY flow",
+      "documentedResponse": "{verification, expiresAt}",
+      "probe": { "status": 200, "ms": 5890, "state": "answered", "ok": true, "reached": true, "why": "answered without verification — the flow is live, but its response does not carry what the platform reads", "responseKeys": ["ok","status","confidence","request","timing","data","results","errors","meta"], "dataKeys": null, "missing": ["verification"] },
+      "verdict": "MISALIGNED", "confidence": "direct", "severity": "critical",
+      "findings": [
+        "This is the DIRECT evidence behind OTP_VERIFY's inferred verdict above — same physical flow, `verification` explicitly declared missing here.",
+        "No proof token is minted, so neither the portal's own verified-submission/verified-status path nor the platform's Wave 3 sign-in can complete, on this tenant, today."
+      ],
+      "actionable": { "owner": "flow", "priority": "critical", "sameFixAs": "OTP_VERIFY", "steps": [ "Same fix as OTP_VERIFY — one physical flow, two contract names." ], "verify": "Re-probe VERIFY_CONFIRM directly; confirm verification/token present." }
+    },
+    {
+      "id": "UPLOAD", "app": "portal", "physicalFlow": "UPLOAD", "httpMethod": "PUT",
+      "documentedRequest": "raw bytes, ticket in X-Upload-Ticket header",
+      "documentedResponse": "401/403 expected when no ticket is presented (the pass condition — proves the ticket check is live)",
+      "probe": null,
+      "verdict": "NOT_PROBED", "confidence": "n/a", "severity": "critical",
+      "findings": [
+        "The flow's real definition is now known directly (supplied 2026-08-09 — not harvested, not from either probe transcript; see DOCUMENT_PORTAL_FLOWS.md §2.2–§2.3 and the flowDefinition object in DOCUMENT_PORTAL_FLOWS.json for the full action sequence).",
+        "Condition_Upload_Ticket_Missing tests only empty(trim(string(coalesce(triggerOutputs()?['headers']?['x-upload-ticket'], triggerOutputs()?['headers']?['X-Upload-Ticket'], '')))) == true — a non-empty-string check, not a validity check.",
+        "The ticket is never compared against anything SUBMISSION issued. Any caller sending any non-empty X-Upload-Ticket value gets a file written into the live SharePoint registry (https://nitdanigeria.sharepoint.com/sites/NEDMS, /NITDA_Central_Registry) — an unauthenticated write path into a production government document registry.",
+        "No size limit, no integrity check (SHA-256 or otherwise), and no association recorded between the stored file and a correspondence record.",
+        "This is known from the flow's own source definition, not from a live HTTP probe — no transcript entry exists for this key, so the verdict category stays NOT_PROBED per this report's legend even though the defect itself is now certain, not inferred."
+      ],
+      "actionable": {
+        "owner": "flow", "priority": "critical",
+        "steps": [
+          "Have SUBMISSION persist each minted ticket (id, expiry, one-time-use flag, and — once available — declared file name/size/SHA-256) somewhere UPLOAD can read it back, e.g. a DGO_UploadTickets list keyed by ticket value.",
+          "In UPLOAD, replace Condition_Upload_Ticket_Missing's empty-string check with a lookup against that store: reject 403 a ticket that is absent, expired, or already redeemed, and mark it redeemed in the same operation that writes the file so it cannot be replayed.",
+          "Once SUBMISSION carries declared size/SHA-256, verify the uploaded bytes against them before returning stored:true; reject with 422 (or the existing 500 upload-processing-failed shape) on mismatch.",
+          "Write the ticket's parent referenceId and the resulting attachmentLink back onto the correspondence record — today that association exists only in the flow's own response body."
+        ],
+        "verify": "Send a syntactically-valid but never-issued value in X-Upload-Ticket and confirm 403, not 200. Then confirm a ticket issued by a real SUBMISSION call succeeds exactly once, and a second UPLOAD call reusing the same ticket is rejected."
+      }
+    }
+  ]
+}

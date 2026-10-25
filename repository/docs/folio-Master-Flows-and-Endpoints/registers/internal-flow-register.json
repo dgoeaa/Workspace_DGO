@@ -1,0 +1,504 @@
+{
+  "registerVersion": "2.4.0",
+  "purpose": "The declared internal-operations flow estate: every endpoint contract key, the physical Power Automate flow behind it, its workflow id where the corpus records one, and the definition file in this repository that covers it. scripts/flow-list-sweep.mjs reads this to state contract coverage; it never infers an attribution from a filename.",
+  "whyItMatters": "The full-scope provisioning gate is held open by \"Internal operations — 7 of ~20 flow definitions available\". That count is of CONTRACT KEYS. Several keys share one physical flow, so the number of flows that actually have to be exported is smaller than the number of keys — this register is where that arithmetic is visible rather than assumed.",
+  "credentialPolicy": "Workflow ids only. A signed trigger URL is a bearer credential and its sig token is never recorded here, in line with scripts/flow-inventory.mjs.",
+  "sources": [
+    "docs/folio-Master-Flows-and-Endpoints/contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts",
+    "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id",
+    "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+  ],
+  "contractKeys": [
+    {
+      "key": "FETCH_ACTIVITIES",
+      "physicalFlow": "SUBSIDIARY_ACTIONS",
+      "flowLabel": "Supplementary / subsidiary actions",
+      "fixedAction": "LIST-ACTIVITIES",
+      "workflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Get_Docs_Endpoint__28f6e62a-fea8-437c-a61a-47aec706c4e2__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for FETCH_ACTIVITIES (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Shares one physical flow with SUBSIDIARY_ACTIONS — exporting that flow once covers both keys."
+    },
+    {
+      "key": "SUBSIDIARY_ACTIONS",
+      "physicalFlow": "SUBSIDIARY_ACTIONS",
+      "flowLabel": "Supplementary / subsidiary actions",
+      "fixedAction": "INIT",
+      "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Dynamic_Global_Actions_Endpoint__31c0aaf0-ddbb-478c-9a98-bc013265c4c7__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for SUBSIDIARY_ACTIONS (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration."
+    },
+    {
+      "key": "FETCH_ALL",
+      "physicalFlow": "FETCH_ALL",
+      "flowLabel": "Get all data",
+      "fixedAction": "fetchAll",
+      "workflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "31e02518075940d2bcfa9bdb0e9b0b8d",
+          "label": "geta all data",
+          "source": "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+        },
+        {
+          "workflowId": "1d56be97cd184fd9b2facede12b17c34",
+          "label": "all data and references",
+          "source": "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+        },
+        {
+          "workflowId": "4a250f97181b4a28abc1d0fb0f7d4c4d",
+          "label": "Copy of - Fetch_All_Data_&_References_Matrix-POST",
+          "source": "The recovered definition's own workflow_identity"
+        }
+      ],
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_FETCH_ALL_BOOTSTRAP__b79e6707-df4d-4ae7-8a65-738aa45e9a73__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for FETCH_ALL (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "RESOLVED. The deployed config points this key at this flow as of 2026-09-04, so the cutover for FETCH_ALL is done. The three deployed definitions listed below belong to the flow it pointed at before the rebuild and are kept for their list footprint, which is what the coverage gate reads them for.",
+      "flowId": "b79e6707df4d4ae78a65738aa45e9a73"
+    },
+    {
+      "key": "REFERENCE_DATA",
+      "physicalFlow": "REFERENCE_DATA",
+      "flowLabel": "Get references (users, categories, departments)",
+      "fixedAction": "lookups",
+      "workflowId": "885fad5ec91f460490e8c772d5d10cb8",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "20e3b003a57f47febae8a24ad5b9acd4",
+          "label": "LOOKUPS (users, departments, categories)",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id"
+        }
+      ],
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Reference_Data_Endpoint__9a4dea8e-15f2-42b6-904d-3655056fa3c2__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for REFERENCE_DATA (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "SERVICEABLE. IP_Reference_Data_Endpoint, 51 packaged actions to 51 live. INSTALLED AND VERIFIED IN THE TENANT 2026-09-04. The flow was rebuilt not by pasting but by scripts/patch-flow-package.mjs --install, which writes the declarations and the scope into the flow's own exported definition and is imported with Update. Re-exported afterwards, it reads 0 missing, 0 different, 0 extra against its package, every variable write carrying its value, every connector host in the definition shape, the eight declarations at the top level, and Method = POST. The flow id is unchanged, so the trigger URL is unchanged. 13 variable writes, 7 connector actions. The deployed config still points this key at d67f2acb3708449490eed561ee56efbe, so the cutover is the remaining step. The rejected candidate, Fetch_Users_Categories_Departments_Data_Sync, is hand-built and unchanged. CLOSED: the question of whether two flows shared the display name Fetch_Users_Categories_Departments_Data_Sync is moot. That flow is not this key's flow and no contract key points at it, so which of it exists changes nothing this register asserts.",
+      "flowId": "9a4dea8e15f242b6904d3655056fa3c2"
+    },
+    {
+      "key": "GET_DOCS",
+      "physicalFlow": "GET_DOCS",
+      "flowLabel": "Get docs",
+      "fixedAction": "getDocs",
+      "workflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "7995c1eb50d94d5daa2780e71391d874",
+          "label": "BULK OPS GET DOCS",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id"
+        }
+      ],
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Get_Docs_Endpoint__28f6e62a-fea8-437c-a61a-47aec706c4e2__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for GET_DOCS (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Six deployed flows carry a get-docs shape and no source names which the GET_DOCS key points at. All six are attributed so the footprint is the union rather than a guess; config/config.local.js settles which is live."
+    },
+    {
+      "key": "FETCH_EMAIL_ATTACHMENTS",
+      "physicalFlow": "FETCH_EMAIL_ATTACHMENTS",
+      "flowLabel": "Fetch email attachments",
+      "fixedAction": "fetchEmailAttachments",
+      "workflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3-7a99-4259-b6a2-315fbc794d9b__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for FETCH_EMAIL_ATTACHMENTS (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Two candidates, \"Get Email Attachments\" and \"Web - Get Email Attachments\". Neither touches SharePoint, so the footprint is empty whichever is live - the ambiguity does not affect the gate."
+    },
+    {
+      "key": "SINGLE_ASSIGNMENT",
+      "physicalFlow": "SINGLE_ASSIGNMENT",
+      "flowLabel": "Single assign / create task and update activity",
+      "fixedAction": "singleassignment",
+      "workflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/Single_Task_Assignment__3caf9458-8d95-4740-a01b-6803dad97d34__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for SINGLE_ASSIGNMENT (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "RESOLVED AND SERVICEABLE. IP_Single_Assignment_Endpoint is the flow DGO_SINGLE_ASSIGNMENT.designer-paste.json builds — 63 packaged actions to 63 live — installed and verified in the tenant on 2026-09-04 by patch-flow-package.mjs --install: 0 missing, 0 different, 0 extra, 21 variable writes all carrying their values, 7 connector actions, Method = POST. The deployed config points here as of the same day, so the cutover is done. The rejected candidate, IP_Create_Task (6b3bad3005b44bf6bced0f8074d3f2ed), is 108 live actions against the package's 63 and is not what this repository builds or can verify.",
+      "flowId": "05825db0c8064974807cc062f386cc41"
+    },
+    {
+      "key": "BULK_ASSIGNMENT",
+      "physicalFlow": "BULK_ASSIGNMENT",
+      "flowLabel": "Bulk assign",
+      "fixedAction": "bulkassignment",
+      "workflowId": "a705e453f922457c95ca19f32731e4d7",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/BULK OPS DATA RETRIEVAL HTTP__5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for BULK_ASSIGNMENT (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "c43388639d14452faef4ca3042a95b23",
+          "label": "Deployed Bulk Task Assignment_Create Task",
+          "source": "The shipped definition's own workflow_identity"
+        },
+        {
+          "workflowId": "7e71fffe770a45ccb93bf216bb53786e",
+          "label": "BULK ASSIGN",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt row 8"
+        }
+      ]
+    },
+    {
+      "key": "DYNAMIC_ACTIONS",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "dynamicGlobalAction",
+      "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Dynamic_Global_Actions_Endpoint__31c0aaf0-ddbb-478c-9a98-bc013265c4c7__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for DYNAMIC_ACTIONS (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "One physical flow serves four contract keys — DYNAMIC_ACTIONS, EMAIL, DISPATCH_OUTBOUND and ARCHIVE_REFERENCE. One export covers all four."
+    },
+    {
+      "key": "EMAIL",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "dispatchEmail",
+      "workflowId": "378b491ec39a4beca886ddec250e6961",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_SEND_EMAIL__df59a69f-92ca-4554-ae68-6b464aa73ef7__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for EMAIL (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Served by its own flow, IP_SEND_EMAIL (df59a69f), at its own URL. The config sourceKey groups it with DYNAMIC_GLOBAL_ACTIONS for routing only."
+    },
+    {
+      "key": "DISPATCH_OUTBOUND",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "dispatchOutbound",
+      "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Dynamic_Global_Actions_Endpoint__31c0aaf0-ddbb-478c-9a98-bc013265c4c7__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for DISPATCH_OUTBOUND (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Registered and flow-reachable, but no module in the codebase invokes it today."
+    },
+    {
+      "key": "ARCHIVE_REFERENCE",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "archiveReference",
+      "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Dynamic_Global_Actions_Endpoint__31c0aaf0-ddbb-478c-9a98-bc013265c4c7__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for ARCHIVE_REFERENCE (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Registered and flow-reachable, but modules/archive.js performs the archive locally with no network call."
+    },
+    {
+      "key": "EMAIL_RELATED_TASK",
+      "physicalFlow": "EMAIL_RELATED_TASK",
+      "flowLabel": "Create task for email",
+      "fixedAction": "emailtotaskassignment",
+      "workflowId": "a942d230337c4ddfa9a386e92bbd048b",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "a942d230337c4ddfa9a386e92bbd048b",
+          "label": "CREATE TASK FOR EMAIL",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id"
+        },
+        {
+          "workflowId": "fe794e0139784ac694768e5a716e0be7",
+          "label": "email to task",
+          "source": "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+        }
+      ],
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Create__Task__for_received_Email_Endpoint__ab1a3555-7fce-4bfe-a193-b8b84654b0a4__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for EMAIL_RELATED_TASK (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration (still the retired IP_Create_Email_Assignment_Endpoint URL until the owner repoints EMAIL_RELATED_TASK at ab1a3555; readiness register ITEM-74)."
+    },
+    {
+      "key": "AI_DOC_ANALYSIS",
+      "physicalFlow": "AI_DOC_ANALYSIS",
+      "flowLabel": "AI document analysis",
+      "fixedAction": "aiAnalyseEventDocs",
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/AI_Document_Processing__fefa43c6-fb9d-4337-8b65-7fd19fa09b6d__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for AI_DOC_ANALYSIS (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "THE DEPLOYED CONFIG DOES NOT POINT HERE. It points this key at 20e3b003a57f47febae8a24ad5b9acd4, which appears under no flow in the operator's map and which this register lists as a candidate for REFERENCE_DATA — an unidentified flow under a key that should reach AI_Document_Processing. That is the mis-slotted-URL failure check-config-local.mjs exists to catch, and it is now a hard failure rather than a warning.",
+      "flowId": "fefa43c6fb9d43378b657fd19fa09b6d"
+    },
+    {
+      "key": "AI_EMAIL_ANALYSIS",
+      "physicalFlow": "AI_EMAIL_ANALYSIS",
+      "flowLabel": "AI email analysis",
+      "fixedAction": "aiAnalyseEmail",
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/AI_Document_Processing__fefa43c6-fb9d-4337-8b65-7fd19fa09b6d__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for AI_EMAIL_ANALYSIS (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Two candidates. Neither touches SharePoint."
+    },
+    {
+      "key": "AI_CHAT",
+      "physicalFlow": "AI_CHAT",
+      "flowLabel": "AI chat",
+      "fixedAction": "aiChat",
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/AI_Document_Processing__fefa43c6-fb9d-4337-8b65-7fd19fa09b6d__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for AI_CHAT (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "note": "Three candidates. None touches SharePoint, so the footprint is empty whichever is live."
+    },
+    {
+      "key": "OTP_GENERATE",
+      "physicalFlow": "OTP_GENERATE",
+      "flowLabel": "Web - OTP Generate",
+      "fixedAction": "otpGenerate",
+      "workflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_OTP_VERIFY__4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for OTP_GENERATE (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "contradictedByBranch": "claude/fetchall-flow-error-1h94u5 @ 5d922be — one flow IP_OTP_Endpoint at b372d45e4b2a47d88b8e8b032da67fcd"
+    },
+    {
+      "key": "OTP_VERIFY",
+      "physicalFlow": "OTP_VERIFY",
+      "flowLabel": "Web - OTP Verify",
+      "fixedAction": "otpVerify",
+      "workflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_OTP_VERIFY__4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for OTP_VERIFY (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "supersededWorkflowId": "43879c5165de439680055ab4258b3f27",
+      "contradictedByBranch": "claude/fetchall-flow-error-1h94u5 @ 5d922be — one flow IP_OTP_Endpoint at b372d45e4b2a47d88b8e8b032da67fcd"
+    },
+    {
+      "key": "SCAN_INTAKE",
+      "physicalFlow": "SCAN_INTAKE",
+      "flowLabel": "Scan intake (PUT, non-JSON)",
+      "fixedAction": "n/a",
+      "workflowId": "88401ce1f44148539c0da53c9491f8e6",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_SCAN_INTAKE__5504d7f9-cc96-470c-be79-217582faf415__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for SCAN_INTAKE (one copy, selected by the owner or by the latest tenant evidence); definition in contracts/deployed. Trigger workflow id from registers/endpoint-register.json current_configuration.",
+      "internalName": "5504d7f9-cc96-470c-be79-217582faf415",
+      "attributionHistory": "This entry once attached ECM_DOCS_INTAKE__df7ddff1-… and declared it 'the deployed flow'. That was wrong twice over: the definition was a POST tenant-authenticated Portal Registry feed that reads no X-DGO-* header, and the file itself carried a workflow id belonging to a different flow. It was emptied on 2026-09-03 when the key was genuinely unbuilt, and carries a real definition for the first time on 2026-09-04.",
+      "workflowIdCandidateUnverified": "88401ce1f44148539c0da53c9491f8e6",
+      "workflowIdCandidateSource": "claude/fetchall-flow-error-1h94u5 @ 5d922be — operator's tenant name-to-workflow-id map, 2026-09-04"
+    },
+    {
+      "key": "USER_ADMIN",
+      "physicalFlow": "USER_ADMIN",
+      "flowLabel": "IP_User_Admin_Endpoint",
+      "fixedAction": "userAdmin",
+      "workflowId": "466cf7ea66c54240aaede85a5a500f1c",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_User_Admin_Endpoint__e3e5c825-55ba-447e-88c1-96b7e89fd013__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for USER_ADMIN (created 2026-10-08 on the owner's approval, ITEM-25); definition in contracts/deployed; creation and live test in evidence/2026-10-08-closure-operations.json (item25_userAdminFlow)."
+    },
+    {
+      "key": "ACTIVITY_LIFECYCLE",
+      "physicalFlow": "ACTIVITY_LIFECYCLE",
+      "flowLabel": "IP_Activity_Lifecycle_Endpoint",
+      "fixedAction": "activityLifecycle",
+      "workflowId": "35fa90bfad8f4a639cc20882f1688149",
+      "definitions": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Activity_Lifecycle_Endpoint__b4db02d8-02a0-4bc9-b9d3-06e2aae2448c__full_definition.json"
+      ],
+      "evidence": "docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json — the adopted flow for ACTIVITY_LIFECYCLE (created 2026-10-10 on the owner's decision, ITEM-25); definition in contracts/deployed."
+    }
+  ],
+  "unattributedDefinitions": [
+    {
+      "definition": "docs/reference/foundational/flows/run-records/deployed_create_task__08584160987852269791356030937CU197/definition.json",
+      "describedAs": "Deployed - Create Task",
+      "candidateWorkflowId": "6b3bad3005b44bf6bced0f8074d3f2ed",
+      "why": "\"Create task\" describes what SINGLE_ASSIGNMENT, BULK_ASSIGNMENT and EMAIL_RELATED_TASK all do. The name alone does not pick one, and guessing would put a wrong attribution into the gate. The definition declares its own workflow id 6b3bad3005b44bf6bced0f8074d3f2ed, which matches the labelled URL register — so the flow is identified; what is not settled is which contract key, if any, it serves."
+    },
+    {
+      "definition": "docs/reference/foundational/flows/run-records/dgso_incoming_ai_processing_provisioning_report_2026-08-04_1/definition_raw.json",
+      "describedAs": "dgso_incoming_ai_processing — Gemini text extraction over incoming documents",
+      "candidateWorkflowId": null,
+      "why": "An AI flow, but the contract declares three (AI_DOC_ANALYSIS, AI_EMAIL_ANALYSIS, AI_CHAT) and this definition names none of them. It is also a scheduled/triggered internal flow rather than one of the browser-invoked contract endpoints, so it may serve no contract key at all."
+    }
+  ],
+  "physicalFlows": [
+    {
+      "physicalFlow": "AI_CHAT",
+      "servesContractKeys": [
+        "AI_CHAT"
+      ],
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2"
+    },
+    {
+      "physicalFlow": "AI_DOC_ANALYSIS",
+      "servesContractKeys": [
+        "AI_DOC_ANALYSIS"
+      ],
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2"
+    },
+    {
+      "physicalFlow": "AI_EMAIL_ANALYSIS",
+      "servesContractKeys": [
+        "AI_EMAIL_ANALYSIS"
+      ],
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2"
+    },
+    {
+      "physicalFlow": "BULK_ASSIGNMENT",
+      "servesContractKeys": [
+        "BULK_ASSIGNMENT"
+      ],
+      "workflowId": "a705e453f922457c95ca19f32731e4d7"
+    },
+    {
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "servesContractKeys": [
+        "ARCHIVE_REFERENCE",
+        "DISPATCH_OUTBOUND",
+        "DYNAMIC_ACTIONS",
+        "EMAIL"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "EMAIL_RELATED_TASK",
+      "servesContractKeys": [
+        "EMAIL_RELATED_TASK"
+      ],
+      "workflowId": "a942d230337c4ddfa9a386e92bbd048b"
+    },
+    {
+      "physicalFlow": "FETCH_ALL",
+      "servesContractKeys": [
+        "FETCH_ALL"
+      ],
+      "workflowId": "aa662769f13a4666bfadf3039cd8d247"
+    },
+    {
+      "physicalFlow": "FETCH_EMAIL_ATTACHMENTS",
+      "servesContractKeys": [
+        "FETCH_EMAIL_ATTACHMENTS"
+      ],
+      "workflowId": "d2c773332f6f4fbf97ee4a5baa01f70b"
+    },
+    {
+      "physicalFlow": "GET_DOCS",
+      "servesContractKeys": [
+        "GET_DOCS"
+      ],
+      "workflowId": "c4c26f93ba1e4d7db5247536c30cdc11"
+    },
+    {
+      "physicalFlow": "OTP_GENERATE",
+      "servesContractKeys": [
+        "OTP_GENERATE"
+      ],
+      "workflowId": "b372d45e4b2a47d88b8e8b032da67fcd"
+    },
+    {
+      "physicalFlow": "OTP_VERIFY",
+      "servesContractKeys": [
+        "OTP_VERIFY"
+      ],
+      "workflowId": "b372d45e4b2a47d88b8e8b032da67fcd"
+    },
+    {
+      "physicalFlow": "REFERENCE_DATA",
+      "servesContractKeys": [
+        "REFERENCE_DATA"
+      ],
+      "workflowId": "885fad5ec91f460490e8c772d5d10cb8"
+    },
+    {
+      "physicalFlow": "SCAN_INTAKE",
+      "servesContractKeys": [
+        "SCAN_INTAKE"
+      ],
+      "workflowId": "88401ce1f44148539c0da53c9491f8e6"
+    },
+    {
+      "physicalFlow": "SINGLE_ASSIGNMENT",
+      "servesContractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ],
+      "workflowId": "72acfc6a694f414f9fe39c939ead7f08"
+    },
+    {
+      "physicalFlow": "SUBSIDIARY_ACTIONS",
+      "servesContractKeys": [
+        "FETCH_ACTIVITIES",
+        "SUBSIDIARY_ACTIONS"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "USER_ADMIN",
+      "servesContractKeys": [
+        "USER_ADMIN"
+      ],
+      "workflowId": "466cf7ea66c54240aaede85a5a500f1c"
+    },
+    {
+      "physicalFlow": "ACTIVITY_LIFECYCLE",
+      "servesContractKeys": [
+        "ACTIVITY_LIFECYCLE"
+      ],
+      "workflowId": "35fa90bfad8f4a639cc20882f1688149"
+    }
+  ],
+  "totals": {
+    "contractKeys": 21,
+    "physicalFlows": 17,
+    "physicalFlowsWithWorkflowId": 15,
+    "unattributedDefinitions": 2
+  },
+  "changelog": [
+    {
+      "version": "2.0.0",
+      "what": "Attributed every physical flow to a definition exported from the live tenant on 2026-08-19. All 16 flows and all 20 contract keys are now covered by a deployed definition rather than by a capture, an inference or nothing. Where more than one deployed flow carries the right shape, every candidate is attributed so the footprint is a union rather than a guess, and the note says whether the ambiguity can affect the gate."
+    },
+    {
+      "version": "1.1.0",
+      "what": "Read workflow_identity out of the definitions themselves. That confirmed REFERENCE_DATA and DYNAMIC_GLOBAL_ACTIONS, settled the EMAIL_RELATED_TASK conflict, supplied both OTP ids that no labelled register held, and opened a new conflict on BULK_ASSIGNMENT. Two definitions were also recovered from deleted git history: Dynamic_Multi-Actions (closes four contract keys) and a copy of the fetch-all flow."
+    },
+    {
+      "version": "2.0.0",
+      "what": "Consolidation of the five most recently updated branches. SCAN_INTAKE takes the claude/system-remediation-gaps-ahpmsy row (IP_SCAN_INTAKE 5504d7f9-cc96-470c-be79-217582faf415, tenant export attached, checked by npm run test:keyimpl); the superseded ECM_DOCS_INTAKE attribution is not restored. Every other key keeps the claude/fetchall-flow-error-1h94u5 tenant-sourced ids. The OTP rows keep the claude/sharepoint-lists-gap-bqo7j7 two-flow model, so physicalFlows returns to 16.",
+      "unresolved": "CONTRADICTED — the OTP topology. claude/sharepoint-lists-gap-bqo7j7 carries a tenant export of IP_OTP_VERIFY (workflow_identity.internal_name c5e314c7-68b5-4bdc-8935-0954ef6a256d, full_resource_id flow 4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61) and treats OTP_GENERATE and OTP_VERIFY as two flows. claude/fetchall-flow-error-1h94u5 records one flow, IP_OTP_Endpoint, at b372d45e4b2a47d88b8e8b032da67fcd, and states IP_OTP_Endpoint and IP_OTP_VERIFY are one flow renamed. b372d45e appears in no committed definition on either branch. The export-backed model is adopted; the contradiction is not resolved. CLOSURE: export IP_OTP_Endpoint from the tenant and compare its workflow_identity against c5e314c7 / 4dbe6dde.",
+      "date": "2026-09-05"
+    },
+    {
+      "version": "2.1.0",
+      "date": "2026-10-06",
+      "what": "Every contract key names the one adopted definition (registers/flow-adoption.json) and nothing else. The duplicate and superseded definitions the earlier versions listed are retired and removed (registers/flow-retirement.json records each, with its hash and last commit). Workflow ids are the trigger ids in registers/endpoint-register.json current_configuration. BULK_ASSIGNMENT_DIRECT is retired: no definition."
+    },
+    {
+      "version": "2.2.0",
+      "date": "2026-10-06",
+      "what": "BULK_ASSIGNMENT_DIRECT removed from the Folio configuration (owner, 2026-10-06): its contract-key row and its physical-flow row are deleted. Bulk assignment is BULK_ASSIGNMENT. The retirement is recorded in registers/flow-adoption.json (retiredContractKeys) and registers/endpoint-register.json (retired_configuration)."
+    },
+    {
+      "version": "2.3.0",
+      "date": "2026-10-08",
+      "what": "USER_ADMIN added (owner approval 2026-10-08, ITEM-25): Folio's User Administration on its own flow, IP_User_Admin_Endpoint (e3e5c825), created from IP_Dynamic_Global_Actions_Endpoint with only the user-admin operation, because DYNAMIC_ACTIONS has no room under the service's 500-action limit."
+    },
+    {
+      "version": "2.4.0",
+      "date": "2026-10-10",
+      "what": "ACTIVITY_LIFECYCLE added (owner decision 2026-10-10, ITEM-25): Folio's Activities lifecycle (Archive, SIWES, NYSC) on its own flow, IP_Activity_Lifecycle_Endpoint (b4db02d8), created from IP_Dynamic_Global_Actions_Endpoint with only the lifecycle, because DYNAMIC_ACTIONS has no room under the service's 500-action limit."
+    }
+  ]
+}

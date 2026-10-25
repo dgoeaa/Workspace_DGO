@@ -1,0 +1,166 @@
+{
+  "release": "nitda-ecm-ops-email-templates/2.1.1-remediated",
+  "generated": "2026-08-19T03:44:01.439Z",
+  "container_width": 640,
+  "breakpoint": 640,
+  "brand": {
+    "deep_green": "#05583B",
+    "smart_green": "#17B255",
+    "ink": "#373435"
+  },
+  "status_indicators": {
+    "drivers": [
+      "Compose_Status_Text",
+      "Compose_Decision_Label"
+    ],
+    "buckets": {
+      "success": "#0D7234",
+      "alert": "#C8102E",
+      "caution": "#5A3F00",
+      "review": "#05583B",
+      "neutral": "#4A4849"
+    }
+  },
+  "templates": [
+    {
+      "id": "nitda-ip-01-single-task-assignment",
+      "platform": "internal",
+      "name": "Single Task Assignment",
+      "subject": "[@{outputs('Compose_Priority_Level')}] Assignment \u2014 @{outputs('Compose_Reference_Id')} \u2014 @{outputs('Compose_Subject')}",
+      "trigger": "single-assignment module dispatches one task to one officer."
+    },
+    {
+      "id": "nitda-ip-02-bulk-dispatch",
+      "platform": "internal",
+      "name": "Bulk Consolidated Dispatch",
+      "subject": "[Batch @{outputs('Compose_Batch_Id')}] @{outputs('Compose_Batch_Total')} matters assigned for action",
+      "trigger": "bulk-assignment module dispatches a consolidated batch."
+    },
+    {
+      "id": "nitda-ip-03-email-to-task",
+      "platform": "internal",
+      "name": "Email-to-Task Assignment",
+      "subject": "[@{outputs('Compose_Priority_Level')}] Email converted to task \u2014 @{outputs('Compose_Reference_Id')}",
+      "trigger": "Customer-service mailbox item converted into a registry task."
+    },
+    {
+      "id": "nitda-ip-04-portal-intake-alert",
+      "platform": "internal",
+      "name": "Portal Intake Alert",
+      "subject": "New portal submission \u2014 @{outputs('Compose_Reference_Id')} awaiting triage",
+      "trigger": "Document Portal SUBMISSION flow lands a new public submission in intake."
+    },
+    {
+      "id": "nitda-ip-05-document-submitted-for-review",
+      "platform": "internal",
+      "name": "Document Submitted for Review",
+      "subject": "For review \u2014 @{outputs('Compose_Reference_Id')} \u2014 @{outputs('Compose_Subject')}",
+      "trigger": "An officer routes a document to a reviewer or unit head."
+    },
+    {
+      "id": "nitda-ip-06-action-required-reminder",
+      "platform": "internal",
+      "name": "Action Required \u2014 Overdue Escalation",
+      "subject": "OVERDUE \u2014 @{outputs('Compose_Reference_Id')} \u2014 action required now",
+      "trigger": "A task passes its due date without disposal; escalation rule fires."
+    },
+    {
+      "id": "nitda-ip-07-daily-task-digest",
+      "platform": "internal",
+      "name": "Daily Task Digest",
+      "subject": "Your DGO digest \u2014 @{outputs('Compose_Digest_Date')} \u2014 @{outputs('Compose_Batch_Total')} open matters",
+      "trigger": "Scheduled daily digest per officer or unit."
+    },
+    {
+      "id": "nitda-ip-08-approval-decision-request",
+      "platform": "internal",
+      "name": "Approval / Decision Request",
+      "subject": "For decision \u2014 @{outputs('Compose_Reference_Id')} \u2014 @{outputs('Compose_Subject')}",
+      "trigger": "approvals module routes a matter to a deciding authority."
+    },
+    {
+      "id": "nitda-ip-09-dispatch-transmittal",
+      "platform": "internal",
+      "name": "Dispatch / Transmittal Confirmation",
+      "subject": "Dispatched \u2014 @{outputs('Compose_Reference_Id')} \u2014 transmittal @{outputs('Compose_Transmittal_Ref')}",
+      "trigger": "dispatch module confirms outward transmission of a document."
+    },
+    {
+      "id": "nitda-ip-10-internal-support-request",
+      "platform": "internal",
+      "name": "Internal Support Request",
+      "subject": "[@{outputs('Compose_Priority_Level')}] Service desk @{outputs('Compose_Ticket_Ref')} \u2014 @{outputs('Compose_Subject')}",
+      "trigger": "Staff member raises an internal support request to the IT department."
+    },
+    {
+      "id": "nitda-ip-11-official-correspondence",
+      "platform": "internal",
+      "name": "Official Correspondence (outbound letterhead)",
+      "subject": "@{outputs('Compose_Reference_Id')} \u2014 @{outputs('Compose_Subject')}",
+      "trigger": "correspondence-email module composes outbound agency correspondence. Carries all six configured variants (official correspondence, request for information, transmittal, invitation, circular, closure) through Compose_Correspondence_Type and Compose_Body_Html."
+    },
+    {
+      "id": "nitda-ip-12-single-task-from-email",
+      "platform": "internal",
+      "name": "Single Task Assignment \u2014 Email Origin",
+      "subject": "[@{outputs('Compose_Priority_Level')}] Assignment \u2014 @{outputs('Compose_Reference_Id')} \u2014 from the email of @{outputs('Compose_Source_Sender_Name')}",
+      "trigger": "single-assignment module dispatches one task to one officer where that task was raised from an email received by the Agency."
+    },
+    {
+      "id": "nitda-dp-01-submission-received",
+      "platform": "portal",
+      "name": "Submission Received \u2014 Acknowledgement",
+      "subject": "Acknowledgement of Submission \u2014 @{outputs('Compose_Reference_Id')}",
+      "trigger": "SUBMISSION flow returns a minted registry reference."
+    },
+    {
+      "id": "nitda-dp-02-verification-code",
+      "platform": "portal",
+      "name": "Email Verification Code",
+      "subject": "Your NITDA verification code",
+      "trigger": "VERIFY flow issues a one-time code."
+    },
+    {
+      "id": "nitda-dp-03-under-review",
+      "platform": "portal",
+      "name": "Status \u2014 Under Review",
+      "subject": "Under review \u2014 @{outputs('Compose_Reference_Id')}",
+      "trigger": "Registry moves the record to the governed status \"review\"."
+    },
+    {
+      "id": "nitda-dp-04-request-for-information",
+      "platform": "portal",
+      "name": "Action Required \u2014 Request for Information",
+      "subject": "Action required \u2014 information needed on @{outputs('Compose_Reference_Id')}",
+      "trigger": "Officer raises a request for information; status becomes \"action-required\"."
+    },
+    {
+      "id": "nitda-dp-05-decision-issued",
+      "platform": "portal",
+      "name": "Decision Issued",
+      "subject": "Decision on @{outputs('Compose_Reference_Id')} \u2014 @{outputs('Compose_Decision_Label')}",
+      "trigger": "Unit head or DGCEO issues a decision (approved / declined)."
+    },
+    {
+      "id": "nitda-dp-06-matter-closed",
+      "platform": "portal",
+      "name": "Matter Closed \u2014 Final Response",
+      "subject": "Final response \u2014 @{outputs('Compose_Reference_Id')} now closed",
+      "trigger": "Registry closes and archives the record."
+    },
+    {
+      "id": "nitda-dp-07-support-case-acknowledged",
+      "platform": "portal",
+      "name": "Helpdesk Case Acknowledged",
+      "subject": "Helpdesk case @{outputs('Compose_Case_Ref')} \u2014 we have your request",
+      "trigger": "SUPPORT flow returns a CASE- reference."
+    },
+    {
+      "id": "nitda-dp-08-acknowledgement-overdue",
+      "platform": "portal",
+      "name": "Acknowledgement Clock Overdue",
+      "subject": "Status of @{outputs('Compose_Reference_Id')} \u2014 acknowledgement now overdue",
+      "trigger": "Working-day acknowledgement clock passes 3 days without substantive acknowledgement."
+    }
+  ]
+}

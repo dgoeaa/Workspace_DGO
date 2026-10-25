@@ -1,0 +1,1619 @@
+{
+  "nodeId": "Scope_Flow_Body",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Get_Governance_Registry": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getbytitle('DGO_HTTPFlowRegistry')/items?$top=5000",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {}
+      },
+      "Get_Governance_Ledger": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getbytitle('DGO_HTTPFlowExecutionLedger')/items?$top=5000",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Get_Governance_Registry": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Get_Governance_Exceptions": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getbytitle('DGO_HTTPFlowRegistryExceptions')/items?$top=5000",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Get_Governance_Ledger": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Governance": {
+        "type": "Compose",
+        "inputs": {
+          "Registry": {
+            "list": "DGO_HTTPFlowRegistry",
+            "read": "@equals(actions('Get_Governance_Registry')?['status'], 'Succeeded')",
+            "error": "@if(equals(actions('Get_Governance_Registry')?['status'], 'Succeeded'), '', string(coalesce(outputs('Get_Governance_Registry')?['body']?['error']?['message'], outputs('Get_Governance_Registry')?['body']?['odata.error']?['message']?['value'], actions('Get_Governance_Registry')?['status'])))",
+            "rows": "@if(equals(actions('Get_Governance_Registry')?['status'], 'Succeeded'), coalesce(outputs('Get_Governance_Registry')?['body']?['value'], json('[]')), json('[]'))"
+          },
+          "Ledger": {
+            "list": "DGO_HTTPFlowExecutionLedger",
+            "read": "@equals(actions('Get_Governance_Ledger')?['status'], 'Succeeded')",
+            "error": "@if(equals(actions('Get_Governance_Ledger')?['status'], 'Succeeded'), '', string(coalesce(outputs('Get_Governance_Ledger')?['body']?['error']?['message'], outputs('Get_Governance_Ledger')?['body']?['odata.error']?['message']?['value'], actions('Get_Governance_Ledger')?['status'])))",
+            "rows": "@if(equals(actions('Get_Governance_Ledger')?['status'], 'Succeeded'), coalesce(outputs('Get_Governance_Ledger')?['body']?['value'], json('[]')), json('[]'))"
+          },
+          "Exceptions": {
+            "list": "DGO_HTTPFlowRegistryExceptions",
+            "read": "@equals(actions('Get_Governance_Exceptions')?['status'], 'Succeeded')",
+            "error": "@if(equals(actions('Get_Governance_Exceptions')?['status'], 'Succeeded'), '', string(coalesce(outputs('Get_Governance_Exceptions')?['body']?['error']?['message'], outputs('Get_Governance_Exceptions')?['body']?['odata.error']?['message']?['value'], actions('Get_Governance_Exceptions')?['status'])))",
+            "rows": "@if(equals(actions('Get_Governance_Exceptions')?['status'], 'Succeeded'), coalesce(outputs('Get_Governance_Exceptions')?['body']?['value'], json('[]')), json('[]'))"
+          }
+        },
+        "runAfter": {
+          "Get_Governance_Exceptions": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Governance_Text": {
+        "type": "Compose",
+        "inputs": {
+          "Registry": "@toLower(string(outputs('Compose_Governance')?['Registry']?['rows']))",
+          "Ledger": "@toLower(string(outputs('Compose_Governance')?['Ledger']?['rows']))",
+          "Exceptions": "@toLower(string(outputs('Compose_Governance')?['Exceptions']?['rows']))"
+        },
+        "runAfter": {
+          "Compose_Governance": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Apply_to_each_In_Use_Flow": {
+        "type": "Foreach",
+        "foreach": "@variables('varInUse')",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "actions": {
+          "Set_varResolvedFlow_Empty": {
+            "type": "SetVariable",
+            "inputs": {
+              "name": "varResolvedFlow",
+              "value": "@string('')"
+            },
+            "runAfter": {}
+          },
+          "Apply_to_each_Candidate": {
+            "type": "Foreach",
+            "foreach": "@items('Apply_to_each_In_Use_Flow')?['Candidates']",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            },
+            "runAfter": {
+              "Set_varResolvedFlow_Empty": [
+                "Succeeded"
+              ]
+            },
+            "actions": {
+              "List_Candidate_Callback": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                    "connectionName": "shared_flowmanagement",
+                    "operationId": "ListCallbackUrl"
+                  },
+                  "parameters": {
+                    "environmentName": "@variables('varEnvironment')",
+                    "flowName": "@items('Apply_to_each_Candidate')"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {}
+              },
+              "Condition_Candidate_Is_Live": {
+                "type": "If",
+                "runAfter": {
+                  "List_Candidate_Callback": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@empty(variables('varResolvedFlow'))",
+                        true
+                      ]
+                    },
+                    {
+                      "or": [
+                        {
+                          "equals": [
+                            "@empty(items('Apply_to_each_In_Use_Flow')?['WorkflowId'])",
+                            true
+                          ]
+                        },
+                        {
+                          "equals": [
+                            "@contains(toLower(string(outputs('List_Candidate_Callback')?['body'])), toLower(items('Apply_to_each_In_Use_Flow')?['WorkflowId']))",
+                            true
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Set_varResolvedFlow_Candidate": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varResolvedFlow",
+                      "value": "@items('Apply_to_each_Candidate')"
+                    },
+                    "runAfter": {}
+                  }
+                },
+                "else": {
+                  "actions": {}
+                }
+              }
+            }
+          },
+          "Scope_Read_Live_Flow": {
+            "type": "Scope",
+            "runAfter": {
+              "Apply_to_each_Candidate": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "actions": {
+              "Get_Live_Flow": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                    "connectionName": "shared_flowmanagement",
+                    "operationId": "GetFlow"
+                  },
+                  "parameters": {
+                    "environmentName": "@variables('varEnvironment')",
+                    "flowName": "@variables('varResolvedFlow')"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {}
+              },
+              "List_Live_Flow_Owners": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                    "connectionName": "shared_flowmanagement",
+                    "operationId": "ListFlowOwners"
+                  },
+                  "parameters": {
+                    "environmentName": "@variables('varEnvironment')",
+                    "flowName": "@variables('varResolvedFlow')"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {
+                  "Get_Live_Flow": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "List_Live_Callback": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                    "connectionName": "shared_flowmanagement",
+                    "operationId": "ListCallbackUrl"
+                  },
+                  "parameters": {
+                    "environmentName": "@variables('varEnvironment')",
+                    "flowName": "@variables('varResolvedFlow')"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                },
+                "runAfter": {
+                  "List_Live_Flow_Owners": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ]
+                }
+              },
+              "Select_Live_Owner_Roles": {
+                "type": "Select",
+                "inputs": {
+                  "from": "@coalesce(outputs('List_Live_Flow_Owners')?['body']?['value'], json('[]'))",
+                  "select": "@string(coalesce(item()?['properties']?['roleName'], ''))"
+                },
+                "runAfter": {
+                  "List_Live_Callback": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ]
+                }
+              },
+              "Select_Live_Connectors": {
+                "type": "Select",
+                "inputs": {
+                  "from": "@skip(split(string(outputs('Get_Live_Flow')?['body']?['properties']?['connectionReferences']), '/providers/Microsoft.PowerApps/apis/'), 1)",
+                  "select": "@first(split(item(), '\"'))"
+                },
+                "runAfter": {
+                  "Select_Live_Owner_Roles": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Select_Live_Sites": {
+                "type": "Select",
+                "inputs": {
+                  "from": "@skip(split(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']), '\"dataset\":\"'), 1)",
+                  "select": "@first(split(item(), '\"'))"
+                },
+                "runAfter": {
+                  "Select_Live_Connectors": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Select_Live_Lists": {
+                "type": "Select",
+                "inputs": {
+                  "from": "@skip(split(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']), '\"table\":\"'), 1)",
+                  "select": "@first(split(item(), '\"'))"
+                },
+                "runAfter": {
+                  "Select_Live_Sites": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Live_Record": {
+                "type": "Compose",
+                "runAfter": {
+                  "Select_Live_Lists": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "Name": "@coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['displayName'], items('Apply_to_each_In_Use_Flow')?['Name'])",
+                  "FlowGuid": "@variables('varResolvedFlow')",
+                  "Retrieved": true,
+                  "PrimaryRole": "@items('Apply_to_each_In_Use_Flow')?['PrimaryRole']",
+                  "Platform": "@items('Apply_to_each_In_Use_Flow')?['Platform']",
+                  "ContractKeys": "@items('Apply_to_each_In_Use_Flow')?['ContractKeys']",
+                  "WorkflowId": "@items('Apply_to_each_In_Use_Flow')?['WorkflowId']",
+                  "CandidateFlows": "@join(items('Apply_to_each_In_Use_Flow')?['Candidates'], '; ')",
+                  "ConfiguredUrl": "@items('Apply_to_each_In_Use_Flow')?['ConfiguredUrl']",
+                  "CallbackUrlRedacted": "@if(contains(string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], '')), 'sig='), concat(first(split(string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], '')), 'sig=')), 'sig=<redacted>'), string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], '')))",
+                  "CallbackSignatureLength": "@if(contains(string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], '')), 'sig='), length(first(split(last(split(string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], '')), 'sig=')), '&'))), 0)",
+                  "CallbackMatchesConfiguration": "@if(or(empty(string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], ''))), empty(items('Apply_to_each_In_Use_Flow')?['ConfiguredUrl'])), 'n/a', if(equals(toLower(first(split(last(split(string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], '')), '/workflows/')), '/'))), toLower(first(split(last(split(items('Apply_to_each_In_Use_Flow')?['ConfiguredUrl'], '/workflows/')), '/')))), 'Yes', 'No'))",
+                  "State": "@string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['state'], ''))",
+                  "BaselineState": "@items('Apply_to_each_In_Use_Flow')?['State']",
+                  "StateChanged": "@not(equals(toLower(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['state'], ''))), toLower(items('Apply_to_each_In_Use_Flow')?['State'])))",
+                  "Created": "@string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['createdTime'], ''))",
+                  "Modified": "@string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['lastModifiedTime'], ''))",
+                  "BaselineModified": "@items('Apply_to_each_In_Use_Flow')?['Modified']",
+                  "ModifiedSinceBaseline": "@if(or(empty(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['lastModifiedTime'], ''))), empty(items('Apply_to_each_In_Use_Flow')?['Modified'])), false, greater(ticks(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['lastModifiedTime'], '1900-01-01T00:00:00Z')), ticks(concat(replace(coalesce(items('Apply_to_each_In_Use_Flow')?['Modified'], ''), ' ', 'T'), if(empty(items('Apply_to_each_In_Use_Flow')?['Modified']), '1900-01-01T00:00:00Z', 'Z')))))",
+                  "TriggerType": "@if(contains(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers']), '\"type\":\"Request\"'), 'HTTP request', if(contains(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers']), '\"type\":\"Recurrence\"'), 'Recurrence', if(contains(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers']), 'OpenApiConnection'), 'Connector event', if(empty(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers'], ''))), '', 'Other'))))",
+                  "Method": "@if(contains(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers']), '\"method\":\"'), first(split(substring(concat(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers']), '          '), add(max(indexOf(string(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers']), '\"method\":\"'), 0), 10)), '\"')), '')",
+                  "ActionCount": "@add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(add(sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"OpenApiConnection\"')), 1), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"OpenApiConnectionWebhook\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"ApiConnection\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"ApiConnectionWebhook\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Http\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"HttpWebhook\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Response\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Compose\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"ParseJson\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Query\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Select\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Table\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Join\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"InitializeVariable\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"SetVariable\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"AppendToArrayVariable\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"AppendToStringVariable\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"IncrementVariable\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"DecrementVariable\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Scope\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"If\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Switch\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Foreach\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Until\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Terminate\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Wait\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Workflow\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Expression\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"JavaScriptCode\"')), 1)), sub(length(split(string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['actions'], '')), '\"type\":\"Function\"')), 1))",
+                  "Connectors": "@join(union(body('Select_Live_Connectors'), body('Select_Live_Connectors')), '; ')",
+                  "Sites": "@join(union(body('Select_Live_Sites'), body('Select_Live_Sites')), '; ')",
+                  "ListCount": "@length(union(body('Select_Live_Lists'), body('Select_Live_Lists')))",
+                  "Owners": "@length(coalesce(outputs('List_Live_Flow_Owners')?['body']?['value'], json('[]')))",
+                  "OwnerRoles": "@join(union(body('Select_Live_Owner_Roles'), body('Select_Live_Owner_Roles')), '; ')",
+                  "FailureAlerts": "@if(equals(outputs('Get_Live_Flow')?['body']?['properties']?['flowFailureAlertSubscribed'], true), true, false)",
+                  "InRegistry": "@greater(if(empty(variables('varResolvedFlow')), 0, sub(length(split(outputs('Compose_Governance_Text')?['Registry'], toLower(variables('varResolvedFlow')))), 1)), 0)",
+                  "LedgerMentions": "@if(empty(variables('varResolvedFlow')), 0, sub(length(split(outputs('Compose_Governance_Text')?['Ledger'], toLower(variables('varResolvedFlow')))), 1))",
+                  "ExceptionMentions": "@if(empty(variables('varResolvedFlow')), 0, sub(length(split(outputs('Compose_Governance_Text')?['Exceptions'], toLower(variables('varResolvedFlow')))), 1))",
+                  "OpenInDesigner": "@concat('https://make.powerautomate.com/environments/', variables('varEnvironment'), '/flows/', variables('varResolvedFlow'), '/details')",
+                  "Creator": "@string(coalesce(outputs('Get_Live_Flow')?['body']?['properties']?['creator']?['objectId'], ''))",
+                  "Triggers": "@outputs('Get_Live_Flow')?['body']?['properties']?['definition']?['triggers']",
+                  "ConnectionReferences": "@outputs('Get_Live_Flow')?['body']?['properties']?['connectionReferences']",
+                  "Definition": "@outputs('Get_Live_Flow')?['body']?['properties']?['definition']"
+                }
+              },
+              "Append_to_varCallbackUrls": {
+                "type": "AppendToArrayVariable",
+                "runAfter": {
+                  "Compose_Live_Record": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "name": "varCallbackUrls",
+                  "value": {
+                    "Flow": "@outputs('Compose_Live_Record')?['Name']",
+                    "FlowGuid": "@variables('varResolvedFlow')",
+                    "Platform": "@items('Apply_to_each_In_Use_Flow')?['Platform']",
+                    "ContractKeys": "@items('Apply_to_each_In_Use_Flow')?['ContractKeys']",
+                    "WorkflowId": "@items('Apply_to_each_In_Use_Flow')?['WorkflowId']",
+                    "CallbackUrl": "@string(coalesce(outputs('List_Live_Callback')?['body']?['response']?['value'], outputs('List_Live_Callback')?['body']?['value'], ''))"
+                  }
+                }
+              },
+              "Append_to_varLiveFlows": {
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varLiveFlows",
+                  "value": "@outputs('Compose_Live_Record')"
+                },
+                "runAfter": {
+                  "Append_to_varCallbackUrls": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Apply_to_each_Live_List": {
+                "type": "Foreach",
+                "foreach": "@union(body('Select_Live_Lists'), body('Select_Live_Lists'))",
+                "runAfter": {
+                  "Append_to_varLiveFlows": [
+                    "Succeeded"
+                  ]
+                },
+                "actions": {
+                  "Append_to_varListsTouched": {
+                    "type": "AppendToArrayVariable",
+                    "runAfter": {},
+                    "inputs": {
+                      "name": "varListsTouched",
+                      "value": {
+                        "Flow": "@outputs('Compose_Live_Record')?['Name']",
+                        "FlowGuid": "@variables('varResolvedFlow')",
+                        "List": "@items('Apply_to_each_Live_List')",
+                        "Sites": "@outputs('Compose_Live_Record')?['Sites']"
+                      }
+                    }
+                  }
+                }
+              },
+              "Condition_Changed_Since_Baseline": {
+                "type": "If",
+                "runAfter": {
+                  "Apply_to_each_Live_List": [
+                    "Succeeded"
+                  ]
+                },
+                "expression": {
+                  "or": [
+                    {
+                      "equals": [
+                        "@outputs('Compose_Live_Record')?['StateChanged']",
+                        true
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@outputs('Compose_Live_Record')?['ModifiedSinceBaseline']",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Append_to_varChanges": {
+                    "type": "AppendToArrayVariable",
+                    "runAfter": {},
+                    "inputs": {
+                      "name": "varChanges",
+                      "value": {
+                        "Flow": "@outputs('Compose_Live_Record')?['Name']",
+                        "FlowGuid": "@variables('varResolvedFlow')",
+                        "Change": "@concat(if(outputs('Compose_Live_Record')?['StateChanged'], concat('State ', outputs('Compose_Live_Record')?['BaselineState'], ' → ', outputs('Compose_Live_Record')?['State'], '. '), ''), if(outputs('Compose_Live_Record')?['ModifiedSinceBaseline'], concat('Modified ', outputs('Compose_Live_Record')?['Modified'], ' (baseline ', outputs('Compose_Live_Record')?['BaselineModified'], ').'), ''))",
+                        "OpenInDesigner": "@concat('https://make.powerautomate.com/environments/', variables('varEnvironment'), '/flows/', variables('varResolvedFlow'), '/details')"
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {}
+                }
+              }
+            }
+          },
+          "Condition_Not_Readable": {
+            "type": "If",
+            "runAfter": {
+              "Scope_Read_Live_Flow": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@actions('Get_Live_Flow')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Append_to_varNotRetrieved": {
+                "type": "AppendToArrayVariable",
+                "runAfter": {},
+                "inputs": {
+                  "name": "varNotRetrieved",
+                  "value": {
+                    "Name": "@items('Apply_to_each_In_Use_Flow')?['Name']",
+                    "FlowGuid": "@variables('varResolvedFlow')",
+                    "PrimaryRole": "@items('Apply_to_each_In_Use_Flow')?['PrimaryRole']",
+                    "Platform": "@items('Apply_to_each_In_Use_Flow')?['Platform']",
+                    "ContractKeys": "@items('Apply_to_each_In_Use_Flow')?['ContractKeys']",
+                    "WorkflowId": "@items('Apply_to_each_In_Use_Flow')?['WorkflowId']",
+                    "CandidateFlows": "@join(items('Apply_to_each_In_Use_Flow')?['Candidates'], '; ')",
+                    "Reason": "@if(empty(variables('varResolvedFlow')), concat('None of the candidate tenant flows (', join(items('Apply_to_each_In_Use_Flow')?['Candidates'], ', '), ') has a live callback URL carrying the configured workflow ', items('Apply_to_each_In_Use_Flow')?['WorkflowId'], '.'), string(coalesce(outputs('Get_Live_Flow')?['body']?['error']?['message'], outputs('Get_Live_Flow')?['body']?['message'], actions('Get_Live_Flow')?['status'])))",
+                    "OpenInDesigner": "@if(empty(variables('varResolvedFlow')), '', concat('https://make.powerautomate.com/environments/', variables('varEnvironment'), '/flows/', variables('varResolvedFlow'), '/details'))"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_Governance_Text": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Live_State": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": "@toLower(string(coalesce(item()?['State'], '')))"
+        },
+        "runAfter": {
+          "Apply_to_each_In_Use_Flow": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Select_Live_Modified": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": "@toLower(string(item()?['ModifiedSinceBaseline']))"
+        },
+        "runAfter": {
+          "Select_Live_State": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Live_StateChanged": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": "@toLower(string(item()?['StateChanged']))"
+        },
+        "runAfter": {
+          "Select_Live_Modified": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Live_InRegistry": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": "@toLower(string(item()?['InRegistry']))"
+        },
+        "runAfter": {
+          "Select_Live_StateChanged": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Live_Callback": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": "@toLower(string(item()?['CallbackMatchesConfiguration']))"
+        },
+        "runAfter": {
+          "Select_Live_InRegistry": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Live_Flags": {
+        "type": "Compose",
+        "inputs": {
+          "State": "@concat('|', join(body('Select_Live_State'), '||'), '|')",
+          "Modified": "@concat('|', join(body('Select_Live_Modified'), '||'), '|')",
+          "StateChanged": "@concat('|', join(body('Select_Live_StateChanged'), '||'), '|')",
+          "InRegistry": "@concat('|', join(body('Select_Live_InRegistry'), '||'), '|')",
+          "Callback": "@concat('|', join(body('Select_Live_Callback'), '||'), '|')"
+        },
+        "runAfter": {
+          "Select_Live_Callback": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Primary_Roles": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varInUse')",
+          "select": "@item()?['PrimaryRole']"
+        },
+        "runAfter": {
+          "Compose_Live_Flags": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Roles_Joined": {
+        "type": "Compose",
+        "inputs": "@concat('|', join(body('Select_Primary_Roles'), '||'), '|')",
+        "runAfter": {
+          "Select_Primary_Roles": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_By_Role": {
+        "type": "Compose",
+        "inputs": [
+          {
+            "PrimaryRole": "Folio Workspace",
+            "Flows": "@sub(length(split(outputs('Compose_Roles_Joined'), '|Folio Workspace|')), 1)"
+          },
+          {
+            "PrimaryRole": "NITDA Document Portal",
+            "Flows": "@sub(length(split(outputs('Compose_Roles_Joined'), '|NITDA Document Portal|')), 1)"
+          },
+          {
+            "PrimaryRole": "Correspondence Mailer",
+            "Flows": "@sub(length(split(outputs('Compose_Roles_Joined'), '|Correspondence Mailer|')), 1)"
+          },
+          {
+            "PrimaryRole": "Estate Console / Flow Workbench",
+            "Flows": "@sub(length(split(outputs('Compose_Roles_Joined'), '|Estate Console / Flow Workbench|')), 1)"
+          },
+          {
+            "PrimaryRole": "Background automation",
+            "Flows": "@sub(length(split(outputs('Compose_Roles_Joined'), '|Background automation|')), 1)"
+          }
+        ],
+        "runAfter": {
+          "Compose_Roles_Joined": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Distinct_Lists": {
+        "type": "Compose",
+        "inputs": "@union(variables('varListsTouched'), json('[]'))",
+        "runAfter": {
+          "Compose_By_Role": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Generated_At": {
+        "type": "Compose",
+        "inputs": "@utcNow()",
+        "runAfter": {
+          "Compose_Distinct_Lists": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Totals": {
+        "type": "Compose",
+        "inputs": {
+          "inUse": "@length(variables('varInUse'))",
+          "retrievedLive": "@length(variables('varLiveFlows'))",
+          "notRetrieved": "@length(variables('varNotRetrieved'))",
+          "on": "@sub(length(split(outputs('Compose_Live_Flags')?['State'], '|started|')), 1)",
+          "notOn": "@sub(length(variables('varLiveFlows')), sub(length(split(outputs('Compose_Live_Flags')?['State'], '|started|')), 1))",
+          "modifiedSinceBaseline": "@sub(length(split(outputs('Compose_Live_Flags')?['Modified'], '|true|')), 1)",
+          "stateChanged": "@sub(length(split(outputs('Compose_Live_Flags')?['StateChanged'], '|true|')), 1)",
+          "inRegistry": "@sub(length(split(outputs('Compose_Live_Flags')?['InRegistry'], '|true|')), 1)",
+          "listTouches": "@length(variables('varListsTouched'))",
+          "callbackMatches": "@sub(length(split(outputs('Compose_Live_Flags')?['Callback'], '|yes|')), 1)",
+          "callbackMismatches": "@sub(length(split(outputs('Compose_Live_Flags')?['Callback'], '|no|')), 1)",
+          "registryRows": "@length(outputs('Compose_Governance')?['Registry']?['rows'])",
+          "ledgerRows": "@length(outputs('Compose_Governance')?['Ledger']?['rows'])",
+          "exceptionRows": "@length(outputs('Compose_Governance')?['Exceptions']?['rows'])"
+        },
+        "runAfter": {
+          "Compose_Generated_At": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Run_Stamp": {
+        "type": "Compose",
+        "inputs": "@formatDateTime(outputs('Compose_Generated_At'), 'yyyy-MM-dd_HHmm')",
+        "runAfter": {
+          "Compose_Totals": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Report_Head": {
+        "type": "Compose",
+        "inputs": "@concat('<!doctype html><html><head><meta charset=\"utf-8\"><title>Folio Flow Estate — Live Report</title><style>td.k{padding:6px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;color:#5F5C5D;width:200px;vertical-align:top}td.v{padding:6px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top;word-break:break-all}</style></head><body style=\"margin:0;background:#FAFAF9;font-family:Arial,Segoe UI,sans-serif;color:#373435\"><div style=\"max-width:1100px;margin:0 auto;padding:24px\"><div style=\"background:#fff;border:1px solid #E8E6E7;border-radius:18px;overflow:hidden\">','<div style=\"background:#05583B;color:#fff;padding:18px 22px\"><div style=\"font-size:11px;letter-spacing:.12em;text-transform:uppercase\">Federal Ministry of Communications, Innovation &amp; Digital Economy</div><h1 style=\"margin:6px 0 0;font-size:22px\">National Information Technology Development Agency</h1><div>Office of the Director-General/CEO</div></div>','<div style=\"padding:22px\"><div style=\"display:inline-block;background:#17B255;color:#011610;border-radius:999px;padding:5px 10px;font-size:12px\">Official · Internal · Live read</div><h2 style=\"margin:14px 0 4px;color:#05583B;font-size:22px\">Folio Flow Estate — Live Report</h2><p style=\"color:#5F5C5D;margin:0\">Read live from the tenant ',formatDateTime(outputs('Compose_Generated_At'),'dd MMMM yyyy HH:mm'),' UTC · Run ',workflow()?['run']?['name'],' · Environment ',replace(replace(replace(string(coalesce(variables('varEnvironment'),'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</p><table style=\"width:100%;border-collapse:separate;margin:14px 0\"><tr>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['inUse']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">In use by the platforms</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['retrievedLive']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">Read live</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['notRetrieved']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">Not readable</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['on']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">On</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['notOn']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">Not on</div></div></td>','</tr><tr>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['modifiedSinceBaseline']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">Modified since 2026-09-26</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['stateChanged']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">State changed</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['inRegistry']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">In flow registry</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['callbackMatches']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">Callback = configured</div></div></td>','<td style=\"padding:5px\"><div style=\"background:#FAFAF9;border:1px solid #E8E6E7;border-top:4px solid #17B255;border-radius:12px;padding:10px 12px\"><div style=\"font-size:24px;font-weight:bold;color:#05583B\">',string(outputs('Compose_Totals')?['callbackMismatches']),'</div><div style=\"font-size:10px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.06em\">Callback ≠ configured</div></div></td>','</tr></table>')",
+        "runAfter": {
+          "Compose_Run_Stamp": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Role_Rows": {
+        "type": "Select",
+        "inputs": {
+          "from": "@outputs('Compose_By_Role')",
+          "select": "@concat('<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['PrimaryRole'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',string(item()?['Flows']),'</td></tr>')"
+        },
+        "runAfter": {
+          "Compose_Report_Head": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Index_Rows": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": "@concat('<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',concat('<a style=\"color:#05583B\" href=\"#f-', item()?['FlowGuid'], '\"><b>', replace(replace(replace(string(coalesce(item()?['Name'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'), '</b></a>'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Platform'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['ContractKeys'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['State'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['TriggerType'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',string(item()?['ActionCount']),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['CallbackMatchesConfiguration'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',if(equals(item()?['InRegistry'], true), 'Yes', 'No'),'</td></tr>')"
+        },
+        "runAfter": {
+          "Select_Role_Rows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Flow_Cards": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": "@concat('<div id=\"f-',item()?['FlowGuid'],'\" style=\"border:1px solid #E8E6E7;border-left:5px solid #05583B;border-radius:12px;padding:10px 14px;margin:12px 0\"><h3 style=\"margin:0 0 4px;color:#05583B;font-size:15px\">',replace(replace(replace(string(coalesce(item()?['Name'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),' <span style=\"background:#17B255;color:#011610;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:normal\">',replace(replace(replace(string(coalesce(item()?['PrimaryRole'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</span></h3><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\">','<tr><td class=\"k\">Platform</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['Platform'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Contract keys</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['ContractKeys'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Configured workflow ID</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['WorkflowId'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Configured endpoint (register)</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['ConfiguredUrl'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Live callback URL</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['CallbackUrlRedacted'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Callback signature</td><td class=\"v\">',concat(string(item()?['CallbackSignatureLength']), ' characters (full URL in the restricted callback file)'),'</td></tr>','<tr><td class=\"k\">Callback = configured</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['CallbackMatchesConfiguration'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Tenant flow ID (live)</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['FlowGuid'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Candidates checked</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['CandidateFlows'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Creator</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['Creator'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">State (live / baseline)</td><td class=\"v\">',concat(replace(replace(replace(string(coalesce(item()?['State'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'), ' / ', replace(replace(replace(string(coalesce(item()?['BaselineState'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;')),'</td></tr>','<tr><td class=\"k\">Modified (live / baseline)</td><td class=\"v\">',concat(replace(replace(replace(string(coalesce(item()?['Modified'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'), ' / ', replace(replace(replace(string(coalesce(item()?['BaselineModified'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;')),'</td></tr>','<tr><td class=\"k\">Created</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['Created'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">Trigger</td><td class=\"v\">',concat(replace(replace(replace(string(coalesce(item()?['TriggerType'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'), if(empty(item()?['Method']), '', concat(' · ', replace(replace(replace(string(coalesce(item()?['Method'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;')))),'</td></tr>','<tr><td class=\"k\">Actions</td><td class=\"v\">',concat(string(item()?['ActionCount']), ' (action definitions in the live definition, including any carried as data)'),'</td></tr>','<tr><td class=\"k\">Connectors</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['Connectors'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">SharePoint sites</td><td class=\"v\">',replace(replace(replace(string(coalesce(item()?['Sites'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>','<tr><td class=\"k\">SharePoint lists</td><td class=\"v\">',string(item()?['ListCount']),'</td></tr>','<tr><td class=\"k\">Owners</td><td class=\"v\">',concat(string(item()?['Owners']), if(empty(item()?['OwnerRoles']), '', concat(' (', replace(replace(replace(string(coalesce(item()?['OwnerRoles'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'), ')'))),'</td></tr>','<tr><td class=\"k\">Failure alerts</td><td class=\"v\">',if(equals(item()?['FailureAlerts'], true), 'On', 'Off'),'</td></tr>','<tr><td class=\"k\">Full definition</td><td class=\"v\">',concat('In flows/<name>__', item()?['FlowGuid'], '.json and the complete JSON'),'</td></tr>','<tr><td class=\"k\">In DGO_HTTPFlowRegistry</td><td class=\"v\">',if(equals(item()?['InRegistry'], true), 'Yes', 'No'),'</td></tr>','<tr><td class=\"k\">Execution ledger mentions</td><td class=\"v\">',string(item()?['LedgerMentions']),'</td></tr>','<tr><td class=\"k\">Registry exception mentions</td><td class=\"v\">',string(item()?['ExceptionMentions']),'</td></tr>','<tr><td class=\"k\">Open in designer</td><td class=\"v\">',concat('<a style=\"color:#05583B\" href=\"', item()?['OpenInDesigner'], '\">Open</a>'),'</td></tr></table></div>')"
+        },
+        "runAfter": {
+          "Select_Index_Rows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_List_Rows": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varListsTouched')",
+          "select": "@concat('<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Flow'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['List'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Sites'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td></tr>')"
+        },
+        "runAfter": {
+          "Select_Flow_Cards": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Change_Rows": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varChanges')",
+          "select": "@concat('<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Flow'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Change'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',concat('<a style=\"color:#05583B\" href=\"', item()?['OpenInDesigner'], '\">Open</a>'),'</td></tr>')"
+        },
+        "runAfter": {
+          "Select_List_Rows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Not_Retrieved_Rows": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varNotRetrieved')",
+          "select": "@concat('<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Name'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Platform'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['ContractKeys'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',replace(replace(replace(string(coalesce(item()?['Reason'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',concat('<a style=\"color:#05583B\" href=\"', item()?['OpenInDesigner'], '\">Open</a>'),'</td></tr>')"
+        },
+        "runAfter": {
+          "Select_Change_Rows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Report_HTML": {
+        "type": "Compose",
+        "inputs": "@concat(outputs('Compose_Report_Head'),'<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">1. Changes since the 2026-09-26 export</h2><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Flow</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Change</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Designer</th></tr>',join(body('Select_Change_Rows'),''),'</table>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">2. Endpoints and flows that could not be read</h2><p style=\"font-size:12px;color:#5F5C5D;margin:4px 0 8px\">No candidate tenant flow carries the configured workflow ID, or the flow is deleted, or not visible to the connection that ran this report.</p><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Flow</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Platform</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Contract keys</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Reason</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Designer</th></tr>',join(body('Select_Not_Retrieved_Rows'),''),'</table>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">3. In use, by platform</h2><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Platform</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Flows</th></tr>',join(body('Select_Role_Rows'),''),'</table>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">4. Endpoints and flows in use, live</h2><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Flow</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Platform</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Contract keys</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">State</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Trigger</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Actions</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Callback = configured</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Registered</th></tr>',join(body('Select_Index_Rows'),''),'</table>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">5. Flow details, live</h2>',join(body('Select_Flow_Cards'),''),'<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">6. SharePoint lists the flows touch, from their live definitions</h2><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Flow</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">List</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Sites in that flow</th></tr>',join(body('Select_List_Rows'),''),'</table>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">7. Governance lists</h2><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">List</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Read</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Rows</th></tr>','<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">DGO_HTTPFlowRegistry</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',if(outputs('Compose_Governance')?['Registry']?['read'], 'Read', concat('Not read: ', replace(replace(replace(string(coalesce(outputs('Compose_Governance')?['Registry']?['error'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'))),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',string(length(outputs('Compose_Governance')?['Registry']?['rows'])),'</td></tr>','<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">DGO_HTTPFlowExecutionLedger</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',if(outputs('Compose_Governance')?['Ledger']?['read'], 'Read', concat('Not read: ', replace(replace(replace(string(coalesce(outputs('Compose_Governance')?['Ledger']?['error'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'))),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',string(length(outputs('Compose_Governance')?['Ledger']?['rows'])),'</td></tr>','<tr><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">DGO_HTTPFlowRegistryExceptions</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',if(outputs('Compose_Governance')?['Exceptions']?['read'], 'Read', concat('Not read: ', replace(replace(replace(string(coalesce(outputs('Compose_Governance')?['Exceptions']?['error'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'))),'</td><td style=\"padding:7px 10px;border-bottom:1px solid #E8E6E7;font-size:12px;vertical-align:top\">',string(length(outputs('Compose_Governance')?['Exceptions']?['rows'])),'</td></tr>','</table>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">8. Sources</h2><p style=\"font-size:12px;color:#5F5C5D;margin:4px 0 8px\">Which flows: the endpoint register''s current configuration (Workspace, Document Portal), the Mailer''s settings, the GOV registry flows and the background carriers. Live: Power Automate Management (GetFlow, ListFlowOwners, ListCallbackUrl) and SharePoint on DGO_ECM_GOVERNANCE, read at the time above. Earlier state compared against: ',replace(replace(replace(string(coalesce(variables('varSources')?['usageAnalysis'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),' (',replace(replace(replace(string(coalesce(variables('varSources')?['tenantExport'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),').</p></div>','<div style=\"border-top:1px solid #E8E6E7;padding:14px 22px;color:#5F5C5D;font-size:12px\">Confidentiality Notice: This report is for internal use within the Agency. If received in error, please notify the sender and delete it.<br>National Information Technology Development Agency · Office of the Director-General/CEO</div></div></div></body></html>')",
+        "runAfter": {
+          "Select_Not_Retrieved_Rows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Full_JSON": {
+        "type": "Compose",
+        "inputs": {
+          "report": {
+            "title": "Folio Flow Estate — Live Report",
+            "generatedUtc": "@outputs('Compose_Generated_At')",
+            "runId": "@workflow()?['run']?['name']",
+            "reportFlow": "@workflow()?['tags']?['flowDisplayName']",
+            "environment": "@variables('varEnvironment')",
+            "issuer": {
+              "agency": "National Information Technology Development Agency",
+              "office": "Office of the Director-General/CEO",
+              "ministry": "Federal Ministry of Communications, Innovation & Digital Economy"
+            },
+            "baselineSources": "@variables('varSources')"
+          },
+          "totals": "@outputs('Compose_Totals')",
+          "byRole": "@outputs('Compose_By_Role')",
+          "flowsLive": "@variables('varLiveFlows')",
+          "changesSinceBaseline": "@variables('varChanges')",
+          "notRetrieved": "@variables('varNotRetrieved')",
+          "listsTouched": "@variables('varListsTouched')",
+          "governance": "@outputs('Compose_Governance')",
+          "inUseConfiguration": "@variables('varInUse')",
+          "callbackUrls": "Full signed callback URLs are filed separately in the restricted callback file, not in this JSON."
+        },
+        "runAfter": {
+          "Compose_Report_HTML": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Report_Data": {
+        "type": "Compose",
+        "inputs": {
+          "report": "@outputs('Compose_Full_JSON')?['report']",
+          "totals": "@outputs('Compose_Totals')",
+          "flowsLive": "@variables('varLiveFlows')",
+          "notRetrieved": "@variables('varNotRetrieved')",
+          "changesSinceBaseline": "@variables('varChanges')",
+          "listsTouched": "@variables('varListsTouched')",
+          "governance": {
+            "Registry": {
+              "list": "@outputs('Compose_Governance')?['Registry']?['list']",
+              "read": "@outputs('Compose_Governance')?['Registry']?['read']",
+              "error": "@outputs('Compose_Governance')?['Registry']?['error']",
+              "rowCount": "@length(outputs('Compose_Governance')?['Registry']?['rows'])"
+            },
+            "Ledger": {
+              "list": "@outputs('Compose_Governance')?['Ledger']?['list']",
+              "read": "@outputs('Compose_Governance')?['Ledger']?['read']",
+              "error": "@outputs('Compose_Governance')?['Ledger']?['error']",
+              "rowCount": "@length(outputs('Compose_Governance')?['Ledger']?['rows'])"
+            },
+            "Exceptions": {
+              "list": "@outputs('Compose_Governance')?['Exceptions']?['list']",
+              "read": "@outputs('Compose_Governance')?['Exceptions']?['read']",
+              "error": "@outputs('Compose_Governance')?['Exceptions']?['error']",
+              "rowCount": "@length(outputs('Compose_Governance')?['Exceptions']?['rows'])"
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_Full_JSON": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Interactive_HTML": {
+        "type": "Compose",
+        "inputs": "@replace(variables('varReportTemplate'), '\"__REPORT_DATA__\"', replace(string(outputs('Compose_Report_Data')), '</', '<\\/'))",
+        "runAfter": {
+          "Compose_Report_Data": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_CSV_Flows": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('varLiveFlows')",
+          "select": {
+            "Name": "@item()?['Name']",
+            "Platform": "@item()?['Platform']",
+            "ContractKeys": "@item()?['ContractKeys']",
+            "WorkflowId": "@item()?['WorkflowId']",
+            "FlowGuid": "@item()?['FlowGuid']",
+            "State": "@item()?['State']",
+            "Created": "@item()?['Created']",
+            "Modified": "@item()?['Modified']",
+            "TriggerType": "@item()?['TriggerType']",
+            "Method": "@item()?['Method']",
+            "ActionCount": "@item()?['ActionCount']",
+            "Connectors": "@item()?['Connectors']",
+            "Sites": "@item()?['Sites']",
+            "ListCount": "@item()?['ListCount']",
+            "Owners": "@item()?['Owners']",
+            "OwnerRoles": "@item()?['OwnerRoles']",
+            "FailureAlerts": "@item()?['FailureAlerts']",
+            "ConfiguredUrl": "@item()?['ConfiguredUrl']",
+            "CallbackUrlRedacted": "@item()?['CallbackUrlRedacted']",
+            "CallbackSignatureLength": "@item()?['CallbackSignatureLength']",
+            "CallbackMatchesConfiguration": "@item()?['CallbackMatchesConfiguration']",
+            "InRegistry": "@item()?['InRegistry']",
+            "LedgerMentions": "@item()?['LedgerMentions']",
+            "ExceptionMentions": "@item()?['ExceptionMentions']",
+            "CandidateFlows": "@item()?['CandidateFlows']",
+            "OpenInDesigner": "@item()?['OpenInDesigner']"
+          }
+        },
+        "runAfter": {
+          "Compose_Interactive_HTML": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Create_CSV_Flows": {
+        "type": "Table",
+        "inputs": {
+          "from": "@body('Select_CSV_Flows')",
+          "format": "CSV"
+        },
+        "runAfter": {
+          "Select_CSV_Flows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Create_CSV_Lists_Touched": {
+        "type": "Table",
+        "inputs": {
+          "from": "@variables('varListsTouched')",
+          "format": "CSV"
+        },
+        "runAfter": {
+          "Create_CSV_Flows": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Create_CSV_Changes": {
+        "type": "Table",
+        "inputs": {
+          "from": "@union(variables('varChanges'), variables('varNotRetrieved'))",
+          "format": "CSV"
+        },
+        "runAfter": {
+          "Create_CSV_Lists_Touched": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_File_Names": {
+        "type": "Compose",
+        "inputs": {
+          "html": "@concat('Folio-Flow-Estate_', outputs('Compose_Run_Stamp'), '.html')",
+          "pdf": "@concat('Folio-Flow-Estate_', outputs('Compose_Run_Stamp'), '.pdf')",
+          "json": "@concat('Folio-Flow-Estate_', outputs('Compose_Run_Stamp'), '.json')",
+          "csvFlows": "@concat('Folio-Flow-Estate-Flows_', outputs('Compose_Run_Stamp'), '.csv')",
+          "csvLists": "@concat('Folio-Flow-Estate-Lists_', outputs('Compose_Run_Stamp'), '.csv')",
+          "csvChanges": "@concat('Folio-Flow-Estate-Changes_', outputs('Compose_Run_Stamp'), '.csv')",
+          "callbacks": "@concat('Folio-Flow-Estate-CONFIDENTIAL-Callback-URLs_', outputs('Compose_Run_Stamp'), '.json')",
+          "interactive": "@concat('Folio-Flow-Estate-Interactive_', outputs('Compose_Run_Stamp'), '.html')",
+          "printable": "@concat('Folio-Flow-Estate-Printable_', outputs('Compose_Run_Stamp'), '.html')",
+          "folder": "@concat('/Shared Documents/Folio Flow Estate Reports/', outputs('Compose_Run_Stamp'))"
+        },
+        "runAfter": {
+          "Create_CSV_Changes": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Create_HTML_in_OneDrive": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connectionName": "shared_onedriveforbusiness",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "folderPath": "/Folio Flow Estate Reports",
+            "name": "@outputs('Compose_File_Names')?['html']",
+            "body": "@outputs('Compose_Report_HTML')"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Compose_File_Names": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Convert_Report_to_PDF": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness",
+            "connectionName": "shared_onedriveforbusiness",
+            "operationId": "ConvertFile"
+          },
+          "parameters": {
+            "id": "@outputs('Create_HTML_in_OneDrive')?['body']?['Id']",
+            "type": "PDF"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Create_HTML_in_OneDrive": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_PDF_Made": {
+        "type": "Compose",
+        "inputs": "@equals(actions('Convert_Report_to_PDF')?['status'], 'Succeeded')",
+        "runAfter": {
+          "Convert_Report_to_PDF": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Create_Record_Interactive": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "folderPath": "@outputs('Compose_File_Names')?['folder']",
+            "name": "@outputs('Compose_File_Names')?['interactive']",
+            "body": "@outputs('Compose_Interactive_HTML')"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Compose_PDF_Made": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Create_Record_HTML": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "folderPath": "@outputs('Compose_File_Names')?['folder']",
+            "name": "@outputs('Compose_File_Names')?['printable']",
+            "body": "@outputs('Compose_Report_HTML')"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Create_Record_Interactive": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Create_Record_JSON": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "folderPath": "@outputs('Compose_File_Names')?['folder']",
+            "name": "@outputs('Compose_File_Names')?['json']",
+            "body": "@string(outputs('Compose_Full_JSON'))"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Create_Record_HTML": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Create_Record_CSV_Flows": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "folderPath": "@outputs('Compose_File_Names')?['folder']",
+            "name": "@outputs('Compose_File_Names')?['csvFlows']",
+            "body": "@body('Create_CSV_Flows')"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Create_Record_JSON": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Create_Record_CSV_Lists": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "folderPath": "@outputs('Compose_File_Names')?['folder']",
+            "name": "@outputs('Compose_File_Names')?['csvLists']",
+            "body": "@body('Create_CSV_Lists_Touched')"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Create_Record_CSV_Flows": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Create_Record_CSV_Changes": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "folderPath": "@outputs('Compose_File_Names')?['folder']",
+            "name": "@outputs('Compose_File_Names')?['csvChanges']",
+            "body": "@body('Create_CSV_Changes')"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Create_Record_CSV_Lists": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Create_Record_Callback_URLs": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "folderPath": "@outputs('Compose_File_Names')?['folder']",
+            "name": "@outputs('Compose_File_Names')?['callbacks']",
+            "body": "@string(variables('varCallbackUrls'))"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Create_Record_CSV_Changes": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Apply_to_each_Flow_File": {
+        "type": "Foreach",
+        "foreach": "@union(variables('varLiveFlows'), variables('varNotRetrieved'))",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 5
+          }
+        },
+        "actions": {
+          "Create_Record_Flow_File": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "CreateFile"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "folderPath": "@concat(outputs('Compose_File_Names')?['folder'], '/flows')",
+                "name": "@concat(replace(replace(string(items('Apply_to_each_Flow_File')?['Name']), ' ', '_'), '/', '_'), '__', if(empty(items('Apply_to_each_Flow_File')?['FlowGuid']), concat('unread_', items('Apply_to_each_Flow_File')?['WorkflowId']), items('Apply_to_each_Flow_File')?['FlowGuid']), '.json')",
+                "body": "@string(items('Apply_to_each_Flow_File'))"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {}
+          }
+        },
+        "runAfter": {
+          "Create_Record_Callback_URLs": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Condition_File_PDF": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@outputs('Compose_PDF_Made')",
+                true
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Create_Record_PDF": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "CreateFile"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "folderPath": "@outputs('Compose_File_Names')?['folder']",
+                "name": "@outputs('Compose_File_Names')?['pdf']",
+                "body": "@body('Convert_Report_to_PDF')"
+              },
+              "authentication": "@parameters('$authentication')"
+            },
+            "runAfter": {}
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Apply_to_each_Flow_File": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Filed": {
+        "type": "Compose",
+        "inputs": {
+          "folder": "@concat('https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE', outputs('Compose_File_Names')?['folder'])",
+          "filed": "@concat(if(equals(actions('Create_Record_Interactive')?['status'], 'Succeeded'), 'Interactive ', ''), if(equals(actions('Create_Record_HTML')?['status'], 'Succeeded'), 'HTML ', ''), if(equals(actions('Create_Record_JSON')?['status'], 'Succeeded'), 'JSON ', ''), if(equals(actions('Create_Record_CSV_Flows')?['status'], 'Succeeded'), 'CSV Flows ', ''), if(equals(actions('Create_Record_CSV_Lists')?['status'], 'Succeeded'), 'CSV Lists ', ''), if(equals(actions('Create_Record_CSV_Changes')?['status'], 'Succeeded'), 'CSV Changes ', ''), if(equals(actions('Create_Record_PDF')?['status'], 'Succeeded'), 'PDF ', ''), if(equals(actions('Create_Record_Callback_URLs')?['status'], 'Succeeded'), 'Callback-URLs (restricted) ', ''), if(equals(actions('Apply_to_each_Flow_File')?['status'], 'Succeeded'), concat(string(add(length(variables('varLiveFlows')), length(variables('varNotRetrieved')))), ' per-flow files '), ''))"
+        },
+        "runAfter": {
+          "Condition_File_PDF": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Base_Attachments": {
+        "type": "Compose",
+        "inputs": [
+          {
+            "Name": "@outputs('Compose_File_Names')?['interactive']",
+            "ContentBytes": "@base64(outputs('Compose_Interactive_HTML'))"
+          },
+          {
+            "Name": "@outputs('Compose_File_Names')?['printable']",
+            "ContentBytes": "@base64(outputs('Compose_Report_HTML'))"
+          },
+          {
+            "Name": "@outputs('Compose_File_Names')?['json']",
+            "ContentBytes": "@base64(string(outputs('Compose_Full_JSON')))"
+          },
+          {
+            "Name": "@outputs('Compose_File_Names')?['csvFlows']",
+            "ContentBytes": "@base64(body('Create_CSV_Flows'))"
+          },
+          {
+            "Name": "@outputs('Compose_File_Names')?['csvLists']",
+            "ContentBytes": "@base64(body('Create_CSV_Lists_Touched'))"
+          },
+          {
+            "Name": "@outputs('Compose_File_Names')?['csvChanges']",
+            "ContentBytes": "@base64(body('Create_CSV_Changes'))"
+          }
+        ],
+        "runAfter": {
+          "Compose_Filed": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Attachments": {
+        "type": "Compose",
+        "inputs": "@union(outputs('Compose_Base_Attachments'), if(outputs('Compose_PDF_Made'), createArray(json(concat('{\"Name\":\"', outputs('Compose_File_Names')?['pdf'], '\",\"ContentBytes\":\"', string(body('Convert_Report_to_PDF')?['$content']), '\"}'))), json('[]')))",
+        "runAfter": {
+          "Compose_Base_Attachments": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Email_HTML": {
+        "type": "Compose",
+        "inputs": "@concat(outputs('Compose_Report_Head'),'<p style=\"font-size:13px;margin:6px 0 14px\">Open the attached <b>Interactive report</b> for navigation, search, filters, the dashboard and each flow''s full definition. The <b>Printable</b> report and PDF carry the same content for print.</p>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">Changes since the 2026-09-26 export</h2><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Flow</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Change</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Designer</th></tr>',join(body('Select_Change_Rows'),''),'</table>','<h2 style=\"color:#05583B;font-size:17px;margin:26px 0 6px;border-bottom:2px solid #17B255;padding-bottom:4px\">Not readable</h2><table style=\"width:100%;border-collapse:collapse;margin:8px 0 18px\"><tr><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Flow</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Platform</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Contract keys</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Reason</th><th style=\"text-align:left;background:#05583B;color:#fff;padding:8px 10px;font-size:12px\">Designer</th></tr>',join(body('Select_Not_Retrieved_Rows'),''),'</table>','</div><div style=\"border-top:1px solid #E8E6E7;padding:14px 22px;color:#5F5C5D;font-size:12px\">Confidentiality Notice: This report is for internal use within the Agency. If received in error, please notify the sender and delete it.<br>National Information Technology Development Agency · Office of the Director-General/CEO</div></div></div></body></html>')",
+        "runAfter": {
+          "Compose_Attachments": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Send_an_email_Folio_Flow_Estate": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connectionName": "shared_office365",
+            "operationId": "SendEmailV2"
+          },
+          "parameters": {
+            "emailMessage/To": "@coalesce(triggerOutputs()?['headers']?['x-ms-user-email'], 'dgsRegistry@nitda.gov.ng')",
+            "emailMessage/Subject": "@concat('Folio Flow Estate — Live Report — ', formatDateTime(outputs('Compose_Generated_At'),'dd MMMM yyyy HH:mm'), ' UTC — ', string(outputs('Compose_Totals')?['retrievedLive']), ' read, ', string(outputs('Compose_Totals')?['notRetrieved']), ' not readable, ', string(length(variables('varChanges'))), ' changed')",
+            "emailMessage/Body": "@concat('<p style=\"font-family:Arial;font-size:12px;color:#5F5C5D\">Filed: ', outputs('Compose_Filed')?['filed'], '· <a href=\"', outputs('Compose_Filed')?['folder'], '\">record folder</a>', if(outputs('Compose_PDF_Made'), '', ' · PDF not produced this run'), '</p>', outputs('Compose_Email_HTML'))",
+            "emailMessage/Attachments": "@outputs('Compose_Attachments')",
+            "emailMessage/Importance": "Normal"
+          },
+          "authentication": "@parameters('$authentication')"
+        },
+        "runAfter": {
+          "Compose_Email_HTML": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Governance_Registry": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Governance_Ledger": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Governance_Exceptions": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "List_Candidate_Callback": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement/connections/shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+        },
+        "connectionName": "shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+      },
+      "referenceKey": "shared_flowmanagement"
+    },
+    "Get_Live_Flow": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement/connections/shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+        },
+        "connectionName": "shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+      },
+      "referenceKey": "shared_flowmanagement"
+    },
+    "List_Live_Flow_Owners": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement/connections/shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+        },
+        "connectionName": "shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+      },
+      "referenceKey": "shared_flowmanagement"
+    },
+    "List_Live_Callback": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement/connections/shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+        },
+        "connectionName": "shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+      },
+      "referenceKey": "shared_flowmanagement"
+    },
+    "Create_HTML_in_OneDrive": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness/connections/shared-onedriveforbu-63773f75-c217-43f5-9677-30aec0d49fa0"
+        },
+        "connectionName": "shared-onedriveforbu-63773f75-c217-43f5-9677-30aec0d49fa0"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    },
+    "Convert_Report_to_PDF": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness/connections/shared-onedriveforbu-63773f75-c217-43f5-9677-30aec0d49fa0"
+        },
+        "connectionName": "shared-onedriveforbu-63773f75-c217-43f5-9677-30aec0d49fa0"
+      },
+      "referenceKey": "shared_onedriveforbusiness"
+    },
+    "Create_Record_Interactive": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_HTML": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_JSON": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_CSV_Flows": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_CSV_Lists": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_CSV_Changes": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_Callback_URLs": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_Flow_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Record_PDF": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_an_email_Folio_Flow_Estate": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

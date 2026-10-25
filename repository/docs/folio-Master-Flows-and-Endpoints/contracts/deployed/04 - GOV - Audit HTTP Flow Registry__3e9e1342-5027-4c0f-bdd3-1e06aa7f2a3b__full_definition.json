@@ -1,0 +1,1366 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/04_-_GOV_-_Audit_HTTP_Flow_Registry__3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b.json",
+  "workflow_identity": {
+    "internal_name": "3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b",
+    "tags": {
+      "flowDisplayName": "04 - GOV - Audit HTTP Flow Registry"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "timeZone": "W. Central Africa Standard Time",
+          "schedule": {
+            "hours": [
+              2
+            ]
+          }
+        },
+        "evaluatedRecurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "timeZone": "W. Central Africa Standard Time",
+          "schedule": {
+            "hours": [
+              2
+            ]
+          }
+        },
+        "type": "Recurrence"
+      }
+    },
+    "actions": {
+      "Scope_04_GOV_Audit_HTTP_Flow_Registry_COMPLETE_UPDATED": {
+        "actions": {
+          "Scope_Main": {
+            "actions": {
+              "Get_Stale_Threshold": {
+                "metadata": {
+                  "operationMetadataId": "8c9c1976-c5bb-4846-ab6c-5711e73aa4d4"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryConfiguration')/items?$select=ConfigKey,ConfigValue,IsEnabled&$filter=(ConfigKey eq 'StaleAfterDays' or ConfigKey eq 'ConsecutiveFailureThreshold') and IsEnabled eq 1&$top=2",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Find_Stale_Flows": {
+                "runAfter": {
+                  "Validate_Audit_Configuration": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "6092a276-fac0-4af1-9b47-4d7adb110bfa"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,RegistryKey,FlowId,FlowName,TechnicalOwnerEmail,LastSeenUtc,ConsecutiveFailures,IsCompliant,ComplianceIssues,RecordVersion&$filter=LifecycleStatus eq ''Active'' and LastSeenUtc lt datetime''',formatDateTime(addDays(utcNow(),sub(0,int(first(body('Filter_Stale_Config'))?['ConfigValue']))),'yyyy-MM-ddTHH:mm:ssZ'),'''&$top=5000')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Audit_Stale_Flows": {
+                "foreach": "@coalesce(body('Find_Stale_Flows')?['value'],json('[]'))",
+                "actions": {
+                  "Compose_Exception_Key": {
+                    "metadata": {
+                      "operationMetadataId": "3bde2d8c-5406-4d0c-b6f9-19ea06a4530c"
+                    },
+                    "type": "Compose",
+                    "inputs": "@concat(item()?['RegistryKey'],'|STALE')"
+                  },
+                  "Find_Exception": {
+                    "runAfter": {
+                      "Compose_Exception_Key": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "e9270e4e-d39d-4e84-a635-8f93cefef0f2"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items?$select=Id,Status,DetectedUtc,Modified&$filter=ExceptionKey eq ''',replace(outputs('Compose_Exception_Key'),'''',''''''),'''&$top=1')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "If_Exception_Missing": {
+                    "actions": {
+                      "Create_Exception": {
+                        "metadata": {
+                          "operationMetadataId": "1d070460-2f15-4e34-98fa-8a7a14258121"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryExceptions')/items",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata"
+                            },
+                            "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',outputs('Compose_Exception_Key')),'ExceptionKey',outputs('Compose_Exception_Key')),'RegistryKey',item()?['RegistryKey']),'FlowId',item()?['FlowId']),'ExceptionType','StaleRegistration'),'Severity','High'),'Status','Open'),'Details',concat('Active flow has not been observed within ',string(first(body('Filter_Stale_Config'))?['ConfigValue']),' days. LastSeenUtc: ',string(item()?['LastSeenUtc']))),'DetectedUtc',utcNow()),'AssignedToEmail',coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')),'DiagnosticJson',string(setProperty(setProperty(json('{}'),'LastSeenUtc',item()?['LastSeenUtc']),'StaleAfterDays',int(first(body('Filter_Stale_Config'))?['ConfigValue']))))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Compose_Stale_Owner_Notification_HTML": {
+                        "runAfter": {
+                          "Create_Exception": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "Compose",
+                        "inputs": "@concat('<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light\"><style>@media only screen and (max-width:640px){.wrap{width:100%!important}.pad{padding:20px!important}.stack{display:block!important;width:100%!important}.btn{display:block!important;text-align:center!important}}</style></head><body style=\"margin:0;padding:0;background:#EDF1EF;color:#373435;font-family:Verdana,Arial,sans-serif\"><div style=\"display:none;max-height:0;overflow:hidden;opacity:0\">',concat('Flow ',coalesce(item()?['FlowName'],item()?['FlowId']),' requires governance attention. ',concat('Last observed: ',string(item()?['LastSeenUtc']),'.')),'</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#EDF1EF\"><tr><td align=\"center\" style=\"padding:24px 12px\"><table role=\"presentation\" class=\"wrap\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:640px;max-width:640px;background:#ffffff;border-collapse:collapse\"><tr><td style=\"background:#05583B;padding:24px 28px;color:#ffffff\"><img src=\"https://nitda.gov.ng/assets/nitda-lockup-white.png\" width=\"190\" alt=\"National Information Technology Development Agency\" style=\"display:block;border:0;max-width:190px;height:auto\"><div style=\"font-size:11px;letter-spacing:1.4px;text-transform:uppercase;margin-top:16px;color:#cfe8dc\">DGO Digital Operations · Governance Registry</div><div style=\"font-size:25px;line-height:1.25;font-weight:700;margin-top:7px\">','Governance exception detected','</div></td></tr><tr><td class=\"pad\" style=\"padding:28px\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td width=\"4\" style=\"background:',if(or(equals('High','Critical'),equals('High','Urgent')),'#B42318',if(equals('High','High'),'#B54708',if(equals('Action required','Closed'),'#067647','#05583B'))),';font-size:0;line-height:0\">&nbsp;</td><td style=\"padding:0 0 0 18px\"><span style=\"display:inline-block;padding:6px 10px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;background:',if(or(equals('High','Critical'),equals('High','Urgent')),'#FEF3F2',if(equals('High','High'),'#FEF6EE',if(equals('Action required','Closed'),'#ECFDF3','#E6EEEB'))),';color:',if(or(equals('High','Critical'),equals('High','Urgent')),'#B42318',if(equals('High','High'),'#B54708',if(equals('Action required','Closed'),'#067647','#05583B'))),'\">','Action required',' · ','High','</span><p style=\"font-size:14px;line-height:1.68;margin:18px 0;color:#373435\">',concat('Flow ',coalesce(item()?['FlowName'],item()?['FlowId']),' requires governance attention. ',concat('Last observed: ',string(item()?['LastSeenUtc']),'.')),'</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#F7F9F8;border:1px solid #DDE7E1\"><tr><td style=\"padding:16px;font-size:13px;line-height:1.65;color:#475467\">',concat('<b>Registry key:</b> ',item()?['RegistryKey'],'<br><b>Flow ID:</b> ',item()?['FlowId'],'<br><b>Technical owner:</b> ',coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng'),'<br><b>Detected UTC:</b> ',utcNow()),'</td></tr></table><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin-top:22px\"><tr><td bgcolor=\"#05583B\" style=\"border-radius:2px\"><a class=\"btn\" href=\"',concat('https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE/Lists/DGO_HTTPFlowRegistry/DispForm.aspx?ID=',string(item()?['Id'])),'\" style=\"display:inline-block;padding:13px 20px;color:#ffffff;text-decoration:none;font-size:13px;font-weight:700\">','Open registry record','</a></td></tr></table></td></tr></table></td></tr><tr><td style=\"padding:20px 28px;background:#F7F9F8;border-top:1px solid #DDE7E1;font-size:11px;line-height:1.6;color:#667085\">Office of the Director-General / CEO<br>No. 28 Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja<br><a href=\"https://nitda.gov.ng\" style=\"color:#05583B\">nitda.gov.ng</a> · Internal operational notice. Do not forward outside the Agency.</td></tr></table></td></tr></table></body></html>')"
+                      },
+                      "Send_Stale_Owner_And_Governance_Alert": {
+                        "runAfter": {
+                          "Compose_Stale_Owner_Notification_HTML": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "emailMessage/Subject": "@concat('[High] ',item()?['FlowName'],' | ',item()?['RegistryKey'])",
+                            "emailMessage/Body": "@outputs('Compose_Stale_Owner_Notification_HTML')",
+                            "emailMessage/Cc": "dgsRegistry@nitda.gov.ng",
+                            "emailMessage/Importance": "High"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365-1",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Record_Stale_Notification_Delivery_Failure": {
+                        "runAfter": {
+                          "Send_Stale_Owner_And_Governance_Alert": [
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items(',string(body('Create_Exception')?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(json('{}'),'Details',concat('Notification delivery failed at ',utcNow(),'. Original condition remains open for retry.')),'Status','Open')"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Create_Send_Stale_Owner_And_Governance_Alert_Receipt": {
+                        "runAfter": {
+                          "Send_Stale_Owner_And_Governance_Alert": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "PostItem"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                            "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                            "item/Title": "@concat('stale-owner-and-governance-alert:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                            "item/MessageType": "stale-owner-and-governance-alert",
+                            "item/RecipientEmail": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "item/Reference": "@string(workflow()?['run']?['name'])",
+                            "item/SentAtUtc": "@utcNow()",
+                            "item/Status": "@if(equals(actions('Send_Stale_Owner_And_Governance_Alert')?['status'],'Succeeded'),'sent','failed')",
+                            "item/Attempts": 1,
+                            "item/LastError": "@if(equals(actions('Send_Stale_Owner_And_Governance_Alert')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Stale_Owner_And_Governance_Alert')?['error']?['message'],actions('Send_Stale_Owner_And_Governance_Alert')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Stale_Owner_And_Governance_Alert')?['error']?['message'],actions('Send_Stale_Owner_And_Governance_Alert')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Compose_Send_Stale_Owner_And_Governance_Alert_Outcome": {
+                        "runAfter": {
+                          "Create_Send_Stale_Owner_And_Governance_Alert_Receipt": [
+                            "Succeeded",
+                            "Failed",
+                            "Skipped",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "Compose",
+                        "inputs": "@int(if(or(equals(actions('Send_Stale_Owner_And_Governance_Alert')?['status'],'Failed'),equals(actions('Send_Stale_Owner_And_Governance_Alert')?['status'],'TimedOut')),'send-failed','0'))"
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Exception": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {
+                        "If_Stale_Reminder_Due": {
+                          "actions": {
+                            "Compose_Stale_Reminder_HTML": {
+                              "type": "Compose",
+                              "inputs": "@concat('<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light\"><style>@media only screen and (max-width:640px){.wrap{width:100%!important}.pad{padding:20px!important}.stack{display:block!important;width:100%!important}.btn{display:block!important;text-align:center!important}}</style></head><body style=\"margin:0;padding:0;background:#EDF1EF;color:#373435;font-family:Verdana,Arial,sans-serif\"><div style=\"display:none;max-height:0;overflow:hidden;opacity:0\">',concat('This governance exception remains unresolved for flow ',coalesce(item()?['FlowName'],item()?['FlowId']),'. Immediate review is required.'),'</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#EDF1EF\"><tr><td align=\"center\" style=\"padding:24px 12px\"><table role=\"presentation\" class=\"wrap\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:640px;max-width:640px;background:#ffffff;border-collapse:collapse\"><tr><td style=\"background:#05583B;padding:24px 28px;color:#ffffff\"><img src=\"https://nitda.gov.ng/assets/nitda-lockup-white.png\" width=\"190\" alt=\"National Information Technology Development Agency\" style=\"display:block;border:0;max-width:190px;height:auto\"><div style=\"font-size:11px;letter-spacing:1.4px;text-transform:uppercase;margin-top:16px;color:#cfe8dc\">DGO Digital Operations · Governance Registry</div><div style=\"font-size:25px;line-height:1.25;font-weight:700;margin-top:7px\">','Outstanding governance exception','</div></td></tr><tr><td class=\"pad\" style=\"padding:28px\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td width=\"4\" style=\"background:',if(or(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'Critical'),equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'Urgent')),'#B42318',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'High'),'#B54708',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),'Closed'),'#067647','#05583B'))),';font-size:0;line-height:0\">&nbsp;</td><td style=\"padding:0 0 0 18px\"><span style=\"display:inline-block;padding:6px 10px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;background:',if(or(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'Critical'),equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'Urgent')),'#FEF3F2',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'High'),'#FEF6EE',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),'Closed'),'#ECFDF3','#E6EEEB'))),';color:',if(or(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'Critical'),equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'Urgent')),'#B42318',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'High'),'#B54708',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),'Closed'),'#067647','#05583B'))),'\">',if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),' · ',if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','High'),'</span><p style=\"font-size:14px;line-height:1.68;margin:18px 0;color:#373435\">',concat('This governance exception remains unresolved for flow ',coalesce(item()?['FlowName'],item()?['FlowId']),'. Immediate review is required.'),'</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#F7F9F8;border:1px solid #DDE7E1\"><tr><td style=\"padding:16px;font-size:13px;line-height:1.65;color:#475467\">',concat('<b>Registry key:</b> ',item()?['RegistryKey'],'<br><b>Detected UTC:</b> ',first(body('Find_Exception')?['value'])?['DetectedUtc'],'<br><b>Reminder UTC:</b> ',utcNow(),'<br><b>Escalation level:</b> ',if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'2','1')),'</td></tr></table><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin-top:22px\"><tr><td bgcolor=\"#05583B\" style=\"border-radius:2px\"><a class=\"btn\" href=\"',concat('https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE/Lists/DGO_HTTPFlowRegistry/DispForm.aspx?ID=',string(item()?['Id'])),'\" style=\"display:inline-block;padding:13px 20px;color:#ffffff;text-decoration:none;font-size:13px;font-weight:700\">','Review exception now','</a></td></tr></table></td></tr></table></td></tr><tr><td style=\"padding:20px 28px;background:#F7F9F8;border-top:1px solid #DDE7E1;font-size:11px;line-height:1.6;color:#667085\">Office of the Director-General / CEO<br>No. 28 Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja<br><a href=\"https://nitda.gov.ng\" style=\"color:#05583B\">nitda.gov.ng</a> · Internal operational notice. Do not forward outside the Agency.</td></tr></table></td></tr></table></body></html>')"
+                            },
+                            "Send_Stale_Reminder_Or_Escalation": {
+                              "runAfter": {
+                                "Compose_Stale_Reminder_HTML": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "emailMessage/To": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                                  "emailMessage/Subject": "@concat(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'[ESCALATED] ','[REMINDER] '),item()?['FlowName'],' | ',item()?['RegistryKey'])",
+                                  "emailMessage/Body": "@outputs('Compose_Stale_Reminder_HTML')",
+                                  "emailMessage/Cc": "dgsRegistry@nitda.gov.ng",
+                                  "emailMessage/Importance": "High"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                  "connectionName": "shared_office365-1",
+                                  "operationId": "SendEmailV2"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              }
+                            },
+                            "Update_Stale_Reminder_Audit_Stamp": {
+                              "runAfter": {
+                                "Send_Stale_Reminder_Or_Escalation": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                  "parameters/method": "POST",
+                                  "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items(',string(first(body('Find_Exception')?['value'])?['Id']),')')",
+                                  "parameters/headers": {
+                                    "Accept": "application/json;odata=nometadata",
+                                    "Content-Type": "application/json;odata=nometadata",
+                                    "IF-MATCH": "*",
+                                    "X-HTTP-Method": "MERGE"
+                                  },
+                                  "parameters/body": "@setProperty(setProperty(json('{}'),'Status','Open'),'Details',concat('Reminder or escalation delivered at ',utcNow(),'. Condition remains unresolved.'))"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connectionName": "shared_sharepointonline-1",
+                                  "operationId": "HttpRequest"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              }
+                            },
+                            "Create_Send_Stale_Reminder_Or_Escalation_Receipt": {
+                              "runAfter": {
+                                "Send_Stale_Reminder_Or_Escalation": [
+                                  "Succeeded",
+                                  "Failed",
+                                  "TimedOut"
+                                ]
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connectionName": "shared_sharepointonline",
+                                  "operationId": "PostItem"
+                                },
+                                "parameters": {
+                                  "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                  "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                                  "item/Title": "@concat('stale-reminder-or-escalation:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                                  "item/MessageType": "stale-reminder-or-escalation",
+                                  "item/RecipientEmail": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                                  "item/Reference": "@string(workflow()?['run']?['name'])",
+                                  "item/SentAtUtc": "@utcNow()",
+                                  "item/Status": "@if(equals(actions('Send_Stale_Reminder_Or_Escalation')?['status'],'Succeeded'),'sent','failed')",
+                                  "item/Attempts": 1,
+                                  "item/LastError": "@if(equals(actions('Send_Stale_Reminder_Or_Escalation')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Stale_Reminder_Or_Escalation')?['error']?['message'],actions('Send_Stale_Reminder_Or_Escalation')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Stale_Reminder_Or_Escalation')?['error']?['message'],actions('Send_Stale_Reminder_Or_Escalation')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              }
+                            },
+                            "Compose_Send_Stale_Reminder_Or_Escalation_Outcome": {
+                              "runAfter": {
+                                "Create_Send_Stale_Reminder_Or_Escalation_Receipt": [
+                                  "Succeeded",
+                                  "Failed",
+                                  "Skipped",
+                                  "TimedOut"
+                                ]
+                              },
+                              "type": "Compose",
+                              "inputs": "@int(if(or(equals(actions('Send_Stale_Reminder_Or_Escalation')?['status'],'Failed'),equals(actions('Send_Stale_Reminder_Or_Escalation')?['status'],'TimedOut')),'send-failed','0'))"
+                            }
+                          },
+                          "else": {
+                            "actions": {}
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "lessOrEquals": [
+                                  "@ticks(first(body('Find_Exception')?['value'])?['Modified'])",
+                                  "@ticks(addHours(utcNow(),-24))"
+                                ]
+                              }
+                            ]
+                          },
+                          "type": "If"
+                        }
+                      }
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@length(coalesce(body('Find_Exception')?['value'],json('[]')))",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "60a5e622-995d-4563-a7e4-ac2ccd364ebf"
+                    },
+                    "type": "If"
+                  },
+                  "Update_Stale_Registry_Audit": {
+                    "runAfter": {
+                      "If_Exception_Missing": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "8c7c944e-5379-4bc8-8ca1-762ef896b769"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items(',string(item()?['Id']),')')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata",
+                          "IF-MATCH": "*",
+                          "X-HTTP-Method": "MERGE"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'),'LastAuditUtc',utcNow()),'IsCompliant',false),'ComplianceIssues',concat('Stale registration: no activity within ',string(first(body('Filter_Stale_Config'))?['ConfigValue']),' days.')),'RecordVersion',add(int(coalesce(item()?['RecordVersion'],0)),1))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Find_Stale_Flows": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Foreach",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                }
+              },
+              "Validate_Audit_Configuration": {
+                "actions": {
+                  "Audit_Configuration_Validated": {
+                    "metadata": {
+                      "operationMetadataId": "d1cb9530-df25-4240-adf2-c83756adb8ef"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "status": "Validated"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Filter_Failure_Config": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_Invalid_Audit_Configuration": {
+                      "metadata": {
+                        "operationMetadataId": "690f0de5-80cb-4e78-8a03-fc2c83590d8b"
+                      },
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Failed",
+                        "runError": {
+                          "code": "INVALID_AUDIT_CONFIGURATION",
+                          "message": "Enabled StaleAfterDays and ConsecutiveFailureThreshold configuration values are required and must be positive integers."
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@length(body('Filter_Stale_Config'))",
+                        1
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@length(body('Filter_Failure_Config'))",
+                        1
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@int(first(body('Filter_Stale_Config'))?['ConfigValue'])",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@int(first(body('Filter_Failure_Config'))?['ConfigValue'])",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "497d8aee-6687-49d2-a090-9fd7072e9ffb"
+                },
+                "type": "If"
+              },
+              "Filter_Stale_Config": {
+                "runAfter": {
+                  "Compose_1": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a319d37d-b89f-484d-b4f6-89082f161701"
+                },
+                "type": "Query",
+                "inputs": {
+                  "from": "@outputs('Compose')",
+                  "where": "@equals(toLower(trim(string(item()?['ConfigKey']))), 'staleafterdays')"
+                }
+              },
+              "Filter_Failure_Config": {
+                "runAfter": {
+                  "Compose_1_2": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "7071d62c-92c2-47e6-be7e-ff994bd6670c"
+                },
+                "type": "Query",
+                "inputs": {
+                  "from": "@outputs('Compose')",
+                  "where": "@equals(toLower(trim(string(item()?['ConfigKey']))), 'staleafterdays')"
+                }
+              },
+              "Find_Failing_Flows": {
+                "runAfter": {
+                  "Audit_Stale_Flows": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "bb8b519b-24eb-4bbd-8386-9879ef5ae5ce"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,RegistryKey,FlowId,FlowName,TechnicalOwnerEmail,ConsecutiveFailures,LastFailureUtc,IsCompliant,ComplianceIssues,RecordVersion&$filter=LifecycleStatus eq ''Active'' and ConsecutiveFailures ge ',string(int(first(body('Filter_Failure_Config'))?['ConfigValue'])),'&$top=5000')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Audit_Failing_Flows": {
+                "foreach": "@coalesce(body('Find_Failing_Flows')?['value'],json('[]'))",
+                "actions": {
+                  "Compose_Failure_Exception_Key": {
+                    "metadata": {
+                      "operationMetadataId": "c49140d7-18dd-447f-b5a1-8e996c9364d2"
+                    },
+                    "type": "Compose",
+                    "inputs": "@concat(item()?['RegistryKey'],'|CONSECUTIVE_FAILURES')"
+                  },
+                  "Find_Failure_Exception": {
+                    "runAfter": {
+                      "Compose_Failure_Exception_Key": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "effaecaf-ea84-4ed6-bf78-b5c503881709"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items?$select=Id,Status,DetectedUtc,Modified&$filter=ExceptionKey eq ''',replace(outputs('Compose_Failure_Exception_Key'),'''',''''''),'''&$top=1')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "If_Failure_Exception_Missing": {
+                    "actions": {
+                      "Create_Failure_Exception": {
+                        "metadata": {
+                          "operationMetadataId": "738cb77d-e3e6-495e-b433-082402616f4c"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryExceptions')/items",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata"
+                            },
+                            "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',outputs('Compose_Failure_Exception_Key')),'ExceptionKey',outputs('Compose_Failure_Exception_Key')),'RegistryKey',item()?['RegistryKey']),'FlowId',item()?['FlowId']),'ExceptionType','ConsecutiveFailures'),'Severity','Critical'),'Status','Open'),'Details',concat('Flow reached ',string(item()?['ConsecutiveFailures']),' consecutive failures; configured threshold is ',string(first(body('Filter_Failure_Config'))?['ConfigValue']),'.')),'DetectedUtc',utcNow()),'AssignedToEmail',coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')),'DiagnosticJson',string(setProperty(setProperty(json('{}'),'ConsecutiveFailures',item()?['ConsecutiveFailures']),'LastFailureUtc',item()?['LastFailureUtc'])))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Compose_Failure_Owner_Notification_HTML": {
+                        "runAfter": {
+                          "Create_Failure_Exception": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "Compose",
+                        "inputs": "@concat('<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light\"><style>@media only screen and (max-width:640px){.wrap{width:100%!important}.pad{padding:20px!important}.stack{display:block!important;width:100%!important}.btn{display:block!important;text-align:center!important}}</style></head><body style=\"margin:0;padding:0;background:#EDF1EF;color:#373435;font-family:Verdana,Arial,sans-serif\"><div style=\"display:none;max-height:0;overflow:hidden;opacity:0\">',concat('Flow ',coalesce(item()?['FlowName'],item()?['FlowId']),' requires governance attention. ',concat('Consecutive failures: ',string(item()?['ConsecutiveFailures']),'.')),'</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#EDF1EF\"><tr><td align=\"center\" style=\"padding:24px 12px\"><table role=\"presentation\" class=\"wrap\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:640px;max-width:640px;background:#ffffff;border-collapse:collapse\"><tr><td style=\"background:#05583B;padding:24px 28px;color:#ffffff\"><img src=\"https://nitda.gov.ng/assets/nitda-lockup-white.png\" width=\"190\" alt=\"National Information Technology Development Agency\" style=\"display:block;border:0;max-width:190px;height:auto\"><div style=\"font-size:11px;letter-spacing:1.4px;text-transform:uppercase;margin-top:16px;color:#cfe8dc\">DGO Digital Operations · Governance Registry</div><div style=\"font-size:25px;line-height:1.25;font-weight:700;margin-top:7px\">','Governance exception detected','</div></td></tr><tr><td class=\"pad\" style=\"padding:28px\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td width=\"4\" style=\"background:',if(or(equals('Critical','Critical'),equals('Critical','Urgent')),'#B42318',if(equals('Critical','High'),'#B54708',if(equals('Action required','Closed'),'#067647','#05583B'))),';font-size:0;line-height:0\">&nbsp;</td><td style=\"padding:0 0 0 18px\"><span style=\"display:inline-block;padding:6px 10px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;background:',if(or(equals('Critical','Critical'),equals('Critical','Urgent')),'#FEF3F2',if(equals('Critical','High'),'#FEF6EE',if(equals('Action required','Closed'),'#ECFDF3','#E6EEEB'))),';color:',if(or(equals('Critical','Critical'),equals('Critical','Urgent')),'#B42318',if(equals('Critical','High'),'#B54708',if(equals('Action required','Closed'),'#067647','#05583B'))),'\">','Action required',' · ','Critical','</span><p style=\"font-size:14px;line-height:1.68;margin:18px 0;color:#373435\">',concat('Flow ',coalesce(item()?['FlowName'],item()?['FlowId']),' requires governance attention. ',concat('Consecutive failures: ',string(item()?['ConsecutiveFailures']),'.')),'</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#F7F9F8;border:1px solid #DDE7E1\"><tr><td style=\"padding:16px;font-size:13px;line-height:1.65;color:#475467\">',concat('<b>Registry key:</b> ',item()?['RegistryKey'],'<br><b>Flow ID:</b> ',item()?['FlowId'],'<br><b>Technical owner:</b> ',coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng'),'<br><b>Detected UTC:</b> ',utcNow()),'</td></tr></table><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin-top:22px\"><tr><td bgcolor=\"#05583B\" style=\"border-radius:2px\"><a class=\"btn\" href=\"',concat('https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE/Lists/DGO_HTTPFlowRegistry/DispForm.aspx?ID=',string(item()?['Id'])),'\" style=\"display:inline-block;padding:13px 20px;color:#ffffff;text-decoration:none;font-size:13px;font-weight:700\">','Open registry record','</a></td></tr></table></td></tr></table></td></tr><tr><td style=\"padding:20px 28px;background:#F7F9F8;border-top:1px solid #DDE7E1;font-size:11px;line-height:1.6;color:#667085\">Office of the Director-General / CEO<br>No. 28 Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja<br><a href=\"https://nitda.gov.ng\" style=\"color:#05583B\">nitda.gov.ng</a> · Internal operational notice. Do not forward outside the Agency.</td></tr></table></td></tr></table></body></html>')"
+                      },
+                      "Send_Failure_Owner_And_Governance_Alert": {
+                        "runAfter": {
+                          "Compose_Failure_Owner_Notification_HTML": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "emailMessage/Subject": "@concat('[Critical] ',item()?['FlowName'],' | ',item()?['RegistryKey'])",
+                            "emailMessage/Body": "@outputs('Compose_Failure_Owner_Notification_HTML')",
+                            "emailMessage/Cc": "dgsRegistry@nitda.gov.ng",
+                            "emailMessage/Importance": "High"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365-1",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Record_Failure_Notification_Delivery_Failure": {
+                        "runAfter": {
+                          "Send_Failure_Owner_And_Governance_Alert": [
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items(',string(body('Create_Failure_Exception')?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(json('{}'),'Details',concat('Notification delivery failed at ',utcNow(),'. Original condition remains open for retry.')),'Status','Open')"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Create_Send_Failure_Owner_And_Governance_Alert_Receipt": {
+                        "runAfter": {
+                          "Send_Failure_Owner_And_Governance_Alert": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "PostItem"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                            "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                            "item/Title": "@concat('failure-owner-and-governance-alert:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                            "item/MessageType": "failure-owner-and-governance-alert",
+                            "item/RecipientEmail": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "item/Reference": "@string(workflow()?['run']?['name'])",
+                            "item/SentAtUtc": "@utcNow()",
+                            "item/Status": "@if(equals(actions('Send_Failure_Owner_And_Governance_Alert')?['status'],'Succeeded'),'sent','failed')",
+                            "item/Attempts": 1,
+                            "item/LastError": "@if(equals(actions('Send_Failure_Owner_And_Governance_Alert')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Failure_Owner_And_Governance_Alert')?['error']?['message'],actions('Send_Failure_Owner_And_Governance_Alert')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Failure_Owner_And_Governance_Alert')?['error']?['message'],actions('Send_Failure_Owner_And_Governance_Alert')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Compose_Send_Failure_Owner_And_Governance_Alert_Outcome": {
+                        "runAfter": {
+                          "Create_Send_Failure_Owner_And_Governance_Alert_Receipt": [
+                            "Succeeded",
+                            "Failed",
+                            "Skipped",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "Compose",
+                        "inputs": "@int(if(or(equals(actions('Send_Failure_Owner_And_Governance_Alert')?['status'],'Failed'),equals(actions('Send_Failure_Owner_And_Governance_Alert')?['status'],'TimedOut')),'send-failed','0'))"
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Failure_Exception": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {
+                        "If_Failure_Reminder_Due": {
+                          "actions": {
+                            "Compose_Failure_Reminder_HTML": {
+                              "type": "Compose",
+                              "inputs": "@concat('<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light\"><style>@media only screen and (max-width:640px){.wrap{width:100%!important}.pad{padding:20px!important}.stack{display:block!important;width:100%!important}.btn{display:block!important;text-align:center!important}}</style></head><body style=\"margin:0;padding:0;background:#EDF1EF;color:#373435;font-family:Verdana,Arial,sans-serif\"><div style=\"display:none;max-height:0;overflow:hidden;opacity:0\">',concat('This governance exception remains unresolved for flow ',coalesce(item()?['FlowName'],item()?['FlowId']),'. Immediate review is required.'),'</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#EDF1EF\"><tr><td align=\"center\" style=\"padding:24px 12px\"><table role=\"presentation\" class=\"wrap\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:640px;max-width:640px;background:#ffffff;border-collapse:collapse\"><tr><td style=\"background:#05583B;padding:24px 28px;color:#ffffff\"><img src=\"https://nitda.gov.ng/assets/nitda-lockup-white.png\" width=\"190\" alt=\"National Information Technology Development Agency\" style=\"display:block;border:0;max-width:190px;height:auto\"><div style=\"font-size:11px;letter-spacing:1.4px;text-transform:uppercase;margin-top:16px;color:#cfe8dc\">DGO Digital Operations · Governance Registry</div><div style=\"font-size:25px;line-height:1.25;font-weight:700;margin-top:7px\">','Outstanding governance exception','</div></td></tr><tr><td class=\"pad\" style=\"padding:28px\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td width=\"4\" style=\"background:',if(or(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'Critical'),equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'Urgent')),'#B42318',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'High'),'#B54708',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),'Closed'),'#067647','#05583B'))),';font-size:0;line-height:0\">&nbsp;</td><td style=\"padding:0 0 0 18px\"><span style=\"display:inline-block;padding:6px 10px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;background:',if(or(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'Critical'),equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'Urgent')),'#FEF3F2',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'High'),'#FEF6EE',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),'Closed'),'#ECFDF3','#E6EEEB'))),';color:',if(or(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'Critical'),equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'Urgent')),'#B42318',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'High'),'#B54708',if(equals(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),'Closed'),'#067647','#05583B'))),'\">',if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Escalated','Action required'),' · ',if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'Urgent','Critical'),'</span><p style=\"font-size:14px;line-height:1.68;margin:18px 0;color:#373435\">',concat('This governance exception remains unresolved for flow ',coalesce(item()?['FlowName'],item()?['FlowId']),'. Immediate review is required.'),'</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#F7F9F8;border:1px solid #DDE7E1\"><tr><td style=\"padding:16px;font-size:13px;line-height:1.65;color:#475467\">',concat('<b>Registry key:</b> ',item()?['RegistryKey'],'<br><b>Detected UTC:</b> ',first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'],'<br><b>Reminder UTC:</b> ',utcNow(),'<br><b>Escalation level:</b> ',if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'2','1')),'</td></tr></table><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin-top:22px\"><tr><td bgcolor=\"#05583B\" style=\"border-radius:2px\"><a class=\"btn\" href=\"',concat('https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE/Lists/DGO_HTTPFlowRegistry/DispForm.aspx?ID=',string(item()?['Id'])),'\" style=\"display:inline-block;padding:13px 20px;color:#ffffff;text-decoration:none;font-size:13px;font-weight:700\">','Review exception now','</a></td></tr></table></td></tr></table></td></tr><tr><td style=\"padding:20px 28px;background:#F7F9F8;border-top:1px solid #DDE7E1;font-size:11px;line-height:1.6;color:#667085\">Office of the Director-General / CEO<br>No. 28 Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja<br><a href=\"https://nitda.gov.ng\" style=\"color:#05583B\">nitda.gov.ng</a> · Internal operational notice. Do not forward outside the Agency.</td></tr></table></td></tr></table></body></html>')"
+                            },
+                            "Send_Failure_Reminder_Or_Escalation": {
+                              "runAfter": {
+                                "Compose_Failure_Reminder_HTML": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "emailMessage/To": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                                  "emailMessage/Subject": "@concat(if(greaterOrEquals(div(sub(ticks(utcNow()),ticks(first(body('Find_Failure_Exception')?['value'])?['DetectedUtc'])),864000000000),3),'[ESCALATED] ','[REMINDER] '),item()?['FlowName'],' | ',item()?['RegistryKey'])",
+                                  "emailMessage/Body": "@outputs('Compose_Failure_Reminder_HTML')",
+                                  "emailMessage/Cc": "dgsRegistry@nitda.gov.ng",
+                                  "emailMessage/Importance": "High"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                  "connectionName": "shared_office365-1",
+                                  "operationId": "SendEmailV2"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              }
+                            },
+                            "Update_Failure_Reminder_Audit_Stamp": {
+                              "runAfter": {
+                                "Send_Failure_Reminder_Or_Escalation": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                                  "parameters/method": "POST",
+                                  "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items(',string(first(body('Find_Failure_Exception')?['value'])?['Id']),')')",
+                                  "parameters/headers": {
+                                    "Accept": "application/json;odata=nometadata",
+                                    "Content-Type": "application/json;odata=nometadata",
+                                    "IF-MATCH": "*",
+                                    "X-HTTP-Method": "MERGE"
+                                  },
+                                  "parameters/body": "@setProperty(setProperty(json('{}'),'Status','Open'),'Details',concat('Reminder or escalation delivered at ',utcNow(),'. Condition remains unresolved.'))"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connectionName": "shared_sharepointonline-1",
+                                  "operationId": "HttpRequest"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              }
+                            },
+                            "Create_Send_Failure_Reminder_Or_Escalation_Receipt": {
+                              "runAfter": {
+                                "Send_Failure_Reminder_Or_Escalation": [
+                                  "Succeeded",
+                                  "Failed",
+                                  "TimedOut"
+                                ]
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connectionName": "shared_sharepointonline",
+                                  "operationId": "PostItem"
+                                },
+                                "parameters": {
+                                  "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                  "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                                  "item/Title": "@concat('failure-reminder-or-escalation:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                                  "item/MessageType": "failure-reminder-or-escalation",
+                                  "item/RecipientEmail": "@coalesce(item()?['TechnicalOwnerEmail'],'dgsRegistry@nitda.gov.ng')",
+                                  "item/Reference": "@string(workflow()?['run']?['name'])",
+                                  "item/SentAtUtc": "@utcNow()",
+                                  "item/Status": "@if(equals(actions('Send_Failure_Reminder_Or_Escalation')?['status'],'Succeeded'),'sent','failed')",
+                                  "item/Attempts": 1,
+                                  "item/LastError": "@if(equals(actions('Send_Failure_Reminder_Or_Escalation')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Failure_Reminder_Or_Escalation')?['error']?['message'],actions('Send_Failure_Reminder_Or_Escalation')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Failure_Reminder_Or_Escalation')?['error']?['message'],actions('Send_Failure_Reminder_Or_Escalation')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                                },
+                                "authentication": "@parameters('$authentication')"
+                              }
+                            },
+                            "Compose_Send_Failure_Reminder_Or_Escalation_Outcome": {
+                              "runAfter": {
+                                "Create_Send_Failure_Reminder_Or_Escalation_Receipt": [
+                                  "Succeeded",
+                                  "Failed",
+                                  "Skipped",
+                                  "TimedOut"
+                                ]
+                              },
+                              "type": "Compose",
+                              "inputs": "@int(if(or(equals(actions('Send_Failure_Reminder_Or_Escalation')?['status'],'Failed'),equals(actions('Send_Failure_Reminder_Or_Escalation')?['status'],'TimedOut')),'send-failed','0'))"
+                            }
+                          },
+                          "else": {
+                            "actions": {}
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "lessOrEquals": [
+                                  "@ticks(first(body('Find_Failure_Exception')?['value'])?['Modified'])",
+                                  "@ticks(addHours(utcNow(),-24))"
+                                ]
+                              }
+                            ]
+                          },
+                          "type": "If"
+                        }
+                      }
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@length(coalesce(body('Find_Failure_Exception')?['value'],json('[]')))",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "5880c55e-c1f2-474d-bf99-007223424280"
+                    },
+                    "type": "If"
+                  },
+                  "Update_Failing_Registry_Audit": {
+                    "runAfter": {
+                      "If_Failure_Exception_Missing": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "de98f260-6994-4c2c-bd6b-79415be2e3bd"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items(',string(item()?['Id']),')')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata",
+                          "IF-MATCH": "*",
+                          "X-HTTP-Method": "MERGE"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'),'LastAuditUtc',utcNow()),'IsCompliant',false),'ComplianceIssues',concat('Consecutive execution failures: ',string(item()?['ConsecutiveFailures']),'.')),'RecordVersion',add(int(coalesce(item()?['RecordVersion'],0)),1))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Find_Failing_Flows": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "6257ad76-3424-4c64-b454-19be38ec5e42"
+                },
+                "type": "Foreach",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                }
+              },
+              "Find_Open_Audit_Exceptions": {
+                "runAfter": {
+                  "Audit_Failing_Flows": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryExceptions')/items?$select=Id,ExceptionKey,RegistryKey,FlowId,ExceptionType,Status,AssignedToEmail,DetectedUtc&$filter=Status eq 'Open' and (ExceptionType eq 'StaleRegistration' or ExceptionType eq 'ConsecutiveFailures')&$top=5000",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Notify_And_Close_Recovered_Exceptions": {
+                "foreach": "@coalesce(body('Find_Open_Audit_Exceptions')?['value'],json('[]'))",
+                "actions": {
+                  "Get_Recovery_Registry_Record": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,RegistryKey,FlowId,FlowName,TechnicalOwnerEmail,LastSeenUtc,ConsecutiveFailures,LifecycleStatus&$filter=RegistryKey eq ''',replace(item()?['RegistryKey'],'''',''''''),'''&$top=1')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "If_Exception_Recovered": {
+                    "actions": {
+                      "Compose_Recovery_Notification_HTML": {
+                        "type": "Compose",
+                        "inputs": "@concat('<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light\"><style>@media only screen and (max-width:640px){.wrap{width:100%!important}.pad{padding:20px!important}.stack{display:block!important;width:100%!important}.btn{display:block!important;text-align:center!important}}</style></head><body style=\"margin:0;padding:0;background:#EDF1EF;color:#373435;font-family:Verdana,Arial,sans-serif\"><div style=\"display:none;max-height:0;overflow:hidden;opacity:0\">',concat('The monitored flow ',first(body('Get_Recovery_Registry_Record')?['value'])?['FlowName'],' has returned to a compliant operating state.'),'</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#EDF1EF\"><tr><td align=\"center\" style=\"padding:24px 12px\"><table role=\"presentation\" class=\"wrap\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:640px;max-width:640px;background:#ffffff;border-collapse:collapse\"><tr><td style=\"background:#05583B;padding:24px 28px;color:#ffffff\"><img src=\"https://nitda.gov.ng/assets/nitda-lockup-white.png\" width=\"190\" alt=\"National Information Technology Development Agency\" style=\"display:block;border:0;max-width:190px;height:auto\"><div style=\"font-size:11px;letter-spacing:1.4px;text-transform:uppercase;margin-top:16px;color:#cfe8dc\">DGO Digital Operations · Governance Registry</div><div style=\"font-size:25px;line-height:1.25;font-weight:700;margin-top:7px\">','Governance exception cleared','</div></td></tr><tr><td class=\"pad\" style=\"padding:28px\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td width=\"4\" style=\"background:',if(or(equals('Normal','Critical'),equals('Normal','Urgent')),'#B42318',if(equals('Normal','High'),'#B54708',if(equals('Closed','Closed'),'#067647','#05583B'))),';font-size:0;line-height:0\">&nbsp;</td><td style=\"padding:0 0 0 18px\"><span style=\"display:inline-block;padding:6px 10px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;background:',if(or(equals('Normal','Critical'),equals('Normal','Urgent')),'#FEF3F2',if(equals('Normal','High'),'#FEF6EE',if(equals('Closed','Closed'),'#ECFDF3','#E6EEEB'))),';color:',if(or(equals('Normal','Critical'),equals('Normal','Urgent')),'#B42318',if(equals('Normal','High'),'#B54708',if(equals('Closed','Closed'),'#067647','#05583B'))),'\">','Closed',' · ','Normal','</span><p style=\"font-size:14px;line-height:1.68;margin:18px 0;color:#373435\">',concat('The monitored flow ',first(body('Get_Recovery_Registry_Record')?['value'])?['FlowName'],' has returned to a compliant operating state.'),'</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#F7F9F8;border:1px solid #DDE7E1\"><tr><td style=\"padding:16px;font-size:13px;line-height:1.65;color:#475467\">',concat('<b>Registry key:</b> ',item()?['RegistryKey'],'<br><b>Exception type:</b> ',item()?['ExceptionType'],'<br><b>Resolved UTC:</b> ',utcNow()),'</td></tr></table><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin-top:22px\"><tr><td bgcolor=\"#05583B\" style=\"border-radius:2px\"><a class=\"btn\" href=\"',concat('https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE/Lists/DGO_HTTPFlowRegistry/DispForm.aspx?ID=',string(first(body('Get_Recovery_Registry_Record')?['value'])?['Id'])),'\" style=\"display:inline-block;padding:13px 20px;color:#ffffff;text-decoration:none;font-size:13px;font-weight:700\">','Open registry record','</a></td></tr></table></td></tr></table></td></tr><tr><td style=\"padding:20px 28px;background:#F7F9F8;border-top:1px solid #DDE7E1;font-size:11px;line-height:1.6;color:#667085\">Office of the Director-General / CEO<br>No. 28 Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja<br><a href=\"https://nitda.gov.ng\" style=\"color:#05583B\">nitda.gov.ng</a> · Internal operational notice. Do not forward outside the Agency.</td></tr></table></td></tr></table></body></html>')"
+                      },
+                      "Send_Recovery_Notification": {
+                        "runAfter": {
+                          "Compose_Recovery_Notification_HTML": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@coalesce(first(body('Get_Recovery_Registry_Record')?['value'])?['TechnicalOwnerEmail'],item()?['AssignedToEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "emailMessage/Subject": "@concat('[CLEARED] ',first(body('Get_Recovery_Registry_Record')?['value'])?['FlowName'],' | ',item()?['RegistryKey'])",
+                            "emailMessage/Body": "@outputs('Compose_Recovery_Notification_HTML')",
+                            "emailMessage/Cc": "dgsRegistry@nitda.gov.ng",
+                            "emailMessage/Importance": "Normal"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365-1",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Close_Recovered_Exception": {
+                        "runAfter": {
+                          "Send_Recovery_Notification": [
+                            "Succeeded"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items(',string(item()?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(setProperty(json('{}'),'Status','Closed'),'ResolvedUtc',utcNow()),'Details',concat('Condition cleared and recovery notification delivered at ',utcNow(),'.'))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Create_Send_Recovery_Notification_Receipt": {
+                        "runAfter": {
+                          "Send_Recovery_Notification": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline",
+                            "operationId": "PostItem"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                            "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                            "item/Title": "@concat('recovery-notification:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                            "item/MessageType": "recovery-notification",
+                            "item/RecipientEmail": "@coalesce(first(body('Get_Recovery_Registry_Record')?['value'])?['TechnicalOwnerEmail'],item()?['AssignedToEmail'],'dgsRegistry@nitda.gov.ng')",
+                            "item/Reference": "@string(workflow()?['run']?['name'])",
+                            "item/SentAtUtc": "@utcNow()",
+                            "item/Status": "@if(equals(actions('Send_Recovery_Notification')?['status'],'Succeeded'),'sent','failed')",
+                            "item/Attempts": 1,
+                            "item/LastError": "@if(equals(actions('Send_Recovery_Notification')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Recovery_Notification')?['error']?['message'],actions('Send_Recovery_Notification')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Recovery_Notification')?['error']?['message'],actions('Send_Recovery_Notification')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Compose_Send_Recovery_Notification_Outcome": {
+                        "runAfter": {
+                          "Create_Send_Recovery_Notification_Receipt": [
+                            "Succeeded",
+                            "Failed",
+                            "Skipped",
+                            "TimedOut"
+                          ]
+                        },
+                        "type": "Compose",
+                        "inputs": "@int(if(or(equals(actions('Send_Recovery_Notification')?['status'],'Failed'),equals(actions('Send_Recovery_Notification')?['status'],'TimedOut')),'send-failed','0'))"
+                      }
+                    },
+                    "runAfter": {
+                      "Get_Recovery_Registry_Record": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {}
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "",
+                            ""
+                          ]
+                        }
+                      ]
+                    },
+                    "type": "If"
+                  }
+                },
+                "runAfter": {
+                  "Find_Open_Audit_Exceptions": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Foreach",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                }
+              },
+              "Compose": {
+                "runAfter": {
+                  "Get_Stale_Threshold": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@coalesce(body('Get_Stale_Threshold')?['value'],json('[]'))"
+              },
+              "Compose_1": {
+                "runAfter": {
+                  "Compose": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@item()?['ConfigKey']"
+              },
+              "Compose_1_1": {
+                "runAfter": {
+                  "Filter_Stale_Config": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@{coalesce(body('Get_Stale_Threshold')?['value'],json('[]'))}"
+              },
+              "Compose_1_2": {
+                "runAfter": {
+                  "Compose_1_1": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@{item()?['ConfigKey']}"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "1c757db7-35c8-4657-957f-64a3bee9e405"
+            },
+            "type": "Scope"
+          },
+          "Compose_Final_Report_JSON": {
+            "runAfter": {
+              "Scope_Main": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "129e8f91-297d-4cb2-8784-7ffd6471fec2"
+            },
+            "type": "Compose",
+            "inputs": {
+              "reportType": "DGO Power Automate Execution Report",
+              "schemaVersion": "5.0.0",
+              "flow": "04 - GOV - Audit HTTP Flow Registry",
+              "flowId": "@workflow()?['name']",
+              "runId": "@workflow()?['run']?['name']",
+              "environmentId": "@workflow()?['tags']?['environmentName']",
+              "generatedAtUtc": "@utcNow()",
+              "status": "@if(contains(string(result('Scope_Main')),'Failed'),'Failed',if(contains(string(result('Scope_Main')),'TimedOut'),'TimedOut','Succeeded'))",
+              "details": {
+                "staleAfterDays": "@if(empty(body('Filter_Stale_Config')),null,int(first(body('Filter_Stale_Config'))?['ConfigValue']))",
+                "consecutiveFailureThreshold": "@if(empty(body('Filter_Failure_Config')),null,int(first(body('Filter_Failure_Config'))?['ConfigValue']))",
+                "staleFlowsFound": "@if(empty(body('Find_Stale_Flows')?['value']),0,length(body('Find_Stale_Flows')?['value']))",
+                "failingFlowsFound": "@if(empty(body('Find_Failing_Flows')?['value']),0,length(body('Find_Failing_Flows')?['value']))",
+                "openAuditExceptionsChecked": "@if(contains(string(result('Scope_Main')),'\"name\":\"Find_Open_Audit_Exceptions\",\"status\":\"Succeeded\"'),length(coalesce(body('Find_Open_Audit_Exceptions')?['value'],json('[]'))),null)"
+              },
+              "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+            }
+          },
+          "Compose_Final_Report_HTML": {
+            "runAfter": {
+              "Compose_Final_Report_JSON": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "139c9bb6-8e77-4d0a-9d98-b2740649aa34"
+            },
+            "type": "Compose",
+            "inputs": "@concat('<html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px\"><div style=\"max-width:900px;margin:auto;background:white;border-radius:12px;overflow:hidden\"><div style=\"background:#004578;color:white;padding:24px\"><h1>',outputs('Compose_Final_Report_JSON')?['flow'],'</h1></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Run ID:</b> ',outputs('Compose_Final_Report_JSON')?['runId'],'</p><pre style=\"white-space:pre-wrap;background:#f8fafc;padding:12px\">',string(outputs('Compose_Final_Report_JSON')?['details']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['runUrl'],'\">Open run</a></p></div></div></body></html>')"
+          },
+          "Send_Final_Report_Email": {
+            "runAfter": {
+              "Compose_Final_Report_HTML": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "0760fdcb-56b1-43ed-8504-1d563a803f4e"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] ',outputs('Compose_Final_Report_JSON')?['flow'],' | ',outputs('Compose_Final_Report_JSON')?['runId'])",
+                "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@concat(replace(workflow()?['name'],' ','_'),'_',workflow()?['run']?['name'],'_Report.json')",
+                    "ContentBytes": "@string(outputs('Compose_Final_Report_JSON'))"
+                  }
+                ],
+                "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "If_Audit_Failed": {
+            "actions": {
+              "Terminate_Audit_Failed": {
+                "metadata": {
+                  "operationMetadataId": "af5229a2-69c2-4d50-b388-f87ba131d735"
+                },
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Failed",
+                  "runError": {
+                    "code": "DGORegistryAuditFailed",
+                    "message": "@concat('HTTP flow registry audit ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ],
+              "Record_Final_Report_Delivery_Failure": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Terminate_Audit_Succeeded": {
+                  "metadata": {
+                    "operationMetadataId": "1ce1ec70-bc77-4894-b158-90b91b0f1734"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Compose_Final_Report_JSON')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "22112bea-e13b-45fa-ae38-2ee4c3794226"
+            },
+            "type": "If"
+          },
+          "Record_Final_Report_Delivery_Failure": {
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                "parameters/method": "POST",
+                "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryExceptions')/items",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata",
+                  "Content-Type": "application/json;odata=nometadata"
+                },
+                "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',concat('AUDIT-REPORT-DELIVERY|',workflow()?['run']?['name'])),'ExceptionKey',concat('AUDIT-REPORT-DELIVERY|',workflow()?['run']?['name'])),'RegistryKey','04-GOV-AUDIT-HTTP-FLOW-REGISTRY'),'FlowId',workflow()?['name']),'ExceptionType','NotificationDeliveryFailure'),'Severity','Critical'),'Status','Open'),'Details',concat('Final audit email could not be delivered. Run: ',workflow()?['run']?['name'],'. Review: ',concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name']))),'DetectedUtc',utcNow())"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline-1",
+                "operationId": "HttpRequest"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Create_Send_Final_Report_Email_Receipt": {
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PostItem"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "item/Title": "@concat('final-report:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                "item/MessageType": "final-report",
+                "item/RecipientEmail": "dgsRegistry@nitda.gov.ng",
+                "item/Reference": "@string(workflow()?['run']?['name'])",
+                "item/SentAtUtc": "@utcNow()",
+                "item/Status": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'sent','failed')",
+                "item/Attempts": 1,
+                "item/LastError": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Compose_Send_Final_Report_Email_Outcome": {
+            "runAfter": {
+              "Create_Send_Final_Report_Email_Receipt": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "type": "Compose",
+            "inputs": "@int(if(or(equals(actions('Send_Final_Report_Email')?['status'],'Failed'),equals(actions('Send_Final_Report_Email')?['status'],'TimedOut')),'send-failed','0'))"
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "4ff75208-6ff7-4073-a4a1-f55ef6649320"
+        },
+        "type": "Scope"
+      }
+    },
+    "outputs": {}
+  }
+}

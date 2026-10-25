@@ -1,0 +1,608 @@
+{
+ "wiringVersion": "1.5.0",
+ "purpose": "Which flow reads and writes which portal list, what crosses into the internal estate and where, and what is not yet wired. Derived from the 01-09 design as the SPOT workbook reads it out of those definitions, expressed against live list GUIDs, and checked against the flows actually deployed.",
+ "principle": "The portal estate is a trust boundary. Its flows are invoked by anonymous strangers with no session, so they may touch the twelve portal lists and nothing else. Exactly one crossing exists - ECM_DOCS_INTAKE - and the property that protects it is that it is TENANT-AUTHENTICATED, not that it is read-only: it reads the portal registry outward for the internal platform and, under D1, writes portal status back. It touches no internal list in either direction, and no anonymous caller can invoke it at all. No portal flow may read or write the internal operations estate or any DGO_* governance list.",
+ "sites": [
+  {
+   "key": "DGO_ECM_GOVERNANCE",
+   "url": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+  },
+  {
+   "key": "Global_Digital_Documents_Centre",
+   "url": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre"
+  },
+  {
+   "key": "NEDMS",
+   "url": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+  }
+ ],
+ "endpoints": [
+  {
+   "endpoint": "SUBMISSION",
+   "purpose": "Register a submission, mint its reference, and issue one upload ticket per declared attachment.",
+   "designFlow": "01-portal-submission",
+   "deployedFlowCandidates": [
+    "CG_Submission_Endpoint"
+   ],
+   "requiredOperations": [
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Verification Proofs",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Verification Proofs",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Sequence Counters",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Sequence Counters",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Sequence Counters",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Registry",
+     "site": "NEDMS",
+     "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Status Timeline",
+     "site": "NEDMS",
+     "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Upload Tickets",
+     "site": "NEDMS",
+     "listGuid": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Flow Telemetry",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+     "operation": "create"
+    }
+   ],
+   "referenceMinting": {
+    "decision": "D6",
+    "source": "Portal Sequence Counters",
+    "format": "NITDA-<yyyy>-<zero-padded sequence, width 5>",
+    "mustNotUse": "concat('NITDA-', yyyy, '-', last 3 digits of ticks(utcNow())) - the deployed expression. A thousand values per year drawn at random; a collision is more likely than not after about thirty-seven submissions.",
+    "why": "The legacy references are never persisted and no flow looks them up, so nothing depends on the old format. Minting sequentially from the counter, at a width the legacy form never used, keeps the two generations distinguishable to a person while both are in circulation during the deferred migration."
+   },
+   "telemetry": {
+    "where": "Inside Scope_Flow_Data_Capture, alongside the existing Compose_Flow_Run_Record",
+    "why": "The house standard already composes the record in 23 flows and ships it by email. This gives it a queryable home. One create per run, in the capture scope, not on the request path."
+   },
+   "requiredOperationsCorrection": "A Portal Registry `update` was required here and is removed 2026-09-03. Nothing performs it and nothing needs to: Create_Submission_Record writes the COMPLETE row in one call — Title, ReferenceId, Subject, Category, CorrespondenceType, Channel, the five sender fields, EventDate, Description, AttachmentCount, SubmittedAtUtc, UpdatedAtUtc, Status, StatusLabel, ActionRequired, VerifiedSubmission, SourceIp and LocalId. The reference is minted BEFORE the create, so there is no second pass to write it back. Checked in all three places a create-then-update would have to appear: the deployed definition exported 2026-09-03, the Portal_SUBMISSION_ECM_DOCS paste package, and the 01-portal-submission design. None has one. Adding a no-op PatchItem to a live flow to satisfy a checklist would be worse than the gap it closed."
+  },
+  {
+   "endpoint": "UPLOAD",
+   "purpose": "Redeem one upload ticket exactly once and store the attachment bytes.",
+   "designFlow": "02-portal-upload",
+   "deployedFlowCandidates": [
+    "CG_Upload_Endpoint"
+   ],
+   "requiredOperations": [
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Upload Tickets",
+     "site": "NEDMS",
+     "listGuid": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Upload Tickets",
+     "site": "NEDMS",
+     "listGuid": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Attachments",
+     "site": "NEDMS",
+     "listGuid": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Flow Telemetry",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+     "operation": "create"
+    }
+   ],
+   "alsoWrites": [
+    {
+     "target": "NITDA_Central_Registry",
+     "site": "NEDMS",
+     "kind": "document library",
+     "why": "The attachment bytes themselves. This is the one portal write outside the portal estate and it is by design - a library holds files, a list holds metadata."
+    }
+   ],
+   "telemetry": {
+    "where": "Inside Scope_Flow_Data_Capture, alongside the existing Compose_Flow_Run_Record",
+    "why": "The house standard already composes the record in 23 flows and ships it by email. This gives it a queryable home. One create per run, in the capture scope, not on the request path."
+   }
+  },
+  {
+   "endpoint": "SUPPORT",
+   "purpose": "Raise a helpdesk case. Never enters the registry - a case is not correspondence.",
+   "designFlow": "03-portal-support",
+   "deployedFlowCandidates": [
+    "CG_Support_Endpoint"
+   ],
+   "requiredOperations": [
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Support Cases",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "b984645b-8e3a-457f-a305-b95650fd3f23",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Outbox Receipts",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Flow Telemetry",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+     "operation": "create"
+    }
+   ],
+   "telemetry": {
+    "where": "Inside Scope_Flow_Data_Capture, alongside the existing Compose_Flow_Run_Record",
+    "why": "The house standard already composes the record in 23 flows and ships it by email. This gives it a queryable home. One create per run, in the capture scope, not on the request path."
+   }
+  },
+  {
+   "endpoint": "VERIFY",
+   "purpose": "Mail a one-time code to a submitter address.",
+   "designFlow": "04-portal-verify-request",
+   "deployedFlowCandidates": [
+    "CG_Verification_Endpoint"
+   ],
+   "requiredOperations": [
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal OTP Codes",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+     "operation": "read"
+    },
+    {
+     "list": "Portal OTP Codes",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+     "operation": "update"
+    },
+    {
+     "list": "Portal OTP Codes",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Outbox Receipts",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Flow Telemetry",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+     "operation": "create"
+    }
+   ],
+   "telemetry": {
+    "where": "Inside Scope_Flow_Data_Capture, alongside the existing Compose_Flow_Run_Record",
+    "why": "The house standard already composes the record in 23 flows and ships it by email. This gives it a queryable home. One create per run, in the capture scope, not on the request path."
+   },
+   "candidatesCorrected": "Web - OTP Generate and Web - OTP Verify were listed here and are not portal flows. docs/folio-Master-Flows-and-Endpoints/registers/internal-flow-register.json attributes them to the internal contract keys OTP_GENERATE and OTP_VERIFY, on the evidence of the definitions naming themselves and declaring their own workflow ids; they serve the DGO runtime's sign-in. OTP_Transactions is their correct home, which is why remediation 01 lists them under doNotChange. Counting their six reads and writes as portal boundary crossings made the target of zero unreachable by construction - no change to any portal flow could ever clear them."
+  },
+  {
+   "endpoint": "VERIFY_CONFIRM",
+   "purpose": "Exchange a code for the single-use proof SUBMISSION and STATUS accept.",
+   "designFlow": "05-portal-verify-confirm",
+   "deployedFlowCandidates": [
+    "CG_Verification_Confirmation_Endpoint"
+   ],
+   "requiredOperations": [
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal OTP Codes",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+     "operation": "read"
+    },
+    {
+     "list": "Portal OTP Codes",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Verification Proofs",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Flow Telemetry",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+     "operation": "create"
+    }
+   ],
+   "telemetry": {
+    "where": "Inside Scope_Flow_Data_Capture, alongside the existing Compose_Flow_Run_Record",
+    "why": "The house standard already composes the record in 23 flows and ships it by email. This gives it a queryable home. One create per run, in the capture scope, not on the request path."
+   },
+   "candidatesCorrected": "Web - OTP Generate and Web - OTP Verify were listed here and are not portal flows. docs/folio-Master-Flows-and-Endpoints/registers/internal-flow-register.json attributes them to the internal contract keys OTP_GENERATE and OTP_VERIFY, on the evidence of the definitions naming themselves and declaring their own workflow ids; they serve the DGO runtime's sign-in. OTP_Transactions is their correct home, which is why remediation 01 lists them under doNotChange. Counting their six reads and writes as portal boundary crossings made the target of zero unreachable by construction - no change to any portal flow could ever clear them."
+  },
+  {
+   "endpoint": "STATUS",
+   "purpose": "Read a submission status back for a reference plus email the caller supplies.",
+   "designFlow": "06-portal-status",
+   "deployedFlowCandidates": [
+    "CG_Status_Check_Endpoint"
+   ],
+   "requiredOperations": [
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Verification Proofs",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Verification Proofs",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Registry",
+     "site": "NEDMS",
+     "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Status Timeline",
+     "site": "NEDMS",
+     "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Flow Telemetry",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+     "operation": "create"
+    }
+   ],
+   "telemetry": {
+    "where": "Inside Scope_Flow_Data_Capture, alongside the existing Compose_Flow_Run_Record",
+    "why": "The house standard already composes the record in 23 flows and ships it by email. This gives it a queryable home. One create per run, in the capture scope, not on the request path."
+   }
+  },
+  {
+   "endpoint": "WRITEBACK",
+   "purpose": "A verified citizen responds, adds a note, or withdraws. Appends to the status timeline; only a withdrawal changes the record's status. The citizen half of the circle whose staff half is ECM_DOCS_INTAKE.",
+   "designFlow": "06-writeback-citizen-actions",
+   "deployedFlowCandidates": [
+    "CG_Writeback_Endpoint"
+   ],
+   "requiredOperations": [
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Rate Limits",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Verification Proofs",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Verification Proofs",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Registry",
+     "site": "NEDMS",
+     "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+     "operation": "read"
+    },
+    {
+     "list": "Portal Registry",
+     "site": "NEDMS",
+     "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Status Timeline",
+     "site": "NEDMS",
+     "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Audit Events",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "f59026cc-9fd7-4322-b681-73c599b852c6",
+     "operation": "create"
+    },
+    {
+     "list": "Portal Flow Telemetry",
+     "site": "Global_Digital_Documents_Centre",
+     "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+     "operation": "create"
+    }
+   ],
+   "telemetry": "One row in Portal Flow Telemetry per run, inside the capture scope."
+  }
+ ],
+ "bridge": {
+  "flow": "ECM_DOCS_INTAKE",
+  "designFlow": "09-portal-intake-feed",
+  "internalName": "df7ddff1-9275-4f23-acf6-e169525f4e2f",
+  "trigger": "HTTP POST, triggerAuthenticationType = Tenant",
+  "reads": [
+   [
+    "Portal Registry",
+    "read"
+   ]
+  ],
+  "projects": [
+   "ID",
+   "Subject",
+   "ReferenceId",
+   "Category",
+   "Status",
+   "StatusLabel",
+   "CorrespondenceType",
+   "Channel",
+   "SenderName",
+   "SenderEmail",
+   "SenderOrganisation",
+   "SenderOrganisationType",
+   "SenderPhone",
+   "EventDate",
+   "Description",
+   "AttachmentCount",
+   "SubmittedAtUtc",
+   "UpdatedAtUtc",
+   "AcknowledgedAtUtc",
+   "ClosedAtUtc",
+   "ActionRequired",
+   "VerifiedSubmission",
+   "LocalId"
+  ],
+  "why": "The single crossing between the public estate and the internal platform, and the only one. It is tenant-authenticated, read-only, and projects a fixed column set - so the portal estate can be written by anonymous callers without any of it becoming reachable from, or reaching into, the internal operations or governance estates.",
+  "writesBack": {
+   "decision": "D1",
+   "action": "writeback",
+   "selectedBy": "@coalesce(triggerBody()?['action'], 'feed')",
+   "operations": [
+    {
+     "list": "Portal Registry",
+     "site": "NEDMS",
+     "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+     "operation": "update"
+    },
+    {
+     "list": "Portal Status Timeline",
+     "site": "NEDMS",
+     "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+     "operation": "create"
+    }
+   ],
+   "why": "ECM_DOCS_INTAKE is a live read feed, not a copy, so a portal submission has no internal row to trigger on - the four flows that create in the internal estate never read Portal Registry. A trigger-based design would need a persistence path built first. Extending the crossing costs one flow edit and one config key, and keeps the number of crossings at one.",
+   "backwardCompatible": "Callers that send no action keep today's feed behaviour."
+  },
+  "measuredState": {
+    "asOf": "2026-10-08",
+    "presentUnderThisName": false,
+    "readsPortalRegistry": false,
+    "what": "ECM_DOCS_INTAKE (df7ddff1) does not exist in the tenant: the owner found no flow of that name (2026-10-08) and the Flow API answers 404 FlowNotFound. Its recorded definition was retired from contracts/deployed with it (registers/flow-retirement.json). Folio reads Portal Registry through IP_Dynamic_Global_Actions_Endpoint; where the staff status write-back runs is readiness ITEM-6, a decision.",
+    "evidence": "docs/folio-Master-Flows-and-Endpoints/evidence/2026-10-08-closure-operations.json",
+    "openItem": 6,
+    "previous": {
+      "asOf": "2026-09-03",
+      "presentUnderThisName": true,
+      "readsPortalRegistry": true,
+      "what": "ECM_DOCS_INTAKE is present at workflow df7ddff1-9275-4f23-acf6-e169525f4e2f and performs its Portal Registry read. `npm run wiring` measures the crossing in place."
+    }
+  },
+  "bearingOnD6": "D6's one-crossing argument stands: the crossing exists and performs its read."
+ },
+ "totals": {
+  "endpoints": 7,
+  "portalListsWired": 12,
+  "portalListsReserved": 0,
+  "requiredOperations": 59
+ },
+ "retainedRecords": {
+  "decision": "D6",
+  "list": "NITDA_Central_Registry",
+  "site": "NEDMS",
+  "position": "Remain in place. No migration, copy, rewrite or delete. Handled as a separate records-management exercise once provisioning concludes.",
+  "riskAssessed": "Nil for the cutover. The deployed SUBMISSION never persists the reference it mints (Update_file_properties patches id alone), and the deployed STATUS carries no $filter and never queries by reference or email - so there is no citizen-facing lookup over these records to preserve or to break."
+ },
+ "buildStandard": {
+  "file": "flow-standard.json",
+  "conformanceCommand": "node scripts/verify-flow-standard.mjs",
+  "position": "Every action added by the remediation goes inside the standard skeleton - the work in Scope_<Purpose> under Scope_Global, the failure path in the catch scope, the answer through the standard response envelope, and the run record in Scope_Flow_Data_Capture. The portal flows adopted the response envelope and skipped the rest; 2 of 11 have Scope_Global, 1 of 11 has a catch scope, 1 of 11 redacts headers or queries."
+ },
+ "scopeNote": "WRITEBACK was added at version 1.5.0 by sponsor decision D11. Portal Audit Events, previously the one provisioned list with no reader or writer in the design, is written by it - which is why the reserved count is now zero.",
+ "unwiredListsNote": "Derived by scripts/verify-portal-wiring.mjs from the endpoints' own required operations, not asserted here. It was asserted once and went stale the moment WRITEBACK began writing Portal Audit Events.",
+ "declaredCrossings": [
+  {
+   "endpoint": "WRITEBACK",
+   "flow": "CG_Writeback_Endpoint",
+   "site": "NITDADGO-EAAACTIVITYTRACKING",
+   "list": "Flow Configuration",
+   "listGuid": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+   "operation": "read",
+   "appliesToEndpoints": [
+    "STATUS",
+    "SUBMISSION",
+    "SUPPORT",
+    "UPLOAD",
+    "VERIFY",
+    "VERIFY_CONFIRM",
+    "WRITEBACK"
+   ],
+   "appliesToEndpointsWhy": "D16 accepts this crossing for all seven portal endpoints, and the seven designer-paste packages all carry it. The prose in `decision` and `reach` said so already; this states it in a form the boundary check can read, so a crossing appearing in a package that is NOT on this list fails the gate before anyone pastes it.",
+   "state": "ACCEPTED",
+   "measuredBy": "node scripts/verify-portal-wiring.mjs, against the deployed definition exported 2026-08-31",
+   "what": "The deployed CG_Writeback_Endpoint reads its allowed CORS origins from Flow Configuration, which sits on the internal operations site. WRITEBACK is invoked by anonymous callers.",
+   "contradicts": "This specification's own principle, verbatim: 'No portal flow may read or write the internal operations estate or any DGO_* governance list.' The read is of the internal operations estate. The principle admits no exception for reads.",
+   "reach": "All seven portal designer-paste packages read the same list for the same value, so applying them extends this from one deployed endpoint to all seven. Seven internal packages and the ECM_DOCS_INTAKE bridge also read it, but those are tenant-authenticated and already inside the internal estate, so the principle does not speak to them.",
+   "whyItIsNotNothing": "The value read is public by nature — an allowed origin is a scheme and a host that every response already announces in its own header. The risk is not the value, it is the connection: the flow's SharePoint connection is authorised against the internal operations site as a whole, not against one list, so any flaw that lets a caller influence what the flow reads reaches further than this one row. That is why the principle is stated absolutely rather than per-value.",
+   "whyItIsNotUrgent": "Nothing reads back to the caller. The origin is used to populate a response header, the read is chained on all statuses and fails closed, and no portal response returns list content from this read.",
+   "decision": "Accepted 2026-08-31 by the agency, recorded as D16. The value is public by nature, nothing from the read reaches the caller, the read fails closed, and the deployed endpoint already does this in production — so declining would leave six endpoints on older behaviour while the seventh kept crossing. Accepted for all seven portal endpoints, since all seven packages read the same list for the same value.",
+   "boundedTo": "One list, one operation, one column: Flow Configuration, read, the ALLOWED_ORIGIN_* rows. Any other list, any write, or any read whose target a caller can influence is not covered and reopens the question. No secret is ever placed in this list.",
+   "reverses": "Evidence that the read target can be influenced by a caller, or a decision to scope the portal flows' SharePoint connection to the portal estate — at which point moving the origins becomes the cheaper option.",
+   "decisionRecord": "docs/folio-Master-Flows-and-Endpoints/deployment/sharepoint/DECISIONS.md — D16"
+  }
+ ],
+ "principleNote": "declaredCrossings records every measured touch by a portal flow outside the twelve portal lists, whether or not it is accepted. A crossing with state UNRESOLVED is a violation of the principle above that has been seen and named, not one that has been permitted; ACCEPTED means a decision record says why, and the principle above is NOT amended — it stands as written, with each accepted crossing a named exception to it. tests/portal-wiring.test.mjs measures the deployed definitions and fails on any crossing not declared here."
+}

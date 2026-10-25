@@ -1,0 +1,585 @@
+{
+ "what": "Summary of the Phase 2 claim test report (ID_Phase2_Claim_Test, run 08584104751220439613793458278CU15): the spec 1.2.2 paste (commit 0d85c3d5), 10 attempts with a rand(1, 6) s Delay, connector retry policy none. The ZTST-2026 row was deleted before the run.",
+ "runName": "08584104751220439613793458278CU15",
+ "startedAtUtc": "2026-10-04T16:36:05.0044092Z",
+ "completedAtUtc": "2026-10-04T16:36:36.0329730Z",
+ "result": {
+  "claims": 20,
+  "succeeded": 20,
+  "retryLater": 0,
+  "numbers": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20
+  ],
+  "distinct": true,
+  "gapFree": true,
+  "succeededOnAttempt": {
+   "1": 1,
+   "2": 8,
+   "3": 3,
+   "4": 7,
+   "5": 1,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "attemptStatus": {
+   "attempt1": {
+    "Succeeded": 1,
+    "Failed": 19,
+    "Skipped": 0
+   },
+   "attempt2": {
+    "Succeeded": 8,
+    "Failed": 11,
+    "Skipped": 1
+   },
+   "attempt3": {
+    "Succeeded": 3,
+    "Failed": 8,
+    "Skipped": 9
+   },
+   "attempt4": {
+    "Succeeded": 7,
+    "Failed": 1,
+    "Skipped": 12
+   },
+   "attempt5": {
+    "Succeeded": 1,
+    "Failed": 0,
+    "Skipped": 19
+   },
+   "attempt6": {
+    "Succeeded": 0,
+    "Failed": 0,
+    "Skipped": 20
+   },
+   "attempt7": {
+    "Succeeded": 0,
+    "Failed": 0,
+    "Skipped": 20
+   },
+   "attempt8": {
+    "Succeeded": 0,
+    "Failed": 0,
+    "Skipped": 20
+   },
+   "attempt9": {
+    "Succeeded": 0,
+    "Failed": 0,
+    "Skipped": 20
+   },
+   "attempt10": {
+    "Succeeded": 0,
+    "Failed": 0,
+    "Skipped": 20
+   }
+  },
+  "counterRows": 1,
+  "currentSequence": 20,
+  "verdict": "PASS (spec section 13: 20 parallel claims give 20 distinct, gap-free numbers)"
+ },
+ "reading": [
+  "All 20 started at 16:36:05 UTC. The claim that drew 1 created the ZTST-2026 row; the other 19 creates were refused by enforce-unique Title, and no claim drew 1 twice, so there is exactly one row.",
+  "The 19 contended on the IF-MATCH claim and all won by attempt 5 of 10 (wins per attempt: 1, 8, 3, 7, 1). Every number 1 to 20 was issued once, with no gap.",
+  "CurrentSequence is 20: the claim that drew 20 wrote it through an IF-MATCH update, and any later successful update would have drawn a number above 20; none did.",
+  "Run time 31 s, inside the 120 s HTTP response limit."
+ ],
+ "claims": [
+  {
+   "iteration": 19,
+   "ok": true,
+   "number": 1,
+   "reference": "ZTST-2026-00001",
+   "succeededOnAttempt": 1,
+   "attempts": [
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:05.0044092Z",
+     "endTime": "2026-10-04T16:36:06.1125014Z"
+    }
+   ]
+  },
+  {
+   "iteration": 12,
+   "ok": true,
+   "number": 2,
+   "reference": "ZTST-2026-00002",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0709802Z",
+     "endTime": "2026-10-04T16:36:07.4263951Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.4534892Z",
+     "endTime": "2026-10-04T16:36:09.4828532Z"
+    }
+   ]
+  },
+  {
+   "iteration": 5,
+   "ok": true,
+   "number": 3,
+   "reference": "ZTST-2026-00003",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.1241871Z",
+     "endTime": "2026-10-04T16:36:07.805347Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.8318448Z",
+     "endTime": "2026-10-04T16:36:09.8582019Z"
+    }
+   ]
+  },
+  {
+   "iteration": 17,
+   "ok": true,
+   "number": 4,
+   "reference": "ZTST-2026-00004",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.1083424Z",
+     "endTime": "2026-10-04T16:36:07.5182401Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.54758Z",
+     "endTime": "2026-10-04T16:36:10.4421109Z"
+    }
+   ]
+  },
+  {
+   "iteration": 15,
+   "ok": true,
+   "number": 5,
+   "reference": "ZTST-2026-00005",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0045335Z",
+     "endTime": "2026-10-04T16:36:07.4369702Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.4606726Z",
+     "endTime": "2026-10-04T16:36:11.6384347Z"
+    }
+   ]
+  },
+  {
+   "iteration": 11,
+   "ok": true,
+   "number": 6,
+   "reference": "ZTST-2026-00006",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0075303Z",
+     "endTime": "2026-10-04T16:36:07.2381992Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.2662518Z",
+     "endTime": "2026-10-04T16:36:12.1843641Z"
+    }
+   ]
+  },
+  {
+   "iteration": 18,
+   "ok": true,
+   "number": 7,
+   "reference": "ZTST-2026-00007",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.1235059Z",
+     "endTime": "2026-10-04T16:36:07.6176437Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.6451394Z",
+     "endTime": "2026-10-04T16:36:12.6782574Z"
+    }
+   ]
+  },
+  {
+   "iteration": 13,
+   "ok": true,
+   "number": 8,
+   "reference": "ZTST-2026-00008",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0057078Z",
+     "endTime": "2026-10-04T16:36:07.2073654Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.229575Z",
+     "endTime": "2026-10-04T16:36:13.2770579Z"
+    }
+   ]
+  },
+  {
+   "iteration": 1,
+   "ok": true,
+   "number": 9,
+   "reference": "ZTST-2026-00009",
+   "succeededOnAttempt": 2,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0223067Z",
+     "endTime": "2026-10-04T16:36:07.6179413Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:07.6440923Z",
+     "endTime": "2026-10-04T16:36:13.7217996Z"
+    }
+   ]
+  },
+  {
+   "iteration": 9,
+   "ok": true,
+   "number": 10,
+   "reference": "ZTST-2026-00010",
+   "succeededOnAttempt": 3,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0064024Z",
+     "endTime": "2026-10-04T16:36:07.4370928Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.4741842Z",
+     "endTime": "2026-10-04T16:36:09.401988Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:09.4342244Z",
+     "endTime": "2026-10-04T16:36:14.6844593Z"
+    }
+   ]
+  },
+  {
+   "iteration": 8,
+   "ok": true,
+   "number": 11,
+   "reference": "ZTST-2026-00011",
+   "succeededOnAttempt": 3,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.1016516Z",
+     "endTime": "2026-10-04T16:36:07.657863Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.6869771Z",
+     "endTime": "2026-10-04T16:36:11.5802953Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:11.6073841Z",
+     "endTime": "2026-10-04T16:36:16.4152913Z"
+    }
+   ]
+  },
+  {
+   "iteration": 4,
+   "ok": true,
+   "number": 12,
+   "reference": "ZTST-2026-00012",
+   "succeededOnAttempt": 4,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0707235Z",
+     "endTime": "2026-10-04T16:36:07.6804693Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.70809Z",
+     "endTime": "2026-10-04T16:36:09.7837488Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:09.8013879Z",
+     "endTime": "2026-10-04T16:36:12.6850571Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:12.7090957Z",
+     "endTime": "2026-10-04T16:36:16.7246723Z"
+    }
+   ]
+  },
+  {
+   "iteration": 7,
+   "ok": true,
+   "number": 13,
+   "reference": "ZTST-2026-00013",
+   "succeededOnAttempt": 4,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.1236609Z",
+     "endTime": "2026-10-04T16:36:07.6234068Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.6511234Z",
+     "endTime": "2026-10-04T16:36:11.5384581Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:11.556461Z",
+     "endTime": "2026-10-04T16:36:16.5703412Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:16.592482Z",
+     "endTime": "2026-10-04T16:36:18.7068254Z"
+    }
+   ]
+  },
+  {
+   "iteration": 20,
+   "ok": true,
+   "number": 14,
+   "reference": "ZTST-2026-00014",
+   "succeededOnAttempt": 4,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0710299Z",
+     "endTime": "2026-10-04T16:36:07.5068748Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.5297835Z",
+     "endTime": "2026-10-04T16:36:10.4842385Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:10.5066078Z",
+     "endTime": "2026-10-04T16:36:16.9561714Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:16.9774052Z",
+     "endTime": "2026-10-04T16:36:19.0709055Z"
+    }
+   ]
+  },
+  {
+   "iteration": 6,
+   "ok": true,
+   "number": 15,
+   "reference": "ZTST-2026-00015",
+   "succeededOnAttempt": 3,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.071919Z",
+     "endTime": "2026-10-04T16:36:07.4821684Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.5145148Z",
+     "endTime": "2026-10-04T16:36:13.3724434Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:13.3959092Z",
+     "endTime": "2026-10-04T16:36:19.4144358Z"
+    }
+   ]
+  },
+  {
+   "iteration": 14,
+   "ok": true,
+   "number": 16,
+   "reference": "ZTST-2026-00016",
+   "succeededOnAttempt": 4,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.1390097Z",
+     "endTime": "2026-10-04T16:36:07.6820586Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.7152421Z",
+     "endTime": "2026-10-04T16:36:13.9002873Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:13.9267279Z",
+     "endTime": "2026-10-04T16:36:19.0442105Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:19.0662309Z",
+     "endTime": "2026-10-04T16:36:22.0342073Z"
+    }
+   ]
+  },
+  {
+   "iteration": 10,
+   "ok": true,
+   "number": 17,
+   "reference": "ZTST-2026-00017",
+   "succeededOnAttempt": 5,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0709802Z",
+     "endTime": "2026-10-04T16:36:07.3695184Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.4000402Z",
+     "endTime": "2026-10-04T16:36:13.3997789Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:13.4260518Z",
+     "endTime": "2026-10-04T16:36:16.4461993Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:16.4682204Z",
+     "endTime": "2026-10-04T16:36:20.5092785Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:20.5403214Z",
+     "endTime": "2026-10-04T16:36:22.6464613Z"
+    }
+   ]
+  },
+  {
+   "iteration": 2,
+   "ok": true,
+   "number": 18,
+   "reference": "ZTST-2026-00018",
+   "succeededOnAttempt": 4,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.1244795Z",
+     "endTime": "2026-10-04T16:36:07.4068609Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.4371661Z",
+     "endTime": "2026-10-04T16:36:13.3428815Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:13.3639367Z",
+     "endTime": "2026-10-04T16:36:19.2219342Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:19.2557813Z",
+     "endTime": "2026-10-04T16:36:23.2082026Z"
+    }
+   ]
+  },
+  {
+   "iteration": 3,
+   "ok": true,
+   "number": 19,
+   "reference": "ZTST-2026-00019",
+   "succeededOnAttempt": 4,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.12381Z",
+     "endTime": "2026-10-04T16:36:07.7078908Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.7351452Z",
+     "endTime": "2026-10-04T16:36:13.8121769Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:13.8347132Z",
+     "endTime": "2026-10-04T16:36:18.8190372Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:18.8446625Z",
+     "endTime": "2026-10-04T16:36:24.9375101Z"
+    }
+   ]
+  },
+  {
+   "iteration": 16,
+   "ok": true,
+   "number": 20,
+   "reference": "ZTST-2026-00020",
+   "succeededOnAttempt": 4,
+   "attempts": [
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:05.0725193Z",
+     "endTime": "2026-10-04T16:36:07.3546195Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:07.3844332Z",
+     "endTime": "2026-10-04T16:36:14.6102192Z"
+    },
+    {
+     "status": "Failed",
+     "startTime": "2026-10-04T16:36:14.6529408Z",
+     "endTime": "2026-10-04T16:36:19.3212407Z"
+    },
+    {
+     "status": "Succeeded",
+     "startTime": "2026-10-04T16:36:19.3474834Z",
+     "endTime": "2026-10-04T16:36:25.4563768Z"
+    }
+   ]
+  }
+ ]
+}

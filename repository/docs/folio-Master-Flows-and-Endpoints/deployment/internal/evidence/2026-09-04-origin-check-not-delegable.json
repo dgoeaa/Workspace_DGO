@@ -1,0 +1,24 @@
+{
+  "recordVersion": "1.0.0",
+  "what": "An attempt, with the operator's approval, to settle ITEM-8 from this session by fetching the recorded allowed origin. It did not settle it, and the reason matters: the attempt never reached the host.",
+  "attemptedUtc": "2026-09-04",
+  "target": "https://activityweb.page.gd — the value ALLOWED_ORIGIN_1 records, unconfirmed against the running platform",
+  "result": {
+    "outcome": "BLOCKED_BY_THIS_ENVIRONMENT",
+    "observed": "curl: (56) CONNECT tunnel failed, response 403",
+    "confirmedBy": "the session's own egress proxy status endpoint, which logged two entries: kind connect_rejected, detail 'gateway answered 403 to CONNECT (policy denial or upstream failure)', host activityweb.page.gd:443"
+  },
+  "whatThisEstablishes": "That this session cannot reach that host. Nothing else.",
+  "whatItExplicitlyDoesNotEstablish": [
+    "That the site is down, wrong, or does not exist. A policy denial at the proxy and an unreachable origin are indistinguishable from here, and reading the denial as evidence about the origin would be inventing a measurement.",
+    "That the recorded origin is correct. It remains what it was: recorded, unconfirmed."
+  ],
+  "consequence": "ITEM-8 cannot be delegated to a session in this environment, whatever the network policy is later set to, because a session that CAN reach a host still cannot tell you what origin the platform reports for itself. Only the running page can answer that, by printing location.origin. Recorded here so the attempt is not repeated in the belief it was untried.",
+  "externalDependency": {
+    "declared": true,
+    "material": "one HTTPS GET of a public hostname the repository already records",
+    "reason": "to test whether ITEM-8 could be settled without the operator",
+    "approvedBy": "the operator, in session, 2026-09-04",
+    "outcome": "no external material was obtained; the request was refused before any response body existed"
+  }
+}

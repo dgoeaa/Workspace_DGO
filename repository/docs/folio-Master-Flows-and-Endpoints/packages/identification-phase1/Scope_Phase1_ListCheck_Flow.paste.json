@@ -1,0 +1,744 @@
+{
+  "nodeId": "Scope_Phase1_ListCheck_Flow",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Check_Context": {
+        "type": "Compose",
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000001"
+        },
+        "inputs": {
+          "requestId": "@guid()",
+          "startedAtUtc": "@utcNow()",
+          "runName": "@workflow()?['run']?['name']",
+          "runBy": "@string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],''))",
+          "indexLimitPerList": 20,
+          "listViewThreshold": 5000
+        }
+      },
+      "Compose_Check_Targets": {
+        "type": "Compose",
+        "runAfter": {
+          "Compose_Check_Context": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000002"
+        },
+        "inputs": [
+          {
+            "key": "INTAKE_REGISTER",
+            "site": "NEDMS",
+            "list": "Portal Registry",
+            "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+            "entityType": "REC",
+            "role": "master"
+          },
+          {
+            "key": "ATTACHMENTS",
+            "site": "NEDMS",
+            "list": "Portal Attachments",
+            "listGuid": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+            "entityType": "ATT",
+            "role": "master"
+          },
+          {
+            "key": "SCAN_LIBRARY",
+            "site": "NEDMS",
+            "list": "NITDA_Central_Registry",
+            "listGuid": "f553959f-d55b-4591-aa87-d61fb6f9eda9",
+            "entityType": "ATT",
+            "role": "file-store"
+          },
+          {
+            "key": "STATUS_TIMELINE",
+            "site": "NEDMS",
+            "list": "Portal Status Timeline",
+            "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+            "entityType": "EVT",
+            "role": "event-stream"
+          },
+          {
+            "key": "SUPPORT_CASES",
+            "site": "Global_Digital_Documents_Centre",
+            "list": "Portal Support Cases",
+            "listGuid": "b984645b-8e3a-457f-a305-b95650fd3f23",
+            "entityType": "CAS",
+            "role": "master"
+          },
+          {
+            "key": "SEQUENCE_COUNTERS",
+            "site": "Global_Digital_Documents_Centre",
+            "list": "Portal Sequence Counters",
+            "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+            "entityType": null,
+            "role": "control"
+          },
+          {
+            "key": "FLOW_TELEMETRY",
+            "site": "Global_Digital_Documents_Centre",
+            "list": "Portal Flow Telemetry",
+            "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+            "entityType": null,
+            "role": "run-log"
+          },
+          {
+            "key": "TASK_QUEUE",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+            "entityType": "TSK",
+            "role": "master"
+          },
+          {
+            "key": "TASK_QUEUE_MIRROR",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "listGuid": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
+            "entityType": "TSK",
+            "role": "mirror"
+          },
+          {
+            "key": "OPS_WORKING_REGISTER",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO DIGITAL OPS",
+            "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+            "entityType": "REC",
+            "role": "mirror"
+          },
+          {
+            "key": "MINUTES",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Task_Comments",
+            "listGuid": "1932d687-e77a-4929-9047-a1f544c68a0b",
+            "entityType": "MIN",
+            "role": "master"
+          },
+          {
+            "key": "AI_TEXT_LOG",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "AI TEXT DATA LOG",
+            "listGuid": "d46a2be7-eaca-4056-bc4f-a439eb59721a",
+            "entityType": "EVT",
+            "role": "event-stream"
+          },
+          {
+            "key": "FLOW_CONFIGURATION",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Flow Configuration",
+            "listGuid": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+            "entityType": null,
+            "role": "control"
+          },
+          {
+            "key": "AUDIT_LOG",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_AuditLog",
+            "listGuid": "be0c7af1-b21d-4efe-8c30-53fc55598d95",
+            "entityType": "EVT",
+            "role": "event-stream"
+          },
+          {
+            "key": "USER_DIRECTORY",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_UserDirectory",
+            "listGuid": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+            "entityType": "USR",
+            "role": "master"
+          },
+          {
+            "key": "ORG_DIRECTORY",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_DepartmentDirectory",
+            "listGuid": "eed0ba42-ece1-40e2-bf66-79827de02766",
+            "entityType": "ORG",
+            "role": "master"
+          },
+          {
+            "key": "ENDPOINT_REGISTRY",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_EndpointRegistry",
+            "listGuid": "08c6e1c4-f2b1-4810-933d-69b4327fb6af",
+            "entityType": null,
+            "role": "control"
+          },
+          {
+            "key": "FLOW_REGISTRY",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_HTTPFlowRegistry",
+            "listGuid": null,
+            "entityType": null,
+            "role": "control"
+          },
+          {
+            "key": "FLOW_DEPENDENCIES",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_HTTPFlowDependencies",
+            "listGuid": null,
+            "entityType": null,
+            "role": "control"
+          },
+          {
+            "key": "RECORD_LINKS",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_RecordLinks",
+            "listGuid": null,
+            "entityType": "LNK",
+            "role": "master"
+          },
+          {
+            "key": "IDENTITY_MAP",
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "DGO_IdentityMap",
+            "listGuid": null,
+            "entityType": "MAP",
+            "role": "master"
+          },
+          {
+            "key": "BRIEFS",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Briefs",
+            "listGuid": null,
+            "entityType": "BRF",
+            "role": "master"
+          },
+          {
+            "key": "MEETINGS",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Meetings",
+            "listGuid": null,
+            "entityType": "MTG",
+            "role": "master"
+          },
+          {
+            "key": "PROJECTS",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Projects",
+            "listGuid": null,
+            "entityType": "PRJ",
+            "role": "master"
+          },
+          {
+            "key": "APPROVALS",
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO_Approvals",
+            "listGuid": null,
+            "entityType": "APR",
+            "role": "master"
+          },
+          {
+            "key": "REGISTRY_FILES",
+            "site": "NEDMS",
+            "list": "DGO_RegistryFiles",
+            "listGuid": null,
+            "entityType": "REG",
+            "role": "master"
+          },
+          {
+            "key": "FILE_MOVEMENTS",
+            "site": "NEDMS",
+            "list": "DGO_FileMovements",
+            "listGuid": null,
+            "entityType": "EVT",
+            "role": "event-stream"
+          }
+        ]
+      },
+      "Get_Lists_NEDMS": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_Check_Targets": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000003"
+        },
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "parameters/method": "GET",
+            "parameters/uri": "@concat('_api/web/lists?$select=Id,Title,ItemCount,EnableVersioning,MajorVersionLimit,BaseTemplate,Fields/InternalName,Fields/Title,Fields/TypeAsString,Fields/Required,Fields/Indexed,Fields/EnforceUniqueValues,Fields/Hidden,Fields/ReadOnlyField&$expand=Fields&$filter=',encodeUriComponent('Title eq ''Portal Registry'' or Title eq ''Portal Attachments'' or Title eq ''NITDA_Central_Registry'' or Title eq ''Portal Status Timeline'' or Title eq ''DGO_RegistryFiles'' or Title eq ''DGO_FileMovements'''))",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          }
+        }
+      },
+      "Select_Rows_NEDMS": {
+        "type": "Select",
+        "runAfter": {
+          "Get_Lists_NEDMS": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000004"
+        },
+        "inputs": {
+          "from": "@coalesce(body('Get_Lists_NEDMS')?['value'],json('[]'))",
+          "select": {
+            "site": "NEDMS",
+            "list": "@item()?['Title']",
+            "listGuid": "@toLower(string(item()?['Id']))",
+            "itemCount": "@item()?['ItemCount']",
+            "overThreshold": "@greater(int(coalesce(item()?['ItemCount'],0)),5000)",
+            "versioning": "@item()?['EnableVersioning']",
+            "fieldCount": "@length(coalesce(item()?['Fields'],json('[]')))",
+            "indexedCount": "@length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'))",
+            "freeIndexSlots": "@sub(20,length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()')))",
+            "indexedColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'),', ')",
+            "requiredColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Required=\"true\"][Hidden=\"false\"][ReadOnlyField=\"false\"]/InternalName/text()'),', ')",
+            "uniqueColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[EnforceUniqueValues=\"true\"]/InternalName/text()'),', ')",
+            "identityColumnsPresent": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[InternalName=\"EntityKey\" or InternalName=\"ReferenceId\" or InternalName=\"TaskRef\" or InternalName=\"CaseRef\" or InternalName=\"FileRef\" or InternalName=\"UnitKey\" or InternalName=\"ParentKey\" or InternalName=\"RootKey\" or InternalName=\"RootRef\" or InternalName=\"Rev\" or InternalName=\"IdState\" or InternalName=\"SupersededBy\" or InternalName=\"CorrelationId\" or InternalName=\"CreatedByRequest\" or InternalName=\"ClientCorrelationId\" or InternalName=\"ClientIdempotencyKey\" or InternalName=\"AttachmentHashSet\"]/InternalName/text()'),', ')"
+          }
+        }
+      },
+      "Get_Lists_Global_Digital_Documents_Centre": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Select_Rows_NEDMS": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000005"
+        },
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "parameters/method": "GET",
+            "parameters/uri": "@concat('_api/web/lists?$select=Id,Title,ItemCount,EnableVersioning,MajorVersionLimit,BaseTemplate,Fields/InternalName,Fields/Title,Fields/TypeAsString,Fields/Required,Fields/Indexed,Fields/EnforceUniqueValues,Fields/Hidden,Fields/ReadOnlyField&$expand=Fields&$filter=',encodeUriComponent('Title eq ''Portal Support Cases'' or Title eq ''Portal Sequence Counters'' or Title eq ''Portal Flow Telemetry'''))",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          }
+        }
+      },
+      "Select_Rows_Global_Digital_Documents_Centre": {
+        "type": "Select",
+        "runAfter": {
+          "Get_Lists_Global_Digital_Documents_Centre": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000006"
+        },
+        "inputs": {
+          "from": "@coalesce(body('Get_Lists_Global_Digital_Documents_Centre')?['value'],json('[]'))",
+          "select": {
+            "site": "Global_Digital_Documents_Centre",
+            "list": "@item()?['Title']",
+            "listGuid": "@toLower(string(item()?['Id']))",
+            "itemCount": "@item()?['ItemCount']",
+            "overThreshold": "@greater(int(coalesce(item()?['ItemCount'],0)),5000)",
+            "versioning": "@item()?['EnableVersioning']",
+            "fieldCount": "@length(coalesce(item()?['Fields'],json('[]')))",
+            "indexedCount": "@length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'))",
+            "freeIndexSlots": "@sub(20,length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()')))",
+            "indexedColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'),', ')",
+            "requiredColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Required=\"true\"][Hidden=\"false\"][ReadOnlyField=\"false\"]/InternalName/text()'),', ')",
+            "uniqueColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[EnforceUniqueValues=\"true\"]/InternalName/text()'),', ')",
+            "identityColumnsPresent": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[InternalName=\"EntityKey\" or InternalName=\"ReferenceId\" or InternalName=\"TaskRef\" or InternalName=\"CaseRef\" or InternalName=\"FileRef\" or InternalName=\"UnitKey\" or InternalName=\"ParentKey\" or InternalName=\"RootKey\" or InternalName=\"RootRef\" or InternalName=\"Rev\" or InternalName=\"IdState\" or InternalName=\"SupersededBy\" or InternalName=\"CorrelationId\" or InternalName=\"CreatedByRequest\" or InternalName=\"ClientCorrelationId\" or InternalName=\"ClientIdempotencyKey\" or InternalName=\"AttachmentHashSet\"]/InternalName/text()'),', ')"
+          }
+        }
+      },
+      "Get_Lists_NITDADGO_EAAACTIVITYTRACKING": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Select_Rows_Global_Digital_Documents_Centre": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000007"
+        },
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "parameters/method": "GET",
+            "parameters/uri": "@concat('_api/web/lists?$select=Id,Title,ItemCount,EnableVersioning,MajorVersionLimit,BaseTemplate,Fields/InternalName,Fields/Title,Fields/TypeAsString,Fields/Required,Fields/Indexed,Fields/EnforceUniqueValues,Fields/Hidden,Fields/ReadOnlyField&$expand=Fields&$filter=',encodeUriComponent('Title eq ''Global Tracking Queue'' or Title eq ''DEV_OPS_Global_Tracking_Queue'' or Title eq ''DGO DIGITAL OPS'' or Title eq ''Task_Comments'' or Title eq ''AI TEXT DATA LOG'' or Title eq ''Flow Configuration'' or Title eq ''DGO_Briefs'' or Title eq ''DGO_Meetings'' or Title eq ''DGO_Projects'' or Title eq ''DGO_Approvals'''))",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          }
+        }
+      },
+      "Select_Rows_NITDADGO_EAAACTIVITYTRACKING": {
+        "type": "Select",
+        "runAfter": {
+          "Get_Lists_NITDADGO_EAAACTIVITYTRACKING": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000008"
+        },
+        "inputs": {
+          "from": "@coalesce(body('Get_Lists_NITDADGO_EAAACTIVITYTRACKING')?['value'],json('[]'))",
+          "select": {
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "list": "@item()?['Title']",
+            "listGuid": "@toLower(string(item()?['Id']))",
+            "itemCount": "@item()?['ItemCount']",
+            "overThreshold": "@greater(int(coalesce(item()?['ItemCount'],0)),5000)",
+            "versioning": "@item()?['EnableVersioning']",
+            "fieldCount": "@length(coalesce(item()?['Fields'],json('[]')))",
+            "indexedCount": "@length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'))",
+            "freeIndexSlots": "@sub(20,length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()')))",
+            "indexedColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'),', ')",
+            "requiredColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Required=\"true\"][Hidden=\"false\"][ReadOnlyField=\"false\"]/InternalName/text()'),', ')",
+            "uniqueColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[EnforceUniqueValues=\"true\"]/InternalName/text()'),', ')",
+            "identityColumnsPresent": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[InternalName=\"EntityKey\" or InternalName=\"ReferenceId\" or InternalName=\"TaskRef\" or InternalName=\"CaseRef\" or InternalName=\"FileRef\" or InternalName=\"UnitKey\" or InternalName=\"ParentKey\" or InternalName=\"RootKey\" or InternalName=\"RootRef\" or InternalName=\"Rev\" or InternalName=\"IdState\" or InternalName=\"SupersededBy\" or InternalName=\"CorrelationId\" or InternalName=\"CreatedByRequest\" or InternalName=\"ClientCorrelationId\" or InternalName=\"ClientIdempotencyKey\" or InternalName=\"AttachmentHashSet\"]/InternalName/text()'),', ')"
+          }
+        }
+      },
+      "Get_Lists_DGO_ECM_GOVERNANCE": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Select_Rows_NITDADGO_EAAACTIVITYTRACKING": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000009"
+        },
+        "inputs": {
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+            "parameters/method": "GET",
+            "parameters/uri": "@concat('_api/web/lists?$select=Id,Title,ItemCount,EnableVersioning,MajorVersionLimit,BaseTemplate,Fields/InternalName,Fields/Title,Fields/TypeAsString,Fields/Required,Fields/Indexed,Fields/EnforceUniqueValues,Fields/Hidden,Fields/ReadOnlyField&$expand=Fields&$filter=',encodeUriComponent('Title eq ''DGO_AuditLog'' or Title eq ''DGO_UserDirectory'' or Title eq ''DGO_DepartmentDirectory'' or Title eq ''DGO_EndpointRegistry'' or Title eq ''DGO_HTTPFlowRegistry'' or Title eq ''DGO_HTTPFlowDependencies'' or Title eq ''DGO_RecordLinks'' or Title eq ''DGO_IdentityMap'''))",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          }
+        }
+      },
+      "Select_Rows_DGO_ECM_GOVERNANCE": {
+        "type": "Select",
+        "runAfter": {
+          "Get_Lists_DGO_ECM_GOVERNANCE": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000010"
+        },
+        "inputs": {
+          "from": "@coalesce(body('Get_Lists_DGO_ECM_GOVERNANCE')?['value'],json('[]'))",
+          "select": {
+            "site": "DGO_ECM_GOVERNANCE",
+            "list": "@item()?['Title']",
+            "listGuid": "@toLower(string(item()?['Id']))",
+            "itemCount": "@item()?['ItemCount']",
+            "overThreshold": "@greater(int(coalesce(item()?['ItemCount'],0)),5000)",
+            "versioning": "@item()?['EnableVersioning']",
+            "fieldCount": "@length(coalesce(item()?['Fields'],json('[]')))",
+            "indexedCount": "@length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'))",
+            "freeIndexSlots": "@sub(20,length(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()')))",
+            "indexedColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Indexed=\"true\"]/InternalName/text()'),', ')",
+            "requiredColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[Required=\"true\"][Hidden=\"false\"][ReadOnlyField=\"false\"]/InternalName/text()'),', ')",
+            "uniqueColumns": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[EnforceUniqueValues=\"true\"]/InternalName/text()'),', ')",
+            "identityColumnsPresent": "@join(xpath(xml(json(concat('{\"r\":{\"f\":',string(coalesce(item()?['Fields'],json('[]'))),'}}'))),'/r/f[InternalName=\"EntityKey\" or InternalName=\"ReferenceId\" or InternalName=\"TaskRef\" or InternalName=\"CaseRef\" or InternalName=\"FileRef\" or InternalName=\"UnitKey\" or InternalName=\"ParentKey\" or InternalName=\"RootKey\" or InternalName=\"RootRef\" or InternalName=\"Rev\" or InternalName=\"IdState\" or InternalName=\"SupersededBy\" or InternalName=\"CorrelationId\" or InternalName=\"CreatedByRequest\" or InternalName=\"ClientCorrelationId\" or InternalName=\"ClientIdempotencyKey\" or InternalName=\"AttachmentHashSet\"]/InternalName/text()'),', ')"
+          }
+        }
+      },
+      "Compose_Site_Status": {
+        "type": "Compose",
+        "runAfter": {
+          "Select_Rows_DGO_ECM_GOVERNANCE": [
+            "Succeeded",
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000011"
+        },
+        "inputs": [
+          {
+            "site": "NEDMS",
+            "status": "@coalesce(actions('Get_Lists_NEDMS')?['status'],'Unknown')",
+            "httpStatus": "@actions('Get_Lists_NEDMS')?['outputs']?['statusCode']",
+            "error": "@string(coalesce(body('Get_Lists_NEDMS')?['error']?['message'],body('Get_Lists_NEDMS')?['odata.error']?['message']?['value'],''))",
+            "listsReturned": "@length(coalesce(body('Get_Lists_NEDMS')?['value'],json('[]')))"
+          },
+          {
+            "site": "Global_Digital_Documents_Centre",
+            "status": "@coalesce(actions('Get_Lists_Global_Digital_Documents_Centre')?['status'],'Unknown')",
+            "httpStatus": "@actions('Get_Lists_Global_Digital_Documents_Centre')?['outputs']?['statusCode']",
+            "error": "@string(coalesce(body('Get_Lists_Global_Digital_Documents_Centre')?['error']?['message'],body('Get_Lists_Global_Digital_Documents_Centre')?['odata.error']?['message']?['value'],''))",
+            "listsReturned": "@length(coalesce(body('Get_Lists_Global_Digital_Documents_Centre')?['value'],json('[]')))"
+          },
+          {
+            "site": "NITDADGO-EAAACTIVITYTRACKING",
+            "status": "@coalesce(actions('Get_Lists_NITDADGO_EAAACTIVITYTRACKING')?['status'],'Unknown')",
+            "httpStatus": "@actions('Get_Lists_NITDADGO_EAAACTIVITYTRACKING')?['outputs']?['statusCode']",
+            "error": "@string(coalesce(body('Get_Lists_NITDADGO_EAAACTIVITYTRACKING')?['error']?['message'],body('Get_Lists_NITDADGO_EAAACTIVITYTRACKING')?['odata.error']?['message']?['value'],''))",
+            "listsReturned": "@length(coalesce(body('Get_Lists_NITDADGO_EAAACTIVITYTRACKING')?['value'],json('[]')))"
+          },
+          {
+            "site": "DGO_ECM_GOVERNANCE",
+            "status": "@coalesce(actions('Get_Lists_DGO_ECM_GOVERNANCE')?['status'],'Unknown')",
+            "httpStatus": "@actions('Get_Lists_DGO_ECM_GOVERNANCE')?['outputs']?['statusCode']",
+            "error": "@string(coalesce(body('Get_Lists_DGO_ECM_GOVERNANCE')?['error']?['message'],body('Get_Lists_DGO_ECM_GOVERNANCE')?['odata.error']?['message']?['value'],''))",
+            "listsReturned": "@length(coalesce(body('Get_Lists_DGO_ECM_GOVERNANCE')?['value'],json('[]')))"
+          }
+        ]
+      },
+      "Compose_All_Rows": {
+        "type": "Compose",
+        "runAfter": {
+          "Compose_Site_Status": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000012"
+        },
+        "inputs": "@union(body('Select_Rows_NEDMS'),body('Select_Rows_Global_Digital_Documents_Centre'),body('Select_Rows_NITDADGO_EAAACTIVITYTRACKING'),body('Select_Rows_DGO_ECM_GOVERNANCE'))"
+      },
+      "Select_Target_Status": {
+        "type": "Select",
+        "runAfter": {
+          "Compose_All_Rows": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000013"
+        },
+        "inputs": {
+          "from": "@outputs('Compose_Check_Targets')",
+          "select": {
+            "key": "@item()?['key']",
+            "site": "@item()?['site']",
+            "list": "@item()?['list']",
+            "entityType": "@string(coalesce(item()?['entityType'],''))",
+            "role": "@item()?['role']",
+            "found": "@contains(string(outputs('Compose_All_Rows')),concat('\"list\":\"',item()?['list'],'\"'))",
+            "guidMatches": "@if(empty(item()?['listGuid']),'not catalogued',if(not(contains(string(outputs('Compose_All_Rows')),concat('\"list\":\"',item()?['list'],'\"'))),'n/a',if(contains(string(outputs('Compose_All_Rows')),toLower(string(item()?['listGuid']))),'yes','NO')))",
+            "result": "@if(contains(string(outputs('Compose_All_Rows')),concat('\"list\":\"',item()?['list'],'\"')),'found',if(empty(item()?['listGuid']),'not found: new list, not created yet','NOT FOUND: catalogued list'))"
+          }
+        }
+      },
+      "Create_Target_Table": {
+        "type": "Table",
+        "runAfter": {
+          "Select_Target_Status": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000014"
+        },
+        "inputs": {
+          "from": "@body('Select_Target_Status')",
+          "format": "HTML"
+        }
+      },
+      "Create_Lists_Table": {
+        "type": "Table",
+        "runAfter": {
+          "Create_Target_Table": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000015"
+        },
+        "inputs": {
+          "from": "@outputs('Compose_All_Rows')",
+          "format": "HTML"
+        }
+      },
+      "Create_Site_Table": {
+        "type": "Table",
+        "runAfter": {
+          "Create_Lists_Table": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000016"
+        },
+        "inputs": {
+          "from": "@outputs('Compose_Site_Status')",
+          "format": "HTML"
+        }
+      },
+      "Compose_Check_Report": {
+        "type": "Compose",
+        "runAfter": {
+          "Create_Site_Table": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000017"
+        },
+        "inputs": {
+          "check": "P1-1 read-only list check",
+          "context": "@outputs('Compose_Check_Context')",
+          "completedAtUtc": "@utcNow()",
+          "summary": {
+            "targets": "@length(outputs('Compose_Check_Targets'))",
+            "listsFound": "@length(outputs('Compose_All_Rows'))",
+            "sitesFailed": "@sub(length(outputs('Compose_Site_Status')),length(xpath(xml(json(concat('{\"r\":{\"s\":',string(outputs('Compose_Site_Status')),'}}'))),'/r/s[status=\"Succeeded\"]/site/text()')))",
+            "missing": "@join(xpath(xml(json(concat('{\"r\":{\"t\":',string(body('Select_Target_Status')),'}}'))),'/r/t[result=\"NOT FOUND: catalogued list\"]/key/text()'),', ')",
+            "notCreatedYet": "@join(xpath(xml(json(concat('{\"r\":{\"t\":',string(body('Select_Target_Status')),'}}'))),'/r/t[result=\"not found: new list, not created yet\"]/key/text()'),', ')",
+            "guidMismatch": "@join(xpath(xml(json(concat('{\"r\":{\"t\":',string(body('Select_Target_Status')),'}}'))),'/r/t[guidMatches=\"NO\"]/key/text()'),', ')",
+            "overThreshold": "@join(xpath(xml(json(concat('{\"r\":{\"l\":',string(outputs('Compose_All_Rows')),'}}'))),'/r/l[overThreshold=\"true\"]/list/text()'),', ')"
+          },
+          "sites": "@outputs('Compose_Site_Status')",
+          "targets": "@body('Select_Target_Status')",
+          "lists": "@outputs('Compose_All_Rows')"
+        }
+      },
+      "Compose_Check_Html": {
+        "type": "Compose",
+        "runAfter": {
+          "Compose_Check_Report": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000018"
+        },
+        "inputs": "@concat('<style>body{font-family:Segoe UI,Arial,sans-serif;font-size:13px;color:#1b1b1b}table{border-collapse:collapse;margin:6px 0 18px}th,td{border:1px solid #c8c8c8;padding:4px 6px;text-align:left;vertical-align:top}th{background:#0f5132;color:#fff}h2{color:#0f5132;margin:18px 0 4px}</style><h1>P1-1 SharePoint list check</h1><p>Read-only. Run ',outputs('Compose_Check_Context')?['runName'],' &middot; ',outputs('Compose_Check_Report')?['completedAtUtc'],'</p><p><b>Targets:</b> ',string(outputs('Compose_Check_Report')?['summary']?['targets']),' &middot; <b>found:</b> ',string(outputs('Compose_Check_Report')?['summary']?['listsFound']),' &middot; <b>missing:</b> ',coalesce(outputs('Compose_Check_Report')?['summary']?['missing'],''),' &middot; <b>GUID mismatch:</b> ',coalesce(outputs('Compose_Check_Report')?['summary']?['guidMismatch'],''),' &middot; <b>over 5,000 items:</b> ',coalesce(outputs('Compose_Check_Report')?['summary']?['overThreshold'],''),'</p><h2>Sites</h2>',body('Create_Site_Table'),'<h2>Catalogue targets</h2>',body('Create_Target_Table'),'<h2>Lists: columns and indexes</h2>',body('Create_Lists_Table'),'<p>The full result is attached as JSON. Send the attachment back to continue with P1-2.</p>')"
+      },
+      "Send_Check_Report": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_Check_Html": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000019"
+        },
+        "inputs": {
+          "parameters": {
+            "emailMessage/To": "@outputs('Compose_Check_Context')?['runBy']",
+            "emailMessage/Subject": "@concat('P1-1 SharePoint list check: ',string(outputs('Compose_Check_Report')?['summary']?['listsFound']),' of ',string(outputs('Compose_Check_Report')?['summary']?['targets']),' lists found')",
+            "emailMessage/Body": "@outputs('Compose_Check_Html')",
+            "emailMessage/Attachments": [
+              {
+                "Name": "p1-1-list-check.json",
+                "ContentBytes": "@base64(string(outputs('Compose_Check_Report')))"
+              }
+            ],
+            "emailMessage/Importance": "Normal"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connection": "shared_office365",
+            "operationId": "SendEmailV2"
+          }
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "b1000000-0000-4000-8000-000000000020"
+    }
+  },
+  "allConnectionData": {
+    "Get_Lists_NEDMS": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Lists_Global_Digital_Documents_Centre": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Lists_NITDADGO_EAAACTIVITYTRACKING": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Lists_DGO_ECM_GOVERNANCE": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Check_Report": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

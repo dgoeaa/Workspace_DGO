@@ -1,0 +1,645 @@
+{
+  "nodeId": "Scope_Phase1_Finish_Flow",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Finish_Context": {
+        "type": "Compose",
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "b5000000-0000-4000-8000-000000000010"
+        },
+        "inputs": {
+          "requestId": "@guid()",
+          "startedAtUtc": "@utcNow()",
+          "runName": "@workflow()?['run']?['name']",
+          "planned": 23
+        }
+      },
+      "Compose_Column_Plan": {
+        "type": "Compose",
+        "runAfter": {
+          "Compose_Finish_Context": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b5000000-0000-4000-8000-000000000011"
+        },
+        "inputs": [
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+            "list": "DGO_RegistryFiles",
+            "column": "RegistryFileRef",
+            "type": "Text",
+            "schemaXml": "<Field Type=\"Text\" Name=\"RegistryFileRef\" StaticName=\"RegistryFileRef\" DisplayName=\"RegistryFileRef\" Required=\"FALSE\" MaxLength=\"20\" />",
+            "create": true,
+            "index": true,
+            "unindex": false,
+            "why": "Q5: the REG reference column (spec 1.2.1)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "NVERSE",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": true,
+            "why": "frees a slot: no flow or client filters this mirror list on it, and the list holds 2,503 items (under the 5,000 threshold)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "RefIDDN",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": true,
+            "why": "frees a slot: no flow or client filters this mirror list on it, and the list holds 2,503 items (under the 5,000 threshold)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "Reference_ID",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": true,
+            "why": "frees a slot: no flow or client filters this mirror list on it, and the list holds 2,503 items (under the 5,000 threshold)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "GDSUROUT",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": true,
+            "why": "frees a slot: no flow or client filters this mirror list on it, and the list holds 2,503 items (under the 5,000 threshold)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "Followuptrigger",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": true,
+            "why": "frees a slot: no flow or client filters this mirror list on it, and the list holds 2,503 items (under the 5,000 threshold)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "GTQGrouping",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": true,
+            "why": "frees a slot: no flow or client filters this mirror list on it, and the list holds 2,503 items (under the 5,000 threshold)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "_x0033_rdAssigned",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": false,
+            "unindex": true,
+            "why": "frees a slot: no flow or client filters this mirror list on it, and the list holds 2,503 items (under the 5,000 threshold)"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "CorrelationId",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "ParentKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "RootKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "RootRef",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "AssigneeKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "RoutedOrgKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DEV_OPS_Global_Tracking_Queue",
+            "column": "ClientRequestHash",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "EntityKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index, into the 5 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "TaskRef",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index, into the 5 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "IdState",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index, into the 5 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "RootKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index, into the 5 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "Global Tracking Queue",
+            "column": "ParentKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "spec index, into the 5 free slots"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO DIGITAL OPS",
+            "column": "EntityKey",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "P1-2c retry; the error is recorded if SharePoint refuses again"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO DIGITAL OPS",
+            "column": "ReferenceId",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "P1-2c retry; the error is recorded if SharePoint refuses again"
+          },
+          {
+            "site": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "list": "DGO DIGITAL OPS",
+            "column": "IdState",
+            "type": "",
+            "schemaXml": "",
+            "create": false,
+            "index": true,
+            "unindex": false,
+            "why": "P1-2c retry; the error is recorded if SharePoint refuses again"
+          }
+        ]
+      },
+      "Foreach_Planned_Column": {
+        "type": "Foreach",
+        "foreach": "@outputs('Compose_Column_Plan')",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "runAfter": {
+          "Compose_Column_Plan": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000023"
+        },
+        "actions": {
+          "Get_Existing_Field": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000006"
+            },
+            "inputs": {
+              "parameters": {
+                "dataset": "@items('Foreach_Planned_Column')?['site']",
+                "parameters/method": "GET",
+                "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields?$select=Id,InternalName,TypeAsString,Indexed&$filter=InternalName eq ''',items('Foreach_Planned_Column')?['column'],'''&$top=1')",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              }
+            }
+          },
+          "Condition_Field_Missing": {
+            "type": "If",
+            "runAfter": {
+              "Get_Existing_Field": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000007"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@empty(first(coalesce(body('Get_Existing_Field')?['value'],json('[]'))))",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['create']",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Create_Field": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000008"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/createfieldasxml')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(json('{\"parameters\":{\"Options\":12}}'),'parameters',setProperty(json('{\"Options\":12}'),'SchemaXml',items('Foreach_Planned_Column')?['schemaXml']))"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Condition_Index_Needed": {
+            "type": "If",
+            "runAfter": {
+              "Condition_Field_Missing": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000009"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['index']",
+                    true
+                  ]
+                },
+                {
+                  "not": {
+                    "equals": [
+                      "@coalesce(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))?['Indexed'],false)",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Set_Field_Indexed": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b4000000-0000-4000-8000-000000000010"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/getByInternalNameOrTitle(''',items('Foreach_Planned_Column')?['column'],''')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(json('{}'),'Indexed',true)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Compose_Column_Result": {
+            "type": "Compose",
+            "runAfter": {
+              "Condition_Unindex_Needed": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b4000000-0000-4000-8000-000000000011"
+            },
+            "inputs": {
+              "list": "@items('Foreach_Planned_Column')?['list']",
+              "column": "@items('Foreach_Planned_Column')?['column']",
+              "existed": "@not(empty(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))))",
+              "create": "@coalesce(actions('Create_Field')?['status'],'not needed')",
+              "index": "@coalesce(actions('Set_Field_Indexed')?['status'],'not needed')",
+              "error": "@string(coalesce(body('Create_Field')?['message'],body('Set_Field_Indexed')?['message'],body('Remove_Field_Index')?['message'],''))",
+              "unindex": "@coalesce(actions('Remove_Field_Index')?['status'],'not needed')"
+            }
+          },
+          "Condition_Unindex_Needed": {
+            "type": "If",
+            "runAfter": {
+              "Condition_Index_Needed": [
+                "Succeeded",
+                "Failed",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b5000000-0000-4000-8000-000000000002"
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@items('Foreach_Planned_Column')?['unindex']",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@coalesce(first(coalesce(body('Get_Existing_Field')?['value'],json('[]')))?['Indexed'],false)",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Remove_Field_Index": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "b5000000-0000-4000-8000-000000000001"
+                },
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@items('Foreach_Planned_Column')?['site']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''',replace(items('Foreach_Planned_Column')?['list'],'''',''''''),''')/fields/getByInternalNameOrTitle(''',items('Foreach_Planned_Column')?['column'],''')')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata",
+                      "Content-Type": "application/json;odata=nometadata",
+                      "IF-MATCH": "*",
+                      "X-HTTP-Method": "MERGE"
+                    },
+                    "parameters/body": "@setProperty(json('{}'),'Indexed',false)"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          }
+        }
+      },
+      "Compose_Finish_Report": {
+        "type": "Compose",
+        "runAfter": {
+          "Foreach_Planned_Column": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b5000000-0000-4000-8000-000000000012"
+        },
+        "inputs": {
+          "context": "@outputs('Compose_Finish_Context')",
+          "completedAtUtc": "@utcNow()",
+          "columns": "@result('Foreach_Planned_Column')"
+        }
+      },
+      "Send_Finish_Report": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_Finish_Report": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b4000000-0000-4000-8000-000000000027"
+        },
+        "inputs": {
+          "parameters": {
+            "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+            "emailMessage/Subject": "@concat('NITDA Folio | Phase 1 finish | ',outputs('Compose_Finish_Context')?['runName'])",
+            "emailMessage/Body": "@concat('<p>Phase 1 finish run ',outputs('Compose_Finish_Context')?['runName'],' finished at ',outputs('Compose_Finish_Report')?['completedAtUtc'],'.</p><p>23 planned changes. The step-by-step record is attached.</p>')",
+            "emailMessage/Attachments": [
+              {
+                "Name": "@concat('phase1-finish-',outputs('Compose_Finish_Context')?['runName'],'.json')",
+                "ContentBytes": "@string(outputs('Compose_Finish_Report'))"
+              }
+            ],
+            "emailMessage/Importance": "Normal"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connection": "shared_office365",
+            "operationId": "SendEmailV2"
+          }
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "b5000000-0000-4000-8000-000000000013"
+    }
+  },
+  "allConnectionData": {
+    "Get_Existing_Field": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Field": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Set_Field_Indexed": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Remove_Field_Index": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Finish_Report": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

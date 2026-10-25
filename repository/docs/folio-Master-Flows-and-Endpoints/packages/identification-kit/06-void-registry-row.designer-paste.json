@@ -1,0 +1,47 @@
+{
+  "nodeId": "Scope_Void_Registry_Row",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Create_Void_Registry": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_SITE_URL']",
+            "parameters/method": "POST",
+            "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_LIST_ID']}')/items",
+            "parameters/headers": {
+              "Accept": "application/json;odata=minimalmetadata",
+              "Content-Type": "application/json;odata=nometadata"
+            },
+            "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', 'VOID'), 'ReferenceId', string(first(outputs('Compose_Claim_Registry')?['references']))), 'EntityKey', guid()), 'IdState', 'VOID'), 'VoidReason', 'RECORD_WRITE_FAILED'), 'CreatedByRequest', outputs('Compose_Request_Context')?['requestId']), 'Status', 'void'), 'SenderEmail', string(toLower(trim(string(coalesce(triggerBody()?['payload']?['email'], triggerBody()?['email'], ''))))))"
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Create_Void_Registry": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

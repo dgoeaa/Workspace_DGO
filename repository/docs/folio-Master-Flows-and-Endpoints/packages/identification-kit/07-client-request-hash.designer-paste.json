@@ -1,0 +1,63 @@
+{
+  "nodeId": "Scope_Client_Request_Hash",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Client_Request_Hash_Task": {
+        "type": "Compose",
+        "inputs": "@{toLower(trim(string(coalesce(triggerBody()?['clientRequestHash'], ''))))}",
+        "runAfter": {}
+      },
+      "Get_Replay_Task": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,EntityKey,Title&$top=1&$filter=ClientRequestHash%20eq%20'@{outputs('Compose_Client_Request_Hash_Task')}'%20and%20Created%20ge%20datetime'@{addDays(utcNow(), -7)}'",
+            "parameters/headers": {
+              "Accept": "application/json;odata=minimalmetadata"
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_Client_Request_Hash_Task": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Replay_Task": {
+        "type": "Compose",
+        "inputs": "@if(equals(length(outputs('Compose_Client_Request_Hash_Task')), 64), first(body('Get_Replay_Task')?['value']), null)",
+        "runAfter": {
+          "Get_Replay_Task": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Replay_Task": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

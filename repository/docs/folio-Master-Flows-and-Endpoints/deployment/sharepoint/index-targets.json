@@ -1,0 +1,117 @@
+{
+  "purpose": "Existing columns on lists this platform adopted rather than provisioned, which the flows filter on and which must carry a SharePoint index. An unindexed equality filter FAILS — it does not merely slow — once a list passes the 5,000-item view threshold, so these are correctness requirements, not optimisations. The browser provisioner sets them in a second pass after column creation; it reads each field first and skips one that is already indexed.",
+  "note": "SharePoint allows at most 20 indexed columns per list, and indexing a column on a list already over the threshold can be refused. The provisioner reports the refusal rather than swallowing it. Sorting counts: past the threshold an $orderby on an unindexed column fails exactly as a $filter does, and the four targets added on 2026-09-02 include three that are sorts rather than filters.",
+  "targets": [
+    {
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Rate Limits",
+      "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+      "internalName": "Title",
+      "itemsAtCapture": 0,
+      "reason": "Filtered on every request to every portal endpoint and grows one row per source per endpoint — the first list to cross 5,000 items stops every endpoint at once. Open item 23.",
+      "declaredOn": "2026-08-31"
+    },
+    {
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Verification Proofs",
+      "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+      "internalName": "Title",
+      "itemsAtCapture": 0,
+      "reason": "Filtered on every proof presentation. Open item 23.",
+      "declaredOn": "2026-08-31"
+    },
+    {
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Support Cases",
+      "listGuid": "b984645b-8e3a-457f-a305-b95650fd3f23",
+      "internalName": "Title",
+      "itemsAtCapture": 0,
+      "reason": "Filtered on every support case lookup. Open item 23.",
+      "declaredOn": "2026-08-31"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "internalName": "RefIDD",
+      "itemsAtCapture": 15804,
+      "reason": "Every single and bulk assignment resolves its target with `RefIDD eq`. 15,804 items at capture — already three times the view threshold, so this filter fails rather than slows. Open item 31.",
+      "declaredOn": "2026-08-31"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "DGO DIGITAL OPS",
+      "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+      "internalName": "RefIDD",
+      "itemsAtCapture": 21249,
+      "reason": "The flag and status-transition writes and the narrow document read all resolve with `RefIDD eq`. 21,249 items at capture. Open item 33.",
+      "declaredOn": "2026-08-31"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "internalName": "DueDate",
+      "itemsAtCapture": 15804,
+      "reason": "DGO_SCHEDULED_SWEEP filters and sorts the due-date sweep on it. THIS ONE FAILED IN PRODUCTION: the first live run of AUTO_SCHEDULED_SWEEP returned status 400, 'exceeds the list view threshold', on Get_Due_Breached. Indexing is necessary and not sufficient — the sweep's query was also unbounded, and an indexed clause still has to return under 5,000 rows, which is why the flow now asks for a 30-day window rather than all history.",
+      "declaredOn": "2026-09-02"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "internalName": "Acknowledgement_x0020_Due_x0020_",
+      "itemsAtCapture": 15804,
+      "reason": "DGO_SCHEDULED_SWEEP filters and sorts the acknowledgement sweep on it. Failed in production alongside DueDate, same 400, same run.",
+      "declaredOn": "2026-09-02"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "internalName": "Modified",
+      "itemsAtCapture": 15804,
+      "reason": "DGO_FETCH_ALL sorts the boot payload on it ($orderby Modified desc, $top 500). Past 5,000 items SharePoint refuses to SORT on an unindexed column exactly as it refuses to filter on one, so this is the same failure waiting for the boot call — latent only because the package is not pasted yet.",
+      "declaredOn": "2026-09-02"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "DGO DIGITAL OPS",
+      "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+      "internalName": "Modified",
+      "itemsAtCapture": 21249,
+      "reason": "DGO_FETCH_ALL and DGO_GET_DOCS both sort on it, and DGO_GET_DOCS drops its $filter entirely when no reference is supplied — an unfiltered sorted read of 21,249 items. Same latent failure as Global Tracking Queue.Modified, on the larger list.",
+      "declaredOn": "2026-09-02"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "internalName": "AssignedTo",
+      "itemsAtCapture": 16071,
+      "reason": "FETCH_ALL reads an officer's own tasks with `AssignedTo eq` (ITEM-90 role scoping, release 22): 16,071 items on 2026-10-08, so the filter needs the index. Live read 2026-10-08: AssignedTo is indexed.",
+      "declaredOn": "2026-10-08"
+    },
+    {
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "Global Tracking Queue",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "internalName": "GDSUROUT",
+      "itemsAtCapture": 15804,
+      "reason": "ITEM-91: FETCH_ALL gives a director the tasks routed to their directorate with `GDSUROUT eq`. Indexed 2026-10-18 in place of Reference_ID, which no flow, view or query filters on; read back: 20 indexed columns, GDSUROUT among them (evidence/2026-10-19-release-38-proofs.json).",
+      "declaredOn": "2026-10-19"
+    }
+  ],
+  "declaredOnNote": "The date a target was added here. A target declared AFTER the newest recorded index run has no outcome because no run has reached it yet, which is a different thing from a run having skipped it — tests/sharepoint-field-spec.test.mjs distinguishes the two and reports the first as outstanding rather than as a failure. A target older than the newest run and still without an outcome remains a failure."
+}

@@ -1,0 +1,208 @@
+{
+  "evidenceVersion": "1.0.0",
+  "purpose": "Column names for the internal-platform lists, each recorded with the source it was read from. The portal estate has portal-field-spec.json; the governance and operational estates have no equivalent, so this records what is KNOWN and from where, and nothing else. A column absent here was not invented into a flow.",
+  "sources": {
+    "deployed": "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/ - harvested from item/<col> writes and $filter clauses in the 57 exported definitions",
+    "normaliser": "core/domain.js - the columns the shipping client actually reads back",
+    "seed": "docs/reference/role-catalogue-seed.json - generated from config/rbac.config.js",
+    "tenant": "docs/reference/sharepoint-list-index.json - GUID, site and the adopted flag",
+    "provisioned": "docs/reference/sharepoint-provisioning-spec.json - the extracted provisioning workbook that DEFINES the governance lists, column by column, with the required flag and the choice set. Stronger than 'deployed' for a list no exported flow writes to yet: the estate specified these columns before anything wrote them, and DGO_AuditLog rejects a row that omits the four it marks required."
+  },
+  "lists": {
+    "ee82725a-c408-45e2-a8e8-facf7a092047": {
+      "title": "Global Tracking Queue",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "columns": {
+        "Title": "deployed",
+        "RefIDD": "deployed",
+        "RefIDDN": "deployed",
+        "Reference_ID": "deployed",
+        "Description": "deployed",
+        "Comments": "deployed",
+        "AssignedTo": "deployed",
+        "Assigned": "deployed",
+        "AssignedBy": "deployed",
+        "AssignedToUserTitle": "deployed",
+        "AssgnedTpUserDSU": "deployed",
+        "OData__x0033_rdAssigned": "deployed",
+        "GDSUROUT": "deployed",
+        "HDSUTitltetxt": "deployed",
+        "GTQGrouping": "deployed",
+        "Classification": "deployed",
+        "DueDate": "deployed",
+        "StartDate": "deployed",
+        "AttachmentLink": "deployed",
+        "LinktoDoc": "deployed",
+        "ActivityTrackingID": "deployed",
+        "AcknowledgedBy": "deployed",
+        "DraftResponse": "deployed",
+        "Acknowledge_x0020_Task": "deployed",
+        "Acknowledgement_x0020_Due_x0020_": "deployed",
+        "Priority": "deployed",
+        "Progress": "deployed",
+        "TaskType": "deployed",
+        "TaskTypeChoice": "deployed",
+        "ParentTask": "deployed",
+        "RefID": "deployed"
+      }
+    },
+    "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3": {
+      "title": "DGO DIGITAL OPS",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "columns": {
+        "Title": "deployed",
+        "RefIDD": "deployed",
+        "Category0": "deployed",
+        "Status": "deployed",
+        "OverallStatus": "deployed",
+        "AssignmentStatus": "deployed",
+        "Marked_Item": "deployed",
+        "Assigned": "deployed",
+        "AssignedTo": "deployed",
+        "RoutedToDSU": "deployed",
+        "RoutedToHDSUTitle": "deployed",
+        "Routed_x0020_To": "deployed",
+        "CC_x0027_dTo": "deployed",
+        "BodyExtract": "deployed",
+        "TextExtraxt": "deployed",
+        "AppFlter": "deployed",
+        "StartDate": "deployed"
+      }
+    },
+    "9421d473-8906-43b7-a41f-a213046683c1": {
+      "title": "OTP_Transactions",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "columns": {
+        "Title": "deployed",
+        "OTP_Code": "deployed",
+        "Expires_At": "deployed",
+        "Is_Verified": "deployed"
+      }
+    },
+    "3d591f5b-3f2f-409c-983a-a77b5c174834": {
+      "title": "DGO_UserDirectory",
+      "site": "DGO_ECM_GOVERNANCE",
+      "adopted": true,
+      "columns": {
+        "Title": "normaliser",
+        "UserId": "normaliser",
+        "FullName": "normaliser",
+        "Email": "normaliser",
+        "Directorate": "normaliser",
+        "Department": "normaliser",
+        "Role": "normaliser",
+        "Persona": "normaliser",
+        "Status": "normaliser",
+        "AccessScope": "normaliser",
+        "PilotCohort": "normaliser",
+        "JobTitle": "normaliser",
+        "Phone": "normaliser",
+        "DisabledReason": "normaliser"
+      }
+    },
+    "f675598b-271d-4200-8d75-2597aad4057f": {
+      "title": "DGO_RoleCatalogue",
+      "site": "DGO_ECM_GOVERNANCE",
+      "adopted": true,
+      "columns": {
+        "Title": "seed",
+        "RoleId": "seed",
+        "Persona": "seed",
+        "PermissionsJson": "seed",
+        "AllowedRoutesJson": "seed",
+        "CanAssignRoles": "seed",
+        "CanManageSettings": "seed",
+        "CanViewAudit": "seed",
+        "Active": "seed",
+        "Version": "seed"
+      }
+    },
+    "be0c7af1-b21d-4efe-8c30-53fc55598d95": {
+      "title": "DGO_AuditLog",
+      "site": "DGO_ECM_GOVERNANCE",
+      "adopted": true,
+      "columns": {
+        "Title": "tenant",
+        "AuditId": "provisioned",
+        "RequestId": "provisioned",
+        "Event": "provisioned",
+        "Module": "provisioned",
+        "Action": "provisioned",
+        "ActorEmail": "provisioned",
+        "ActorRole": "provisioned",
+        "ActorPersona": "provisioned",
+        "EntityType": "provisioned",
+        "EntityId": "provisioned",
+        "Ref": "provisioned",
+        "MetaJson": "provisioned",
+        "Severity": "provisioned",
+        "CreatedAt": "provisioned"
+      }
+    },
+    "9fe1872f-3ae0-4b5f-96fc-5d3331c1d07c": {
+      "title": "DGO_UserRoleHistory",
+      "site": "DGO_ECM_GOVERNANCE",
+      "adopted": true,
+      "columns": {
+        "Title": "tenant"
+      }
+    },
+    "1932d687-e77a-4929-9047-a1f544c68a0b": {
+      "title": "Task_Comments",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "columns": {
+        "Title": "normaliser",
+        "RefIDD": "normaliser",
+        "Description": "normaliser",
+        "Created": "normaliser"
+      }
+    },
+    "f64c8b65-c921-46e9-8814-a8cef61f6016": {
+      "title": "Organizational_Categories_Matrix",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "columns": {
+        "Title": "normaliser",
+        "Category": "normaliser",
+        "Subcategory": "normaliser",
+        "DSU_KEY": "normaliser",
+        "Priority": "normaliser",
+        "Timeline": "normaliser"
+      }
+    },
+    "8aab9c4e-001f-4e32-862c-8a50e750f04e": {
+      "title": "Organizaitonal_Departments_Information",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "columns": {
+        "Title": "normaliser",
+        "DSU_KEY": "normaliser",
+        "DSU_Email": "normaliser",
+        "DSU_HeadEmail": "normaliser",
+        "DSU_HeadPersonalEmail": "normaliser",
+        "DSU_HeadTitle": "normaliser"
+      }
+    },
+    "f553959f-d55b-4591-aa87-d61fb6f9eda9": {
+      "title": "NITDA_Central_Registry",
+      "site": "NEDMS",
+      "adopted": true,
+      "columns": {
+        "Title": "tenant"
+      }
+    },
+    "9bc168c3-06e5-4d58-982b-0df06205fd35": {
+      "title": "Flow Configuration",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "columns": {
+        "Title": "tenant",
+        "ConfigValue": "provisioned"
+      }
+    }
+  }
+}

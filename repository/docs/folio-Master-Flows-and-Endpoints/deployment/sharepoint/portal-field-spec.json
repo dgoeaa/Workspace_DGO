@@ -1,0 +1,1177 @@
+{
+  "specVersion": "2.0.0",
+  "purpose": "Canonical, live-accurate provisioning specification for every SharePoint column the document portal and internal governance estates require. Replaces specVersion 1.0, which named seven NITDA_Portal_* lists on a single site; the tenant actually holds twelve \"Portal *\" lists across two site collections plus one governance list, so nothing built against 1.0 could ever reach the real lists.",
+  "supersedes": "docs/folio-Master-Flows-and-Endpoints/packages/sharepoint-lists.json (specVersion 1.0)",
+  "derivedFrom": [
+    "SharePoint_Provisioning_Gate_FULL_SCOPE_REMEDIATED.xlsx — \"Field Gap\" (96 rows) and \"Execution Worklist\" (85 rows)",
+    "NITDA_SharePoint_Structures_SPOT_20260818.xlsx — \"Lists — Adopted\" (list GUIDs, server-relative URLs)"
+  ],
+  "tenantCaptureUtc": {
+    "NEDMS": "2026-08-14T22:07:10Z",
+    "Global_Digital_Documents_Centre": "2026-08-14T22:24:19Z"
+  },
+  "note": "capturedState records what the 2026-08-14 tenant capture found. It is documentation, not control flow: both provisioning scripts re-read the live list and create only what is genuinely absent, so a field added since the capture is skipped rather than duplicated. Title is every list's native column and is never listed here. A field marked PENDING that carries provisionedBy has since been created in the tenant; the named record's ledger is the evidence, and capturedState still says what the 2026-08-14 capture found rather than what is true today.",
+  "sites": [
+    {
+      "key": "DGO_ECM_GOVERNANCE",
+      "url": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+    },
+    {
+      "key": "Global_Digital_Documents_Centre",
+      "url": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre"
+    },
+    {
+      "key": "NEDMS",
+      "url": "https://nitdanigeria.sharepoint.com/sites/NEDMS"
+    },
+    {
+      "key": "NITDADGO-EAAACTIVITYTRACKING",
+      "url": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING"
+    }
+  ],
+  "lists": [
+    {
+      "listOrder": 1,
+      "estate": "Document portal",
+      "site": "NEDMS",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listTitle": "Portal Registry",
+      "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+      "serverRelativeUrl": "/sites/NEDMS/Lists/Portal Registry",
+      "fields": [
+        {
+          "internalName": "ReferenceId",
+          "displayName": "Reference ID",
+          "fieldType": "Text",
+          "required": true,
+          "indexed": true,
+          "enforceUnique": true,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "SenderEmail",
+          "displayName": "Sender Email",
+          "fieldType": "Text",
+          "required": true,
+          "indexed": true,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "Status",
+          "displayName": "Status",
+          "fieldType": "Choice",
+          "required": true,
+          "indexed": true,
+          "enforceUnique": false,
+          "capturedState": "LIVE",
+          "choices": [
+            "received",
+            "validation",
+            "review",
+            "action-required",
+            "approved",
+            "declined",
+            "withdrawn"
+          ],
+          "defaultValue": "received",
+          "choiceFormat": "Dropdown"
+        },
+        {
+          "internalName": "Subject",
+          "displayName": "Subject",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Category",
+          "displayName": "Category",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "CorrespondenceType",
+          "displayName": "Correspondence Type",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Channel",
+          "displayName": "Channel",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SenderName",
+          "displayName": "Sender Name",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SenderPhone",
+          "displayName": "Sender Phone",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SenderOrganisation",
+          "displayName": "Sender Organisation",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SenderOrganisationType",
+          "displayName": "Sender Organisation Type",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "EventDate",
+          "displayName": "Event Date",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Description",
+          "displayName": "Description",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING",
+          "numLines": 6,
+          "richText": false
+        },
+        {
+          "internalName": "AttachmentCount",
+          "displayName": "Attachment Count",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SubmittedAtUtc",
+          "displayName": "Submitted At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "UpdatedAtUtc",
+          "displayName": "Updated At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "AcknowledgedAtUtc",
+          "displayName": "Acknowledged At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "ClosedAtUtc",
+          "displayName": "Closed At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "StatusLabel",
+          "displayName": "Status Label",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "ActionRequired",
+          "displayName": "Action Required",
+          "fieldType": "Boolean",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "VerifiedSubmission",
+          "displayName": "Verified Submission",
+          "fieldType": "Boolean",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SourceIp",
+          "displayName": "Source IP",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "LocalId",
+          "displayName": "Local ID",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 2,
+      "estate": "Document portal",
+      "site": "NEDMS",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listTitle": "Portal Attachments",
+      "listGuid": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+      "serverRelativeUrl": "/sites/NEDMS/Lists/Portal Attachments",
+      "fields": [
+        {
+          "internalName": "SubmissionRef",
+          "displayName": "Submission Reference",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": true,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "DeclaredName",
+          "displayName": "Declared Name",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "StoredName",
+          "displayName": "Stored Name",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "DeclaredSizeBytes",
+          "displayName": "Declared Size (bytes)",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "DeclaredSha256",
+          "displayName": "Declared SHA-256",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "AttachmentLink",
+          "displayName": "Attachment Link",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "CreatedAtUtc",
+          "displayName": "Created At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Status",
+          "displayName": "Status",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 3,
+      "estate": "Document portal",
+      "site": "NEDMS",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listTitle": "Portal Status Timeline",
+      "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+      "serverRelativeUrl": "/sites/NEDMS/Lists/Portal Status Timeline",
+      "fields": [
+        {
+          "internalName": "SubmissionRef",
+          "displayName": "Submission Reference",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": true,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "AtUtc",
+          "displayName": "At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Status",
+          "displayName": "Status",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Label",
+          "displayName": "Label",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Actor",
+          "displayName": "Actor",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Note",
+          "displayName": "Note",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING",
+          "numLines": 4,
+          "richText": false
+        }
+      ]
+    },
+    {
+      "listOrder": 4,
+      "estate": "Document portal",
+      "site": "NEDMS",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+      "listTitle": "Portal Upload Tickets",
+      "listGuid": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+      "serverRelativeUrl": "/sites/NEDMS/Lists/Portal Upload Tickets",
+      "fields": [
+        {
+          "internalName": "SubmissionRef",
+          "displayName": "Submission Reference",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": true,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "DeclaredName",
+          "displayName": "Declared Name",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "StoredName",
+          "displayName": "Stored Name",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "DeclaredSizeBytes",
+          "displayName": "Declared Size (bytes)",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "DeclaredSha256",
+          "displayName": "Declared SHA-256",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "ExpiresAtUtc",
+          "displayName": "Expires At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "CreatedAtUtc",
+          "displayName": "Created At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Redeemed",
+          "displayName": "Redeemed",
+          "fieldType": "Boolean",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Status",
+          "displayName": "Status",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 5,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Rate Limits",
+      "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal Rate Limits",
+      "fields": [
+        {
+          "internalName": "WindowStartUtc",
+          "displayName": "Window Start (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "UpdatedAtUtc",
+          "displayName": "Updated At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "RequestCount",
+          "displayName": "Request Count",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 6,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal OTP Codes",
+      "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal OTP Codes",
+      "fields": [
+        {
+          "internalName": "OTP_Code",
+          "displayName": "OTP Code",
+          "fieldType": "Text",
+          "required": true,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "Expires_At",
+          "displayName": "Expires At",
+          "fieldType": "DateTime",
+          "required": true,
+          "indexed": true,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "Email",
+          "displayName": "Email",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": true,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Attempts",
+          "displayName": "Attempts",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Consumed",
+          "displayName": "Consumed",
+          "fieldType": "Boolean",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SourceIp",
+          "displayName": "Source IP",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "CreatedAtUtc",
+          "displayName": "Created At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 7,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Verification Proofs",
+      "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal Verification Proofs",
+      "fields": [
+        {
+          "internalName": "Email",
+          "displayName": "Email",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Purpose",
+          "displayName": "Purpose",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "ExpiresAtUtc",
+          "displayName": "Expires At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "CreatedAtUtc",
+          "displayName": "Created At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Consumed",
+          "displayName": "Consumed",
+          "fieldType": "Boolean",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 8,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Support Cases",
+      "listGuid": "b984645b-8e3a-457f-a305-b95650fd3f23",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal Support Cases",
+      "fields": [
+        {
+          "internalName": "Name",
+          "displayName": "Name",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Email",
+          "displayName": "Email",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Topic",
+          "displayName": "Topic",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "AboutReference",
+          "displayName": "About Reference",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Message",
+          "displayName": "Message",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING",
+          "numLines": 6,
+          "richText": false
+        },
+        {
+          "internalName": "Status",
+          "displayName": "Status",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SubmittedAtUtc",
+          "displayName": "Submitted At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SourceIp",
+          "displayName": "Source IP",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 9,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Sequence Counters",
+      "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal Sequence Counters",
+      "fields": [
+        {
+          "internalName": "CurrentSequence",
+          "displayName": "Current Sequence",
+          "fieldType": "Number",
+          "required": true,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "LastIssuedAt",
+          "displayName": "Last Issued At",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "LastReferenceId",
+          "displayName": "Last Reference ID",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "LockToken",
+          "displayName": "Lock Token",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "ModifiedByFlowRun",
+          "displayName": "Modified By Flow Run",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "Prefix",
+          "displayName": "Prefix",
+          "fieldType": "Text",
+          "required": true,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE"
+        },
+        {
+          "internalName": "Year",
+          "displayName": "Year",
+          "fieldType": "Text",
+          "required": true,
+          "indexed": true,
+          "enforceUnique": true,
+          "capturedState": "LIVE"
+        }
+      ]
+    },
+    {
+      "listOrder": 10,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Audit Events",
+      "listGuid": "f59026cc-9fd7-4322-b681-73c599b852c6",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal Audit Events",
+      "fields": [
+        {
+          "internalName": "Flow",
+          "displayName": "Flow",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "EventType",
+          "displayName": "Event Type",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "AtUtc",
+          "displayName": "At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Reference",
+          "displayName": "Reference",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SourceIp",
+          "displayName": "Source IP",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Detail",
+          "displayName": "Detail",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING",
+          "numLines": 6,
+          "richText": false
+        }
+      ]
+    },
+    {
+      "listOrder": 11,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Flow Telemetry",
+      "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal Flow Telemetry",
+      "fields": [
+        {
+          "internalName": "Flow",
+          "displayName": "Flow",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "RunId",
+          "displayName": "Run ID",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "StartedAtUtc",
+          "displayName": "Started At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "CompletedAtUtc",
+          "displayName": "Completed At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Outcome",
+          "displayName": "Outcome",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "DurationMs",
+          "displayName": "Duration (ms)",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "ErrorMessage",
+          "displayName": "Error Message",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING",
+          "numLines": 6,
+          "richText": false
+        },
+        {
+          "internalName": "RunRecordJson",
+          "displayName": "Run Record (JSON)",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "PENDING",
+          "numLines": 6,
+          "richText": false,
+          "pendingReason": "Declared after the 2026-08-19 provisioning run. It is not in that run ledger and is not yet in the tenant; provision it before the packages that write it go live.",
+          "provisionedUtc": "2026-08-31T16:08:08Z",
+          "provisionedBy": "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-31-provisioning-run.json"
+        }
+      ]
+    },
+    {
+      "listOrder": 12,
+      "estate": "Document portal",
+      "site": "Global_Digital_Documents_Centre",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+      "listTitle": "Portal Outbox Receipts",
+      "listGuid": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+      "serverRelativeUrl": "/sites/Global_Digital_Documents_Centre/Lists/Portal Outbox Receipts",
+      "fields": [
+        {
+          "internalName": "MessageType",
+          "displayName": "Message Type",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "RecipientEmail",
+          "displayName": "Recipient Email",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Reference",
+          "displayName": "Reference",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "SentAtUtc",
+          "displayName": "Sent At (UTC)",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Status",
+          "displayName": "Status",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "Attempts",
+          "displayName": "Attempts",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        },
+        {
+          "internalName": "LastError",
+          "displayName": "Last Error",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING",
+          "numLines": 4,
+          "richText": false
+        }
+      ]
+    },
+    {
+      "listOrder": 13,
+      "estate": "Internal governance",
+      "site": "DGO_ECM_GOVERNANCE",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "listTitle": "DGO_AccessScopes",
+      "listGuid": "f2ffd2fa-901e-4f28-8f28-957da0fe05e4",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_AccessScopes",
+      "fields": [
+        {
+          "internalName": "AccessScopeId",
+          "displayName": "Access Scope Id",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "MISSING"
+        }
+      ]
+    },
+    {
+      "listOrder": 14,
+      "estate": "Platform configuration",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "Flow Configuration",
+      "listGuid": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/Flow Configuration",
+      "fields": [
+        {
+          "internalName": "ConfigValue",
+          "displayName": "Config Value",
+          "fieldType": "Note",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "PENDING",
+          "pendingReason": "Declared after the 2026-08-19 provisioning run. The list itself already exists in the tenant and holds a row; this is the column the flows read their configuration from. Every read of it is chained on all statuses and fails closed, so no flow breaks before it is provisioned.",
+          "numLines": 3,
+          "richText": false,
+          "provisionedUtc": "2026-08-31T16:08:08Z",
+          "provisionedBy": "docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-31-provisioning-run.json"
+        }
+      ]
+    },
+    {
+      "listOrder": 15,
+      "estate": "Platform configuration",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+      "listTitle": "OTP_Transactions",
+      "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/OTP_Transactions",
+      "fields": [
+        {
+          "internalName": "Attempts",
+          "displayName": "Attempts",
+          "fieldType": "Number",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "PENDING",
+          "pendingReason": "Declared 2026-09-02 for the attempt cap in the OTP verify hardening (register ITEM-38). The list itself already exists in the tenant and holds the one-time codes; this is the counter a verify increments before it checks the code, because a wrong guess finds no row and nothing per-row can count it. It is PENDING rather than MISSING because it was declared after the 2026-08-19 provisioning run, so that run neither found nor created it. It must exist BEFORE the patched flow is saved: the designer validates every item/<Column> against the connector operation at save time and refuses the whole flow with WorkflowOperationParametersExtraParameter.",
+          "declaredAfter": "2026-08-19-provisioning-run",
+          "provisionedBy": "docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-03-provisioning-apply-run.json",
+          "provisionedUtcWhyAbsent": "The apply run was captured as a console paste, not a saved console export, so it carries no filename epoch to derive a timestamp from and the provisioner prints none. The date is 2026-09-03; a time of day is not invented to fill the field.",
+          "provisionedNote": "capturedState stays PENDING because that is what the 2026-08-14 capture found \u2014 it is a record of that capture, not of today. provisionedBy names the run whose ledger created the column: one create, 0 failed, ledger row 'created'. The designer-paste builder strips writes to a column that is PENDING AND unprovisioned; with this set, writes to Attempts survive into the packages, which is what the patched Web - OTP Verify needs."
+        },
+        {
+          "internalName": "OTP_Code",
+          "displayName": "OTP Code",
+          "fieldType": "Text",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE",
+          "declaredAfter": "2026-08-19-provisioning-run",
+          "capturedStateNote": "Not in the 2026-08-14 capture — that capture did not reach this list. Recorded LIVE on a strong inference at first: the deployed Web - OTP Verify writes this column and the flow is saved in the tenant, and Power Automate validates every item/<Column> against the connector operation AT SAVE TIME and refuses the whole flow otherwise. CONFIRMED BY A READING 2026-09-02: a DRY_RUN pass of the provisioner read this list and reported the column present. See evidence/2026-09-02-provisioning-dry-run.json."
+        },
+        {
+          "internalName": "Expires_At",
+          "displayName": "Expires At",
+          "fieldType": "DateTime",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE",
+          "declaredAfter": "2026-08-19-provisioning-run",
+          "capturedStateNote": "Not in the 2026-08-14 capture — that capture did not reach this list. Recorded LIVE on a strong inference at first: the deployed Web - OTP Verify writes this column and the flow is saved in the tenant, and Power Automate validates every item/<Column> against the connector operation AT SAVE TIME and refuses the whole flow otherwise. CONFIRMED BY A READING 2026-09-02: a DRY_RUN pass of the provisioner read this list and reported the column present. See evidence/2026-09-02-provisioning-dry-run.json."
+        },
+        {
+          "internalName": "Is_Verified",
+          "displayName": "Is Verified",
+          "fieldType": "Boolean",
+          "required": false,
+          "indexed": false,
+          "enforceUnique": false,
+          "capturedState": "LIVE",
+          "declaredAfter": "2026-08-19-provisioning-run",
+          "capturedStateNote": "Not in the 2026-08-14 capture — that capture did not reach this list. Recorded LIVE on a strong inference at first: the deployed Web - OTP Verify writes this column and the flow is saved in the tenant, and Power Automate validates every item/<Column> against the connector operation AT SAVE TIME and refuses the whole flow otherwise. CONFIRMED BY A READING 2026-09-02: a DRY_RUN pass of the provisioner read this list and reported the column present. See evidence/2026-09-02-provisioning-dry-run.json."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "lists": 15,
+    "fields": 103,
+    "liveAtCapture": 15,
+    "missingAtCapture": 85,
+    "pendingProvisioning": 3
+  }
+}

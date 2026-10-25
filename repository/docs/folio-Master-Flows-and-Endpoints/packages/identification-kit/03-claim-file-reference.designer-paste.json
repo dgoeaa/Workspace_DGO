@@ -1,0 +1,1968 @@
+{
+  "nodeId": "Scope_Claim_File_Reference",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_EntityKey_File": {
+        "type": "Compose",
+        "inputs": "@guid()",
+        "runAfter": {}
+      },
+      "Compose_Claim_File_Year": {
+        "type": "Compose",
+        "inputs": "@formatDateTime(convertFromUtc(utcNow(), 'W. Central Africa Standard Time'), 'yyyy')",
+        "runAfter": {
+          "Compose_EntityKey_File": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Claim_File_Count": {
+        "type": "Compose",
+        "inputs": "@int(1)",
+        "runAfter": {
+          "Compose_Claim_File_Year": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Claim_File_1": {
+        "type": "Scope",
+        "actions": {
+          "Get_Counter_File_1": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {}
+          },
+          "Condition_Counter_File_1_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_1')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_1": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_1')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_1": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_1')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_1')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_1')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_1'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_1": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_1": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_1')",
+                "runAfter": {
+                  "Claim_Counter_File_1": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_1": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_1": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_1": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_1": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_Claim_File_Count": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Claim_File_2": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_2": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_2": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_2": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_2_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_2')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_2": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_2')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_2": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_2')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_2')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_2')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_2'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_2": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_2": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_2')",
+                "runAfter": {
+                  "Claim_Counter_File_2": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_2": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_2": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_2": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_2": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_1": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_3": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_3": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_3": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_3": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_3_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_3')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_3": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_3')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_3": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_3')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_3')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_3')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_3'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_3": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_3": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_3')",
+                "runAfter": {
+                  "Claim_Counter_File_3": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_3": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_3": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_3": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_3": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_2": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_4": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_4": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_4": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_4": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_4_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_4')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_4": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_4')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_4": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_4')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_4')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_4')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_4'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_4": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_4": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_4')",
+                "runAfter": {
+                  "Claim_Counter_File_4": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_4": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_4": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_4": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_4": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_3": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_5": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_5": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_5": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_5": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_5_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_5')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_5": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_5')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_5": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_5')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_5')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_5')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_5'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_5": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_5": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_5')",
+                "runAfter": {
+                  "Claim_Counter_File_5": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_5": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_5": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_5": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_5": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_4": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_6": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_6": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_6": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_6": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_6_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_6')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_6": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_6')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_6": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_6')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_6')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_6')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_6'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_6": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_6": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_6')",
+                "runAfter": {
+                  "Claim_Counter_File_6": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_6": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_6": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_6": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_6": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_5": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_7": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_7": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_7": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_7": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_7_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_7')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_7": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_7')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_7": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_7')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_7')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_7')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_7'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_7": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_7": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_7')",
+                "runAfter": {
+                  "Claim_Counter_File_7": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_7": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_7": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_7": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_7": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_6": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_8": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_8": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_8": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_8": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_8_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_8')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_8": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_8')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_8": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_8')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_8')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_8')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_8'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_8": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_8": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_8')",
+                "runAfter": {
+                  "Claim_Counter_File_8": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_8": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_8": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_8": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_8": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_7": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_9": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_9": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_9": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_9": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_9_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_9')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_9": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_9')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_9": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_9')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_9')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_9')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_9'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_9": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_9": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_9')",
+                "runAfter": {
+                  "Claim_Counter_File_9": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_9": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_9": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_9": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_9": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_8": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Claim_File_10": {
+        "type": "Scope",
+        "actions": {
+          "Delay_Claim_File_10": {
+            "type": "Wait",
+            "inputs": {
+              "interval": {
+                "count": "@rand(1, 6)",
+                "unit": "Second"
+              }
+            },
+            "runAfter": {}
+          },
+          "Get_Counter_File_10": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,CurrentSequence&$filter=Prefix%20eq%20'FILE'%20and%20Year%20eq%20'@{outputs('Compose_Claim_File_Year')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "none"
+              }
+            },
+            "runAfter": {
+              "Delay_Claim_File_10": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Condition_Counter_File_10_Exists": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@empty(body('Get_Counter_File_10')?['value'])",
+                      true
+                    ]
+                  }
+                }
+              ]
+            },
+            "actions": {
+              "Compose_Next_File_10": {
+                "type": "Compose",
+                "inputs": "@add(int(coalesce(first(body('Get_Counter_File_10')?['value'])?['CurrentSequence'], 0)), outputs('Compose_Claim_File_Count'))",
+                "runAfter": {}
+              },
+              "Claim_Counter_File_10": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  },
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                    "parameters/method": "POST",
+                    "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items(@{first(body('Get_Counter_File_10')?['value'])?['ID']})",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=minimalmetadata",
+                      "X-HTTP-Method": "MERGE",
+                      "IF-MATCH": "@{first(body('Get_Counter_File_10')?['value'])?['odata.etag']}",
+                      "Content-Type": "application/json;odata=nometadata"
+                    },
+                    "parameters/body": "@setProperty(setProperty(setProperty(setProperty(json('{}'), 'CurrentSequence', outputs('Compose_Next_File_10')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Next_File_10'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                  },
+                  "retryPolicy": {
+                    "type": "none"
+                  }
+                },
+                "runAfter": {
+                  "Compose_Next_File_10": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Claimed_File_10": {
+                "type": "Compose",
+                "inputs": "@outputs('Compose_Next_File_10')",
+                "runAfter": {
+                  "Claim_Counter_File_10": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Create_Counter_File_10": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "connection": "shared_sharepointonline",
+                      "operationId": "HttpRequest"
+                    },
+                    "parameters": {
+                      "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+                      "parameters/method": "POST",
+                      "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items",
+                      "parameters/headers": {
+                        "Accept": "application/json;odata=minimalmetadata",
+                        "Content-Type": "application/json;odata=nometadata"
+                      },
+                      "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'), 'Title', concat('FILE-', string(outputs('Compose_Claim_File_Year')))), 'Prefix', 'FILE'), 'Year', string(outputs('Compose_Claim_File_Year'))), 'CurrentSequence', outputs('Compose_Claim_File_Count')), 'LastReferenceId', concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(outputs('Compose_Claim_File_Count'), '00000')))), 'LastIssuedAt', utcNow()), 'ModifiedByFlowRun', workflow()?['run']?['name'])"
+                    },
+                    "retryPolicy": {
+                      "type": "none"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Compose_Created_File_10": {
+                  "type": "Compose",
+                  "inputs": "@outputs('Compose_Claim_File_Count')",
+                  "runAfter": {
+                    "Create_Counter_File_10": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_Counter_File_10": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Claim_File_9": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Claim_File": {
+        "type": "Compose",
+        "inputs": {
+          "ok": "@not(equals(coalesce(actions('Compose_Claimed_File_1')?['outputs'], actions('Compose_Created_File_1')?['outputs'], actions('Compose_Claimed_File_2')?['outputs'], actions('Compose_Created_File_2')?['outputs'], actions('Compose_Claimed_File_3')?['outputs'], actions('Compose_Created_File_3')?['outputs'], actions('Compose_Claimed_File_4')?['outputs'], actions('Compose_Created_File_4')?['outputs'], actions('Compose_Claimed_File_5')?['outputs'], actions('Compose_Created_File_5')?['outputs'], actions('Compose_Claimed_File_6')?['outputs'], actions('Compose_Created_File_6')?['outputs'], actions('Compose_Claimed_File_7')?['outputs'], actions('Compose_Created_File_7')?['outputs'], actions('Compose_Claimed_File_8')?['outputs'], actions('Compose_Created_File_8')?['outputs'], actions('Compose_Claimed_File_9')?['outputs'], actions('Compose_Created_File_9')?['outputs'], actions('Compose_Claimed_File_10')?['outputs'], actions('Compose_Created_File_10')?['outputs']), null))",
+          "prefix": "FILE",
+          "year": "@outputs('Compose_Claim_File_Year')",
+          "last": "@coalesce(actions('Compose_Claimed_File_1')?['outputs'], actions('Compose_Created_File_1')?['outputs'], actions('Compose_Claimed_File_2')?['outputs'], actions('Compose_Created_File_2')?['outputs'], actions('Compose_Claimed_File_3')?['outputs'], actions('Compose_Created_File_3')?['outputs'], actions('Compose_Claimed_File_4')?['outputs'], actions('Compose_Created_File_4')?['outputs'], actions('Compose_Claimed_File_5')?['outputs'], actions('Compose_Created_File_5')?['outputs'], actions('Compose_Claimed_File_6')?['outputs'], actions('Compose_Created_File_6')?['outputs'], actions('Compose_Claimed_File_7')?['outputs'], actions('Compose_Created_File_7')?['outputs'], actions('Compose_Claimed_File_8')?['outputs'], actions('Compose_Created_File_8')?['outputs'], actions('Compose_Claimed_File_9')?['outputs'], actions('Compose_Created_File_9')?['outputs'], actions('Compose_Claimed_File_10')?['outputs'], actions('Compose_Created_File_10')?['outputs'])",
+          "first": "@if(equals(coalesce(actions('Compose_Claimed_File_1')?['outputs'], actions('Compose_Created_File_1')?['outputs'], actions('Compose_Claimed_File_2')?['outputs'], actions('Compose_Created_File_2')?['outputs'], actions('Compose_Claimed_File_3')?['outputs'], actions('Compose_Created_File_3')?['outputs'], actions('Compose_Claimed_File_4')?['outputs'], actions('Compose_Created_File_4')?['outputs'], actions('Compose_Claimed_File_5')?['outputs'], actions('Compose_Created_File_5')?['outputs'], actions('Compose_Claimed_File_6')?['outputs'], actions('Compose_Created_File_6')?['outputs'], actions('Compose_Claimed_File_7')?['outputs'], actions('Compose_Created_File_7')?['outputs'], actions('Compose_Claimed_File_8')?['outputs'], actions('Compose_Created_File_8')?['outputs'], actions('Compose_Claimed_File_9')?['outputs'], actions('Compose_Created_File_9')?['outputs'], actions('Compose_Claimed_File_10')?['outputs'], actions('Compose_Created_File_10')?['outputs']), null), null, sub(int(coalesce(coalesce(actions('Compose_Claimed_File_1')?['outputs'], actions('Compose_Created_File_1')?['outputs'], actions('Compose_Claimed_File_2')?['outputs'], actions('Compose_Created_File_2')?['outputs'], actions('Compose_Claimed_File_3')?['outputs'], actions('Compose_Created_File_3')?['outputs'], actions('Compose_Claimed_File_4')?['outputs'], actions('Compose_Created_File_4')?['outputs'], actions('Compose_Claimed_File_5')?['outputs'], actions('Compose_Created_File_5')?['outputs'], actions('Compose_Claimed_File_6')?['outputs'], actions('Compose_Created_File_6')?['outputs'], actions('Compose_Claimed_File_7')?['outputs'], actions('Compose_Created_File_7')?['outputs'], actions('Compose_Claimed_File_8')?['outputs'], actions('Compose_Created_File_8')?['outputs'], actions('Compose_Claimed_File_9')?['outputs'], actions('Compose_Created_File_9')?['outputs'], actions('Compose_Claimed_File_10')?['outputs'], actions('Compose_Created_File_10')?['outputs']), 0)), sub(outputs('Compose_Claim_File_Count'), 1)))",
+          "references": "@if(equals(coalesce(actions('Compose_Claimed_File_1')?['outputs'], actions('Compose_Created_File_1')?['outputs'], actions('Compose_Claimed_File_2')?['outputs'], actions('Compose_Created_File_2')?['outputs'], actions('Compose_Claimed_File_3')?['outputs'], actions('Compose_Created_File_3')?['outputs'], actions('Compose_Claimed_File_4')?['outputs'], actions('Compose_Created_File_4')?['outputs'], actions('Compose_Claimed_File_5')?['outputs'], actions('Compose_Created_File_5')?['outputs'], actions('Compose_Claimed_File_6')?['outputs'], actions('Compose_Created_File_6')?['outputs'], actions('Compose_Claimed_File_7')?['outputs'], actions('Compose_Created_File_7')?['outputs'], actions('Compose_Claimed_File_8')?['outputs'], actions('Compose_Created_File_8')?['outputs'], actions('Compose_Claimed_File_9')?['outputs'], actions('Compose_Created_File_9')?['outputs'], actions('Compose_Claimed_File_10')?['outputs'], actions('Compose_Created_File_10')?['outputs']), null), json('[]'), body('Select_Claim_File_References'))"
+        },
+        "runAfter": {
+          "Select_Claim_File_References": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Select_Claim_File_References": {
+        "type": "Select",
+        "inputs": {
+          "from": "@if(equals(coalesce(actions('Compose_Claimed_File_1')?['outputs'], actions('Compose_Created_File_1')?['outputs'], actions('Compose_Claimed_File_2')?['outputs'], actions('Compose_Created_File_2')?['outputs'], actions('Compose_Claimed_File_3')?['outputs'], actions('Compose_Created_File_3')?['outputs'], actions('Compose_Claimed_File_4')?['outputs'], actions('Compose_Created_File_4')?['outputs'], actions('Compose_Claimed_File_5')?['outputs'], actions('Compose_Created_File_5')?['outputs'], actions('Compose_Claimed_File_6')?['outputs'], actions('Compose_Created_File_6')?['outputs'], actions('Compose_Claimed_File_7')?['outputs'], actions('Compose_Created_File_7')?['outputs'], actions('Compose_Claimed_File_8')?['outputs'], actions('Compose_Created_File_8')?['outputs'], actions('Compose_Claimed_File_9')?['outputs'], actions('Compose_Created_File_9')?['outputs'], actions('Compose_Claimed_File_10')?['outputs'], actions('Compose_Created_File_10')?['outputs']), null), json('[]'), range(sub(int(coalesce(coalesce(actions('Compose_Claimed_File_1')?['outputs'], actions('Compose_Created_File_1')?['outputs'], actions('Compose_Claimed_File_2')?['outputs'], actions('Compose_Created_File_2')?['outputs'], actions('Compose_Claimed_File_3')?['outputs'], actions('Compose_Created_File_3')?['outputs'], actions('Compose_Claimed_File_4')?['outputs'], actions('Compose_Created_File_4')?['outputs'], actions('Compose_Claimed_File_5')?['outputs'], actions('Compose_Created_File_5')?['outputs'], actions('Compose_Claimed_File_6')?['outputs'], actions('Compose_Created_File_6')?['outputs'], actions('Compose_Claimed_File_7')?['outputs'], actions('Compose_Created_File_7')?['outputs'], actions('Compose_Claimed_File_8')?['outputs'], actions('Compose_Created_File_8')?['outputs'], actions('Compose_Claimed_File_9')?['outputs'], actions('Compose_Created_File_9')?['outputs'], actions('Compose_Claimed_File_10')?['outputs'], actions('Compose_Created_File_10')?['outputs']), 0)), sub(outputs('Compose_Claim_File_Count'), 1)), outputs('Compose_Claim_File_Count')))",
+          "select": "@concat(string(outputs('Compose_Environment_Prefix')), 'FILE-', string(outputs('Compose_Claim_File_Year')), '-', string(formatNumber(item(), '00000')))"
+        },
+        "runAfter": {
+          "Scope_Claim_File_10": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      },
+      "Condition_Claim_File_Failed": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@outputs('Compose_Claim_File')?['ok']",
+                false
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Response_Claim_File_Retry_Later": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 503,
+              "headers": {
+                "Content-Type": "application/json",
+                "Retry-After": "5"
+              },
+              "body": {
+                "ok": false,
+                "code": "RETRY_LATER",
+                "message": "The reference service is busy. Try again in a few seconds.",
+                "requestId": "@outputs('Compose_Request_Context')?['requestId']"
+              }
+            },
+            "runAfter": {}
+          },
+          "Terminate_Claim_File": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {
+              "Response_Claim_File_Retry_Later": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Compose_Claim_File": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Counter_File_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counter_File_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Claim_Counter_File_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Counter_File_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

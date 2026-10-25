@@ -1,0 +1,249 @@
+{
+  "schema": "dgo-governance-list-registry/v1",
+  "purpose": "The authoritative instance of each governance list and every copy to retire. Derived from docs/reference/sharepoint-list-index.json by scripts/build-governance-list-registry.mjs; do not hand-edit. Addresses are GUID-based so re-running provisioning cannot create a further duplicate.",
+  "generatedBy": "scripts/build-governance-list-registry.mjs",
+  "decision": {
+    "id": "GOV-01",
+    "authoritativeSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+    "approvedUtc": "2026-09-09",
+    "rationale": "The internal flows already address DGO_UserDirectory, DGO_RoleCatalogue and DGO_AuditLog by GUID on this site, and the role catalogue is seeded there. Repointing the specification is therefore a one-sided change; repointing the flows would not be."
+  },
+  "derivedFrom": {
+    "capture": "docs/reference/sharepoint-list-index.json",
+    "capturedUtc": "2026-08-18"
+  },
+  "totals": {
+    "lists": 10,
+    "instancesToRetire": 17
+  },
+  "lists": [
+    {
+      "listTitle": "DGO_UserDirectory",
+      "listGuid": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_UserDirectory",
+      "createItemUri": "_api/web/lists(guid'3d591f5b-3f2f-409c-983a-a77b5c174834')/items",
+      "listUri": "_api/web/lists(guid'3d591f5b-3f2f-409c-983a-a77b5c174834')",
+      "fieldsUri": "_api/web/lists(guid'3d591f5b-3f2f-409c-983a-a77b5c174834')/fields"
+    },
+    {
+      "listTitle": "DGO_RoleCatalogue",
+      "listGuid": "f675598b-271d-4200-8d75-2597aad4057f",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_RoleCatalogue",
+      "createItemUri": "_api/web/lists(guid'f675598b-271d-4200-8d75-2597aad4057f')/items",
+      "listUri": "_api/web/lists(guid'f675598b-271d-4200-8d75-2597aad4057f')",
+      "fieldsUri": "_api/web/lists(guid'f675598b-271d-4200-8d75-2597aad4057f')/fields"
+    },
+    {
+      "listTitle": "DGO_UserRoleHistory",
+      "listGuid": "9fe1872f-3ae0-4b5f-96fc-5d3331c1d07c",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_UserRoleHistory",
+      "createItemUri": "_api/web/lists(guid'9fe1872f-3ae0-4b5f-96fc-5d3331c1d07c')/items",
+      "listUri": "_api/web/lists(guid'9fe1872f-3ae0-4b5f-96fc-5d3331c1d07c')",
+      "fieldsUri": "_api/web/lists(guid'9fe1872f-3ae0-4b5f-96fc-5d3331c1d07c')/fields"
+    },
+    {
+      "listTitle": "DGO_AuditLog",
+      "listGuid": "be0c7af1-b21d-4efe-8c30-53fc55598d95",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_AuditLog",
+      "createItemUri": "_api/web/lists(guid'be0c7af1-b21d-4efe-8c30-53fc55598d95')/items",
+      "listUri": "_api/web/lists(guid'be0c7af1-b21d-4efe-8c30-53fc55598d95')",
+      "fieldsUri": "_api/web/lists(guid'be0c7af1-b21d-4efe-8c30-53fc55598d95')/fields"
+    },
+    {
+      "listTitle": "DGO_PendingWrites",
+      "listGuid": "ad1df270-21c7-4b78-99e7-fb18efd02cd2",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_PendingWrites",
+      "createItemUri": "_api/web/lists(guid'ad1df270-21c7-4b78-99e7-fb18efd02cd2')/items",
+      "listUri": "_api/web/lists(guid'ad1df270-21c7-4b78-99e7-fb18efd02cd2')",
+      "fieldsUri": "_api/web/lists(guid'ad1df270-21c7-4b78-99e7-fb18efd02cd2')/fields"
+    },
+    {
+      "listTitle": "DGO_DepartmentDirectory",
+      "listGuid": "eed0ba42-ece1-40e2-bf66-79827de02766",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_DepartmentDirectory",
+      "createItemUri": "_api/web/lists(guid'eed0ba42-ece1-40e2-bf66-79827de02766')/items",
+      "listUri": "_api/web/lists(guid'eed0ba42-ece1-40e2-bf66-79827de02766')",
+      "fieldsUri": "_api/web/lists(guid'eed0ba42-ece1-40e2-bf66-79827de02766')/fields"
+    },
+    {
+      "listTitle": "DGO_AccessScopes",
+      "listGuid": "f2ffd2fa-901e-4f28-8f28-957da0fe05e4",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_AccessScopes",
+      "createItemUri": "_api/web/lists(guid'f2ffd2fa-901e-4f28-8f28-957da0fe05e4')/items",
+      "listUri": "_api/web/lists(guid'f2ffd2fa-901e-4f28-8f28-957da0fe05e4')",
+      "fieldsUri": "_api/web/lists(guid'f2ffd2fa-901e-4f28-8f28-957da0fe05e4')/fields"
+    },
+    {
+      "listTitle": "DGO_PilotCohorts",
+      "listGuid": "ecc4ac65-1804-4f67-ad3e-eacb1a3a4dc2",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_PilotCohorts",
+      "createItemUri": "_api/web/lists(guid'ecc4ac65-1804-4f67-ad3e-eacb1a3a4dc2')/items",
+      "listUri": "_api/web/lists(guid'ecc4ac65-1804-4f67-ad3e-eacb1a3a4dc2')",
+      "fieldsUri": "_api/web/lists(guid'ecc4ac65-1804-4f67-ad3e-eacb1a3a4dc2')/fields"
+    },
+    {
+      "listTitle": "DGO_EndpointRegistry",
+      "listGuid": "08c6e1c4-f2b1-4810-933d-69b4327fb6af",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_EndpointRegistry",
+      "createItemUri": "_api/web/lists(guid'08c6e1c4-f2b1-4810-933d-69b4327fb6af')/items",
+      "listUri": "_api/web/lists(guid'08c6e1c4-f2b1-4810-933d-69b4327fb6af')",
+      "fieldsUri": "_api/web/lists(guid'08c6e1c4-f2b1-4810-933d-69b4327fb6af')/fields"
+    },
+    {
+      "listTitle": "DGO_AccessEvents",
+      "listGuid": "a40d5f57-859c-426c-826c-bfee090137ad",
+      "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+      "serverRelativeUrl": "/sites/DGO_ECM_GOVERNANCE/Lists/DGO_AccessEvents",
+      "createItemUri": "_api/web/lists(guid'a40d5f57-859c-426c-826c-bfee090137ad')/items",
+      "listUri": "_api/web/lists(guid'a40d5f57-859c-426c-826c-bfee090137ad')",
+      "fieldsUri": "_api/web/lists(guid'a40d5f57-859c-426c-826c-bfee090137ad')/fields"
+    }
+  ],
+  "retire": [
+    {
+      "listTitle": "DGO_UserDirectory",
+      "listGuid": "b9b522c6-1219-4fb1-ad01-b54b40416bba",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_UserDirectory",
+      "supersededBy": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_RoleCatalogue",
+      "listGuid": "55c0daae-8b46-4db7-8c03-be54e3fc536f",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_RoleCatalogue",
+      "supersededBy": "f675598b-271d-4200-8d75-2597aad4057f",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_UserRoleHistory",
+      "listGuid": "4fdb8379-9f48-466e-a503-a59912be5015",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_UserRoleHistory",
+      "supersededBy": "9fe1872f-3ae0-4b5f-96fc-5d3331c1d07c",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_AuditLog",
+      "listGuid": "74153ee5-e6dd-4347-b1fe-a51d7fd47521",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_AuditLog",
+      "supersededBy": "be0c7af1-b21d-4efe-8c30-53fc55598d95",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_AuditLog_2",
+      "listGuid": "7ac06ab8-9754-4578-be86-87c809c8deea",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_AuditLog_2",
+      "supersededBy": "be0c7af1-b21d-4efe-8c30-53fc55598d95",
+      "reason": "SharePoint disambiguation copy — the title already existed when provisioning ran again"
+    },
+    {
+      "listTitle": "DGO_PendingWrites",
+      "listGuid": "66e19c2a-877b-4537-8247-2351d6374cf9",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_PendingWrites",
+      "supersededBy": "ad1df270-21c7-4b78-99e7-fb18efd02cd2",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_PendingWrites_2",
+      "listGuid": "673b687d-5e07-4cd2-89c0-411d10238752",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_PendingWrites_2",
+      "supersededBy": "ad1df270-21c7-4b78-99e7-fb18efd02cd2",
+      "reason": "SharePoint disambiguation copy — the title already existed when provisioning ran again"
+    },
+    {
+      "listTitle": "DGO_DepartmentDirectory",
+      "listGuid": "db2f8e1a-69e4-4c8a-a2ee-4f2a29d85f4b",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_DepartmentDirectory",
+      "supersededBy": "eed0ba42-ece1-40e2-bf66-79827de02766",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_DepartmentDirectory_2",
+      "listGuid": "ed850c51-79e6-4f7e-a725-f8ca9f42ff01",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_DepartmentDirectory_2",
+      "supersededBy": "eed0ba42-ece1-40e2-bf66-79827de02766",
+      "reason": "SharePoint disambiguation copy — the title already existed when provisioning ran again"
+    },
+    {
+      "listTitle": "DGO_AccessScopes",
+      "listGuid": "3bd611eb-0391-47ee-9dfa-e4520a18787b",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_AccessScopes",
+      "supersededBy": "f2ffd2fa-901e-4f28-8f28-957da0fe05e4",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_AccessScopes_2",
+      "listGuid": "cccc57f9-1091-4e9c-9826-e46918b057f0",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_AccessScopes_2",
+      "supersededBy": "f2ffd2fa-901e-4f28-8f28-957da0fe05e4",
+      "reason": "SharePoint disambiguation copy — the title already existed when provisioning ran again"
+    },
+    {
+      "listTitle": "DGO_PilotCohorts_2",
+      "listGuid": "146c6162-7bea-4ecb-9b1d-254c1e979e12",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_PilotCohorts_2",
+      "supersededBy": "ecc4ac65-1804-4f67-ad3e-eacb1a3a4dc2",
+      "reason": "SharePoint disambiguation copy — the title already existed when provisioning ran again"
+    },
+    {
+      "listTitle": "DGO_PilotCohorts",
+      "listGuid": "22925b7d-9ea7-497f-9c01-70a32bcb6f2f",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_PilotCohorts",
+      "supersededBy": "ecc4ac65-1804-4f67-ad3e-eacb1a3a4dc2",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_EndpointRegistry_2",
+      "listGuid": "89ac07db-f7d0-43b4-b508-2479580fae18",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_EndpointRegistry_2",
+      "supersededBy": "08c6e1c4-f2b1-4810-933d-69b4327fb6af",
+      "reason": "SharePoint disambiguation copy — the title already existed when provisioning ran again"
+    },
+    {
+      "listTitle": "DGO_EndpointRegistry",
+      "listGuid": "dbc0abbd-51c5-4002-8786-3ebc866a8c35",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_EndpointRegistry",
+      "supersededBy": "08c6e1c4-f2b1-4810-933d-69b4327fb6af",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_AccessEvents",
+      "listGuid": "4411f921-2a76-4dea-823d-03f1daf1df6d",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_AccessEvents",
+      "supersededBy": "a40d5f57-859c-426c-826c-bfee090137ad",
+      "reason": "duplicate of the authoritative instance on a non-authoritative site collection"
+    },
+    {
+      "listTitle": "DGO_AccessEvents_2",
+      "listGuid": "c107a54f-3f38-4f71-8a47-38c75f047186",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "serverRelativeUrl": "/sites/NITDADGO-EAAACTIVITYTRACKING/Lists/DGO_AccessEvents_2",
+      "supersededBy": "a40d5f57-859c-426c-826c-bfee090137ad",
+      "reason": "SharePoint disambiguation copy — the title already existed when provisioning ran again"
+    }
+  ]
+}

@@ -1,0 +1,1226 @@
+{
+  "id": "2d66c266-81d0-44b1-87fe-6a6254a0d904",
+  "brandColor": "#8C3900",
+  "connectionReferences": {
+    "shared_flowmanagement": {
+      "connection": {
+        "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement/connections/shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+      }
+    },
+    "shared_office365": {
+      "connection": {
+        "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+      }
+    },
+    "shared_office365_1": {
+      "connection": {
+        "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/shared-office365-1fb94487-c973-4c56-a1f4-1ac16768a7a7"
+      }
+    }
+  },
+  "connectorDisplayName": "Control",
+  "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzhDMzkwMCIvPg0KIDxwYXRoIGQ9Im04IDEwaDE2djEyaC0xNnptMTUgMTF2LTEwaC0xNHYxMHptLTItOHY2aC0xMHYtNnptLTEgNXYtNGgtOHY0eiIgZmlsbD0iI2ZmZiIvPg0KPC9zdmc+DQo=",
+  "isTrigger": false,
+  "operationName": "Scope_Complete_Provisioned_Endpoint_Inventory",
+  "operationDefinition": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Expanded_Flow_Registry": {
+        "type": "Compose",
+        "inputs": [
+          {
+            "registrySequence": 1,
+            "applicationWorkflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+            "powerAutomateFlowId": null,
+            "category": "IP",
+            "contractKeys": [
+              "FETCH_ACTIVITIES",
+              "GET_DOCS"
+            ],
+            "canonicalFlowName": "IP_Get_Docs_Endpoint",
+            "exportedFlowName": null,
+            "mappingType": "NOT_EVIDENCED",
+            "httpMethod": "POST",
+            "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Repository platform register"
+            ],
+            "registryRecordId": "REG-0001",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 2,
+            "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+            "powerAutomateFlowId": "08da1783-927f-4662-a429-45e1249a989f",
+            "category": "IP",
+            "contractKeys": [
+              "SUBSIDIARY_ACTIONS",
+              "DYNAMIC_ACTIONS"
+            ],
+            "canonicalFlowName": "IP_Dynamic_Global_Actions_Endpoint",
+            "exportedFlowName": "IP_Subsidiary_Actions_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0002",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 3,
+            "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+            "powerAutomateFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+            "category": "IP",
+            "contractKeys": [
+              "FETCH_ALL"
+            ],
+            "canonicalFlowName": "FETCH_ALL",
+            "exportedFlowName": "IP_FETCH_ALL_ENDPOINT",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0003",
+            "candidateSequence": 1,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 3,
+            "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+            "powerAutomateFlowId": "be1f89bd-d7ea-4a15-87c9-2ce6fd4d0eaa",
+            "category": "IP",
+            "contractKeys": [
+              "FETCH_ALL"
+            ],
+            "canonicalFlowName": "FETCH_ALL",
+            "exportedFlowName": "IP_Fetch_All_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0004",
+            "candidateSequence": 2,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 4,
+            "applicationWorkflowId": "885fad5ec91f460490e8c772d5d10cb8",
+            "powerAutomateFlowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+            "category": "IP",
+            "contractKeys": [
+              "REFERENCE_DATA"
+            ],
+            "canonicalFlowName": "IP_Reference_Data_Endpoint",
+            "exportedFlowName": "IP_Reference_Data_Endpoint",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0005",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 5,
+            "applicationWorkflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+            "powerAutomateFlowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+            "category": "IP",
+            "contractKeys": [
+              "FETCH_EMAIL_ATTACHMENTS"
+            ],
+            "canonicalFlowName": "IP_Retrieve_Email_Attachment_Endpoint",
+            "exportedFlowName": "IP_Retrieve_Email_Attachment_Endpoint",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0006",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 6,
+            "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+            "powerAutomateFlowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+            "category": "Other",
+            "contractKeys": [
+              "SINGLE_ASSIGNMENT"
+            ],
+            "canonicalFlowName": "Single_Task_Assignment",
+            "exportedFlowName": "Single_Task_Assignment",
+            "mappingType": "CONSOLIDATED_ALIGNMENT",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0007",
+            "candidateSequence": 1,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 6,
+            "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+            "powerAutomateFlowId": "05825db0-c806-4974-807c-c062f386cc41",
+            "category": "Other",
+            "contractKeys": [
+              "SINGLE_ASSIGNMENT"
+            ],
+            "canonicalFlowName": "Single_Task_Assignment",
+            "exportedFlowName": "IP_Single_Assignment_Endpoint",
+            "mappingType": "CONSOLIDATED_ALIGNMENT",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0008",
+            "candidateSequence": 2,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 7,
+            "applicationWorkflowId": "a705e453f922457c95ca19f32731e4d7",
+            "powerAutomateFlowId": null,
+            "category": "Other",
+            "contractKeys": [
+              "BULK_ASSIGNMENT"
+            ],
+            "canonicalFlowName": "BULK OPS DATA RETRIEVAL HTTP",
+            "exportedFlowName": null,
+            "mappingType": "NOT_EVIDENCED",
+            "httpMethod": "POST",
+            "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Repository platform register"
+            ],
+            "registryRecordId": "REG-0009",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 8,
+            "applicationWorkflowId": "466cf7ea66c54240aaede85a5a500f1c",
+            "powerAutomateFlowId": null,
+            "category": "IP",
+            "contractKeys": [
+              "USER_ADMIN"
+            ],
+            "canonicalFlowName": "IP_User_Admin_Endpoint",
+            "exportedFlowName": null,
+            "mappingType": "NOT_EVIDENCED",
+            "httpMethod": "POST",
+            "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Repository platform register"
+            ],
+            "registryRecordId": "REG-0010",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 9,
+            "applicationWorkflowId": "35fa90bfad8f4a639cc20882f1688149",
+            "powerAutomateFlowId": null,
+            "category": "IP",
+            "contractKeys": [
+              "ACTIVITY_LIFECYCLE"
+            ],
+            "canonicalFlowName": "IP_Activity_Lifecycle_Endpoint",
+            "exportedFlowName": null,
+            "mappingType": "NOT_EVIDENCED",
+            "httpMethod": "POST",
+            "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Repository platform register"
+            ],
+            "registryRecordId": "REG-0011",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 10,
+            "applicationWorkflowId": "378b491ec39a4beca886ddec250e6961",
+            "powerAutomateFlowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+            "category": "IP",
+            "contractKeys": [
+              "EMAIL"
+            ],
+            "canonicalFlowName": "IP_SEND_EMAIL",
+            "exportedFlowName": "IP_SEND_EMAIL",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0012",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 11,
+            "applicationWorkflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+            "powerAutomateFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+            "category": "IP",
+            "contractKeys": [
+              "EMAIL_RELATED_TASK"
+            ],
+            "canonicalFlowName": "IP_Create__Task__for_received_Email_Endpoint",
+            "exportedFlowName": "IP_Create_Task_for_received_Email_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261006205908.zip",
+              "2026-10-07-endpoint-values-read.json"
+            ],
+            "registryRecordId": "REG-0013",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 12,
+            "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+            "powerAutomateFlowId": null,
+            "category": "Other",
+            "contractKeys": [
+              "AI_EMAIL_ANALYSIS",
+              "AI_DOC_ANALYSIS",
+              "AI_CHAT"
+            ],
+            "canonicalFlowName": "AI_Document_Processing",
+            "exportedFlowName": null,
+            "mappingType": "NOT_EVIDENCED",
+            "httpMethod": "POST",
+            "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Repository platform register"
+            ],
+            "registryRecordId": "REG-0014",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 13,
+            "applicationWorkflowId": "741465e483714d48a07e336eb4571b89",
+            "powerAutomateFlowId": null,
+            "category": "IP",
+            "contractKeys": [
+              "OTP_GENERATE"
+            ],
+            "canonicalFlowName": "IP_OTP_GENERATE",
+            "exportedFlowName": null,
+            "mappingType": "NOT_EVIDENCED",
+            "httpMethod": "POST",
+            "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Repository platform register"
+            ],
+            "registryRecordId": "REG-0015",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 14,
+            "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+            "powerAutomateFlowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+            "category": "IP",
+            "contractKeys": [
+              "OTP_VERIFY"
+            ],
+            "canonicalFlowName": "IP_OTP_VERIFY",
+            "exportedFlowName": "IP_OTP_VERIFY",
+            "mappingType": "CONSOLIDATED_ALIGNMENT",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0016",
+            "candidateSequence": 1,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 14,
+            "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+            "powerAutomateFlowId": "913bd078-5411-404f-85ac-507c10fe1a09",
+            "category": "IP",
+            "contractKeys": [
+              "OTP_VERIFY"
+            ],
+            "canonicalFlowName": "IP_OTP_VERIFY",
+            "exportedFlowName": "IP_OTP_Endpoint",
+            "mappingType": "CONSOLIDATED_ALIGNMENT",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0017",
+            "candidateSequence": 2,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 15,
+            "applicationWorkflowId": "88401ce1f44148539c0da53c9491f8e6",
+            "powerAutomateFlowId": "5504d7f9-cc96-470c-be79-217582faf415",
+            "category": "IP",
+            "contractKeys": [
+              "SCAN_INTAKE"
+            ],
+            "canonicalFlowName": "IP_SCAN_INTAKE",
+            "exportedFlowName": "IP_SCAN_INTAKE",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "PUT",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0018",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 16,
+            "applicationWorkflowId": "1041ed37ce924e3c886d891f23e8142c",
+            "powerAutomateFlowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+            "category": "CG",
+            "contractKeys": [
+              "SUBMISSION"
+            ],
+            "canonicalFlowName": "CG_Submission_Endpoint",
+            "exportedFlowName": "CG_Submission_Endpoint",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0019",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 17,
+            "applicationWorkflowId": "62fe121e5a95416bb91275e43dd0e37e",
+            "powerAutomateFlowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+            "category": "CG",
+            "contractKeys": [
+              "UPLOAD"
+            ],
+            "canonicalFlowName": "CG_Upload_Endpoint",
+            "exportedFlowName": "CG_Upload_Endpoint",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "PUT",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0020",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 18,
+            "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+            "powerAutomateFlowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+            "category": "CG",
+            "contractKeys": [
+              "SUPPORT"
+            ],
+            "canonicalFlowName": "CG_Portal_Support_Endpoint",
+            "exportedFlowName": "CG_Portal_Support_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0021",
+            "candidateSequence": 1,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 18,
+            "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+            "powerAutomateFlowId": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+            "category": "CG",
+            "contractKeys": [
+              "SUPPORT"
+            ],
+            "canonicalFlowName": "CG_Portal_Support_Endpoint",
+            "exportedFlowName": "CG_Support_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0022",
+            "candidateSequence": 2,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 19,
+            "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+            "powerAutomateFlowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+            "category": "CG",
+            "contractKeys": [
+              "VERIFY"
+            ],
+            "canonicalFlowName": "CG_Portal_Verification_Endpoint",
+            "exportedFlowName": "CG_Portal_Verification_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0023",
+            "candidateSequence": 1,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 19,
+            "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+            "powerAutomateFlowId": "86897b2f-9770-4efa-8486-2642f24bb947",
+            "category": "CG",
+            "contractKeys": [
+              "VERIFY"
+            ],
+            "canonicalFlowName": "CG_Portal_Verification_Endpoint",
+            "exportedFlowName": "CG_Verification_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0024",
+            "candidateSequence": 2,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 20,
+            "applicationWorkflowId": "b270894ff410499ebbc090e32ffe899b",
+            "powerAutomateFlowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+            "category": "CG",
+            "contractKeys": [
+              "VERIFY_CONFIRM"
+            ],
+            "canonicalFlowName": "CG_Portal_Verification_Confirmation_Endpoint",
+            "exportedFlowName": "CG_Portal_Verification_Confirmation_Endpoint",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0025",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          },
+          {
+            "registrySequence": 21,
+            "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+            "powerAutomateFlowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+            "category": "CG",
+            "contractKeys": [
+              "STATUS"
+            ],
+            "canonicalFlowName": "CG_Portal_Status_Check_Endpoint",
+            "exportedFlowName": "CG_Portal_Status_Check_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0026",
+            "candidateSequence": 1,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 21,
+            "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+            "powerAutomateFlowId": "badb65d8-f472-407e-8975-c29d77b855d7",
+            "category": "CG",
+            "contractKeys": [
+              "STATUS"
+            ],
+            "canonicalFlowName": "CG_Portal_Status_Check_Endpoint",
+            "exportedFlowName": "CG_Status_Check_Endpoint",
+            "mappingType": "ALIAS_ALIGNED",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0027",
+            "candidateSequence": 2,
+            "candidateCount": 2
+          },
+          {
+            "registrySequence": 22,
+            "applicationWorkflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+            "powerAutomateFlowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+            "category": "CG",
+            "contractKeys": [
+              "WRITEBACK"
+            ],
+            "canonicalFlowName": "CG_Portal_Writeback_Endpoint",
+            "exportedFlowName": "CG_Portal_Writeback_Endpoint",
+            "mappingType": "EXACT_MATCH",
+            "httpMethod": "POST",
+            "endpointStatus": "TENANT_CONFIRMATION_REQUIRED",
+            "triggerName": "manual",
+            "sourceFiles": [
+              "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+              "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+            ],
+            "registryRecordId": "REG-0028",
+            "candidateSequence": 1,
+            "candidateCount": 1
+          }
+        ],
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000001"
+        }
+      },
+      "Select_Application_Workflow_Ids": {
+        "type": "Select",
+        "inputs": {
+          "from": "@outputs('Compose_Expanded_Flow_Registry')",
+          "select": "@item()?['applicationWorkflowId']"
+        },
+        "runAfter": {
+          "Compose_Expanded_Flow_Registry": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000002"
+        }
+      },
+      "Condition_EnvironmentName_Available": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "not": {
+                "equals": [
+                  "@trim(string(variables('EnvironmentName')))",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "Apply_to_each_Flow": {
+            "type": "Foreach",
+            "foreach": "@outputs('Compose_Expanded_Flow_Registry')",
+            "actions": {
+              "Condition_Has_Valid_Power_Automate_Flow_ID": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "not": {
+                        "equals": [
+                          "@trim(string(items('Apply_to_each_Flow')?['powerAutomateFlowId']))",
+                          ""
+                        ]
+                      }
+                    },
+                    {
+                      "equals": [
+                        "@length(trim(string(items('Apply_to_each_Flow')?['powerAutomateFlowId'])))",
+                        36
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Scope_Get_One_Flow": {
+                    "type": "Scope",
+                    "actions": {
+                      "Get_Flow_Definition": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "connectionName": "shared_flowmanagement",
+                            "operationId": "GetFlow",
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+                          },
+                          "parameters": {
+                            "environmentName": "@variables('EnvironmentName')",
+                            "flowName": "@items('Apply_to_each_Flow')?['powerAutomateFlowId']"
+                          },
+                          "authentication": {
+                            "type": "Raw",
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                          }
+                        },
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000003"
+                        }
+                      },
+                      "List_Flow_Owners": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "connectionName": "shared_flowmanagement",
+                            "operationId": "ListFlowOwners",
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+                          },
+                          "parameters": {
+                            "environmentName": "@variables('EnvironmentName')",
+                            "flowName": "@outputs('Get_Flow_Definition')?['body']?['name']"
+                          },
+                          "authentication": {
+                            "type": "Raw",
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                          }
+                        },
+                        "runAfter": {
+                          "Get_Flow_Definition": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000004"
+                        }
+                      },
+                      "List_Callback_URL": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "host": {
+                            "connectionName": "shared_flowmanagement",
+                            "operationId": "ListCallbackUrl",
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+                          },
+                          "parameters": {
+                            "environmentName": "@variables('EnvironmentName')",
+                            "flowName": "@outputs('Get_Flow_Definition')?['body']?['name']"
+                          },
+                          "authentication": {
+                            "type": "Raw",
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                          }
+                        },
+                        "runAfter": {
+                          "Get_Flow_Definition": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000005"
+                        }
+                      },
+                      "Compose_Normalized_Callback_URL": {
+                        "type": "Compose",
+                        "inputs": "@coalesce(outputs('List_Callback_URL')?['body']?['response']?['value'], outputs('List_Callback_URL')?['body']?['value'], outputs('Get_Flow_Definition')?['body']?['properties']?['flowTriggerUri'], '')",
+                        "runAfter": {
+                          "Get_Flow_Definition": [
+                            "Succeeded"
+                          ],
+                          "List_Flow_Owners": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut",
+                            "Skipped"
+                          ],
+                          "List_Callback_URL": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut",
+                            "Skipped"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000006"
+                        }
+                      },
+                      "Compose_Redacted_Callback_URL": {
+                        "type": "Compose",
+                        "inputs": "@if(contains(outputs('Compose_Normalized_Callback_URL'),'sig='),concat(first(split(outputs('Compose_Normalized_Callback_URL'),'sig=')),'sig=<CREDENTIAL_REMOVED>'),outputs('Compose_Normalized_Callback_URL'))",
+                        "runAfter": {
+                          "Compose_Normalized_Callback_URL": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000007"
+                        }
+                      },
+                      "Compose_Signature_Length": {
+                        "type": "Compose",
+                        "inputs": "@if(contains(outputs('Compose_Normalized_Callback_URL'),'sig='),length(first(split(last(split(outputs('Compose_Normalized_Callback_URL'),'sig=')),'&'))),0)",
+                        "runAfter": {
+                          "Compose_Redacted_Callback_URL": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000008"
+                        }
+                      },
+                      "Append_Found_Flow": {
+                        "type": "AppendToArrayVariable",
+                        "inputs": {
+                          "name": "FlowsFoundDetails",
+                          "value": {
+                            "inventoryMetadata": {
+                              "inventorySchemaVersion": "6.3.0",
+                              "retrievedAtUtc": "@utcNow()",
+                              "retrievalMethod": "Power Automate Management connector",
+                              "retrievalStatus": "@if(and(equals(actions('List_Flow_Owners')?['status'],'Succeeded'),equals(actions('List_Callback_URL')?['status'],'Succeeded')),'SUCCEEDED','PARTIAL_SUCCESS')",
+                              "definitionRetrievalStatus": "@actions('Get_Flow_Definition')?['status']",
+                              "ownerRetrievalStatus": "@actions('List_Flow_Owners')?['status']",
+                              "callbackRetrievalStatus": "@actions('List_Callback_URL')?['status']",
+                              "containsSignedCallbackUrl": "@greater(outputs('Compose_Signature_Length'),0)"
+                            },
+                            "registry": {
+                              "registryRecordId": "@items('Apply_to_each_Flow')?['registryRecordId']",
+                              "registrySequence": "@items('Apply_to_each_Flow')?['registrySequence']",
+                              "candidateSequence": "@items('Apply_to_each_Flow')?['candidateSequence']",
+                              "candidateCount": "@items('Apply_to_each_Flow')?['candidateCount']",
+                              "applicationWorkflowId": "@items('Apply_to_each_Flow')?['applicationWorkflowId']",
+                              "powerAutomateFlowIdRequested": "@items('Apply_to_each_Flow')?['powerAutomateFlowId']",
+                              "canonicalFlowName": "@items('Apply_to_each_Flow')?['canonicalFlowName']",
+                              "exportedFlowName": "@items('Apply_to_each_Flow')?['exportedFlowName']",
+                              "contractKeys": "@items('Apply_to_each_Flow')?['contractKeys']",
+                              "category": "@items('Apply_to_each_Flow')?['category']",
+                              "mappingType": "@items('Apply_to_each_Flow')?['mappingType']",
+                              "httpMethod": "@items('Apply_to_each_Flow')?['httpMethod']",
+                              "endpointStatus": "@items('Apply_to_each_Flow')?['endpointStatus']",
+                              "triggerName": "@items('Apply_to_each_Flow')?['triggerName']",
+                              "sourceFiles": "@items('Apply_to_each_Flow')?['sourceFiles']"
+                            },
+                            "flowIdentity": {
+                              "id": "@body('Get_Flow_Definition')?['name']",
+                              "displayName": "@body('Get_Flow_Definition')?['properties']?['displayName']",
+                              "resourceId": "@body('Get_Flow_Definition')?['id']"
+                            },
+                            "flowLifecycle": {
+                              "state": "@body('Get_Flow_Definition')?['properties']?['state']",
+                              "createdTime": "@body('Get_Flow_Definition')?['properties']?['createdTime']",
+                              "lastModifiedTime": "@body('Get_Flow_Definition')?['properties']?['lastModifiedTime']"
+                            },
+                            "owners": {
+                              "ownerCount": "@length(coalesce(outputs('List_Flow_Owners')?['body']?['value'],json('[]')))",
+                              "ownerRecords": "@coalesce(outputs('List_Flow_Owners')?['body']?['value'],json('[]'))",
+                              "completeOwnerActionResult": {
+                                "status": "@actions('List_Flow_Owners')?['status']",
+                                "outputs": "@actions('List_Flow_Owners')?['outputs']"
+                              }
+                            },
+                            "endpoint": {
+                              "callbackUrl": "@outputs('Compose_Normalized_Callback_URL')",
+                              "redactedCallbackUrl": "@outputs('Compose_Redacted_Callback_URL')",
+                              "signatureLength": "@outputs('Compose_Signature_Length')",
+                              "endpointAvailable": "@not(empty(outputs('Compose_Normalized_Callback_URL')))",
+                              "endpointSource": "@if(not(empty(outputs('List_Callback_URL')?['body']?['response']?['value'])),'ListCallbackUrl.response.value',if(not(empty(outputs('List_Callback_URL')?['body']?['value'])),'ListCallbackUrl.value',if(not(empty(outputs('Get_Flow_Definition')?['body']?['properties']?['flowTriggerUri'])),'GetFlow.flowTriggerUri','Unavailable')))",
+                              "expectedHttpMethod": "@items('Apply_to_each_Flow')?['httpMethod']",
+                              "observedHttpMethod": "@outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?[items('Apply_to_each_Flow')?['triggerName']]?['inputs']?['method']",
+                              "effectiveHttpMethod": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?[items('Apply_to_each_Flow')?['triggerName']]?['inputs']?['method'],items('Apply_to_each_Flow')?['httpMethod'],'POST')",
+                              "expectedTriggerName": "@items('Apply_to_each_Flow')?['triggerName']",
+                              "triggerFound": "@not(empty(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?[items('Apply_to_each_Flow')?['triggerName']]))",
+                              "completeCallbackActionResult": {
+                                "status": "@actions('List_Callback_URL')?['status']",
+                                "outputs": "@actions('List_Callback_URL')?['outputs']"
+                              }
+                            },
+                            "completeDefinition": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition'],json('{}'))",
+                            "connectionReferences": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['connectionReferences'],json('{}'))",
+                            "completeFlowDefinitionActionResult": {
+                              "status": "@actions('Get_Flow_Definition')?['status']",
+                              "outputs": "@actions('Get_Flow_Definition')?['outputs']"
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Compose_Signature_Length": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000009"
+                        }
+                      },
+                      "Increment_Found_Count": {
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "FlowsFoundCount",
+                          "value": 1
+                        },
+                        "runAfter": {
+                          "Append_Found_Flow": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000010"
+                        }
+                      }
+                    },
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "c0000000-0000-4000-8000-000000000011"
+                    }
+                  },
+                  "Scope_Handle_Retrieval_Failure": {
+                    "type": "Scope",
+                    "actions": {
+                      "Append_Not_Found_Flow": {
+                        "type": "AppendToArrayVariable",
+                        "inputs": {
+                          "name": "FlowsNotFoundDetails",
+                          "value": {
+                            "registryRecord": "@items('Apply_to_each_Flow')",
+                            "status": "FLOW_DEFINITION_RETRIEVAL_FAILED",
+                            "capturedAtUtc": "@utcNow()",
+                            "completeScopeResult": "@result('Scope_Get_One_Flow')"
+                          }
+                        },
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000012"
+                        }
+                      },
+                      "Increment_Not_Found_Count": {
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "FlowsNotFoundCount",
+                          "value": 1
+                        },
+                        "runAfter": {
+                          "Append_Not_Found_Flow": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "c0000000-0000-4000-8000-000000000013"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Scope_Get_One_Flow": [
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "c0000000-0000-4000-8000-000000000014"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Append_Missing_ID_Record": {
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "FlowsNotFoundDetails",
+                        "value": {
+                          "registryRecord": "@items('Apply_to_each_Flow')",
+                          "status": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED_OR_INVALID",
+                          "capturedAtUtc": "@utcNow()"
+                        }
+                      },
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "c0000000-0000-4000-8000-000000000015"
+                      }
+                    },
+                    "Increment_Missing_ID_Count": {
+                      "type": "IncrementVariable",
+                      "inputs": {
+                        "name": "FlowsNotFoundCount",
+                        "value": 1
+                      },
+                      "runAfter": {
+                        "Append_Missing_ID_Record": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "c0000000-0000-4000-8000-000000000016"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "c0000000-0000-4000-8000-000000000017"
+                }
+              }
+            },
+            "runAfter": {},
+            "operationOptions": "Sequential",
+            "metadata": {
+              "operationMetadataId": "c0000000-0000-4000-8000-000000000018"
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Append_Environment_Error": {
+              "type": "AppendToArrayVariable",
+              "inputs": {
+                "name": "RetrievalErrors",
+                "value": {
+                  "code": "ENVIRONMENT_NAME_REQUIRED",
+                  "message": "Provide environmentName in the trigger body or configure the EnvironmentName variable.",
+                  "capturedAtUtc": "@utcNow()",
+                  "affectedRecordCount": "@length(outputs('Compose_Expanded_Flow_Registry'))"
+                }
+              },
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "c0000000-0000-4000-8000-000000000019"
+              }
+            },
+            "Set_All_Records_Not_Processed": {
+              "type": "SetVariable",
+              "inputs": {
+                "name": "FlowsNotFoundCount",
+                "value": "@length(outputs('Compose_Expanded_Flow_Registry'))"
+              },
+              "runAfter": {
+                "Append_Environment_Error": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "c0000000-0000-4000-8000-000000000020"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Select_Application_Workflow_Ids": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000021"
+        }
+      },
+      "Compose_Restricted_Extraction_Result": {
+        "type": "Compose",
+        "inputs": {
+          "schemaVersion": "6.3.0",
+          "generatedAtUtc": "@utcNow()",
+          "environmentName": "@variables('EnvironmentName')",
+          "inputRecordCount": "@length(outputs('Compose_Expanded_Flow_Registry'))",
+          "uniqueApplicationWorkflowCount": "@length(union(body('Select_Application_Workflow_Ids'),json('[]')))",
+          "foundCount": "@variables('FlowsFoundCount')",
+          "notFoundOrNotProcessedCount": "@variables('FlowsNotFoundCount')",
+          "notProcessedCount": "@if(empty(trim(string(variables('EnvironmentName')))),length(outputs('Compose_Expanded_Flow_Registry')),0)",
+          "flowsFound": "@variables('FlowsFoundDetails')",
+          "flowsNotFoundOrNotProcessed": "@variables('FlowsNotFoundDetails')",
+          "retrievalErrors": "@variables('RetrievalErrors')",
+          "completeRegistry": "@outputs('Compose_Expanded_Flow_Registry')",
+          "lookupStrategy": "one_record_per_evidenced_power_automate_flow_id",
+          "endpointStrategy": "ListCallbackUrl_then_flowTriggerUri",
+          "processingMode": "Sequential",
+          "recordPurpose": "Single authoritative source of truth and complete reference record",
+          "informationPolicy": "No filtering, reduction, redaction, masking, validation, or omission of retrieved URL or flow information.",
+          "securityClassification": "Restricted - complete inventory including signed callback URLs, definitions, connections, owners, and raw action results. Run-history only: not emailed, not written to a list, not returned to a caller."
+        },
+        "runAfter": {
+          "Condition_EnvironmentName_Available": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000022"
+        }
+      },
+      "Select_Redacted_Governance_Results": {
+        "type": "Select",
+        "inputs": {
+          "from": "@variables('FlowsFoundDetails')",
+          "select": {
+            "registryRecordId": "@item()?['registry']?['registryRecordId']",
+            "registrySequence": "@item()?['registry']?['registrySequence']",
+            "candidateSequence": "@item()?['registry']?['candidateSequence']",
+            "candidateCount": "@item()?['registry']?['candidateCount']",
+            "applicationWorkflowId": "@item()?['registry']?['applicationWorkflowId']",
+            "powerAutomateFlowId": "@item()?['registry']?['powerAutomateFlowIdRequested']",
+            "contractKeys": "@item()?['registry']?['contractKeys']",
+            "category": "@item()?['registry']?['category']",
+            "canonicalFlowName": "@item()?['registry']?['canonicalFlowName']",
+            "exportedFlowName": "@item()?['registry']?['exportedFlowName']",
+            "mappingType": "@item()?['registry']?['mappingType']",
+            "observedDisplayName": "@item()?['flowIdentity']?['displayName']",
+            "observedFlowId": "@item()?['flowIdentity']?['id']",
+            "state": "@item()?['flowLifecycle']?['state']",
+            "createdTime": "@item()?['flowLifecycle']?['createdTime']",
+            "lastModifiedTime": "@item()?['flowLifecycle']?['lastModifiedTime']",
+            "ownerCount": "@item()?['owners']?['ownerCount']",
+            "endpointAvailable": "@item()?['endpoint']?['endpointAvailable']",
+            "endpointSource": "@item()?['endpoint']?['endpointSource']",
+            "redactedCallbackUrl": "@item()?['endpoint']?['redactedCallbackUrl']",
+            "signatureLength": "@item()?['endpoint']?['signatureLength']",
+            "expectedHttpMethod": "@item()?['endpoint']?['expectedHttpMethod']",
+            "observedHttpMethod": "@item()?['endpoint']?['observedHttpMethod']",
+            "expectedTriggerName": "@item()?['endpoint']?['expectedTriggerName']",
+            "triggerFound": "@item()?['endpoint']?['triggerFound']",
+            "retrievalStatus": "@item()?['inventoryMetadata']?['retrievalStatus']",
+            "retrievedAtUtc": "@item()?['inventoryMetadata']?['retrievedAtUtc']"
+          }
+        },
+        "runAfter": {
+          "Compose_Restricted_Extraction_Result": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000023"
+        }
+      },
+      "Compose_Redacted_Governance_Result": {
+        "type": "Compose",
+        "inputs": {
+          "schemaVersion": "6.3.0",
+          "generatedAtUtc": "@utcNow()",
+          "environmentName": "@variables('EnvironmentName')",
+          "inputRecordCount": "@length(outputs('Compose_Expanded_Flow_Registry'))",
+          "uniqueApplicationWorkflowCount": "@length(union(body('Select_Application_Workflow_Ids'),json('[]')))",
+          "foundCount": "@variables('FlowsFoundCount')",
+          "notFoundOrNotProcessedCount": "@variables('FlowsNotFoundCount')",
+          "flows": "@body('Select_Redacted_Governance_Results')",
+          "completeRegistry": "@outputs('Compose_Expanded_Flow_Registry')",
+          "flowsNotFoundOrNotProcessed": "@variables('FlowsNotFoundDetails')",
+          "retrievalErrors": "@variables('RetrievalErrors')",
+          "informationPolicy": "Every retrieved field except the signature. Callback URLs appear with sig=<CREDENTIAL_REMOVED> and the signature length beside them. Flow definitions, connection references, owner records and raw action results are omitted, not masked.",
+          "securityClassification": "Internal - no credential. Safe to attach to mail, file, or hand to a reviewer.",
+          "restrictedTierLocation": "Compose_Restricted_Extraction_Result, in this run history only."
+        },
+        "runAfter": {
+          "Select_Redacted_Governance_Results": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000024"
+        }
+      },
+      "Compose_Governance_Attachment": {
+        "type": "Compose",
+        "inputs": [
+          {
+            "Name": "@{concat('endpoint_inventory_governance_', formatDateTime(utcNow(), 'yyyy-MM-dd'), '.json')}",
+            "ContentBytes": "@base64(string(outputs('Compose_Redacted_Governance_Result')))"
+          }
+        ],
+        "runAfter": {
+          "Compose_Redacted_Governance_Result": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000025"
+        }
+      },
+      "Send_Governance_Report_Email": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_office365_1",
+            "operationId": "SendEmailV2",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+          },
+          "parameters": {
+            "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+            "emailMessage/Subject": "@{concat('Endpoint inventory — ', variables('EnvironmentName'), ' — ', string(variables('FlowsFoundCount')), ' of ', string(length(outputs('Compose_Expanded_Flow_Registry'))), ' records retrieved')}",
+            "emailMessage/Body": "<p>Endpoint inventory for environment <strong>@{variables('EnvironmentName')}</strong>, run at @{utcNow()}.</p>\n<ul>\n<li>Registry records: @{length(outputs('Compose_Expanded_Flow_Registry'))}, across @{length(union(body('Select_Application_Workflow_Ids'),json('[]')))} application workflows</li>\n<li>Retrieved from the tenant: @{variables('FlowsFoundCount')}</li>\n<li>Not retrieved or not processed: @{variables('FlowsNotFoundCount')}</li>\n</ul>\n<p>The attachment carries every retrieved field except the signature: callback URLs appear\nwith <code>sig=&lt;CREDENTIAL_REMOVED&gt;</code> and the signature length beside them.\nThe complete unredacted record stays in this run history and is not attached.</p>",
+            "emailMessage/Attachments": "@outputs('Compose_Governance_Attachment')"
+          },
+          "authentication": {
+            "type": "Raw",
+            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+          }
+        },
+        "runAfter": {
+          "Compose_Governance_Attachment": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000026"
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "c0000000-0000-4000-8000-ffffffffffff"
+    }
+  }
+}

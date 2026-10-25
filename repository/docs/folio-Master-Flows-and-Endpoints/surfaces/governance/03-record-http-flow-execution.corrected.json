@@ -1,0 +1,679 @@
+{
+  "schema": "dgo-governance-flow-correction/v1",
+  "flow": "03 - GOV - Record HTTP Flow Execution",
+  "flowId": "0545e19a-c34a-45db-bd11-27b87a34973e",
+  "corrects": [
+    "GOV-04"
+  ],
+  "generatedBy": "scripts/patch-governance-flows.mjs",
+  "basedOn": "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/03 - GOV - Record HTTP Flow Execution__0545e19a-c34a-45db-bd11-27b87a34973e__full_definition.json",
+  "howToApply": "Power Automate → the flow → Edit → ⋯ → Peek code is read-only, so apply this through the designer or by importing the corrected package. The definition below is complete and replaces the flow definition wholesale. Export the current version first; docs/folio-Master-Flows-and-Endpoints/deployment/governance/APPLY-FLOW-CORRECTIONS.md carries the full procedure and the rollback.",
+  "changes": [
+    "03 - GOV - Record HTTP Flow Execution: Respond_Registry_Not_Found → 404 before Terminate_Registry_Not_Found",
+    "03 - GOV - Record HTTP Flow Execution: Respond_Invalid_Input → 400 before Terminate_Invalid_Input",
+    "03 - GOV - Record HTTP Flow Execution: Respond_Execution_Recording_Failed → 500 before Terminate_Execution_Recording_Failed",
+    "03 - GOV - Record HTTP Flow Execution: Respond_Execution_Recording_Succeeded → 200 before Terminate_Execution_Recording_Succeeded"
+  ],
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "environmentId",
+              "flowId",
+              "runId",
+              "startedUtc",
+              "completedUtc",
+              "outcome"
+            ],
+            "properties": {
+              "environmentId": {
+                "type": "string"
+              },
+              "flowId": {
+                "type": "string"
+              },
+              "runId": {
+                "type": "string"
+              },
+              "startedUtc": {
+                "type": "string"
+              },
+              "completedUtc": {
+                "type": "string"
+              },
+              "outcome": {
+                "type": "string"
+              },
+              "correlationId": {
+                "type": "string"
+              },
+              "callerSystem": {
+                "type": "string"
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorMessage": {
+                "type": "string"
+              },
+              "durationMs": {
+                "type": "integer"
+              },
+              "httpStatusCode": {
+                "type": "integer"
+              }
+            }
+          },
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Scope_03_GOV_Record_HTTP_Flow_Execution_COMPLETE_UPDATED": {
+        "actions": {
+          "Scope_Main": {
+            "actions": {
+              "Compose_Registry_Key": {
+                "runAfter": {
+                  "Validate_Input": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "d13bad65-465a-402d-91db-e59b2555bda6"
+                },
+                "type": "Compose",
+                "inputs": "@concat(trim(string(triggerBody()?['environmentId'])),'|',trim(string(triggerBody()?['flowId'])))"
+              },
+              "Compose_Execution_Key": {
+                "runAfter": {
+                  "Compose_Registry_Key": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a79c3c25-7ba8-4168-bc8b-ada7c0d770e2"
+                },
+                "type": "Compose",
+                "inputs": "@concat(outputs('Compose_Registry_Key'),'|',trim(string(triggerBody()?['runId'])))"
+              },
+              "Find_Execution": {
+                "runAfter": {
+                  "Compose_Duration_Ms": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "c19ac966-b99c-4274-a551-9c02cf1b12d4"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowExecutionLedger'')/items?$select=Id&$filter=ExecutionKey eq ''',replace(outputs('Compose_Execution_Key'),'''',''''''),'''&$top=1')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "If_Execution_Missing": {
+                "actions": {
+                  "Create_Execution": {
+                    "metadata": {
+                      "operationMetadataId": "bc438c0d-55b6-4129-9f44-e5d0daab2148"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowExecutionLedger')/items",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',outputs('Compose_Execution_Key')),'ExecutionKey',outputs('Compose_Execution_Key')),'RegistryKey',outputs('Compose_Registry_Key')),'FlowId',trim(string(triggerBody()?['flowId']))),'EnvironmentId',trim(string(triggerBody()?['environmentId']))),'RunId',trim(string(triggerBody()?['runId']))),'CorrelationId',coalesce(triggerBody()?['correlationId'],'')),'StartedUtc',triggerBody()?['startedUtc']),'CompletedUtc',outputs('Compose_Completed_Utc')),'DurationMs',outputs('Compose_Duration_Ms')),'Outcome',toLower(trim(string(triggerBody()?['outcome'])))),'HttpStatusCode',if(empty(triggerBody()?['httpStatusCode']),null,int(triggerBody()?['httpStatusCode']))),'CallerSystem',coalesce(triggerBody()?['callerSystem'],'')),'ErrorCode',if(equals(toLower(trim(string(triggerBody()?['outcome']))),'succeeded'),'',coalesce(triggerBody()?['errorCode'],''))),'ErrorMessage',if(equals(toLower(trim(string(triggerBody()?['outcome']))),'succeeded'),'',substring(coalesce(triggerBody()?['errorMessage'],''),0,min(length(coalesce(triggerBody()?['errorMessage'],'')),4000)))),'ExecutionMetadataJson',string(coalesce(triggerBody()?['executionMetadata'],json('{}'))))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Find_Registry": {
+                    "runAfter": {
+                      "Create_Execution": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "661d0784-9fde-466a-93ef-d7d425d96d81"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,TotalExecutions,SuccessfulExecutions,FailedExecutions,ConsecutiveFailures,AverageDurationMs,LastSuccessfulCallUtc,LastFailureUtc,RecordVersion&$filter=RegistryKey eq ''',replace(outputs('Compose_Registry_Key'),'''',''''''),'''&$top=1')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "If_Registry_Found": {
+                    "actions": {
+                      "Update_Registry_Health": {
+                        "metadata": {
+                          "operationMetadataId": "f3717901-1db3-4f54-9c36-b68fa3c582ff"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items(',first(body('Find_Registry')?['value'])?['Id'],')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'TotalExecutions',add(int(coalesce(first(body('Find_Registry')?['value'])?['TotalExecutions'],0)),1)),'SuccessfulExecutions',add(int(coalesce(first(body('Find_Registry')?['value'])?['SuccessfulExecutions'],0)),if(equals(toLower(trim(string(triggerBody()?['outcome']))),'succeeded'),1,0))),'FailedExecutions',add(int(coalesce(first(body('Find_Registry')?['value'])?['FailedExecutions'],0)),if(or(equals(toLower(trim(string(triggerBody()?['outcome']))),'failed'),equals(toLower(trim(string(triggerBody()?['outcome']))),'timedout')),1,0))),'ConsecutiveFailures',if(or(equals(toLower(trim(string(triggerBody()?['outcome']))),'failed'),equals(toLower(trim(string(triggerBody()?['outcome']))),'timedout')),add(int(coalesce(first(body('Find_Registry')?['value'])?['ConsecutiveFailures'],0)),1),0)),'AverageDurationMs',div(add(mul(int(coalesce(first(body('Find_Registry')?['value'])?['AverageDurationMs'],0)),int(coalesce(first(body('Find_Registry')?['value'])?['TotalExecutions'],0))),int(outputs('Compose_Duration_Ms'))),add(int(coalesce(first(body('Find_Registry')?['value'])?['TotalExecutions'],0)),1))),'LastSeenUtc',utcNow()),'LastSuccessfulCallUtc',if(equals(toLower(trim(string(triggerBody()?['outcome']))),'succeeded'),outputs('Compose_Completed_Utc'),first(body('Find_Registry')?['value'])?['LastSuccessfulCallUtc'])),'LastFailureUtc',if(or(equals(toLower(trim(string(triggerBody()?['outcome']))),'failed'),equals(toLower(trim(string(triggerBody()?['outcome']))),'timedout')),outputs('Compose_Completed_Utc'),first(body('Find_Registry')?['value'])?['LastFailureUtc'])),'RecordVersion',add(int(coalesce(first(body('Find_Registry')?['value'])?['RecordVersion'],0)),1))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Registry": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {
+                        "Terminate_Registry_Not_Found": {
+                          "metadata": {
+                            "operationMetadataId": "a54abdf8-4e2f-465b-a672-faa9e06b962b"
+                          },
+                          "type": "Terminate",
+                          "inputs": {
+                            "runStatus": "Failed",
+                            "runError": {
+                              "code": "REGISTRY_RECORD_NOT_FOUND",
+                              "message": "@concat('No HTTP flow registry record exists for ',outputs('Compose_Registry_Key'),'. Register flow truth before recording execution.')"
+                            }
+                          },
+                          "runAfter": {
+                            "Respond_Registry_Not_Found": [
+                              "Succeeded"
+                            ]
+                          }
+                        },
+                        "Respond_Registry_Not_Found": {
+                          "type": "Response",
+                          "kind": "Http",
+                          "runAfter": {},
+                          "inputs": {
+                            "statusCode": 404,
+                            "headers": {
+                              "Content-Type": "application/json"
+                            },
+                            "body": {
+                              "outcome": "not-found",
+                              "status": "Failed",
+                              "flow": "03 - GOV - Record HTTP Flow Execution",
+                              "branch": "Terminate_Registry_Not_Found",
+                              "runId": "@{workflow()?['run']?['name']}",
+                              "message": "@concat('No HTTP flow registry record exists for ',outputs('Compose_Registry_Key'),'. Register flow truth before recording execution.')",
+                              "at": "@{utcNow()}"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "greater": [
+                            "@length(coalesce(body('Find_Registry')?['value'],json('[]')))",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "0a8c1d57-4031-4f39-883d-d412d43d7ab6"
+                    },
+                    "type": "If"
+                  }
+                },
+                "runAfter": {
+                  "Find_Execution": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Execution_Already_Recorded": {
+                      "metadata": {
+                        "operationMetadataId": "f530fd1d-beff-4314-a930-ece9b530db33"
+                      },
+                      "type": "Compose",
+                      "inputs": {
+                        "status": "DuplicateIgnored",
+                        "executionKey": "@outputs('Compose_Execution_Key')",
+                        "registryHealthUpdated": false
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@length(coalesce(body('Find_Execution')?['value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "0fa365f0-3c15-461b-8330-e1cf5fa553ce"
+                },
+                "type": "If"
+              },
+              "Validate_Input": {
+                "actions": {
+                  "Input_Validated": {
+                    "metadata": {
+                      "operationMetadataId": "e9e34df1-1262-4544-998d-ccaaab0e2701"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "status": "Validated"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_Invalid_Input": {
+                      "metadata": {
+                        "operationMetadataId": "57c74c2a-79a6-4feb-bf48-89d686fb2868"
+                      },
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Failed",
+                        "runError": {
+                          "code": "INVALID_EXECUTION_INPUT",
+                          "message": "environmentId, flowId, runId, startedUtc, and outcome are required; identifiers must be 255 characters or fewer without pipe characters; outcome must be Succeeded, Failed, TimedOut, Cancelled, or Skipped."
+                        }
+                      },
+                      "runAfter": {
+                        "Respond_Invalid_Input": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Respond_Invalid_Input": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "runAfter": {},
+                      "inputs": {
+                        "statusCode": 400,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "outcome": "invalid-input",
+                          "status": "Failed",
+                          "flow": "03 - GOV - Record HTTP Flow Execution",
+                          "branch": "Terminate_Invalid_Input",
+                          "runId": "@{workflow()?['run']?['name']}",
+                          "message": "environmentId, flowId, runId, startedUtc, and outcome are required; identifiers must be 255 characters or fewer without pipe characters; outcome must be Succeeded, Failed, TimedOut, Cancelled, or Skipped.",
+                          "at": "@{utcNow()}"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['environmentId'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['flowId'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['runId'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['startedUtc'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['outcome'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['environmentId'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['flowId'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['runId'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@contains(trim(string(triggerBody()?['environmentId'])),'|')",
+                        false
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@contains(trim(string(triggerBody()?['flowId'])),'|')",
+                        false
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@contains(trim(string(triggerBody()?['runId'])),'|')",
+                        false
+                      ]
+                    },
+                    {
+                      "contains": [
+                        "@createArray('succeeded','failed','timedout','cancelled','skipped')",
+                        "@toLower(trim(string(triggerBody()?['outcome'])))"
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "94d7195c-26d5-435b-8bb0-cf3a18d76b37"
+                },
+                "type": "If"
+              },
+              "Compose_Completed_Utc": {
+                "runAfter": {
+                  "Compose_Execution_Key": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "3e0ab69c-5425-4fc4-ab78-c77e0ae94dba"
+                },
+                "type": "Compose",
+                "inputs": "@coalesce(triggerBody()?['completedUtc'],utcNow())"
+              },
+              "Compose_Duration_Ms": {
+                "runAfter": {
+                  "Compose_Completed_Utc": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "3f65f079-fdc0-4e0d-87fc-e774bee055e1"
+                },
+                "type": "Compose",
+                "inputs": "@max(0,if(empty(triggerBody()?['durationMs']),div(sub(ticks(outputs('Compose_Completed_Utc')),ticks(triggerBody()?['startedUtc'])),10000),int(triggerBody()?['durationMs'])))"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "741e5a34-fc92-43e6-9daf-680613f36e85"
+            },
+            "type": "Scope"
+          },
+          "Compose_Final_Report_JSON": {
+            "runAfter": {
+              "Scope_Main": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "1f7bafce-43e1-489c-9b35-18d69515d950"
+            },
+            "type": "Compose",
+            "inputs": {
+              "reportType": "DGO Power Automate Execution Report",
+              "schemaVersion": "5.0.0",
+              "flow": "03 - GOV - Record HTTP Flow Execution",
+              "flowId": "@workflow()?['name']",
+              "runId": "@workflow()?['run']?['name']",
+              "environmentId": "@workflow()?['tags']?['environmentName']",
+              "generatedAtUtc": "@utcNow()",
+              "status": "@if(contains(string(result('Scope_Main')),'Failed'),'Failed',if(contains(string(result('Scope_Main')),'TimedOut'),'TimedOut','Succeeded'))",
+              "details": {
+                "registryKey": "@concat(trim(string(triggerBody()?['environmentId'])),'|',trim(string(triggerBody()?['flowId'])))",
+                "executionKey": "@concat(trim(string(triggerBody()?['environmentId'])),'|',trim(string(triggerBody()?['flowId'])),'|',trim(string(triggerBody()?['runId'])))",
+                "sourceRunId": "@trim(string(triggerBody()?['runId']))",
+                "outcome": "@toLower(trim(string(triggerBody()?['outcome'])))",
+                "durationMs": "@if(empty(triggerBody()?['durationMs']),null,int(triggerBody()?['durationMs']))"
+              },
+              "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+            }
+          },
+          "Compose_Final_Report_HTML": {
+            "runAfter": {
+              "Compose_Final_Report_JSON": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "07ff3f27-536b-4066-8475-c420564ce9cc"
+            },
+            "type": "Compose",
+            "inputs": "@concat('<html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px\"><div style=\"max-width:900px;margin:auto;background:white;border-radius:12px;overflow:hidden\"><div style=\"background:#004578;color:white;padding:24px\"><h1>',outputs('Compose_Final_Report_JSON')?['flow'],'</h1></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Run ID:</b> ',outputs('Compose_Final_Report_JSON')?['runId'],'</p><pre style=\"white-space:pre-wrap;background:#f8fafc;padding:12px\">',string(outputs('Compose_Final_Report_JSON')?['details']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['runUrl'],'\">Open run</a></p></div></div></body></html>')"
+          },
+          "Send_Final_Report_Email": {
+            "runAfter": {
+              "Compose_Final_Report_HTML": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "9cf0474d-c226-40fe-8ffa-dd0ef6b9bcbc"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] ',outputs('Compose_Final_Report_JSON')?['flow'],' | ',outputs('Compose_Final_Report_JSON')?['runId'])",
+                "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@concat(replace(workflow()?['name'],' ','_'),'_',workflow()?['run']?['name'],'_Report.json')",
+                    "ContentBytes": "@string(outputs('Compose_Final_Report_JSON'))"
+                  }
+                ],
+                "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "If_Execution_Recording_Failed": {
+            "actions": {
+              "Terminate_Execution_Recording_Failed": {
+                "metadata": {
+                  "operationMetadataId": "2825eea9-9882-461d-96d1-fe63d43cc4aa"
+                },
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Failed",
+                  "runError": {
+                    "code": "DGOExecutionRecordingFailed",
+                    "message": "@concat('HTTP flow execution recording ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')"
+                  }
+                },
+                "runAfter": {
+                  "Respond_Execution_Recording_Failed": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Respond_Execution_Recording_Failed": {
+                "type": "Response",
+                "kind": "Http",
+                "runAfter": {},
+                "inputs": {
+                  "statusCode": 500,
+                  "headers": {
+                    "Content-Type": "application/json"
+                  },
+                  "body": {
+                    "outcome": "failed",
+                    "status": "Failed",
+                    "flow": "03 - GOV - Record HTTP Flow Execution",
+                    "branch": "Terminate_Execution_Recording_Failed",
+                    "runId": "@{workflow()?['run']?['name']}",
+                    "message": "@concat('HTTP flow execution recording ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')",
+                    "at": "@{utcNow()}"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Terminate_Execution_Recording_Succeeded": {
+                  "metadata": {
+                    "operationMetadataId": "9ca57a39-9791-430c-83dc-b1377610cfad"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  },
+                  "runAfter": {
+                    "Respond_Execution_Recording_Succeeded": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Execution_Recording_Succeeded": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "runAfter": {},
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "outcome": "succeeded",
+                      "status": "Succeeded",
+                      "flow": "03 - GOV - Record HTTP Flow Execution",
+                      "branch": "Terminate_Execution_Recording_Succeeded",
+                      "runId": "@{workflow()?['run']?['name']}",
+                      "message": "03 - GOV - Record HTTP Flow Execution ended at Terminate_Execution_Recording_Succeeded.",
+                      "at": "@{utcNow()}"
+                    }
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Compose_Final_Report_JSON')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "4beb93df-02e3-415e-9193-f94c37a96c8b"
+            },
+            "type": "If"
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "c080bd0e-ce22-461a-8cce-86383945a27c"
+        },
+        "type": "Scope"
+      }
+    },
+    "outputs": {}
+  }
+}

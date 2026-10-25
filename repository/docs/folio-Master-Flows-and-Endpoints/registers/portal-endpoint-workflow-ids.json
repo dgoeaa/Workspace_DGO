@@ -1,0 +1,86 @@
+{
+  "capturedAt": "2026-08-27",
+  "source": "flow run records, docs/folio-Master-Flows-and-Endpoints/evidence/2026-08-27-endpoint-runs",
+  "note": "Workflow ids only. A trigger URL is a bearer credential and is never recorded here. Ids marked null could not be read from telemetry precisely because those flows redact the x-ms-igw-* headers correctly; read them from the flow's trigger URL by hand, ids only.",
+  "endpoints": [
+    {
+      "key": "STATUS",
+      "flow": "CG_Portal_Status_Check_Endpoint",
+      "internalName": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "workflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "supersedes": {
+        "flow": "CG_Status_Check_Endpoint",
+        "internalName": "badb65d8-f472-407e-8975-c29d77b855d7",
+        "workflowId": "cf1e66eb8ac2460794b7f683d9aa8ac0"
+      }
+    },
+    {
+      "key": "VERIFY",
+      "flow": "CG_Portal_Verification_Endpoint",
+      "internalName": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "workflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "supersedes": {
+        "flow": "CG_Verification_Endpoint",
+        "internalName": "86897b2f-9770-4efa-8486-2642f24bb947",
+        "workflowId": "ee627334d2e34ba7ac1b899bdb3ff2d0"
+      }
+    },
+    {
+      "key": "VERIFY_CONFIRM",
+      "flow": "CG_Portal_Verification_Confirmation_Endpoint",
+      "internalName": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "workflowId": "b270894ff410499ebbc090e32ffe899b",
+      "supersedes": {
+        "flow": "CG_Verification_Confirmation_Endpoint",
+        "internalName": "5e13db77-c1e1-4ed4-b109-cb5d9d247b49",
+        "workflowId": "2569134db3514e838594319ea8e2a4a9"
+      }
+    },
+    {
+      "key": "WRITEBACK",
+      "flow": "CG_Portal_Writeback_Endpoint",
+      "internalName": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "workflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+      "supersedes": {
+        "flow": "CG_Writeback_Endpoint",
+        "internalName": "21d4bfd3-f595-46fa-81bb-c29dabc12e7a",
+        "workflowId": "91292a0347d443619316b3d0118462f2"
+      }
+    },
+    {
+      "key": "SUBMISSION",
+      "flow": "CG_Submission_Endpoint",
+      "internalName": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "workflowId": "1041ed37ce924e3c886d891f23e8142c"
+    },
+    {
+      "key": "SUPPORT",
+      "flow": "CG_Portal_Support_Endpoint",
+      "internalName": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "workflowId": "052013da80724713a4285edee72ccb4a",
+      "supersedes": {
+        "flow": "CG_Support_Endpoint",
+        "internalName": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+        "workflowId": null
+      }
+    },
+    {
+      "key": "UPLOAD",
+      "flow": "CG_Upload_Endpoint",
+      "internalName": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "workflowId": "62fe121e5a95416bb91275e43dd0e37e",
+      "correctedUtc": "2026-09-03",
+      "correction": "This recorded internalName df7ddff1-9275-4f23-acf6-e169525f4e2f with the note 'Reuses the ECM_DOCS_INTAKE workflow id.' That was wrong, and it was the single fact behind open item 37. It came from one export file, CG_Upload_Endpoint__df7ddff1-...__full_definition.json, which carried CG_Upload_Endpoint's DEFINITION stamped with ECM_DOCS_INTAKE's workflow id. A legacy export package taken from the tenant on 2026-09-03 states the flow's own resource id: df82e331-b800-4a8d-996e-d2b2ca846c77. The two definitions share 8 of 9 top-level actions; ECM_DOCS_INTAKE's shares none. They are two flows, and the bridge was never overwritten."
+    }
+  ],
+  "changelog": [
+    {
+      "utc": "2026-09-03",
+      "what": "UPLOAD internalName corrected from df7ddff1 to df82e331; five CG_* endpoints re-exported from the tenant."
+    },
+    {
+      "utc": "2026-10-06",
+      "what": "Every key names its adopted flow (registers/flow-adoption.json): STATUS, VERIFY, VERIFY_CONFIRM, WRITEBACK and SUPPORT move from the predecessor CG_* flows (retired, registers/flow-retirement.json) to the CG_Portal_* flows. Workflow ids are the trigger ids in registers/endpoint-register.json current_configuration, the same rows that name these flows. The predecessor each one replaces is kept under supersedes."
+    }
+  ]
+}

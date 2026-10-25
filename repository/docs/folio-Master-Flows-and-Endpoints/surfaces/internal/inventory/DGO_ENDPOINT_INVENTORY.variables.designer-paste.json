@@ -1,0 +1,123 @@
+{
+  "nodeId": "Scope_Variables_DGO_ENDPOINT_INVENTORY",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Initialize_variable_EnvironmentName": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "EnvironmentName",
+              "type": "string",
+              "value": "@{coalesce(triggerBody()?['environmentName'], workflow()?['tags']?['environmentName'], '')}"
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000027"
+        }
+      },
+      "Initialize_variable_FlowsFoundDetails": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "FlowsFoundDetails",
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000028"
+        },
+        "runAfter": {
+          "Initialize_variable_EnvironmentName": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_FlowsNotFoundDetails": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "FlowsNotFoundDetails",
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000029"
+        },
+        "runAfter": {
+          "Initialize_variable_FlowsFoundDetails": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_FlowsFoundCount": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "FlowsFoundCount",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000030"
+        },
+        "runAfter": {
+          "Initialize_variable_FlowsNotFoundDetails": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_FlowsNotFoundCount": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "FlowsNotFoundCount",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000031"
+        },
+        "runAfter": {
+          "Initialize_variable_FlowsFoundCount": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_RetrievalErrors": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "RetrievalErrors",
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "c0000000-0000-4000-8000-000000000032"
+        },
+        "runAfter": {
+          "Initialize_variable_FlowsNotFoundCount": [
+            "Succeeded"
+          ]
+        }
+      }
+    }
+  }
+}

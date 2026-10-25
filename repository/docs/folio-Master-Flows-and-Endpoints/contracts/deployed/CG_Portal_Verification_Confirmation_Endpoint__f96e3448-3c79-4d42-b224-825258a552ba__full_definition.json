@@ -1,0 +1,1378 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/CG_Portal_Verification_Confirmation_Endpoint__f96e3448-3c79-4d42-b224-825258a552ba.json",
+  "workflow_identity": {
+    "internal_name": "f96e3448-3c79-4d42-b224-825258a552ba",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/f96e3448-3c79-4d42-b224-825258a552ba",
+    "tags": {
+      "flowDisplayName": "CG_Portal_Verification_Confirmation_Endpoint"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "undefined",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string"
+              },
+              "Title": {
+                "type": "string"
+              },
+              "Priority": {
+                "type": "string"
+              },
+              "Category": {
+                "type": "string"
+              },
+              "Description": {
+                "type": "string"
+              },
+              "AssignedTo": {
+                "type": "string"
+              }
+            }
+          },
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Initialize_variable_varStatusCode": {
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000001"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStatusCode",
+              "type": "integer",
+              "value": 500
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varData": {
+        "runAfter": {
+          "Initialize_variable_varStatusCode": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000002"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varData",
+              "type": "object",
+              "value": {}
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varErrors": {
+        "runAfter": {
+          "Initialize_variable_varData": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000003"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varErrors",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varRequestId": {
+        "runAfter": {
+          "Initialize_variable_varErrors": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000004"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varRequestId",
+              "type": "string",
+              "value": "@coalesce(triggerBody()?['requestId'],triggerBody()?['request_id'],guid())"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varStartTicks": {
+        "runAfter": {
+          "Initialize_variable_varRequestId": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000005"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStartTicks",
+              "type": "integer",
+              "value": "@ticks(utcNow())"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varReceivedAtUtc": {
+        "runAfter": {
+          "Initialize_variable_varStartTicks": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000006"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varReceivedAtUtc",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varCompletedAtUtc": {
+        "runAfter": {
+          "Initialize_variable_varReceivedAtUtc": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000007"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varCompletedAtUtc",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varDurationMs": {
+        "runAfter": {
+          "Initialize_variable_varCompletedAtUtc": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000008"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varDurationMs",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        }
+      },
+      "Scope_VerifyConfirm_Flow": {
+        "actions": {
+          "Compose_Request_Context": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000133"
+            },
+            "type": "Compose",
+            "inputs": {
+              "requestId": "@string(coalesce(triggerOutputs()?['headers']?['X-Correlation-ID'],triggerBody()?['requestId'],guid()))",
+              "receivedAtUtc": "@utcNow()",
+              "startTicks": "@ticks(utcNow())"
+            }
+          },
+          "Scope_Global_VerifyConfirm": {
+            "actions": {
+              "Compose_Confirm_Email": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000134"
+                },
+                "type": "Compose",
+                "inputs": "@toLower(trim(string(coalesce(triggerBody()?['email'],''))))"
+              },
+              "Compose_Confirm_Code": {
+                "runAfter": {
+                  "Compose_Confirm_Email": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000135"
+                },
+                "type": "Compose",
+                "inputs": "@replace(trim(string(coalesce(triggerBody()?['code'],''))),' ','')"
+              },
+              "Compose_Confirm_Invalid": {
+                "runAfter": {
+                  "Compose_Confirm_Code": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000136"
+                },
+                "type": "Compose",
+                "inputs": "@or(or(empty(outputs('Compose_Confirm_Email')),greater(length(outputs('Compose_Confirm_Email')),255),not(equals(length(split(outputs('Compose_Confirm_Email'),'@')),2)),startsWith(outputs('Compose_Confirm_Email'),'@'),endsWith(outputs('Compose_Confirm_Email'),'@'),contains(outputs('Compose_Confirm_Email'),' '),contains(outputs('Compose_Confirm_Email'),';'),contains(outputs('Compose_Confirm_Email'),','),not(contains(string(last(split(outputs('Compose_Confirm_Email'),'@'))),'.')),endsWith(outputs('Compose_Confirm_Email'),'.')),not(equals(length(outputs('Compose_Confirm_Code')),6)),not(and(not(empty(outputs('Compose_Confirm_Code'))),empty(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(outputs('Compose_Confirm_Code'),'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9','')))))"
+              },
+              "Compose_Confirm_SourceIp": {
+                "runAfter": {
+                  "Compose_Confirm_Invalid": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000137"
+                },
+                "type": "Compose",
+                "inputs": "@if(startsWith(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),'['),substring(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),1,max(sub(indexOf(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),']'),1),0)),if(equals(length(split(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),':')),2),first(split(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),':')),trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),',')))))"
+              },
+              "Compose_Bucket_Confirm": {
+                "runAfter": {
+                  "Compose_Confirm_SourceIp": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000138"
+                },
+                "type": "Compose",
+                "inputs": "@concat('CONFIRM_IP:',outputs('Compose_Confirm_SourceIp'))"
+              },
+              "Get_Rate_Limit_Confirm": {
+                "runAfter": {
+                  "Compose_Bucket_Confirm": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000139"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                    "$filter": "@concat('Title eq ''',replace(outputs('Compose_Bucket_Confirm'),'''',''''''),'''')",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Condition_Rate_Limit_Confirm_Exists": {
+                "actions": {
+                  "Update_Rate_Limit_Confirm": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000140"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                        "id": "@first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['ID']",
+                        "item/Title": "@first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['Title']",
+                        "item/WindowStartUtc": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['WindowStartUtc'],utcNow())",
+                        "item/UpdatedAtUtc": "@utcNow()",
+                        "item/RequestCount": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),add(int(concat('0',first(split(string(coalesce(first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['RequestCount'],'')),'.')))),1),1)"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "PatchItem"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Rate_Limit_Confirm": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Create_Rate_Limit_Confirm": {
+                      "metadata": {
+                        "operationMetadataId": "a0000000-0000-4000-8000-000000000141"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                          "item/Title": "@outputs('Compose_Bucket_Confirm')",
+                          "item/WindowStartUtc": "@utcNow()",
+                          "item/UpdatedAtUtc": "@utcNow()",
+                          "item/RequestCount": 1
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "PostItem"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(coalesce(outputs('Get_Rate_Limit_Confirm')?['body/value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000142"
+                },
+                "type": "If"
+              },
+              "Compose_Rate_Limited_Confirm": {
+                "runAfter": {
+                  "Condition_Rate_Limit_Confirm_Exists": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000143"
+                },
+                "type": "Compose",
+                "inputs": "@and(greater(length(coalesce(outputs('Get_Rate_Limit_Confirm')?['body/value'],json('[]'))),0),greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),greaterOrEquals(int(concat('0',first(split(string(coalesce(first(outputs('Get_Rate_Limit_Confirm')?['body/value'])?['RequestCount'],'')),'.')))),20))"
+              },
+              "Condition_Confirm_Gate": {
+                "actions": {
+                  "Compose_Result_VerifyConfirm_429": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000144"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "status": 429,
+                      "data": {
+                        "error": "too_many_requests"
+                      },
+                      "errors": [],
+                      "event": "none"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Compose_Rate_Limited_Confirm": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Condition_Confirm_Input_Invalid": {
+                      "actions": {
+                        "Compose_Result_VerifyConfirm_400_Input": {
+                          "metadata": {
+                            "operationMetadataId": "a0000000-0000-4000-8000-000000000145"
+                          },
+                          "type": "Compose",
+                          "inputs": {
+                            "status": 400,
+                            "data": {
+                              "error": "verification_failed",
+                              "message": "The code is incorrect or has expired. Request a new code."
+                            },
+                            "errors": [],
+                            "event": "none"
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Get_Verification_Code": {
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000146"
+                            },
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+                                "$filter": "@concat('Email eq ''',replace(outputs('Compose_Confirm_Email'),'''',''''''),''' and Consumed eq 0')",
+                                "$orderby": "ID desc",
+                                "$top": 1
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                "connectionName": "shared_sharepointonline",
+                                "operationId": "GetItems"
+                              },
+                              "authentication": "@parameters('$authentication')"
+                            }
+                          },
+                          "Compose_Confirm_Code_State": {
+                            "runAfter": {
+                              "Get_Verification_Code": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000147"
+                            },
+                            "type": "Compose",
+                            "inputs": "@if(empty(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))),'none',if(less(ticks(coalesce(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['Expires_At'],'1900-01-01T00:00:00Z')),ticks(utcNow())),'expired',if(greaterOrEquals(int(concat('0',first(split(string(coalesce(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['Attempts'],'')),'.')))),5),'locked',if(equals(trim(string(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['OTP_Code'])),outputs('Compose_Confirm_Code')),'match','mismatch'))))"
+                          },
+                          "Condition_Confirm_Code_Matches": {
+                            "actions": {
+                              "Claim_Verification_Code": {
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000148"
+                                },
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                    "parameters/method": "POST",
+                                    "parameters/uri": "@concat('_api/web/lists(guid''3f85213c-1fdc-4be0-8c0c-e28aa77fbe56'')/items(',string(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['ID']),')')",
+                                    "parameters/headers": {
+                                      "Accept": "application/json;odata=nometadata",
+                                      "Content-Type": "application/json;odata=nometadata",
+                                      "IF-MATCH": "@{string(coalesce(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['@odata.etag'],'\"etag-missing\"'))}",
+                                      "X-HTTP-Method": "MERGE"
+                                    },
+                                    "parameters/body": "@concat('{\"Consumed\":true,\"Attempts\":',string(add(int(concat('0',first(split(string(coalesce(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['Attempts'],'')),'.')))),1)),'}')"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                    "connectionName": "shared_sharepointonline",
+                                    "operationId": "HttpRequest"
+                                  },
+                                  "authentication": "@parameters('$authentication')"
+                                }
+                              },
+                              "Condition_Confirm_Claimed": {
+                                "actions": {
+                                  "Compose_Confirm_Proof_Token": {
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000149"
+                                    },
+                                    "type": "Compose",
+                                    "inputs": "@concat(replace(guid(),'-',''),replace(guid(),'-',''))"
+                                  },
+                                  "Compose_Confirm_Proof_Expires": {
+                                    "runAfter": {
+                                      "Compose_Confirm_Proof_Token": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000150"
+                                    },
+                                    "type": "Compose",
+                                    "inputs": "@addMinutes(utcNow(),30)"
+                                  },
+                                  "Create_Verification_Proof": {
+                                    "runAfter": {
+                                      "Compose_Confirm_Proof_Expires": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000151"
+                                    },
+                                    "type": "OpenApiConnection",
+                                    "inputs": {
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                        "table": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+                                        "item/Title": "@outputs('Compose_Confirm_Proof_Token')",
+                                        "item/Email": "@outputs('Compose_Confirm_Email')",
+                                        "item/Purpose": "portal-verification",
+                                        "item/ExpiresAtUtc": "@outputs('Compose_Confirm_Proof_Expires')",
+                                        "item/CreatedAtUtc": "@utcNow()",
+                                        "item/Consumed": false
+                                      },
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "connectionName": "shared_sharepointonline",
+                                        "operationId": "PostItem"
+                                      },
+                                      "authentication": "@parameters('$authentication')"
+                                    }
+                                  },
+                                  "Compose_Result_VerifyConfirm_200": {
+                                    "runAfter": {
+                                      "Create_Verification_Proof": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "a0000000-0000-4000-8000-000000000152"
+                                    },
+                                    "type": "Compose",
+                                    "inputs": {
+                                      "status": 200,
+                                      "data": {
+                                        "verification": "@outputs('Compose_Confirm_Proof_Token')",
+                                        "expiresAt": "@outputs('Compose_Confirm_Proof_Expires')"
+                                      },
+                                      "errors": [],
+                                      "event": "verified"
+                                    }
+                                  }
+                                },
+                                "runAfter": {
+                                  "Claim_Verification_Code": [
+                                    "Succeeded",
+                                    "Failed",
+                                    "TimedOut",
+                                    "Skipped"
+                                  ]
+                                },
+                                "else": {
+                                  "actions": {
+                                    "Compose_Result_VerifyConfirm_400_Claim": {
+                                      "metadata": {
+                                        "operationMetadataId": "a0000000-0000-4000-8000-000000000153"
+                                      },
+                                      "type": "Compose",
+                                      "inputs": {
+                                        "status": 400,
+                                        "data": {
+                                          "error": "verification_failed",
+                                          "message": "The code is incorrect or has expired. Request a new code."
+                                        },
+                                        "errors": [],
+                                        "event": "none"
+                                      }
+                                    }
+                                  }
+                                },
+                                "expression": {
+                                  "and": [
+                                    {
+                                      "equals": [
+                                        "@equals(string(coalesce(actions('Claim_Verification_Code')?['status'],'')),'Succeeded')",
+                                        true
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000154"
+                                },
+                                "type": "If"
+                              }
+                            },
+                            "runAfter": {
+                              "Compose_Confirm_Code_State": [
+                                "Succeeded"
+                              ]
+                            },
+                            "else": {
+                              "actions": {
+                                "Condition_Confirm_Count_Attempt": {
+                                  "actions": {
+                                    "Record_Failed_Attempt": {
+                                      "metadata": {
+                                        "operationMetadataId": "a0000000-0000-4000-8000-000000000155"
+                                      },
+                                      "type": "OpenApiConnection",
+                                      "inputs": {
+                                        "parameters": {
+                                          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                          "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+                                          "id": "@first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['ID']",
+                                          "item/Title": "@string(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['Title'])",
+                                          "item/Attempts": "@add(int(concat('0',first(split(string(coalesce(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['Attempts'],'')),'.')))),1)",
+                                          "item/OTP_Code": "@string(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['OTP_Code'])",
+                                          "item/Expires_At": "@first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['Expires_At']"
+                                        },
+                                        "host": {
+                                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                          "connectionName": "shared_sharepointonline",
+                                          "operationId": "PatchItem"
+                                        },
+                                        "authentication": "@parameters('$authentication')"
+                                      }
+                                    }
+                                  },
+                                  "else": {
+                                    "actions": {}
+                                  },
+                                  "expression": {
+                                    "and": [
+                                      {
+                                        "equals": [
+                                          "@outputs('Compose_Confirm_Code_State')",
+                                          "mismatch"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  "metadata": {
+                                    "operationMetadataId": "a0000000-0000-4000-8000-000000000156"
+                                  },
+                                  "type": "If"
+                                },
+                                "Compose_Result_VerifyConfirm_400": {
+                                  "runAfter": {
+                                    "Condition_Confirm_Count_Attempt": [
+                                      "Succeeded",
+                                      "Failed",
+                                      "TimedOut",
+                                      "Skipped"
+                                    ]
+                                  },
+                                  "metadata": {
+                                    "operationMetadataId": "a0000000-0000-4000-8000-000000000157"
+                                  },
+                                  "type": "Compose",
+                                  "inputs": {
+                                    "status": 400,
+                                    "data": {
+                                      "error": "verification_failed",
+                                      "message": "The code is incorrect or has expired. Request a new code."
+                                    },
+                                    "errors": [],
+                                    "event": "@if(and(equals(outputs('Compose_Confirm_Code_State'),'mismatch'),greaterOrEquals(add(int(concat('0',first(split(string(coalesce(first(coalesce(outputs('Get_Verification_Code')?['body/value'],json('[]')))?['Attempts'],'')),'.')))),1),5)),'code_locked','none')"
+                                  }
+                                }
+                              }
+                            },
+                            "expression": {
+                              "and": [
+                                {
+                                  "equals": [
+                                    "@outputs('Compose_Confirm_Code_State')",
+                                    "match"
+                                  ]
+                                }
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000158"
+                            },
+                            "type": "If"
+                          }
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@outputs('Compose_Confirm_Invalid')",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "a0000000-0000-4000-8000-000000000159"
+                      },
+                      "type": "If"
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@outputs('Compose_Rate_Limited_Confirm')",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000160"
+                },
+                "type": "If"
+              }
+            },
+            "runAfter": {
+              "Compose_Request_Context": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000161"
+            },
+            "type": "Scope"
+          },
+          "Scope_Catch_VerifyConfirm": {
+            "actions": {
+              "Compose_Result_VerifyConfirm_500": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000162"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "status": 500,
+                  "data": {
+                    "error": "server_error"
+                  },
+                  "errors": [
+                    {
+                      "scope": "VerifyConfirm",
+                      "stage": "processing",
+                      "status": "failed",
+                      "message": "VerifyConfirm processing failed, skipped, or timed out.",
+                      "details": "@result('Scope_Global_VerifyConfirm')",
+                      "trackedAtUtc": "@utcNow()"
+                    }
+                  ],
+                  "event": "server_error"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Global_VerifyConfirm": [
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000163"
+            },
+            "type": "Scope"
+          },
+          "Scope_Finalize_Response_VerifyConfirm": {
+            "actions": {
+              "Compose_Outcome": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000164"
+                },
+                "type": "Compose",
+                "inputs": "@coalesce(actions('Compose_Result_VerifyConfirm_500')?['outputs'],actions('Compose_Result_VerifyConfirm_200')?['outputs'],actions('Compose_Result_VerifyConfirm_400')?['outputs'],actions('Compose_Result_VerifyConfirm_400_Claim')?['outputs'],actions('Compose_Result_VerifyConfirm_400_Input')?['outputs'],actions('Compose_Result_VerifyConfirm_429')?['outputs'],json('{\"status\":500,\"data\":{\"error\":\"server_error\"},\"errors\":[],\"event\":\"none\"}'))"
+              },
+              "Compose_Completed_At": {
+                "runAfter": {
+                  "Compose_Outcome": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000165"
+                },
+                "type": "Compose",
+                "inputs": "@utcNow()"
+              },
+              "Compose_Duration_Ms": {
+                "runAfter": {
+                  "Compose_Completed_At": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000166"
+                },
+                "type": "Compose",
+                "inputs": "@max(div(sub(ticks(outputs('Compose_Completed_At')),outputs('Compose_Request_Context')?['startTicks']),10000),0)"
+              },
+              "Compose_Response_Body": {
+                "runAfter": {
+                  "Compose_Duration_Ms": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000167"
+                },
+                "type": "Compose",
+                "inputs": "@coalesce(actions('Compose_Outcome')?['outputs']?['data'],json('{}'))"
+              },
+              "Get_Allowed_Origins_VerifyConfirm": {
+                "runAfter": {
+                  "Compose_Response_Body": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000168"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "$filter": "startswith(Title,'ALLOWED_ORIGIN')",
+                    "$top": 20
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Select_Allowed_Origins_VerifyConfirm": {
+                "runAfter": {
+                  "Get_Allowed_Origins_VerifyConfirm": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000169"
+                },
+                "type": "Select",
+                "inputs": {
+                  "from": "@coalesce(actions('Get_Allowed_Origins_VerifyConfirm')?['outputs']?['body']?['value'],json('[]'))",
+                  "select": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+                }
+              },
+              "Compose_Request_Origin_VerifyConfirm": {
+                "runAfter": {
+                  "Select_Allowed_Origins_VerifyConfirm": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000170"
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['Origin'],triggerOutputs()?['headers']?['origin'],'')))"
+              },
+              "Compose_Allowed_Origin_VerifyConfirm": {
+                "runAfter": {
+                  "Compose_Request_Origin_VerifyConfirm": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000171"
+                },
+                "type": "Compose",
+                "inputs": "@if(contains(coalesce(body('Select_Allowed_Origins_VerifyConfirm'),json('[]')),outputs('Compose_Request_Origin_VerifyConfirm')),outputs('Compose_Request_Origin_VerifyConfirm'),string(coalesce(first(coalesce(body('Select_Allowed_Origins_VerifyConfirm'),json('[]'))),'')))"
+              },
+              "Response_VerifyConfirm": {
+                "runAfter": {
+                  "Compose_Allowed_Origin_VerifyConfirm": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000172"
+                },
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": "@coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)",
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "@{string(coalesce(actions('Compose_Allowed_Origin_VerifyConfirm')?['outputs'],'*'))}",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID",
+                    "Vary": "Origin"
+                  },
+                  "body": "@coalesce(actions('Compose_Response_Body')?['outputs'],json('{\"error\":\"server_error\"}'))"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Global_VerifyConfirm": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ],
+              "Scope_Catch_VerifyConfirm": [
+                "Succeeded",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000173"
+            },
+            "type": "Scope"
+          },
+          "Scope_Notifications": {
+            "actions": {
+              "Get_Notification_Config": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000174"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "$filter": "startswith(Title,'NOTIFY_')",
+                    "$top": 50
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Select_Notify_Config": {
+                "runAfter": {
+                  "Get_Notification_Config": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000175"
+                },
+                "type": "Select",
+                "inputs": {
+                  "from": "@coalesce(actions('Get_Notification_Config')?['outputs']?['body']?['value'],json('[]'))",
+                  "select": {
+                    "k": "@toUpper(trim(string(item()?['Title'])))",
+                    "v": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+                  }
+                }
+              },
+              "Compose_Notify_Config_Xml": {
+                "runAfter": {
+                  "Select_Notify_Config": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000176"
+                },
+                "type": "Compose",
+                "inputs": "@xml(json(concat('{\"r\":{\"i\":',string(body('Select_Notify_Config')),'}}')))"
+              },
+              "Compose_Notify_Logo_Default": {
+                "runAfter": {
+                  "Compose_Notify_Config_Xml": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000177"
+                },
+                "type": "Compose",
+                "inputs": "data:image/png;base64,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"
+              },
+              "Compose_Notify_Config": {
+                "runAfter": {
+                  "Compose_Notify_Logo_Default": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000178"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "enabled": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_ENABLED\"]/v)')))),'false'))",
+                  "opsTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)'))))",
+                  "replyTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)'))))",
+                  "logoSrc": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)')))),outputs('Compose_Notify_Logo_Default'),trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)'))))"
+                }
+              },
+              "Switch_Notification_Event": {
+                "runAfter": {
+                  "Compose_Notify_Config": [
+                    "Succeeded"
+                  ]
+                },
+                "cases": {
+                  "Case_Code_Locked": {
+                    "case": "code_locked",
+                    "actions": {
+                      "Compose_Lockout_Alert_Html_Part1": {
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000179"
+                        },
+                        "type": "Compose",
+                        "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,address=no,email=no,date=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Verification code locked</title><style>\nbody{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}\ntable{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}\nimg{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}\na{color:#05583B}\n@page{size:A4;margin:8mm}\n@media print{.outer{padding:0!important}.card{border:0!important}}\n@media only screen and (max-width:620px){\n .container{width:100%!important;max-width:100%!important}\n .px{padding-left:20px!important;padding-right:20px!important}\n .h1{font-size:21px!important;line-height:28px!important}\n .ref{font-size:21px!important;line-height:28px!important}\n .ref.sm{font-size:15px!important;line-height:22px!important}\n .stack,.stack tbody,.stack tr{display:block!important;width:100%!important}\n .stack td{display:block!important;width:100%!important;box-sizing:border-box}\n .stack td.cell{padding-left:0!important;padding-right:0!important}\n .stack td.tile{padding-bottom:8px!important}\n .pill-cell{text-align:left!important;padding:0 20px 16px 20px!important}\n .step{padding:0 0 12px 0!important}\n .btn a{display:block!important;text-align:center!important}\n .hide-sm{display:none!important}\n}\n</style></head><body style=\"margin:0;padding:0;background:#F6F8F6;\"><div style=\"display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F6F8F6;opacity:0;\">@{concat('A verification code for ',replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Confirm_Email')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),' was locked after 5 wrong attempts.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#F6F8F6\" style=\"background:#F6F8F6;\"><tr><td align=\"center\" class=\"outer\" style=\"padding:20px 12px 24px 12px;\"><table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:600px;max-width:600px;\"><tr><td class=\"card\" style=\"background:#FFFFFF;border:1px solid #E8E6E7;border-radius:18px;overflow:hidden;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td height=\"5\" bgcolor=\"#A87500\" style=\"height:5px;line-height:5px;font-size:0;background:#A87500;background-image:linear-gradient(90deg,#A87500 0%,#A87500 60%,#E1A100 100%);\">&nbsp;</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"left\" valign=\"middle\" width=\"106\" style=\"width:106px;\"><img src=\"@{replace(replace(replace(replace(replace(string(outputs('Compose_Notify_Config')?['logoSrc']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}\" width=\"106\" height=\"48\" alt=\"NITDA &ndash; National Information Technology Development Agency\" style=\"display:block;width:106px;height:48px;border:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;font-weight:800;color:#05583B;\"></td><td class=\"hide-sm\" align=\"left\" valign=\"middle\" style=\"padding-left:14px;\"><div style=\"border-left:1px solid #E8E6E7;padding-left:14px;\"><p style=\"margin:0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;line-height:19px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;white-space:nowrap;\">DGO Digital Ops</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;line-height:14px;letter-spacing:.13em;text-transform:uppercase;color:#5F5C5D;white-space:nowrap;\">Registry notifications</p></div></td><td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#5A3F00;background:#FBF1D8;border:1px solid #F7E2A8;border-radius:999px;padding:4px 10px;white-space:nowrap;\">Security alert</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:12px 32px 0 32px;\"><div style=\"height:1px;line-height:1px;font-size:0;background:#E8E6E7;margin-bottom:14px;\">&nbsp;</div><h1 class=\"h1\" style=\"margin:0 0 6px 0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:22px;line-height:29px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;word-break:break-word;\">A verification code was locked after repeated wrong guesses</h1><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:22px;color:#4A4849;\">5 wrong codes were entered for one address. The code is void; the person must request a new one.</p></td></tr><tr><td class=\"px\" style=\"padding:18px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\" style=\"background:#FBF1D8;border:1px solid #F7E2A8;border-radius:12px;\"><tr><td valign=\"middle\" style=\"padding:14px 20px;\"><p style=\"margin:0 0 2px 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#4A4849;\">Address</p><p class=\"ref sm\" style=\"margin:0;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:16px;line-height:24px;font-weight:700;letter-spacing:1px;color:#1B1A1A;word-break:break-all;\">"
+                      },
+                      "Compose_Lockout_Alert_Html_Part2": {
+                        "runAfter": {
+                          "Compose_Lockout_Alert_Html_Part1": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000180"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Confirm_Email')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td valign=\"middle\" align=\"right\" class=\"pill-cell\" style=\"padding:14px 20px 14px 0;\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;color:#5A3F00;background:#FFFFFF;border:1px solid #F7E2A8;border-radius:999px;padding:4px 11px;white-space:nowrap;\">5 / 5 attempts</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">What happened</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Code issued</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{concat(convertFromUtc(string(coalesce(first(coalesce(actions('Get_Verification_Code')?['outputs']?['body']?['value'],json('[]')))?['CreatedAtUtc'],utcNow())),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT')}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Locked</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{concat(convertFromUtc(utcNow(),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT')}</p></td></tr><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Source IP of the last attempt</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Confirm_SourceIp')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Issued from</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(first(coalesce(actions('Get_Verification_Code')?['outputs']?['body']?['value'],json('[]')))?['SourceIp'],'—'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:16px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#FBF1D8;border:1px solid #F7E2A8;border-radius:10px;\"><tr><td style=\"padding:11px 16px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;\"><p style=\"margin:0 0 2px 0;font-size:13px;font-weight:700;color:#5A3F00;\">How to read this</p><p style=\"margin:0;font-size:13px;line-height:20px;color:#373435;\">A person mistyping their own code rarely reaches five attempts. If the two source addresses differ, or this repeats for the same address, someone may be trying to verify an address they do not own: block the source at the gateway.</p></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:20px 32px 0 32px;\">@{if(not(empty(replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))),concat('<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" style=\"display:inline-table;\"><tr><td align=\"center\" bgcolor=\"#E1A100\" style=\"border-radius:6px;background:#E1A100;\"><a href=\"',replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'\" target=\"_blank\" style=\"display:inline-block;padding:11px 22px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:700;color:#1B1A1A;text-decoration:none;border-radius:6px;\">Open run in Power Automate &rarr;</a></td></tr></table>'),'')}</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-top:12px;border-top:1px dashed #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:18px;word-break:break-all;\"><span style=\"color:#5F5C5D;\">Request</span> <span style=\"font-family:Cascadia Mono,Consol"
+                      },
+                      "Compose_Lockout_Alert_Html_Part3": {
+                        "runAfter": {
+                          "Compose_Lockout_Alert_Html_Part2": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000181"
+                        },
+                        "type": "Compose",
+                        "inputs": "as,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</span> &nbsp;&middot;&nbsp; <span style=\"color:#5F5C5D;\">Run</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{string(workflow()?['run']?['name'])}</span></p></td></tr><tr><td style=\"height:18px;line-height:18px;font-size:0;\">&nbsp;</td></tr></table></td></tr><tr><td align=\"center\" class=\"px\" style=\"padding:14px 24px 0 24px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;\">National Information Technology Development Agency &middot; &copy; @{formatDateTime(utcNow(),'yyyy')} &middot; Automated message</td></tr></table></td></tr></table></body></html>"
+                      },
+                      "Compose_Lockout_Alert_Html": {
+                        "runAfter": {
+                          "Compose_Lockout_Alert_Html_Part3": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000182"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{outputs('Compose_Lockout_Alert_Html_Part1')}@{outputs('Compose_Lockout_Alert_Html_Part2')}@{outputs('Compose_Lockout_Alert_Html_Part3')}"
+                      },
+                      "Send_Lockout_Alert_Email": {
+                        "runAfter": {
+                          "Compose_Lockout_Alert_Html": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000183"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@outputs('Compose_Notify_Config')?['opsTo']",
+                            "emailMessage/Subject": "@concat('Security alert: verification code locked for ',string(coalesce(actions('Compose_Confirm_Email')?['outputs'],'')))",
+                            "emailMessage/Body": "@outputs('Compose_Lockout_Alert_Html')",
+                            "emailMessage/Importance": "High"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    }
+                  },
+                  "Case_Server_Error": {
+                    "case": "server_error",
+                    "actions": {
+                      "Select_Failed_Step_Rows": {
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000184"
+                        },
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@result('Scope_Global_VerifyConfirm')",
+                          "select": "@if(equals(string(item()?['status']),'Failed'),concat('<tr><td valign=\"top\" width=\"38%\" style=\"padding:8px 12px 8px 0;border-bottom:1px solid #F2F4F7;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:12px;line-height:18px;font-weight:700;color:#1B1A1A;word-break:break-all;\">',replace(replace(replace(replace(replace(string(string(item()?['name'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td valign=\"top\" style=\"padding:8px 0;border-bottom:1px solid #F0EFEF;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;line-height:18px;color:#373435;word-break:break-word;\"><span style=\"display:inline-block;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:10px;font-weight:700;color:#780820;background:#FBE7EB;border-radius:4px;padding:1px 6px;margin-bottom:3px;\">',replace(replace(replace(replace(replace(string(string(coalesce(item()?['error']?['code'],item()?['code'],'Failed'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</span><br>',replace(replace(replace(replace(replace(string(concat(substring(string(coalesce(item()?['error']?['message'],'No message returned.')),0,min(length(string(coalesce(item()?['error']?['message'],'No message returned.'))),120)),if(greater(length(string(coalesce(item()?['error']?['message'],''))),120),' …',''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td></tr>'),'')"
+                        }
+                      },
+                      "Select_Failed_Flags": {
+                        "runAfter": {
+                          "Select_Failed_Step_Rows": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000185"
+                        },
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@result('Scope_Global_VerifyConfirm')",
+                          "select": "@if(equals(string(item()?['status']),'Failed'),'1','')"
+                        }
+                      },
+                      "Compose_Server_Error_Alert_Html_Part1": {
+                        "runAfter": {
+                          "Select_Failed_Flags": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000186"
+                        },
+                        "type": "Compose",
+                        "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,address=no,email=no,date=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Verification confirmation endpoint failure</title><style>\nbody{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}\ntable{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}\nimg{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}\na{color:#05583B}\n@page{size:A4;margin:8mm}\n@media print{.outer{padding:0!important}.card{border:0!important}}\n@media only screen and (max-width:620px){\n .container{width:100%!important;max-width:100%!important}\n .px{padding-left:20px!important;padding-right:20px!important}\n .h1{font-size:21px!important;line-height:28px!important}\n .ref{font-size:21px!important;line-height:28px!important}\n .ref.sm{font-size:15px!important;line-height:22px!important}\n .stack,.stack tbody,.stack tr{display:block!important;width:100%!important}\n .stack td{display:block!important;width:100%!important;box-sizing:border-box}\n .stack td.cell{padding-left:0!important;padding-right:0!important}\n .stack td.tile{padding-bottom:8px!important}\n .pill-cell{text-align:left!important;padding:0 20px 16px 20px!important}\n .step{padding:0 0 12px 0!important}\n .btn a{display:block!important;text-align:center!important}\n .hide-sm{display:none!important}\n}\n</style></head><body style=\"margin:0;padding:0;background:#F6F8F6;\"><div style=\"display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F6F8F6;opacity:0;\">@{concat('The verification confirmation endpoint failed (request ',replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'). Action may be required.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#F6F8F6\" style=\"background:#F6F8F6;\"><tr><td align=\"center\" class=\"outer\" style=\"padding:20px 12px 24px 12px;\"><table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:600px;max-width:600px;\"><tr><td class=\"card\" style=\"background:#FFFFFF;border:1px solid #E8E6E7;border-radius:18px;overflow:hidden;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td height=\"5\" bgcolor=\"#C8102E\" style=\"height:5px;line-height:5px;font-size:0;background:#C8102E;background-image:linear-gradient(90deg,#C8102E 0%,#C8102E 60%,#DE3552 100%);\">&nbsp;</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"left\" valign=\"middle\" width=\"106\" style=\"width:106px;\"><img src=\"@{replace(replace(replace(replace(replace(string(outputs('Compose_Notify_Config')?['logoSrc']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}\" width=\"106\" height=\"48\" alt=\"NITDA &ndash; National Information Technology Development Agency\" style=\"display:block;width:106px;height:48px;border:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;font-weight:800;color:#05583B;\"></td><td class=\"hide-sm\" align=\"left\" valign=\"middle\" style=\"padding-left:14px;\"><div style=\"border-left:1px solid #E8E6E7;padding-left:14px;\"><p style=\"margin:0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;line-height:19px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;white-space:nowrap;\">DGO Digital Ops</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;line-height:14px;letter-spacing:.13em;text-transform:uppercase;color:#5F5C5D;white-space:nowrap;\">Registry notifications</p></div></td><td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#780820;background:#FBE7EB;border:1px solid #F6C2CB;border-radius:999px;padding:4px 10px;white-space:nowrap;\">Action required</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:12px 32px 0 32px;\"><div style=\"height:1px;line-height:1px;font-size:0;background:#E8E6E7;margin-bottom:14px;\">&nbsp;</div><h1 class=\"h1\" style=\"margin:0 0 6px 0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:22px;line-height:29px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;word-break:break-word;\">A portal verification confirmation request could not be completed</h1><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:22px;color:#4A4849;\">@{concat('A request received ',concat(convertFromUtc(outputs('Compose_Request_Context')?['receivedAtUtc'],'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT'),' failed. The caller got an HTTP 500 and the portal reported the service as unavailable.')}</p></td></tr><tr><td class=\"px\" style=\"padding:18px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\" style=\"background:#FBE7EB;border:1px solid #F6C2CB;border-radius:12px;\"><tr><td valign=\"middle\" style=\"padding:14px 20px;\"><p style=\"margin:0 0 2px 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#4A4849;\">Request ID</p><p class=\"ref sm\" style=\"margin:0;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:16px;line-height:24px;fo"
+                      },
+                      "Compose_Server_Error_Alert_Html_Part2": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html_Part1": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000187"
+                        },
+                        "type": "Compose",
+                        "inputs": "nt-weight:700;letter-spacing:1px;color:#1B1A1A;word-break:break-all;\">@{replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td valign=\"middle\" align=\"right\" class=\"pill-cell\" style=\"padding:14px 20px 14px 0;\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;color:#780820;background:#FFFFFF;border:1px solid #F6C2CB;border-radius:999px;padding:4px 11px;white-space:nowrap;\">HTTP 500</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">Failed steps</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\">@{if(greater(length(join(body('Select_Failed_Flags'),'')),0),'<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">','<p style=\"margin:0;padding-top:8px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;color:#5F5C5D;\">No failed step was reported at the top level (the run may have timed out). Open the run for details.</p>')}@{if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat(join(take(split(join(body('Select_Failed_Step_Rows'),''),'</tr>'),2),'</tr>'),'</tr>'),join(body('Select_Failed_Step_Rows'),''))}@{if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat('<tr><td colspan=\"2\" style=\"padding:7px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;color:#5F5C5D;\">+ ',string(sub(length(join(body('Select_Failed_Flags'),'')),2)),' more &mdash; open the run for the full list.</td></tr>'),'')}@{if(greater(length(join(body('Select_Failed_Flags'),'')),0),'</table>','')}</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">Request context</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Email</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Confirm_Email')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Code state</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Confirm_Code_State')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td></tr><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Source IP</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Confirm_SourceIp')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td class=\"cell hide-sm\" width=\"50%\" style=\"border-bottom:1px solid #F0EFEF;\">&nbsp;</td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:20px 32px 0 32px;\">@{if(not(empty(replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))),concat('<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" style=\"display:inline-table;\"><tr><td align=\"center\" bgcolor=\"#C8102E\" style=\"border-radius:6px;background:#C8102E;\"><a href=\"',replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'\" target=\"_blank\" style=\"display:inline-block;padding:11px 22px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:6px;\">Open failed run in Power Automate &rarr;</a></td></tr></table>'),'')}</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-top:12px;border-top:1px dashed #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:18px;word-break:break-all;\"><span sty"
+                      },
+                      "Compose_Server_Error_Alert_Html_Part3": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html_Part2": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000188"
+                        },
+                        "type": "Compose",
+                        "inputs": "le=\"color:#5F5C5D;\">Run</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{string(workflow()?['run']?['name'])}</span> &nbsp;&middot;&nbsp; <span style=\"color:#5F5C5D;\">Flow</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{replace(replace(replace(replace(replace(string(string(workflow()?['tags']?['flowDisplayName'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</span></p></td></tr><tr><td style=\"height:18px;line-height:18px;font-size:0;\">&nbsp;</td></tr></table></td></tr><tr><td align=\"center\" class=\"px\" style=\"padding:14px 24px 0 24px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;\">National Information Technology Development Agency &middot; &copy; @{formatDateTime(utcNow(),'yyyy')} &middot; Automated message</td></tr></table></td></tr></table></body></html>"
+                      },
+                      "Compose_Server_Error_Alert_Html": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html_Part3": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000189"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{outputs('Compose_Server_Error_Alert_Html_Part1')}@{outputs('Compose_Server_Error_Alert_Html_Part2')}@{outputs('Compose_Server_Error_Alert_Html_Part3')}"
+                      },
+                      "Send_Server_Error_Alert_Email": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000190"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@outputs('Compose_Notify_Config')?['opsTo']",
+                            "emailMessage/Subject": "@concat('Action required: verification confirmation endpoint failure (request ',outputs('Compose_Request_Context')?['requestId'],')')",
+                            "emailMessage/Body": "@outputs('Compose_Server_Error_Alert_Html')",
+                            "emailMessage/Importance": "High"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    }
+                  }
+                },
+                "default": {
+                  "actions": {}
+                },
+                "expression": "@if(equals(outputs('Compose_Notify_Config')?['enabled'],true),coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none'),'disabled')",
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000191"
+                },
+                "type": "Switch"
+              }
+            },
+            "runAfter": {
+              "Scope_Finalize_Response_VerifyConfirm": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000192"
+            },
+            "type": "Scope"
+          },
+          "Scope_Flow_Data_Capture": {
+            "actions": {
+              "Compose_Redacted_Queries": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000193"
+                },
+                "type": "Compose",
+                "inputs": "@setProperty(setProperty(coalesce(triggerOutputs()?['queries'],json('{}')),'sig','***REDACTED***'),'code','***REDACTED***')"
+              },
+              "Compose_Redacted_Headers": {
+                "runAfter": {
+                  "Compose_Redacted_Queries": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000194"
+                },
+                "type": "Compose",
+                "inputs": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(coalesce(triggerOutputs()?['headers'],json('{}')),'Authorization','***REDACTED***'),'Cookie','***REDACTED***'),'x-api-key','***REDACTED***'),'Ocp-Apim-Subscription-Key','***REDACTED***'),'x-ms-igw-external-uri','***REDACTED***'),'x-ms-igw-raw-target','***REDACTED***'),'X-Upload-Ticket','***REDACTED***')"
+              },
+              "Compose_Flow_Run_Record": {
+                "runAfter": {
+                  "Compose_Redacted_Headers": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000195"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "capture_metadata": {
+                    "telemetry_kind": "flow_run_record",
+                    "capture_version": "2.1.0",
+                    "standard_version": "1.0.0",
+                    "captured_at_utc": "@utcNow()",
+                    "capture_scope": "Scope_Flow_Data_Capture"
+                  },
+                  "workflow_identity": {
+                    "internal_name": "@workflow()?['name']",
+                    "full_resource_id": "@workflow()?['id']",
+                    "type": "@workflow()?['type']",
+                    "location": "@workflow()?['location']",
+                    "tags": "@coalesce(workflow()?['tags'],json('{}'))"
+                  },
+                  "run_identity": {
+                    "run_name": "@workflow()?['run']?['name']",
+                    "run_resource_id": "@workflow()?['run']?['id']",
+                    "request_id": "@outputs('Compose_Request_Context')?['requestId']"
+                  },
+                  "trigger_record": {
+                    "method": "@triggerOutputs()?['method']",
+                    "headers_redacted": "@coalesce(outputs('Compose_Redacted_Headers'),json('{}'))",
+                    "queries_redacted": "@coalesce(outputs('Compose_Redacted_Queries'),json('{}'))"
+                  },
+                  "request": {
+                    "body_redacted": {
+                      "emailDomain": "@string(last(split(string(coalesce(actions('Compose_Confirm_Email')?['outputs'],'')),'@')))",
+                      "codeState": "@string(coalesce(actions('Compose_Confirm_Code_State')?['outputs'],''))"
+                    }
+                  },
+                  "design_definition": {
+                    "contract_version": "2026-08-21.1",
+                    "endpoint": "VerifyConfirm"
+                  },
+                  "response_record": {
+                    "status_code_sent": "@coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)",
+                    "error_count": "@length(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))"
+                  },
+                  "outcome": {
+                    "flow_outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')"
+                  },
+                  "timing": {
+                    "received_at_utc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                    "completed_at_utc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                    "duration_ms": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)"
+                  },
+                  "notifications": {
+                    "event": "@coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none')",
+                    "scope_status": "@coalesce(actions('Scope_Notifications')?['status'],'Unknown')"
+                  }
+                }
+              },
+              "Create_Flow_Telemetry": {
+                "runAfter": {
+                  "Compose_Flow_Run_Record": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000196"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                    "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                    "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                    "item/RunId": "@workflow()?['run']?['name']",
+                    "item/StartedAtUtc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                    "item/CompletedAtUtc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                    "item/Outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')",
+                    "item/DurationMs": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)",
+                    "item/ErrorMessage": "@string(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))",
+                    "item/RunRecordJson": "@string(outputs('Compose_Flow_Run_Record'))"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "PostItem"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Notifications": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000197"
+            },
+            "type": "Scope"
+          }
+        },
+        "runAfter": {
+          "Initialize_variable_varDurationMs": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000198"
+        },
+        "type": "Scope"
+      }
+    }
+  }
+}

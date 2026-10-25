@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" data-platform="dgo-ops">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05583B">
+<meta name="description" content="NITDA Folio provisioning console — every Power Automate flow and every endpoint across both platforms, as configured: identity, trigger, responses, variables, connections, SharePoint operations and the configured input of every action. Searchable, filterable, and navigable by section and by action.">
+<title>Provisioning console — NITDA Folio</title>
+
+<!-- Nothing here reaches above this folder, because Firefox refuses a file:// subresource above
+     the page's own directory and this reference has to stay a folder you can copy to a memory
+     stick and open. brand/ is written by `npm run brand:sync` from styles/dgo-design-system/. -->
+<link rel="icon" type="image/svg+xml" href="brand/dgo-mark.svg">
+<link rel="stylesheet" href="brand/brand.css">
+<link rel="stylesheet" href="console.css">
+
+<!-- Theme before first paint. Applying it from console.js instead produces a white flash on a
+     dark screen, which is the one thing a reader notices on every single navigation. -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('dgo.provisioning.theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) { /* private mode — the media query still decides */ }
+  })();
+</script>
+
+<!-- Tier one: 131 flow summaries and the search haystack. Small, and in the head, so the list,
+     the search and the filters are live on first paint. Tier two — every configured value — is
+     injected by console.js after that paint. -->
+<script src="brand/brand.js"></script>
+<script src="provisioning-index.js"></script>
+</head>
+<body data-view="list">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="shell">
+
+  <header class="topbar">
+    <div class="brand">
+      <img class="bk-logo--on-dark" src="brand/nitda-lockup-digital-white.png" alt="National Information Technology Development Agency" width="544" height="254">
+      <img class="bk-logo--on-light" src="brand/nitda-lockup-digital-colour.png" alt="National Information Technology Development Agency" width="572" height="260">
+      <span class="bk-sub" data-bk-sub><span class="bk-sub__word" aria-hidden="true">DG<svg class="bk-sub__o" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle class="ring" cx="28" cy="28" r="20"/><circle class="dot" cx="28" cy="28" r="6.5"/></svg></span><span class="bk-sub__name" aria-hidden="true"><span>Digital</span><span>Ops</span></span><span class="bk-sub__sr">DGO Digital Ops</span><!--/bk-sub--></span>
+      <div class="brand-text">
+        <b>Provisioning console</b>
+        <span id="brandsub">NITDA Folio</span>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="counts" id="counts"></div>
+
+    <button class="iconbtn outlinebtn" id="outlinebtn" aria-expanded="false" aria-controls="outline" title="Contents of this flow">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <path d="M2 4h12M2 8h12M2 12h8"/>
+      </svg>
+      <span class="vh">Contents of this flow</span>
+    </button>
+
+    <button class="iconbtn" id="themebtn" title="Light, dark, or follow the system">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <circle cx="8" cy="8" r="3.2"/>
+        <path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/>
+      </svg>
+      <span class="vh">Toggle theme</span>
+    </button>
+  </header>
+
+  <!-- Shown only when the data is a narrowed export. console.js fills it from meta.selection. -->
+  <div class="partial" id="partial" role="status"></div>
+
+  <!-- ── the list: search, filter, choose ──────────────────────────────────────────── -->
+  <nav class="rail" id="rail" aria-label="Flows and packages">
+    <div class="railhead">
+      <div class="search">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14" stroke-linecap="round"/>
+        </svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false"
+               placeholder="Search flows, keys, actions, lists…"
+               aria-label="Search flows, contract keys, action names, connections and lists">
+        <button class="clear" id="qclear" hidden title="Clear search" aria-label="Clear search">&times;</button>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="Filter"></div>
+    </div>
+
+    <div class="railmeta">
+      <span id="resultcount" aria-live="polite" role="status"></span>
+      <label>
+        <span class="vh">Sort by</span>
+        <select id="sort">
+          <option value="name">Name</option>
+          <option value="actions">Most actions</option>
+          <option value="estate">Estate</option>
+          <option value="method">Method</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="list" id="list" role="listbox" aria-label="Flows and packages" tabindex="-1"></div>
+  </nav>
+
+  <!-- ── the content ───────────────────────────────────────────────────────────────── -->
+  <main class="main" id="main" tabindex="-1">
+    <div class="wrap" id="content"></div>
+  </main>
+
+  <!-- ── the outline: where you are inside a flow ──────────────────────────────────── -->
+  <aside class="outline" id="outline" aria-label="Contents of this flow"></aside>
+
+</div>
+
+<noscript>
+  <div style="max-width:60ch;margin:3rem auto;padding:1.5rem;border:1px solid var(--dgo-color-border-strong);border-radius:10px">
+    <h1 style="font-size:1.2rem">This console needs scripting</h1>
+    <p>It is an interface over the same facts as the markdown reference, which needs nothing at all.
+    Open <a href="README.md">README.md</a> for the index, or
+    <a href="ENDPOINT_REGISTER.md">ENDPOINT_REGISTER.md</a> for the endpoint register.
+    Every flow has a page under <code>flows/</code>, and every other package one under <code>packages/</code>.</p>
+    <p>Both are generated from the same model, so neither can say something the other cannot.</p>
+  </div>
+</noscript>
+
+<script src="console.js"></script>
+</body>
+</html>

@@ -1,0 +1,597 @@
+{
+  "schema": "dgo-governance-flow-correction/v1",
+  "flow": "07 - GOV - Consumer HTTP Self-Registration Template",
+  "flowId": "c6a011c5-7b11-4241-82ae-a45b88ebf276",
+  "corrects": [
+    "GOV-04"
+  ],
+  "generatedBy": "scripts/patch-governance-flows.mjs",
+  "basedOn": "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/07 - GOV - Consumer HTTP Self-Registration Template__c6a011c5-7b11-4241-82ae-a45b88ebf276__full_definition.json",
+  "howToApply": "Power Automate → the flow → Edit → ⋯ → Peek code is read-only, so apply this through the designer or by importing the corrected package. The definition below is complete and replaces the flow definition wholesale. Export the current version first; docs/folio-Master-Flows-and-Endpoints/deployment/governance/APPLY-FLOW-CORRECTIONS.md carries the full procedure and the rollback.",
+  "changes": [
+    "07 - GOV - Consumer HTTP Self-Registration Template: Respond_Invalid_Input → 400 before Terminate_Invalid_Input",
+    "07 - GOV - Consumer HTTP Self-Registration Template: Respond_Registry_Unavailable → 404 before Terminate_Registry_Unavailable",
+    "07 - GOV - Consumer HTTP Self-Registration Template: Respond_Consumer_Registration_Failed → 500 before Terminate_Consumer_Registration_Failed",
+    "07 - GOV - Consumer HTTP Self-Registration Template: Respond_Consumer_Registration_Succeeded → 200 before Terminate_Consumer_Registration_Succeeded"
+  ],
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "operation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": true
+          },
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Scope_07_GOV_Consumer_HTTP_Self_Registration_Template_COMPLETE_UPDATED": {
+        "actions": {
+          "Scope_Main": {
+            "actions": {
+              "Compose_Consumer_Key": {
+                "runAfter": {
+                  "Validate_Input": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "026f10a0-f86b-4a3d-bf9d-108a3ad12cf3"
+                },
+                "type": "Compose",
+                "inputs": "@concat(trim(string(triggerBody()?['registryKey'])),'|',trim(string(coalesce(triggerBody()?['consumerIdentifier'],triggerBody()?['consumerName']))))"
+              },
+              "Validate_Input": {
+                "actions": {
+                  "Input_Validated": {
+                    "metadata": {
+                      "operationMetadataId": "4d21219e-e5a4-480d-b927-253b75106576"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "status": "Validated"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_Invalid_Input": {
+                      "metadata": {
+                        "operationMetadataId": "509014f5-1826-461e-9ed1-6182a870071a"
+                      },
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Failed",
+                        "runError": {
+                          "code": "INVALID_CONSUMER_REGISTRATION_INPUT",
+                          "message": "registryKey, consumerName, ownerEmail, and a consumer identifier are required; values must be 255 characters or fewer; the consumer identifier must not contain a pipe; ownerEmail must contain @."
+                        }
+                      },
+                      "runAfter": {
+                        "Respond_Invalid_Input": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Respond_Invalid_Input": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "runAfter": {},
+                      "inputs": {
+                        "statusCode": 400,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "outcome": "invalid-input",
+                          "status": "Failed",
+                          "flow": "07 - GOV - Consumer HTTP Self-Registration Template",
+                          "branch": "Terminate_Invalid_Input",
+                          "runId": "@{workflow()?['run']?['name']}",
+                          "message": "registryKey, consumerName, ownerEmail, and a consumer identifier are required; values must be 255 characters or fewer; the consumer identifier must not contain a pipe; ownerEmail must contain @.",
+                          "at": "@{utcNow()}"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['registryKey'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['consumerName'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(triggerBody()?['ownerEmail'])))",
+                        0
+                      ]
+                    },
+                    {
+                      "greater": [
+                        "@length(trim(string(coalesce(triggerBody()?['consumerIdentifier'],triggerBody()?['consumerName']))))",
+                        0
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['registryKey'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['consumerName'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(triggerBody()?['ownerEmail'])))",
+                        255
+                      ]
+                    },
+                    {
+                      "lessOrEquals": [
+                        "@length(trim(string(coalesce(triggerBody()?['consumerIdentifier'],triggerBody()?['consumerName']))))",
+                        255
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@contains(trim(string(coalesce(triggerBody()?['consumerIdentifier'],triggerBody()?['consumerName']))),'|')",
+                        false
+                      ]
+                    },
+                    {
+                      "contains": [
+                        "@trim(string(triggerBody()?['ownerEmail']))",
+                        "@"
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "8ef28413-47fc-478c-8733-a6d48cefb697"
+                },
+                "type": "If"
+              },
+              "Find_Registry": {
+                "runAfter": {
+                  "Compose_Consumer_Key": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "b83309cc-0ebe-4628-8342-c953f0efda1b"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistry'')/items?$select=Id,RegistryKey,LifecycleStatus,AuthenticationMode&$filter=RegistryKey eq ''',replace(trim(string(triggerBody()?['registryKey'])),'''',''''''),'''&$top=1')",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "If_Registry_Active": {
+                "actions": {
+                  "Find_Consumer": {
+                    "metadata": {
+                      "operationMetadataId": "cf543daa-1fd6-431f-acef-d2b767d2b9a5"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "GET",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items?$select=Id,IsApproved,ApprovedUtc,LifecycleStatus&$filter=ConsumerKey eq ''',replace(outputs('Compose_Consumer_Key'),'''',''''''),'''&$top=1')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Upsert_Consumer": {
+                    "actions": {
+                      "Update_Consumer": {
+                        "metadata": {
+                          "operationMetadataId": "661e9b3d-987f-486c-9fa9-4e842a4fa171"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                            "parameters/method": "POST",
+                            "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowConsumerRegistry'')/items(',string(first(body('Find_Consumer')?['value'])?['Id']),')')",
+                            "parameters/headers": {
+                              "Accept": "application/json;odata=nometadata",
+                              "Content-Type": "application/json;odata=nometadata",
+                              "IF-MATCH": "*",
+                              "X-HTTP-Method": "MERGE"
+                            },
+                            "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',trim(string(triggerBody()?['consumerName']))),'ConsumerKey',outputs('Compose_Consumer_Key')),'RegistryKey',trim(string(triggerBody()?['registryKey']))),'ConsumerName',trim(string(triggerBody()?['consumerName']))),'ConsumerType',coalesce(triggerBody()?['consumerType'],'PowerAutomate')),'ConsumerIdentifier',trim(string(coalesce(triggerBody()?['consumerIdentifier'],triggerBody()?['consumerName'])))),'OwnerEmail',toLower(trim(string(triggerBody()?['ownerEmail'])))),'ExpectedAuthentication',coalesce(triggerBody()?['expectedAuthentication'],first(body('Find_Registry')?['value'])?['AuthenticationMode'],'Unknown')),'LastObservedUtc',utcNow()),'LifecycleStatus','Active'),'IsApproved',coalesce(first(body('Find_Consumer')?['value'])?['IsApproved'],false)),'ApprovedUtc',if(equals(coalesce(first(body('Find_Consumer')?['value'])?['IsApproved'],false),true),first(body('Find_Consumer')?['value'])?['ApprovedUtc'],null))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connectionName": "shared_sharepointonline-1",
+                            "operationId": "HttpRequest"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Find_Consumer": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {
+                        "Create_Consumer": {
+                          "metadata": {
+                            "operationMetadataId": "6dd45897-767b-4872-b832-a688e42a03c5"
+                          },
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                              "parameters/method": "POST",
+                              "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowConsumerRegistry')/items",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=nometadata",
+                                "Content-Type": "application/json;odata=nometadata"
+                              },
+                              "parameters/body": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(json('{}'),'Title',trim(string(triggerBody()?['consumerName']))),'ConsumerKey',outputs('Compose_Consumer_Key')),'RegistryKey',trim(string(triggerBody()?['registryKey']))),'ConsumerName',trim(string(triggerBody()?['consumerName']))),'ConsumerType',coalesce(triggerBody()?['consumerType'],'PowerAutomate')),'ConsumerIdentifier',trim(string(coalesce(triggerBody()?['consumerIdentifier'],triggerBody()?['consumerName'])))),'OwnerEmail',toLower(trim(string(triggerBody()?['ownerEmail'])))),'ExpectedAuthentication',coalesce(triggerBody()?['expectedAuthentication'],first(body('Find_Registry')?['value'])?['AuthenticationMode'],'Unknown')),'LastObservedUtc',utcNow()),'LifecycleStatus','Active'),'IsApproved',false),'ApprovedUtc',null)"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connectionName": "shared_sharepointonline-1",
+                              "operationId": "HttpRequest"
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          }
+                        }
+                      }
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "greater": [
+                            "@length(coalesce(body('Find_Consumer')?['value'],json('[]')))",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "01bfb741-272a-439d-b686-993bfcd75e3b"
+                    },
+                    "type": "If"
+                  }
+                },
+                "runAfter": {
+                  "Find_Registry": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_Registry_Unavailable": {
+                      "metadata": {
+                        "operationMetadataId": "37fe0520-40c2-4aa0-a71a-b9bba498672c"
+                      },
+                      "type": "Terminate",
+                      "inputs": {
+                        "runStatus": "Failed",
+                        "runError": {
+                          "code": "REGISTRY_NOT_ACTIVE",
+                          "message": "@concat('The referenced HTTP flow registry record is missing or not active: ',trim(string(triggerBody()?['registryKey'])),'.')"
+                        }
+                      },
+                      "runAfter": {
+                        "Respond_Registry_Unavailable": [
+                          "Succeeded"
+                        ]
+                      }
+                    },
+                    "Respond_Registry_Unavailable": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "runAfter": {},
+                      "inputs": {
+                        "statusCode": 404,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "body": {
+                          "outcome": "not-found",
+                          "status": "Failed",
+                          "flow": "07 - GOV - Consumer HTTP Self-Registration Template",
+                          "branch": "Terminate_Registry_Unavailable",
+                          "runId": "@{workflow()?['run']?['name']}",
+                          "message": "@concat('The referenced HTTP flow registry record is missing or not active: ',trim(string(triggerBody()?['registryKey'])),'.')",
+                          "at": "@{utcNow()}"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(coalesce(body('Find_Registry')?['value'],json('[]')))",
+                        0
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@first(body('Find_Registry')?['value'])?['LifecycleStatus']",
+                        "Active"
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "17d84f2d-dde4-4ae4-aef7-3d850e9ff9a1"
+                },
+                "type": "If"
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "3244ee80-53c2-4d6d-b890-66db3d06a09a"
+            },
+            "type": "Scope"
+          },
+          "Compose_Final_Report_JSON": {
+            "runAfter": {
+              "Scope_Main": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "c09ceee5-daaf-4f05-b856-46c283f83c0b"
+            },
+            "type": "Compose",
+            "inputs": {
+              "reportType": "DGO Power Automate Execution Report",
+              "schemaVersion": "5.0.0",
+              "flow": "07 - GOV - Consumer HTTP Self-Registration Template",
+              "flowId": "@workflow()?['name']",
+              "runId": "@workflow()?['run']?['name']",
+              "environmentId": "@workflow()?['tags']?['environmentName']",
+              "generatedAtUtc": "@utcNow()",
+              "status": "@if(contains(string(result('Scope_Main')),'Failed'),'Failed',if(contains(string(result('Scope_Main')),'TimedOut'),'TimedOut','Succeeded'))",
+              "details": {
+                "consumerKey": "@concat(trim(string(triggerBody()?['registryKey'])),'|',trim(string(coalesce(triggerBody()?['consumerIdentifier'],triggerBody()?['consumerName']))))",
+                "registryKey": "@trim(string(triggerBody()?['registryKey']))",
+                "consumerName": "@trim(string(triggerBody()?['consumerName']))",
+                "consumerType": "@coalesce(triggerBody()?['consumerType'],'PowerAutomate')",
+                "ownerEmail": "@toLower(trim(string(triggerBody()?['ownerEmail'])))",
+                "approvalPolicy": "Self-registration never grants approval"
+              },
+              "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+            }
+          },
+          "Compose_Final_Report_HTML": {
+            "runAfter": {
+              "Compose_Final_Report_JSON": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "64fafd53-79fa-4dcb-813d-3838668ce1ae"
+            },
+            "type": "Compose",
+            "inputs": "@concat('<html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px\"><div style=\"max-width:900px;margin:auto;background:white;border-radius:12px;overflow:hidden\"><div style=\"background:#004578;color:white;padding:24px\"><h1>',outputs('Compose_Final_Report_JSON')?['flow'],'</h1></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Run ID:</b> ',outputs('Compose_Final_Report_JSON')?['runId'],'</p><pre style=\"white-space:pre-wrap;background:#f8fafc;padding:12px\">',string(outputs('Compose_Final_Report_JSON')?['details']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['runUrl'],'\">Open run</a></p></div></div></body></html>')"
+          },
+          "Send_Final_Report_Email": {
+            "runAfter": {
+              "Compose_Final_Report_HTML": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "96289fab-b70f-48dc-ae9c-ead4bed9afc0"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] ',outputs('Compose_Final_Report_JSON')?['flow'],' | ',outputs('Compose_Final_Report_JSON')?['runId'])",
+                "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@concat(replace(workflow()?['name'],' ','_'),'_',workflow()?['run']?['name'],'_Report.json')",
+                    "ContentBytes": "@string(outputs('Compose_Final_Report_JSON'))"
+                  }
+                ],
+                "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "If_Consumer_Registration_Failed": {
+            "actions": {
+              "Terminate_Consumer_Registration_Failed": {
+                "metadata": {
+                  "operationMetadataId": "8b023142-0b46-46c7-a535-eca5a7c9c383"
+                },
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Failed",
+                  "runError": {
+                    "code": "DGOConsumerRegistrationFailed",
+                    "message": "@concat('Consumer HTTP self-registration ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')"
+                  }
+                },
+                "runAfter": {
+                  "Respond_Consumer_Registration_Failed": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Respond_Consumer_Registration_Failed": {
+                "type": "Response",
+                "kind": "Http",
+                "runAfter": {},
+                "inputs": {
+                  "statusCode": 500,
+                  "headers": {
+                    "Content-Type": "application/json"
+                  },
+                  "body": {
+                    "outcome": "failed",
+                    "status": "Failed",
+                    "flow": "07 - GOV - Consumer HTTP Self-Registration Template",
+                    "branch": "Terminate_Consumer_Registration_Failed",
+                    "runId": "@{workflow()?['run']?['name']}",
+                    "message": "@concat('Consumer HTTP self-registration ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')",
+                    "at": "@{utcNow()}"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Terminate_Consumer_Registration_Succeeded": {
+                  "metadata": {
+                    "operationMetadataId": "f555b5a4-745d-4df6-b229-ecaa6f84a906"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  },
+                  "runAfter": {
+                    "Respond_Consumer_Registration_Succeeded": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Respond_Consumer_Registration_Succeeded": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "runAfter": {},
+                  "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                      "Content-Type": "application/json"
+                    },
+                    "body": {
+                      "outcome": "succeeded",
+                      "status": "Succeeded",
+                      "flow": "07 - GOV - Consumer HTTP Self-Registration Template",
+                      "branch": "Terminate_Consumer_Registration_Succeeded",
+                      "runId": "@{workflow()?['run']?['name']}",
+                      "message": "07 - GOV - Consumer HTTP Self-Registration Template ended at Terminate_Consumer_Registration_Succeeded.",
+                      "at": "@{utcNow()}"
+                    }
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Compose_Final_Report_JSON')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "1170bc8a-9691-44c1-b358-8ec4e7012771"
+            },
+            "type": "If"
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "aeca070f-534b-44a1-a283-7cd364654510"
+        },
+        "type": "Scope"
+      }
+    },
+    "outputs": {}
+  }
+}

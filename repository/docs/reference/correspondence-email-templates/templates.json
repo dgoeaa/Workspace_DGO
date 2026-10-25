@@ -1,0 +1,249 @@
+{
+  "generatedBy": "scripts/extract-correspondence-email-templates.mjs",
+  "module": "modules/correspondence-email.js (Correspondence Email Desk)",
+  "templateConfig": "config/correspondence-email-templates.config.js",
+  "renderer": "core/correspondence-email-service.js → render()",
+  "sentThrough": {
+    "endpointKey": "EMAIL",
+    "operation": "sendCorrespondenceEmail",
+    "flow": "IP_SEND_EMAIL",
+    "bodyField": "payload.email.html",
+    "heroField": "payload.email.hero",
+    "footerNoteField": "payload.email.footerNote",
+    "attachmentsField": "payload.email.attachments"
+  },
+  "designs": "docs/folio-Master-Flows-and-Endpoints/email-templates/ (CL-* fragments and complete documents)",
+  "brand": {
+    "agency": "National Information Technology Development Agency",
+    "office": "Office of the Director-General/CEO",
+    "ministry": "Federal Ministry of Communications, Innovation & Digital Economy",
+    "deepGreen": "#05583B",
+    "smartGreen": "#17B255",
+    "ink": "#373435",
+    "line": "#E8E6E7",
+    "paper": "#FAFAF9",
+    "muted": "#5F5C5D",
+    "onAccent": "#011610"
+  },
+  "defaults": {
+    "fromName": "Office of the Director-General / Registry",
+    "replyTo": "dgsregistry@nitda.gov.ng",
+    "classification": "Official",
+    "signatoryName": "Registry, Office of the Director-General",
+    "signatoryTitle": "For: Director-General/CEO"
+  },
+  "templates": [
+    {
+      "id": "official-correspondence",
+      "label": "Official Correspondence",
+      "category": "Formal Response",
+      "tone": "formal",
+      "subject": "{{referenceId}} — {{subject}}",
+      "exampleSubject": "NITDA/DG/COR/2026/0142 — Adoption of the National Data Exchange Framework",
+      "requiredFields": [
+        "recipientEmail",
+        "subject",
+        "referenceId",
+        "body"
+      ],
+      "design": "CL-Official",
+      "exampleDesign": "CL-Official",
+      "variants": [
+        {
+          "design": "CL-Official--no-optional-lines",
+          "sentWhenNoneOf": [
+            "actionRequired is set",
+            "dueDate is set"
+          ]
+        }
+      ],
+      "optionalLines": [
+        "actionRequired",
+        "dueDate"
+      ],
+      "hero": {
+        "purpose": "CL-Official",
+        "chip": "Official · high",
+        "title": "Adoption of the National Data Exchange Framework",
+        "lead": "Office of the Director-General/CEO"
+      },
+      "footerNote": "<strong>Confidentiality Notice:</strong> This correspondence and any attachment(s) are intended solely for the addressed recipient(s). If received in error, please notify the sender and delete the message.",
+      "files": {
+        "template": "html/official-correspondence.html",
+        "example": "rendered/official-correspondence.html"
+      },
+      "examplePlainText": "Reference NITDA/DG/COR/2026/0142 Date 25 September 2026\nDear Executive Secretary,\nPlease find below the official correspondence of the Agency on the referenced matter.\nThe Agency writes to formally notify the Commission of the adoption of the National Data Exchange Framework and to request the nomination of two focal persons to coordinate implementation across Nigerian universities.\nAction required\nNominate two focal persons and forward their details to the Office of the Director-General.\nKindly respond on or before 9 October 2026.\nPlease accept the assurances of our highest consideration.\nYours faithfully,\nRegistry, Office of the Director-General\nFor: Director-General/CEO"
+    },
+    {
+      "id": "request-for-information",
+      "label": "Request for Information / Documents",
+      "category": "Request",
+      "tone": "diplomatic",
+      "subject": "Request for Information — {{referenceId}}",
+      "exampleSubject": "Request for Information — NITDA/DG/RFI/2026/0057",
+      "requiredFields": [
+        "recipientEmail",
+        "referenceId",
+        "body"
+      ],
+      "design": "CL-Request-Info",
+      "exampleDesign": "CL-Request-Info",
+      "variants": [
+        {
+          "design": "CL-Request-Info--no-due-date",
+          "sentWhenNoneOf": [
+            "dueDate is set"
+          ]
+        }
+      ],
+      "optionalLines": [
+        "dueDate"
+      ],
+      "hero": {
+        "purpose": "CL-Request-Info",
+        "chip": "⚠  Request for information · Official",
+        "title": "Status of ICT projects funded in 2025",
+        "lead": "Office of the Director-General/CEO · priority normal"
+      },
+      "footerNote": "<strong>Confidentiality Notice:</strong> This correspondence and any attachment(s) are intended solely for the addressed recipient(s). If received in error, please notify the sender and delete the message.",
+      "files": {
+        "template": "html/request-for-information.html",
+        "example": "rendered/request-for-information.html"
+      },
+      "examplePlainText": "Reference NITDA/DG/RFI/2026/0057 Date 25 September 2026\nDear Executive Secretary,\nThe Agency is reviewing the referenced correspondence and requests the following information/documentation:\n1. A list of ICT infrastructure projects approved in 2025, with their current status.\n2. The clearance reference issued by the Agency for each project.\n3. The name of the officer responsible for each project.\nReply by 16 October 2026\nTo enable timely processing, kindly provide the requested information by 16 October 2026.\nThank you for your cooperation.\nYours faithfully,\nRegistry, Office of the Director-General\nFor: Director-General/CEO"
+    },
+    {
+      "id": "document-transmittal",
+      "label": "Document Transmittal",
+      "category": "Transmittal",
+      "tone": "formal",
+      "subject": "Transmittal — {{referenceId}} — {{subject}}",
+      "exampleSubject": "Transmittal — NITDA/DG/TRN/2026/0311 — Signed Memorandum of Understanding",
+      "requiredFields": [
+        "recipientEmail",
+        "referenceId"
+      ],
+      "design": "CL-Transmittal",
+      "exampleDesign": "CL-Transmittal",
+      "variants": [
+        {
+          "design": "CL-Transmittal--no-attachments",
+          "sentWhenNoneOf": [
+            "attachmentSummary is set"
+          ]
+        }
+      ],
+      "optionalLines": [
+        "attachmentSummary"
+      ],
+      "hero": {
+        "purpose": "CL-Transmittal",
+        "chip": "✉  Transmittal · Official",
+        "title": "Signed Memorandum of Understanding",
+        "lead": "Office of the Director-General/CEO · priority normal"
+      },
+      "footerNote": "<strong>Confidentiality Notice:</strong> This correspondence and any attachment(s) are intended solely for the addressed recipient(s). If received in error, please notify the sender and delete the message.",
+      "files": {
+        "template": "html/document-transmittal.html",
+        "example": "rendered/document-transmittal.html"
+      },
+      "examplePlainText": "Reference NITDA/DG/TRN/2026/0311 Date 25 September 2026\nDear Director-General,\nKindly receive the transmitted document(s) relating to the referenced matter.\nEnclosed is the counter-signed Memorandum of Understanding between the Agency and the Commission on digital identity integration, for your records.\nAttachment reference(s)\nNITDA-NIMC_MoU_Signed.pdf; Annex_A_Data_Sharing_Schedule.pdf\nKindly acknowledge receipt where necessary.\nYours faithfully,\nRegistry, Office of the Director-General\nFor: Director-General/CEO"
+    },
+    {
+      "id": "meeting-invitation",
+      "label": "Meeting / Engagement Invitation",
+      "category": "Invitation",
+      "tone": "formal",
+      "subject": "Invitation — {{subject}} — {{referenceId}}",
+      "exampleSubject": "Invitation — Stakeholder Workshop on the National AI Strategy — NITDA/DG/INV/2026/0088",
+      "requiredFields": [
+        "recipientEmail",
+        "subject",
+        "body"
+      ],
+      "design": "CL-Invitation",
+      "exampleDesign": "CL-Invitation",
+      "variants": [
+        {
+          "design": "CL-Invitation--no-due-date",
+          "sentWhenNoneOf": [
+            "dueDate is set"
+          ]
+        }
+      ],
+      "optionalLines": [
+        "dueDate"
+      ],
+      "hero": {
+        "purpose": "CL-Invitation",
+        "chip": "✉  Invitation · Official",
+        "title": "Stakeholder Workshop on the National AI Strategy",
+        "lead": "Office of the Director-General/CEO · priority normal"
+      },
+      "footerNote": "<strong>Confidentiality Notice:</strong> This correspondence and any attachment(s) are intended solely for the addressed recipient(s). If received in error, please notify the sender and delete the message.",
+      "files": {
+        "template": "html/meeting-invitation.html",
+        "example": "rendered/meeting-invitation.html"
+      },
+      "examplePlainText": "Reference NITDA/DG/INV/2026/0088 Date 25 September 2026\nDear Director-General,\nThe Agency is pleased to invite you/your organization to the referenced engagement.\nDate: Thursday, 22 October 2026\nTime: 10:00 a.m.\nVenue: NITDA Corporate Headquarters, Abuja\nThe workshop will review the implementation roadmap and the role of standards in trustworthy AI.\nConfirm by 15 October 2026\nKindly confirm availability on or before 15 October 2026.\nWe look forward to your participation.\nYours faithfully,\nRegistry, Office of the Director-General\nFor: Director-General/CEO"
+    },
+    {
+      "id": "circular-notice",
+      "label": "Circular / General Notice",
+      "category": "Notice",
+      "tone": "official",
+      "subject": "Circular / Notice — {{subject}}",
+      "exampleSubject": "Circular / Notice — Revised Guidelines for IT Project Clearance",
+      "requiredFields": [
+        "recipientEmail",
+        "subject",
+        "body"
+      ],
+      "design": "CL-Circular",
+      "exampleDesign": "CL-Circular",
+      "variants": [],
+      "optionalLines": [],
+      "hero": {
+        "purpose": "CL-Circular",
+        "chip": "Circular · Official",
+        "title": "Revised Guidelines for IT Project Clearance",
+        "lead": "Office of the Director-General/CEO · priority normal"
+      },
+      "footerNote": "<strong>Confidentiality Notice:</strong> This correspondence and any attachment(s) are intended solely for the addressed recipient(s). If received in error, please notify the sender and delete the message.",
+      "files": {
+        "template": "html/circular-notice.html",
+        "example": "rendered/circular-notice.html"
+      },
+      "examplePlainText": "Reference NITDA/DG/CIR/2026/0009 Date 25 September 2026\nDear Sir/Ma,\nKindly note the following official notice from the Agency:\nWith effect from 1 November 2026, every IT project clearance request must be submitted through the Agency's online portal. Paper submissions will no longer be accepted.\nKindly be guided accordingly.\nYours faithfully,\nRegistry, Office of the Director-General\nFor: Director-General/CEO"
+    },
+    {
+      "id": "closure-response",
+      "label": "Closure / Final Response",
+      "category": "Closure",
+      "tone": "formal",
+      "subject": "Final Response — {{referenceId}}",
+      "exampleSubject": "Final Response — NITDA/DG/COR/2026/0142",
+      "requiredFields": [
+        "recipientEmail",
+        "referenceId",
+        "body"
+      ],
+      "design": "CL-Closure",
+      "exampleDesign": "CL-Closure",
+      "variants": [],
+      "optionalLines": [],
+      "hero": {
+        "purpose": "CL-Closure",
+        "chip": "✓  Final response · Official",
+        "title": "Adoption of the National Data Exchange Framework",
+        "lead": "Office of the Director-General/CEO · priority normal"
+      },
+      "footerNote": "<strong>Confidentiality Notice:</strong> This correspondence and any attachment(s) are intended solely for the addressed recipient(s). If received in error, please notify the sender and delete the message.",
+      "files": {
+        "template": "html/closure-response.html",
+        "example": "rendered/closure-response.html"
+      },
+      "examplePlainText": "Reference NITDA/DG/COR/2026/0142 Date 25 September 2026\nDear Executive Secretary,\nThe Agency hereby conveys its final response on the referenced matter as follows:\nThe Agency acknowledges receipt of the Commission's nominations dated 7 October 2026. The focal persons have been enrolled, and no further action is required from the Commission.\nThis correspondence closes the matter from the Agency’s current action point unless otherwise communicated.\nYours faithfully,\nRegistry, Office of the Director-General\nFor: Director-General/CEO"
+    }
+  ]
+}

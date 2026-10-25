@@ -1,0 +1,1478 @@
+{
+  "schema": "dgo-flow-adoption/v1",
+  "generatedBy": "scripts/build-flow-adoption.mjs",
+  "direction": "Owner, 2026-10-05: no duplicate, orphaned or purposeless flow is retained for any reason. One copy per function is adopted, by the owner's selection or by evidence-based inference.",
+  "selectionRule": [
+    "1. the owner's latest explicit selection (pastes of 2026-10-05; a flow the owner named for its key)",
+    "2. the latest tenant evidence of what serves the key (live read 2026-09-27, endpoint register, tenant captures 2026-10-01)",
+    "3. the owner's map of 2026-09-24"
+  ],
+  "scope": "The flows this repository holds an artefact of, and the flows its registers name for a contract key. The rest of the agency tenant is not evidenced as part of this platform.",
+  "counts": {
+    "adopted": 43,
+    "retired": 79,
+    "retiredKeys": 1,
+    "artefactsRetired": 433
+  },
+  "adopted": [
+    {
+      "function": "Portal submission",
+      "contractKeys": [
+        "SUBMISSION"
+      ],
+      "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "name": "CG_Submission_Endpoint",
+      "basis": "map = live; pasted (2026-10-05 pastes (owner; identification Phase 3 and 4 READMEs))",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/CG_Submission_Endpoint__de9ef13b-ae4c-42b0-9afa-20e71a180759.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Submission_Endpoint__de9ef13b-ae4c-42b0-9afa-20e71a180759__full_definition.json"
+      ]
+    },
+    {
+      "function": "Portal upload",
+      "contractKeys": [
+        "UPLOAD"
+      ],
+      "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "name": "CG_Upload_Endpoint",
+      "basis": "map = live",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/CG_Upload_Endpoint__df82e331-b800-4a8d-996e-d2b2ca846c77.json",
+        "docs/folio-Master-Flows-and-Endpoints/captures/build-sources/CG_Upload_Endpoint.build-source.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Upload_Endpoint__df82e331-b800-4a8d-996e-d2b2ca846c77__full_definition.json"
+      ]
+    },
+    {
+      "function": "Portal status",
+      "contractKeys": [
+        "STATUS"
+      ],
+      "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "name": "CG_Portal_Status_Check_Endpoint",
+      "basis": "map = live",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/CG_Portal_Status_Check_Endpoint__60042a2e-dadb-4ad8-a672-38b4132d299f.json",
+        "docs/folio-Master-Flows-and-Endpoints/captures/build-sources/CG_Portal_Status_Check_Endpoint.build-source.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Portal_Status_Check_Endpoint__60042a2e-dadb-4ad8-a672-38b4132d299f__full_definition.json"
+      ]
+    },
+    {
+      "function": "Portal support",
+      "contractKeys": [
+        "SUPPORT"
+      ],
+      "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "name": "CG_Portal_Support_Endpoint",
+      "basis": "map = live; pasted (2026-10-05 pastes (owner; identification Phase 3 and 4 READMEs))",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/CG_Portal_Support_Endpoint__4873c936-a2be-4726-8e69-426edb8f70e6.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Portal_Support_Endpoint__4873c936-a2be-4726-8e69-426edb8f70e6__full_definition.json"
+      ]
+    },
+    {
+      "function": "Portal write-back",
+      "contractKeys": [
+        "WRITEBACK"
+      ],
+      "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "name": "CG_Portal_Writeback_Endpoint",
+      "basis": "map = live",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/CG_Portal_Writeback_Endpoint__bde13d27-73b3-4e1a-9687-eb289b039c7a.json",
+        "docs/folio-Master-Flows-and-Endpoints/captures/build-sources/CG_Portal_Writeback_Endpoint.build-source.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Portal_Writeback_Endpoint__bde13d27-73b3-4e1a-9687-eb289b039c7a__full_definition.json"
+      ]
+    },
+    {
+      "function": "Portal verification",
+      "contractKeys": [
+        "VERIFY"
+      ],
+      "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "name": "CG_Portal_Verification_Endpoint",
+      "basis": "rule 2: live read 2026-09-27 (ITEM-65), endpoint register current_configuration, tenant capture 2026-10-01 (the map named 86897b2f, the earlier CG_Verification_Endpoint)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/CG_Portal_Verification_Endpoint__ba47f79b-a831-49e8-b00b-3f8937c331df.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Portal_Verification_Endpoint__ba47f79b-a831-49e8-b00b-3f8937c331df__full_definition.json"
+      ]
+    },
+    {
+      "function": "Portal verification confirmation",
+      "contractKeys": [
+        "VERIFY_CONFIRM"
+      ],
+      "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "name": "CG_Portal_Verification_Confirmation_Endpoint",
+      "basis": "map = live",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/CG_Portal_Verification_Confirmation_Endpoint__f96e3448-3c79-4d42-b224-825258a552ba.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Portal_Verification_Confirmation_Endpoint__f96e3448-3c79-4d42-b224-825258a552ba__full_definition.json"
+      ]
+    },
+    {
+      "function": "Registry status notifier (Portal Registry item change)",
+      "contractKeys": [],
+      "flowId": "8ebf6001-89cd-49c9-a9b6-4dedb9a5768b",
+      "name": "CG_Registry_Status_Notifier",
+      "basis": "tenant export 2026-10-05: running Phase 3",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/build-sources/CG_Registry_Status_Notifier.build-source.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Registry_Status_Notifier__8ebf6001-89cd-49c9-a9b6-4dedb9a5768b__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/NOKEY__CG_Registry_Status_Notifier__8ebf6001__Export_20261005160536.zip"
+      ]
+    },
+    {
+      "function": "Portal daily sweep (schedule)",
+      "contractKeys": [],
+      "flowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "name": "CG_Portal_Daily_Sweep",
+      "basis": "tenant export 2026-10-05: running Phase 3",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/build-sources/CG_Portal_Daily_Sweep.build-source.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/CG_Portal_Daily_Sweep__f12aec6d-1554-483d-a525-a96ddb60d06f__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/NOKEY__CG_Portal_Daily_Sweep__f12aec6d__Export_20261005160554.zip"
+      ]
+    },
+    {
+      "function": "Task reminder sweep (schedule)",
+      "contractKeys": [],
+      "flowId": "8c19b45c-4174-4d2f-9429-ffd08dd1a5ae",
+      "name": "AUTO_SCHEDULED_SWEEP",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 export 1cb48715 is an earlier copy)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/AUTO_SCHEDULED_SWEEP__8c19b45c-4174-4d2f-9429-ffd08dd1a5ae.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/AUTO_SCHEDULED_SWEEP__8c19b45c-4174-4d2f-9429-ffd08dd1a5ae__full_definition.json"
+      ]
+    },
+    {
+      "function": "Workspace bootstrap",
+      "contractKeys": [
+        "FETCH_ALL"
+      ],
+      "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "name": "IP_FETCH_ALL_BOOTSTRAP",
+      "basis": "rule 1: pasted (2026-10-05 pastes (owner; identification Phase 3 and 4 READMEs)); wired (ITEM-63 option \"install into the wired flow\")",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_FETCH_ALL_BOOTSTRAP__b79e6707-df4d-4ae7-8a65-738aa45e9a73.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_FETCH_ALL_BOOTSTRAP__b79e6707-df4d-4ae7-8a65-738aa45e9a73__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/IP_FETCH_ALL_BOOTSTRAP_20260924035751.zip"
+      ]
+    },
+    {
+      "function": "Documents and activities",
+      "contractKeys": [
+        "GET_DOCS",
+        "FETCH_ACTIVITIES"
+      ],
+      "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "name": "IP_Get_Docs_Endpoint",
+      "basis": "map = live (GET_DOCS on the map flow, ITEM-65); FETCH_ACTIVITIES shares it (ITEM-65)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_Get_Docs_Endpoint__28f6e62a-fea8-437c-a61a-47aec706c4e2.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Get_Docs_Endpoint__28f6e62a-fea8-437c-a61a-47aec706c4e2__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/IP_Get_Docs_Endpoint_20260917114919.zip"
+      ]
+    },
+    {
+      "function": "Reference data",
+      "contractKeys": [
+        "REFERENCE_DATA"
+      ],
+      "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "name": "IP_Reference_Data_Endpoint",
+      "basis": "map = live",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_Reference_Data_Endpoint__9a4dea8e-15f2-42b6-904d-3655056fa3c2.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Reference_Data_Endpoint__9a4dea8e-15f2-42b6-904d-3655056fa3c2__full_definition.json"
+      ]
+    },
+    {
+      "function": "E-mail attachments",
+      "contractKeys": [
+        "FETCH_EMAIL_ATTACHMENTS"
+      ],
+      "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "name": "IP_Retrieve_Email_Attachment_Endpoint",
+      "basis": "map = live",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3-7a99-4259-b6a2-315fbc794d9b.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3-7a99-4259-b6a2-315fbc794d9b__full_definition.json"
+      ]
+    },
+    {
+      "function": "Dynamic and subsidiary actions",
+      "contractKeys": [
+        "DYNAMIC_ACTIONS",
+        "SUBSIDIARY_ACTIONS"
+      ],
+      "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "name": "IP_Dynamic_Global_Actions_Endpoint",
+      "basis": "rule 1: pasted (2026-10-05 pastes (owner; identification Phase 3 and 4 READMEs)); map for DYNAMIC; serves SUBSIDIARY live (ITEM-65), the map's 08da1783 implementing none of its routes",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_Dynamic_Global_Actions_Endpoint__31c0aaf0-ddbb-478c-9a98-bc013265c4c7.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Dynamic_Global_Actions_Endpoint__31c0aaf0-ddbb-478c-9a98-bc013265c4c7__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/IP_Dynamic_Global_Actions_Endpoint_20260912100754.zip"
+      ]
+    },
+    {
+      "function": "Single assignment",
+      "contractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ],
+      "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "name": "Single_Task_Assignment",
+      "basis": "rule 1: pasted (2026-10-05 pastes (owner; identification Phase 3 and 4 READMEs)); wired (ITEM-65)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/Single_Task_Assignment__3caf9458-8d95-4740-a01b-6803dad97d34.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/Single_Task_Assignment__3caf9458-8d95-4740-a01b-6803dad97d34__full_definition.json"
+      ]
+    },
+    {
+      "function": "Bulk assignment",
+      "contractKeys": [
+        "BULK_ASSIGNMENT"
+      ],
+      "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+      "name": "BULK_OPS_DATA_RETRIEVAL_HTTP",
+      "basis": "rule 1: pasted (2026-10-05 pastes (owner; identification Phase 3 and 4 READMEs)); wired (ITEM-65). BULK_ASSIGNMENT_DIRECT is retired with it (identification Phase 4 README)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/BULK OPS DATA RETRIEVAL HTTP__5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/BULKOPSDATARETRIEVALHTTP_20260911185143.zip"
+      ]
+    },
+    {
+      "function": "Task from e-mail",
+      "contractKeys": [
+        "EMAIL_RELATED_TASK"
+      ],
+      "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+      "name": "IP_Create__Task__for_received_Email_Endpoint",
+      "basis": "rule 1: the owner supplied it as the email-to-task flow and asked for its paste (2026-10-05). Its definition equals 3f2f649b and 2fbb5485",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Create__Task__for_received_Email_Endpoint__ab1a3555-7fce-4bfe-a193-b8b84654b0a4__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261005174125.zip",
+        "docs/folio-Master-Flows-and-Endpoints/exports/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261006205908.zip"
+      ]
+    },
+    {
+      "function": "AI document, e-mail and chat",
+      "contractKeys": [
+        "AI_CHAT",
+        "AI_DOC_ANALYSIS",
+        "AI_EMAIL_ANALYSIS"
+      ],
+      "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "name": "AI_Document_Processing",
+      "basis": "map; endpoint register",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/AI_Document_Processing__fefa43c6-fb9d-4337-8b65-7fd19fa09b6d.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/AI_Document_Processing__fefa43c6-fb9d-4337-8b65-7fd19fa09b6d__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/AI_Document_Processing_20260911185206.zip"
+      ]
+    },
+    {
+      "function": "Library and scan intake (rebuild)",
+      "contractKeys": [],
+      "flowId": "197527c8-e76c-4f7d-81b8-3cb5c88b1c6c",
+      "name": "Folio_Incoming_Correspondence_Scan_Processing_Flow",
+      "basis": "rule 1: the owner created it for the rebuild of DGSO INCOMING AI PROCESSING (ITEM-80, 2026-10-06); written 2026-10-08; since 2026-10-16 it watches /E-DOCUMENT STATION, where the scanner saves, and replaces DGSO INCOMING AI PROCESSING",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8-e76c-4f7d-81b8-3cb5c88b1c6c.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8-e76c-4f7d-81b8-3cb5c88b1c6c__full_definition.json"
+      ]
+    },
+    {
+      "function": "Failed-notice watch",
+      "contractKeys": [],
+      "flowId": "c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6",
+      "name": "Folio_Failure_Watch",
+      "basis": "rule 1: created for the owner-approved failure register (2026-10-18): hourly in working hours it reports new citizen-outcome failures and broken-connection bursts to the registry, and writes the health row System Health shows",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/Folio_Failure_Watch__c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/Folio_Failure_Watch__c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6__full_definition.json"
+      ]
+    },
+    {
+      "function": "One-time code verification",
+      "contractKeys": [
+        "OTP_VERIFY"
+      ],
+      "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "name": "IP_OTP_VERIFY",
+      "basis": "map for OTP_VERIFY. Until Folio's OTP_GENERATE points at IP_OTP_GENERATE it also answers generate requests (ITEM-82)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_OTP_VERIFY__4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_OTP_VERIFY__4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61__full_definition.json"
+      ]
+    },
+    {
+      "function": "One-time code generation",
+      "contractKeys": [
+        "OTP_GENERATE"
+      ],
+      "flowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+      "name": "IP_OTP_GENERATE",
+      "basis": "rule 1: the owner's selection, 2026-10-07 (ITEM-82): generation on its own flow, created from IP_OTP_VERIFY with Case_Verify removed",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_OTP_GENERATE__e5632336-641f-4b9b-bd93-99185b5eb975.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_OTP_GENERATE__e5632336-641f-4b9b-bd93-99185b5eb975__full_definition.json"
+      ]
+    },
+    {
+      "function": "User administration",
+      "contractKeys": [
+        "USER_ADMIN"
+      ],
+      "flowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+      "name": "IP_User_Admin_Endpoint",
+      "basis": "rule 1: the owner's approval, 2026-10-08 (ITEM-25): Folio's User Administration on its own flow, created from IP_Dynamic_Global_Actions_Endpoint with only the user-admin operation, because DYNAMIC_ACTIONS has no room under the service's 500-action limit",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_User_Admin_Endpoint__e3e5c825-55ba-447e-88c1-96b7e89fd013.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_User_Admin_Endpoint__e3e5c825-55ba-447e-88c1-96b7e89fd013__full_definition.json"
+      ]
+    },
+    {
+      "function": "Activities lifecycle",
+      "contractKeys": [
+        "ACTIVITY_LIFECYCLE"
+      ],
+      "flowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+      "name": "IP_Activity_Lifecycle_Endpoint",
+      "basis": "rule 1: the owner's decision, 2026-10-10 (ITEM-25, build them): Folio's Activities lifecycle shortcuts (Archive, SIWES, NYSC) on their own flow, created from IP_Dynamic_Global_Actions_Endpoint with only the activity lifecycle, because DYNAMIC_ACTIONS has no room under the service's 500-action limit (live read 2026-10-10: 495)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_Activity_Lifecycle_Endpoint__b4db02d8-02a0-4bc9-b9d3-06e2aae2448c.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_Activity_Lifecycle_Endpoint__b4db02d8-02a0-4bc9-b9d3-06e2aae2448c__full_definition.json"
+      ]
+    },
+    {
+      "function": "Scan intake",
+      "contractKeys": [
+        "SCAN_INTAKE"
+      ],
+      "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "name": "IP_SCAN_INTAKE",
+      "basis": "rule 1: pasted (2026-10-05 pastes (owner; identification Phase 3 and 4 READMEs)); wired (ITEM-63 option \"install into the wired flow\")",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_SCAN_INTAKE__5504d7f9-cc96-470c-be79-217582faf415.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_SCAN_INTAKE__5504d7f9-cc96-470c-be79-217582faf415__full_definition.json",
+        "docs/folio-Master-Flows-and-Endpoints/exports/IP_SCAN_INTAKE_20261008030812.zip"
+      ]
+    },
+    {
+      "function": "Send e-mail",
+      "contractKeys": [
+        "EMAIL"
+      ],
+      "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "name": "IP_SEND_EMAIL",
+      "basis": "map = live; adoption record 2026-09-24",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/IP_SEND_EMAIL__df59a69f-92ca-4554-ae68-6b464aa73ef7.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/IP_SEND_EMAIL__df59a69f-92ca-4554-ae68-6b464aa73ef7__full_definition.json"
+      ]
+    },
+    {
+      "function": "Library intake (document library)",
+      "contractKeys": [],
+      "flowId": "b6d92bae-591e-fa1e-52eb-b350cad988a7",
+      "name": "DGSO INCOMING AI PROCESSING",
+      "basis": "the platform's library intake; identification Phase 4",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/_DGSO_INCOMING_AI_PROCESSING__b6d92bae-591e-fa1e-52eb-b350cad988a7.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/DGSO INCOMING AI PROCESSING__b6d92bae-591e-fa1e-52eb-b350cad988a7__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "17a85efb-1ed2-45c9-a602-2ad6f8bb7ead",
+      "name": "01 - GOV - Provision HTTP Flow Registry",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/01_-_GOV_-_Provision_HTTP_Flow_Registry__17a85efb-1ed2-45c9-a602-2ad6f8bb7ead.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/01 - GOV - Provision HTTP Flow Registry__17a85efb-1ed2-45c9-a602-2ad6f8bb7ead__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "651ae389-eeed-4bf0-9799-67bd964ebe71",
+      "name": "02 - GOV - Register HTTP Flow Truth",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/02_-_GOV_-_Register_HTTP_Flow_Truth__651ae389-eeed-4bf0-9799-67bd964ebe71.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/02 - GOV - Register HTTP Flow Truth__651ae389-eeed-4bf0-9799-67bd964ebe71__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "0545e19a-c34a-45db-bd11-27b87a34973e",
+      "name": "03 - GOV - Record HTTP Flow Execution",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/03_-_GOV_-_Record_HTTP_Flow_Execution__0545e19a-c34a-45db-bd11-27b87a34973e.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/03 - GOV - Record HTTP Flow Execution__0545e19a-c34a-45db-bd11-27b87a34973e__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b",
+      "name": "04 - GOV - Audit HTTP Flow Registry",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/04_-_GOV_-_Audit_HTTP_Flow_Registry__3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/04 - GOV - Audit HTTP Flow Registry__3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "493b4ab7-8f63-4fab-8121-746c2cac7f98",
+      "name": "05 - GOV - Retire HTTP Flow",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/05_-_GOV_-_Retire_HTTP_Flow__493b4ab7-8f63-4fab-8121-746c2cac7f98.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/05 - GOV - Retire HTTP Flow__493b4ab7-8f63-4fab-8121-746c2cac7f98__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "87a74d7e-7435-4e34-baa1-7e759ebf5565",
+      "name": "06 - GOV - Registry Exception Notification",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/06_-_GOV_-_Registry_Exception_Notification__87a74d7e-7435-4e34-baa1-7e759ebf5565.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/06 - GOV - Registry Exception Notification__87a74d7e-7435-4e34-baa1-7e759ebf5565__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "c6a011c5-7b11-4241-82ae-a45b88ebf276",
+      "name": "07 - GOV - Consumer HTTP Self-Registration Template",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/07_-_GOV_-_Consumer_HTTP_Self-Registration_Template__c6a011c5-7b11-4241-82ae-a45b88ebf276.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/07 - GOV - Consumer HTTP Self-Registration Template__c6a011c5-7b11-4241-82ae-a45b88ebf276__full_definition.json"
+      ]
+    },
+    {
+      "function": "Governance flow registry",
+      "contractKeys": [],
+      "flowId": "f5e7679f-ca1b-4216-8a6e-bb6c044ed06f",
+      "name": "08 - GOV - Discover and Register HTTP Consumers",
+      "basis": "tenant capture 2026-10-01 (the 2026-08 exports are earlier copies)",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/08_-_GOV_-_Discover_and_Register_HTTP_Consumers__f5e7679f-ca1b-4216-8a6e-bb6c044ed06f.json",
+        "docs/folio-Master-Flows-and-Endpoints/contracts/deployed/08 - GOV - Discover and Register HTTP Consumers__f5e7679f-ca1b-4216-8a6e-bb6c044ed06f__full_definition.json"
+      ]
+    },
+    {
+      "function": "Correspondence Mailer",
+      "contractKeys": [],
+      "flowId": "7d90f8f0-fa91-4aed-899c-b2bce5b70694",
+      "name": "DGO_MAIL_AUTH",
+      "basis": "the Mailer system (spec 1.2); tenant capture 2026-10-01",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/DGO_MAIL_AUTH__7d90f8f0-fa91-4aed-899c-b2bce5b70694.json"
+      ]
+    },
+    {
+      "function": "Correspondence Mailer",
+      "contractKeys": [],
+      "flowId": "d44a67e3-c55a-415a-afe9-ef50a4702117",
+      "name": "DGO_MAIL_DATA",
+      "basis": "the Mailer system (spec 1.2); tenant capture 2026-10-01",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/DGO_MAIL_DATA__d44a67e3-c55a-415a-afe9-ef50a4702117.json"
+      ]
+    },
+    {
+      "function": "Correspondence Mailer",
+      "contractKeys": [],
+      "flowId": "0cb4c4a8-578a-4017-90dc-b8f2ffb21cb8",
+      "name": "DGO_MAIL_DIRECTORY",
+      "basis": "the Mailer system (spec 1.2); tenant capture 2026-10-01",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/DGO_MAIL_DIRECTORY__0cb4c4a8-578a-4017-90dc-b8f2ffb21cb8.json"
+      ]
+    },
+    {
+      "function": "Correspondence Mailer",
+      "contractKeys": [],
+      "flowId": "98ce8b40-d386-4ec5-a277-1a35688fef4f",
+      "name": "DGO_MAIL_LOG",
+      "basis": "the Mailer system (spec 1.2); tenant capture 2026-10-01",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/DGO_MAIL_LOG__98ce8b40-d386-4ec5-a277-1a35688fef4f.json"
+      ]
+    },
+    {
+      "function": "Correspondence Mailer",
+      "contractKeys": [],
+      "flowId": "c5a0f936-40a5-4044-a383-2530468f8413",
+      "name": "DGO_MAIL_PROVISION",
+      "basis": "the Mailer system (spec 1.2); tenant capture 2026-10-01",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/DGO_MAIL_PROVISION__c5a0f936-40a5-4044-a383-2530468f8413.json"
+      ]
+    },
+    {
+      "function": "Correspondence Mailer",
+      "contractKeys": [],
+      "flowId": "0fb53e16-fa57-41a9-9880-752c3a4d4749",
+      "name": "DGO_MAIL_SEND",
+      "basis": "the Mailer system (spec 1.2); tenant capture 2026-10-01",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/DGO_MAIL_SEND__0fb53e16-fa57-41a9-9880-752c3a4d4749.json"
+      ]
+    },
+    {
+      "function": "Correspondence Mailer",
+      "contractKeys": [],
+      "flowId": "176f7af5-7ffc-41d0-910b-e17b5587ebbd",
+      "name": "DGO_MAIL_TEMPLATES",
+      "basis": "the Mailer system (spec 1.2); tenant capture 2026-10-01",
+      "artefacts": [
+        "docs/folio-Master-Flows-and-Endpoints/captures/DGO_MAIL_TEMPLATES__176f7af5-7ffc-41d0-910b-e17b5587ebbd.json"
+      ]
+    }
+  ],
+  "retiredContractKeys": [
+    {
+      "key": "BULK_ASSIGNMENT_DIRECT",
+      "why": "called by nothing in Folio; bulk assignment is BULK_ASSIGNMENT (identification Phase 4 README; the owner pasted the consolidated bulk scope 2026-10-05)"
+    }
+  ],
+  "retired": [
+    {
+      "flowIdPrefix": "30e04477",
+      "name": "01 - GOV - Provision HTTP Flow Registry",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "17a85efb-1ed2-45c9-a602-2ad6f8bb7ead",
+        "name": "01 - GOV - Provision HTTP Flow Registry"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "a45cec1b",
+      "name": "02 - GOV - Register HTTP Flow Truth",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "651ae389-eeed-4bf0-9799-67bd964ebe71",
+        "name": "02 - GOV - Register HTTP Flow Truth"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "c6e573d8",
+      "name": "03 - GOV - Record HTTP Flow Execution",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "0545e19a-c34a-45db-bd11-27b87a34973e",
+        "name": "03 - GOV - Record HTTP Flow Execution"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "a52c5119",
+      "name": "04 - GOV - Audit HTTP Flow Registry Flow Update",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "3e9e1342-5027-4c0f-bdd3-1e06aa7f2a3b",
+        "name": "04 - GOV - Audit HTTP Flow Registry"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "eb5450b3",
+      "name": "05 - GOV - Retire HTTP Flow",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "493b4ab7-8f63-4fab-8121-746c2cac7f98",
+        "name": "05 - GOV - Retire HTTP Flow"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "befc43d2",
+      "name": "06 - GOV - Registry Exception",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "87a74d7e-7435-4e34-baa1-7e759ebf5565",
+        "name": "06 - GOV - Registry Exception Notification"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "9ec66366",
+      "name": "07 - GOV - Consumer HTTP Self-Registration Template",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "c6a011c5-7b11-4241-82ae-a45b88ebf276",
+        "name": "07 - GOV - Consumer HTTP Self-Registration Template"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "5c9080fb",
+      "name": "08 - GOV - Discover and Register HTTP Consumers",
+      "why": "duplicate: an earlier copy of the governance flow the tenant runs",
+      "successor": {
+        "flowId": "f5e7679f-ca1b-4216-8a6e-bb6c044ed06f",
+        "name": "08 - GOV - Discover and Register HTTP Consumers"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "1cb48715",
+      "name": "AUTO_SCHEDULED_SWEEP (2026-08 copy)",
+      "why": "duplicate: an earlier copy",
+      "successor": {
+        "flowId": "8c19b45c-4174-4d2f-9429-ffd08dd1a5ae",
+        "name": "AUTO_SCHEDULED_SWEEP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "badb65d8",
+      "name": "CG_Status_Check_Endpoint / Portal_Status_Enquiry",
+      "why": "duplicate: superseded portal status flow",
+      "successor": {
+        "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+        "name": "CG_Portal_Status_Check_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "e21e7b9f",
+      "name": "Portal_ECM_DOCS_STATUS",
+      "why": "superseded portal status flow",
+      "successor": {
+        "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+        "name": "CG_Portal_Status_Check_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "1b2c2e53",
+      "name": "CG_Support_Endpoint / Portal_ECM_DOCS_SUPPORT",
+      "why": "duplicate: superseded portal support flow",
+      "successor": {
+        "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+        "name": "CG_Portal_Support_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "21d4bfd3",
+      "name": "CG_Writeback_Endpoint",
+      "why": "duplicate: superseded portal write-back flow",
+      "successor": {
+        "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+        "name": "CG_Portal_Writeback_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "5e13db77",
+      "name": "CG_Verification_Confirmation_Endpoint",
+      "why": "duplicate: superseded portal confirmation flow",
+      "successor": {
+        "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+        "name": "CG_Portal_Verification_Confirmation_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "3b69aa71",
+      "name": "Portal_Verify_Confirm",
+      "why": "superseded portal confirmation flow",
+      "successor": {
+        "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+        "name": "CG_Portal_Verification_Confirmation_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "86897b2f",
+      "name": "CG_Verification_Endpoint / Portal_Verify",
+      "why": "duplicate: superseded portal verification flow",
+      "successor": {
+        "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+        "name": "CG_Portal_Verification_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "270fb295",
+      "name": "Portal_UBMISSION_ECM_DOCS",
+      "why": "superseded portal submission flow",
+      "successor": {
+        "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+        "name": "CG_Submission_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "ae4b2a44",
+      "name": "Portal_UPLOAD_ECM_DOCS",
+      "why": "superseded portal upload flow",
+      "successor": {
+        "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+        "name": "CG_Upload_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "39d65c5b",
+      "name": "Portal_Upload_HTTP",
+      "why": "superseded portal upload flow",
+      "successor": {
+        "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+        "name": "CG_Upload_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "9bd6724c",
+      "name": "UPLOAD_ECM_DOCS_PORTAL",
+      "why": "superseded portal upload flow",
+      "successor": {
+        "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+        "name": "CG_Upload_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "63a7f2d7",
+      "name": "CG_SEND_EMAIL",
+      "why": "orphan: no contract key and no caller; mail is sent by IP_SEND_EMAIL and the Mailer",
+      "successor": {
+        "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+        "name": "IP_SEND_EMAIL"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "e5e2c6a2",
+      "name": "Web - Send Email",
+      "why": "superseded mail flow",
+      "successor": {
+        "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+        "name": "IP_SEND_EMAIL"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "3eec824c",
+      "name": "01 - Fetch_All_Data_&_References_Matrix-POST",
+      "why": "superseded workspace data flow",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "10f0d76b",
+      "name": "02- Fetch_All_Data_&_References_Matrix-POST",
+      "why": "superseded workspace data flow",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "672e6085",
+      "name": "03 - Fetch_All_Data_&_References_Matrix-POST",
+      "why": "superseded workspace data flow",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "ce2cbed8",
+      "name": "IP_FETCH_ALL__EXTENDED_ENDPOINT",
+      "why": "duplicate: an alternative FETCH_ALL build behind no URL (ITEM-63)",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "d477fe23",
+      "name": "Fetch_Tasks_POST",
+      "why": "superseded task read flow",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "2b146c0c",
+      "name": "Get Tasks HTTP",
+      "why": "superseded task read flow",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "49de1ff0",
+      "name": "Web - Get Tasks GET SWITCH",
+      "why": "superseded task read flow",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "912f4b9f",
+      "name": "Get Selected Activities and Tasks",
+      "why": "superseded read flow",
+      "successor": {
+        "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "name": "IP_FETCH_ALL_BOOTSTRAP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "e663a119",
+      "name": "01-Fetch_Docs_POST",
+      "why": "superseded document read flow",
+      "successor": {
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "name": "IP_Get_Docs_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "e83e7462",
+      "name": "02-Fetch_Docs_POST",
+      "why": "superseded document read flow",
+      "successor": {
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "name": "IP_Get_Docs_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "34a6d00d",
+      "name": "FETCH_DOCS_V2_POST",
+      "why": "superseded document read flow",
+      "successor": {
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "name": "IP_Get_Docs_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "a9439b39",
+      "name": "Get Docs HTTP",
+      "why": "superseded document read flow",
+      "successor": {
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "name": "IP_Get_Docs_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "81cacabd",
+      "name": "GetDocsPaginatedData",
+      "why": "superseded document read flow",
+      "successor": {
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "name": "IP_Get_Docs_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "d4907f18",
+      "name": "WEB Get Docs  HTTP GET",
+      "why": "superseded document read flow",
+      "successor": {
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "name": "IP_Get_Docs_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "09912e0b",
+      "name": "Fetch Activities",
+      "why": "superseded: an earlier flow named IP_Get_Docs_Endpoint",
+      "successor": {
+        "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+        "name": "IP_Get_Docs_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "3dc47349",
+      "name": "01 - Fetch_References_and_Lookups_Data - POST",
+      "why": "superseded reference data flow",
+      "successor": {
+        "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+        "name": "IP_Reference_Data_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "e1a827d5",
+      "name": "02 - Fetch_References_and_Lookups_Data - POST",
+      "why": "superseded reference data flow",
+      "successor": {
+        "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+        "name": "IP_Reference_Data_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "9695b92b",
+      "name": "OPS_REFERENCES_AND_LOOKUPS",
+      "why": "superseded reference data flow",
+      "successor": {
+        "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+        "name": "IP_Reference_Data_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "340190e6",
+      "name": "Get Email Attachments",
+      "why": "superseded attachment flow",
+      "successor": {
+        "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+        "name": "IP_Retrieve_Email_Attachment_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "8726fb6f",
+      "name": "Web - Get Email Attachments",
+      "why": "superseded attachment flow",
+      "successor": {
+        "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+        "name": "IP_Retrieve_Email_Attachment_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "29399421",
+      "name": "Fetch_Emails_HTTP_POST",
+      "why": "orphan: no contract key and no caller",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "a2b43ce3",
+      "name": "Fetch_Emails_POST",
+      "why": "orphan: no contract key and no caller",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "e209e8a5",
+      "name": "Get Emails HTTP",
+      "why": "orphan: no contract key and no caller",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "4d1c9a59",
+      "name": "Get Correspondences",
+      "why": "orphan: no contract key and no caller",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "b56ce201",
+      "name": "ECM_EDM_ARCHIVE",
+      "why": "orphan: an HTTP flow with no contract key and no caller",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "1abbe547",
+      "name": "Universal Dynamic_Multi-Actions_Executor",
+      "why": "superseded dynamic actions flow (it also created tasks in the DEV_OPS test list)",
+      "successor": {
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "name": "IP_Dynamic_Global_Actions_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "2784d4e0",
+      "name": "Dynamic_Multi-Actions (recovered)",
+      "why": "superseded dynamic actions flow (it also created tasks in the DEV_OPS test list)",
+      "successor": {
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "name": "IP_Dynamic_Global_Actions_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "6d819704",
+      "name": "Web - Subsidiary Doc Actions",
+      "why": "superseded subsidiary actions flow",
+      "successor": {
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "name": "IP_Dynamic_Global_Actions_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "811af8bf",
+      "name": "Web - Task Update",
+      "why": "superseded task update flow",
+      "successor": {
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "name": "IP_Dynamic_Global_Actions_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "08da1783",
+      "name": "IP_Subsidiary_Actions_Endpoint",
+      "why": "superseded: implements none of the SUBSIDIARY_ACTIONS routes (ITEM-65)",
+      "successor": {
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "name": "IP_Dynamic_Global_Actions_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "b9d07010",
+      "name": "Deployed - Create Task",
+      "why": "superseded task creation flow",
+      "successor": {
+        "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+        "name": "Single_Task_Assignment"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "05825db0",
+      "name": "IP_Single_Assignment_Endpoint",
+      "why": "duplicate: the map named it for SINGLE_ASSIGNMENT; the key runs on and was pasted into 3caf9458",
+      "successor": {
+        "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+        "name": "Single_Task_Assignment"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "122bb363",
+      "name": "Deployed Bulk Task Assignment_Create Task",
+      "why": "superseded bulk assignment flow (BULK_ASSIGNMENT_DIRECT retired)",
+      "successor": {
+        "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+        "name": "BULK_OPS_DATA_RETRIEVAL_HTTP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "0d1e8df5",
+      "name": "IP_Bulk_Assign_Endpoint",
+      "why": "superseded: BULK_ASSIGNMENT_DIRECT retired",
+      "successor": {
+        "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+        "name": "BULK_OPS_DATA_RETRIEVAL_HTTP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "57f137b6",
+      "name": "bulk Assign direct",
+      "why": "superseded bulk assignment flow (it created tasks in the DEV_OPS test list)",
+      "successor": {
+        "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+        "name": "BULK_OPS_DATA_RETRIEVAL_HTTP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "9e098918",
+      "name": "optimized Bulk Assign Direct",
+      "why": "superseded bulk assignment flow",
+      "successor": {
+        "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+        "name": "BULK_OPS_DATA_RETRIEVAL_HTTP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "f96399c6",
+      "name": "IP_Bulk_Assignment_Endpoint",
+      "why": "duplicate: the map named it for BULK_ASSIGNMENT; the key was pasted into 5aab9e61",
+      "successor": {
+        "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+        "name": "BULK_OPS_DATA_RETRIEVAL_HTTP"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "3f2f649b",
+      "name": "IP_Create_Email_Assignment (Web - Email Task Created)",
+      "why": "duplicate: the same definition as the adopted email-to-task flow",
+      "successor": {
+        "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+        "name": "IP_Create__Task__for_received_Email_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "2fbb5485",
+      "name": "IP_Create_Email_Assignment_Endpoint",
+      "why": "duplicate: the same definition as the adopted email-to-task flow",
+      "successor": {
+        "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+        "name": "IP_Create__Task__for_received_Email_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "447b1b4d",
+      "name": "Web - Email To Task Processing",
+      "why": "superseded email-to-task flow",
+      "successor": {
+        "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+        "name": "IP_Create__Task__for_received_Email_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "89925df0",
+      "name": "DGO_AI_Assist",
+      "why": "superseded AI flow",
+      "successor": {
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+        "name": "AI_Document_Processing"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "34761736",
+      "name": "Digital Hub Email AI Assist",
+      "why": "superseded AI flow",
+      "successor": {
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+        "name": "AI_Document_Processing"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "aacdf9d5",
+      "name": "Web - Email AI Assist",
+      "why": "superseded AI flow",
+      "successor": {
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+        "name": "AI_Document_Processing"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "fdd3f24e",
+      "name": "Web - Preprocess user message",
+      "why": "superseded AI flow",
+      "successor": {
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+        "name": "AI_Document_Processing"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "98fb5275",
+      "name": "Instant OpenRouter AI Chat",
+      "why": "superseded AI flow",
+      "successor": {
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+        "name": "AI_Document_Processing"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "033e5d70",
+      "name": "Persistent GPT AI Chat in App",
+      "why": "superseded AI flow",
+      "successor": {
+        "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+        "name": "AI_Document_Processing"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "5d0d0a72",
+      "name": "IP_OTP_Endpoint",
+      "why": "duplicate one-time code flow",
+      "successor": {
+        "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "name": "IP_OTP_VERIFY"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "913bd078",
+      "name": "IP_OTP_Endpoint (map)",
+      "why": "duplicate: the map named it for OTP_GENERATE; the key runs on 4dbe6dde",
+      "successor": {
+        "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "name": "IP_OTP_VERIFY"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "c5e314c7",
+      "name": "IP_OTP_VERIFY (2026-09-04 build)",
+      "why": "duplicate one-time code flow, not bound to any key",
+      "successor": {
+        "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "name": "IP_OTP_VERIFY"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "a03d0ae8",
+      "name": "Web - OTP Generate",
+      "why": "superseded one-time code flow",
+      "successor": {
+        "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "name": "IP_OTP_VERIFY"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "3e201620",
+      "name": "Web - OTP Verify",
+      "why": "superseded one-time code flow (the defective one, ITEM-43)",
+      "successor": {
+        "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "name": "IP_OTP_VERIFY"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "12b6e690",
+      "name": "IP_SCAN_INTAKE_Endpoint_v2.1",
+      "why": "duplicate: the map named it for SCAN_INTAKE; the key runs on and was pasted into 5504d7f9",
+      "successor": {
+        "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+        "name": "IP_SCAN_INTAKE"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "3f96478b",
+      "name": "Global_Gap_Remediation_Provisioning",
+      "why": "one-off: provisioning done",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "b340affe",
+      "name": "Portal_Datta_Architecture_Provisioning",
+      "why": "one-off: provisioning done",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "bc095fa2",
+      "name": "Repair the DGO_* governance lists",
+      "why": "one-off repair tool; GOV-10: aimed at the non-authoritative site and deletes columns it does not recognise (turned off 2026-10-08, evidence/2026-10-08-closure-operations.json)",
+      "successor": null,
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "df7ddff1",
+      "name": "ECM_DOCS_INTAKE",
+      "why": "absent from the tenant: the owner answered that no flow or endpoint of that name exists and that the intake flow is IP_SCAN_INTAKE (exported and shared 2026-10-08), and the Flow API answers 404 (evidence/2026-10-08-closure-operations.json item86_ecmDocsIntake). Its recorded definition was a tenant-authenticated read of Portal Registry that no contract key called; Folio reads Portal Registry through IP_Dynamic_Global_Actions_Endpoint",
+      "successor": {
+        "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+        "name": "IP_Dynamic_Global_Actions_Endpoint"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    },
+    {
+      "flowIdPrefix": "326d1fbf",
+      "name": "Folio_LEGACY_INTAKE",
+      "why": "duplicate: an unregistered copy of DGSO INCOMING AI PROCESSING on the same trigger, so each scan was processed twice (turned off 2026-10-08)",
+      "successor": {
+        "flowId": "197527c8-e76c-4f7d-81b8-3cb5c88b1c6c",
+        "name": "Folio_Incoming_Correspondence_Scan_Processing_Flow"
+      },
+      "tenantAction": "If it is in the tenant: turn it off, then delete it once its run history shows no call for 14 days.",
+      "tenantState": "Turned off (owner, 6 October 2026)",
+      "deleteFrom": "2026-10-20"
+    }
+  ],
+  "retiredArtefactsRecord": "docs/folio-Master-Flows-and-Endpoints/registers/flow-retirement.json"
+}

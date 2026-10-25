@@ -1,0 +1,78 @@
+{
+  "schema": "nitda-notification-decisions/v1",
+  "status": "APPROVED",
+  "approvedServiceMailbox": "dgsregistry@nitda.gov.ng",
+  "administratorNotificationTarget": "dgsregistry@nitda.gov.ng",
+  "intakeNotificationTarget": "dgsregistry@nitda.gov.ng",
+  "recurrence": {
+    "frequency": "Week",
+    "interval": 1,
+    "weekDays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "at": "08:45",
+    "timeZone": "W. Central Africa Standard Time"
+  },
+  "retryPolicy": {
+    "maxAttempts": 3,
+    "delayMinutes": [
+      1440,
+      1440
+    ],
+    "permanentFailureAlertAfterAttempt": 3,
+    "scope": "support-case closure notices only",
+    "otherFailures": "every other failed send writes one failed receipt (Attempts 1) in Portal Outbox Receipts and is not re-sent automatically; the platform's default retry policy already retries a send within its run on a transient fault. Owner decision 2026-10-18 (supersedes rule A's reporting clause): every failure is registered; Folio_Failure_Watch reports the reportable groups (citizen outcomes, and any type it cannot place) to the registry hourly in working hours, each once, a burst as a broken mail connection, and the open ones at 07:00; the other groups are counted and shown in the Workspace's System Health.",
+    "note": "support-case closure notices keep their sweep retry (RN-027); owner rule A (2026-10-17) revised by the owner on 2026-10-18 as recorded in failureHandling"
+  },
+  "claimPolicy": {
+    "claimExpiryMinutes": 60,
+    "maximumConcurrency": 1,
+    "note": "recorded as policy; not built. Only one sweep is scheduled and the trigger sets no concurrency limit (owner, 2026-10-18: leave as is, no flow change)"
+  },
+  "reassignment": {
+    "notifyNewHolder": true,
+    "notifyPreviousHolder": false,
+    "note": "current behaviour: StaffNotices.reassigned (core/staff-notice-service.js, RN-019) goes to the registry mailbox while StaffNoticeDelivery.recipients is registry. Owner, 2026-10-18: leave as is, no change built"
+  },
+  "comments": {
+    "audiences": [],
+    "note": "current behaviour: comments send no mail (RN-020 is ABSENT). Owner, 2026-10-18: leave as is, the proposed comment notice is not built"
+  },
+  "statusMappings": {
+    "Accepted": "Under review (governed label; config/status-vocabulary.config.js maps Accepted to review)",
+    "Archived": "Approved (governed label; config/status-vocabulary.config.js maps Archived to approved)"
+  },
+  "approvals": {
+    "businessOwner": "Office of the Director-General/CEO (dgsregistry@nitda.gov.ng)",
+    "technicalOwner": "Hamza Kani (hkani@nitda.gov.ng)",
+    "securityPrivacyOwner": "Office of the Director-General/CEO (dgsregistry@nitda.gov.ng)",
+    "approvedAtUtc": "2026-10-18T00:00:00Z"
+  },
+  "proposal": {
+    "date": "2026-10-16",
+    "basis": "Rechecked 2026-10-17 against the released packages and a live read. Each value is marked current (what the released flows do now) or proposed (needs owner approval and, where noted, a build).",
+    "sources": {
+      "recurrence": "current: AUTO_SCHEDULED_SWEEP trigger, Week, interval 1, Monday to Friday 08:45 WAT (live read 2026-10-16). CG_Portal_Daily_Sweep: daily 08:00 UTC (09:00 WAT). Both are Stopped until commissioning.",
+      "retry": "current and approved: only support-case closure notices are retried by the sweep; every failure is registered and the reportable ones are reported by Folio_Failure_Watch (owner decision 2026-10-18).",
+      "targets": "current: Flow Configuration has no NOTIFY_ rows (live read 2026-10-17), so the flows use their built-in defaults: alerts to dgsRegistry@nitda.gov.ng, sweep digests to the registry (not staff), notices enabled, working hours only.",
+      "claim": "current: no claim step is built; the trigger sets no concurrency limit. proposed: concurrency 1, a flow change made only on approval.",
+      "reassignment": "proposed, not current behaviour: notify the new holder, not the previous one.",
+      "comments": "proposed, not current behaviour: comment notices to the assignee and the registry.",
+      "statusMappings": "current: config/status-vocabulary.config.js maps Accepted to review (Under review) and Archived to approved (Approved)."
+    }
+  },
+  "approvalBasis": "Owner messages in the commissioning session: 2026-10-16 \"All requested Approvals approved\" and \"Proposal accepted\"; 2026-10-17 retry rule A; 2026-10-18 security and privacy owner confirmed as the Office of the DG/CEO, the three proposals (claim concurrency, reassignment, comments) left as is, all other approvals given.",
+  "failureHandling": {
+    "decidedBy": "owner, 2026-10-18 (approved in the commissioning session)",
+    "principle": "All failures are registered; not all are reported.",
+    "register": "Portal Outbox Receipts (Global_Digital_Documents_Centre, 88a81ca1): every send of every released package writes Status sent or failed (tests/failure-register.test.mjs). A failure is closed by setting Status to resolved-resent, resolved-corrected or resolved-superseded; Modified and Modified By record who and when.",
+    "groups": "config/notification-failure-groups.config.js: citizen (reported), codes, staff, ops, outward (registered and counted), unclassified (reported, fail-safe)",
+    "watch": "Folio_Failure_Watch: every hour, Monday to Friday, 07:00-18:00 WAT; reports new reportable failures once; a burst (default 5 in the window) as a broken mail connection; at 07:00 the summary of open reportable failures with totals per group; writes NOTIFY_FAILURE_HEALTH for the Workspace.",
+    "controls": "Flow Configuration NOTIFY_FAILURE_WATCH_ENABLED, NOTIFY_FAILURE_REPORT_GROUPS, NOTIFY_FAILURE_BURST, NOTIFY_FAILURE_REPORT_TO; registration itself cannot be switched off.",
+    "status": "built in the repository (identification release of 2026-10-18); the flow is not yet created in the tenant"
+  }
+}

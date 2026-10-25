@@ -1,0 +1,2139 @@
+{
+  "nodeId": "Scope_ScheduledSweep_Flow",
+  "serializedValue": {
+    "actions": {
+      "Compose_Request_Context": {
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000133"
+        },
+        "type": "Compose",
+        "inputs": {
+          "requestId": "@string(workflow()?['run']?['name'])",
+          "receivedAtUtc": "@utcNow()",
+          "startTicks": "@ticks(utcNow())"
+        }
+      },
+      "Scope_Global_ScheduledSweep": {
+        "actions": {
+          "Get_Notification_Config": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000134"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                "$filter": "startswith(Title,'NOTIFY_')",
+                "$top": 50
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Select_Notify_Config": {
+            "runAfter": {
+              "Get_Notification_Config": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000135"
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(actions('Get_Notification_Config')?['outputs']?['body']?['value'],json('[]'))",
+              "select": {
+                "k": "@toUpper(trim(string(item()?['Title'])))",
+                "v": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+              }
+            }
+          },
+          "Compose_Notify_Config_Xml": {
+            "runAfter": {
+              "Select_Notify_Config": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000136"
+            },
+            "type": "Compose",
+            "inputs": "@xml(json(concat('{\"r\":{\"i\":',string(body('Select_Notify_Config')),'}}')))"
+          },
+          "Compose_Notify_Logo_Default": {
+            "runAfter": {
+              "Compose_Notify_Config_Xml": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000137"
+            },
+            "type": "Compose",
+            "inputs": "data:image/png;base64,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"
+          },
+          "Compose_Notify_Config": {
+            "runAfter": {
+              "Compose_Notify_Logo_Default": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000138"
+            },
+            "type": "Compose",
+            "inputs": {
+              "enabled": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_ENABLED\"]/v)')))),'false'))",
+              "opsTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)'))))",
+              "replyTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)'))))",
+              "logoSrc": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)')))),outputs('Compose_Notify_Logo_Default'),trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)'))))",
+              "opsAppUrl": "@trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_APP_URL\"]/v)')))",
+              "supportReplyTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_SUPPORT_REPLY_TO\"]/v)')))),if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_SUPPORT_REPLY_TO\"]/v)'))))",
+              "trackUrl": "@trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_TRACK_URL\"]/v)')))",
+              "workingHoursOnly": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_WORKING_HOURS_ONLY\"]/v)')))),'false'))",
+              "staffRecipients": "@equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_SWEEP_RECIPIENTS\"]/v)')))),'staff')"
+            }
+          },
+          "Compose_In_Working_Hours": {
+            "runAfter": {
+              "Compose_Notify_Config": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000139"
+            },
+            "type": "Compose",
+            "inputs": "@or(not(equals(outputs('Compose_Notify_Config')?['workingHoursOnly'],true)),and(greaterOrEquals(dayOfWeek(convertFromUtc(utcNow(),'W. Central Africa Standard Time')),1),lessOrEquals(dayOfWeek(convertFromUtc(utcNow(),'W. Central Africa Standard Time')),5),greaterOrEquals(int(formatDateTime(convertFromUtc(utcNow(),'W. Central Africa Standard Time'),'HH')),7),less(int(formatDateTime(convertFromUtc(utcNow(),'W. Central Africa Standard Time'),'HH')),18)))"
+          },
+          "Get_Ack_Tasks": {
+            "runAfter": {
+              "Compose_In_Working_Hours": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000140"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "ee82725a-c408-45e2-a8e8-facf7a092047",
+                "$filter": "@concat('Acknowledgement_x0020_Due_x0020_ ge ''',formatDateTime(addDays(utcNow(),-30),'yyyy-MM-ddTHH:mm:ssZ'),''' and Acknowledgement_x0020_Due_x0020_ lt ''',formatDateTime(utcNow(),'yyyy-MM-ddTHH:mm:ssZ'),'''')",
+                "$orderby": "Acknowledgement_x0020_Due_x0020_ asc",
+                "$top": 500
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Get_Due_Tasks": {
+            "runAfter": {
+              "Get_Ack_Tasks": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000158"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "ee82725a-c408-45e2-a8e8-facf7a092047",
+                "$filter": "@concat('DueDate ge ''',formatDateTime(addDays(utcNow(),-30),'yyyy-MM-ddTHH:mm:ssZ'),''' and DueDate lt ''',formatDateTime(utcNow(),'yyyy-MM-ddTHH:mm:ssZ'),'''')",
+                "$orderby": "DueDate asc",
+                "$top": 500
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Get_Closed_Support_Cases": {
+            "runAfter": {
+              "Compose_Sweep_Section_Reminders": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000176"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "b984645b-8e3a-457f-a305-b95650fd3f23",
+                "$filter": "@concat('(Status eq ''Closed'' or Status eq ''closed'' or Status eq ''Resolved'' or Status eq ''resolved'') and Modified ge ''',formatDateTime(addDays(utcNow(),-30),'yyyy-MM-ddTHH:mm:ssZ'),'''')",
+                "$orderby": "Modified desc",
+                "$top": 100
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Get_Case_Receipts": {
+            "runAfter": {
+              "Get_Closed_Support_Cases": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000177"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "$filter": "@concat('MessageType eq ''support-reply'' and SentAtUtc ge ''',formatDateTime(addDays(utcNow(),-45),'yyyy-MM-ddTHH:mm:ssZ'),'''')",
+                "$orderby": "ID asc",
+                "$top": 5000
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Select_Case_Receipts": {
+            "runAfter": {
+              "Get_Case_Receipts": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000178"
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(outputs('Get_Case_Receipts')?['body/value'],json('[]'))",
+              "select": {
+                "k": "@replace(string(coalesce(item()?['Title'],'')),'\"','')",
+                "t": "@string(coalesce(item()?['Title'],''))",
+                "s": "@toLower(string(coalesce(item()?['Status'],'')))",
+                "a": "@int(concat('0',first(split(string(coalesce(item()?['Attempts'],'')),'.'))))",
+                "id": "@item()?['ID']"
+              }
+            }
+          },
+          "Compose_Case_Receipts_Xml": {
+            "runAfter": {
+              "Select_Case_Receipts": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000179"
+            },
+            "type": "Compose",
+            "inputs": "@xml(json(concat('{\"r\":{\"i\":',string(union(createArray(json('{\"k\":\"__none__\",\"t\":\"\",\"s\":\"\",\"a\":0,\"id\":0}')),body('Select_Case_Receipts'))),'}}')))"
+          },
+          "Foreach_Closed_Case": {
+            "foreach": "@coalesce(outputs('Get_Closed_Support_Cases')?['body/value'],json('[]'))",
+            "actions": {
+              "Condition_Case_Eligible": {
+                "actions": {
+                  "Compose_Case_Receipt": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000180"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "state": "@if(equals(int(xpath(outputs('Compose_Case_Receipts_Xml'),concat('count(',concat('/r/i[k=\"',replace(concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'\"',''),'\"]'),')'))),0),'none',if(equals(xpath(outputs('Compose_Case_Receipts_Xml'),concat('string(',concat('/r/i[k=\"',replace(concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'\"',''),'\"]'),'[last()]/s)')),'sent'),'sent',if(equals(xpath(outputs('Compose_Case_Receipts_Xml'),concat('string(',concat('/r/i[k=\"',replace(concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'\"',''),'\"]'),'[last()]/s)')),'abandoned'),'exhausted',if(less(int(concat('0',xpath(outputs('Compose_Case_Receipts_Xml'),concat('string(',concat('/r/i[k=\"',replace(concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'\"',''),'\"]'),'[last()]/a)')))),3),'retry','exhausted'))))",
+                      "id": "@int(concat('0',xpath(outputs('Compose_Case_Receipts_Xml'),concat('string(',concat('/r/i[k=\"',replace(concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'\"',''),'\"]'),'[last()]/id)'))))",
+                      "title": "@xpath(outputs('Compose_Case_Receipts_Xml'),concat('string(',concat('/r/i[k=\"',replace(concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'\"',''),'\"]'),'[last()]/t)'))",
+                      "attempts": "@int(concat('0',xpath(outputs('Compose_Case_Receipts_Xml'),concat('string(',concat('/r/i[k=\"',replace(concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'\"',''),'\"]'),'[last()]/a)'))))"
+                    }
+                  },
+                  "Condition_Case_Send": {
+                    "actions": {
+                      "Compose_Case_Fields": {
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000181"
+                        },
+                        "type": "Compose",
+                        "inputs": {
+                          "reference": "@replace(replace(replace(replace(replace(string(string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                          "topic": "@if(empty(string(coalesce(items('Foreach_Closed_Case')?['Topic'],''))),'&mdash;',replace(replace(replace(replace(replace(string(string(items('Foreach_Closed_Case')?['Topic'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))",
+                          "opened": "@if(empty(string(coalesce(items('Foreach_Closed_Case')?['SubmittedAtUtc'],''))),'&mdash;',concat(convertFromUtc(if(empty(string(coalesce(string(items('Foreach_Closed_Case')?['SubmittedAtUtc']),''))),'1970-01-01T00:00:00Z',if(endsWith(string(string(items('Foreach_Closed_Case')?['SubmittedAtUtc'])),'Z'),string(string(items('Foreach_Closed_Case')?['SubmittedAtUtc'])),concat(string(string(items('Foreach_Closed_Case')?['SubmittedAtUtc'])),'Z'))),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT'))",
+                          "closed": "@if(empty(string(coalesce(items('Foreach_Closed_Case')?['Modified'],''))),'&mdash;',concat(convertFromUtc(if(empty(string(coalesce(string(items('Foreach_Closed_Case')?['Modified']),''))),'1970-01-01T00:00:00Z',if(endsWith(string(string(items('Foreach_Closed_Case')?['Modified'])),'Z'),string(string(items('Foreach_Closed_Case')?['Modified'])),concat(string(string(items('Foreach_Closed_Case')?['Modified'])),'Z'))),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT'))",
+                          "aboutRef": "@if(empty(toUpper(trim(string(coalesce(items('Foreach_Closed_Case')?['AboutReference'],''))))),'&mdash;',replace(replace(replace(replace(replace(string(toUpper(trim(string(coalesce(items('Foreach_Closed_Case')?['AboutReference'],''))))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))",
+                          "trackLink": "@if(empty(toUpper(trim(string(coalesce(items('Foreach_Closed_Case')?['AboutReference'],''))))),'',if(empty(outputs('Compose_Notify_Config')?['trackUrl']),'',concat(outputs('Compose_Notify_Config')?['trackUrl'],if(contains(outputs('Compose_Notify_Config')?['trackUrl'],'?'),'&','?'),'id=',encodeUriComponent(toUpper(trim(string(coalesce(items('Foreach_Closed_Case')?['AboutReference'],''))))),'&email=',encodeUriComponent(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],''))))))))",
+                          "logoSrc": "@outputs('Compose_Notify_Config')?['logoSrc']"
+                        }
+                      },
+                      "Compose_Case_Html": {
+                        "runAfter": {
+                          "Compose_Case_Html_Part3": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000184"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{outputs('Compose_Case_Html_Part1')}@{outputs('Compose_Case_Html_Part2')}@{outputs('Compose_Case_Html_Part3')}"
+                      },
+                      "Send_Case_Email": {
+                        "runAfter": {
+                          "Compose_Case_Html": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000185"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),outputs('Compose_Notify_Config')?['opsTo'])",
+                            "emailMessage/Subject": "@concat('Your NITDA support case ',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID'])),' is closed')",
+                            "emailMessage/Body": "@outputs('Compose_Case_Html')",
+                            "emailMessage/ReplyTo": "@outputs('Compose_Notify_Config')?['supportReplyTo']",
+                            "emailMessage/Importance": "Normal"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connection": "shared_office365",
+                            "operationId": "SendEmailV2"
+                          }
+                        }
+                      },
+                      "Condition_Case_Had_Receipt": {
+                        "actions": {
+                          "Update_Case_Receipt": {
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000186"
+                            },
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                                "id": "@outputs('Compose_Case_Receipt')?['id']",
+                                "item/Title": "@outputs('Compose_Case_Receipt')?['title']",
+                                "item/Status": "@if(equals(string(coalesce(actions('Send_Case_Email')?['status'],'')),'Succeeded'),'sent','failed')",
+                                "item/Attempts": "@add(outputs('Compose_Case_Receipt')?['attempts'],1)",
+                                "item/SentAtUtc": "@utcNow()",
+                                "item/LastError": "@if(equals(string(coalesce(actions('Send_Case_Email')?['status'],'')),'Succeeded'),'',substring(string(coalesce(actions('Send_Case_Email')?['error']?['message'],actions('Send_Case_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Case_Email')?['error']?['message'],actions('Send_Case_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                "connection": "shared_sharepointonline",
+                                "operationId": "PatchItem"
+                              }
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Send_Case_Email": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut",
+                            "Skipped"
+                          ]
+                        },
+                        "else": {
+                          "actions": {
+                            "Create_Case_Receipt": {
+                              "metadata": {
+                                "operationMetadataId": "a0000000-0000-4000-8000-000000000187"
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                  "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                                  "item/Title": "@concat('support-reply:',string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID'])))",
+                                  "item/MessageType": "support-reply",
+                                  "item/RecipientEmail": "@toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],''))))",
+                                  "item/Reference": "@string(coalesce(items('Foreach_Closed_Case')?['Title'],items('Foreach_Closed_Case')?['ID']))",
+                                  "item/SentAtUtc": "@utcNow()",
+                                  "item/Status": "@if(equals(string(coalesce(actions('Send_Case_Email')?['status'],'')),'Succeeded'),'sent','failed')",
+                                  "item/Attempts": 1,
+                                  "item/LastError": "@if(equals(string(coalesce(actions('Send_Case_Email')?['status'],'')),'Succeeded'),'',substring(string(coalesce(actions('Send_Case_Email')?['error']?['message'],actions('Send_Case_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Case_Email')?['error']?['message'],actions('Send_Case_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                  "connection": "shared_sharepointonline",
+                                  "operationId": "PostItem"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "expression": {
+                          "and": [
+                            {
+                              "equals": [
+                                "@outputs('Compose_Case_Receipt')?['state']",
+                                "retry"
+                              ]
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000188"
+                        },
+                        "type": "If"
+                      },
+                      "Compose_Case_Html_Part1": {
+                        "type": "Compose",
+                        "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,date=no,address=no,email=no,url=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Your support case is closed</title><!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,span,h1{font-family:'Segoe UI',Arial,sans-serif!important}</style><![endif]--><style>body{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}a{color:#05583B}a:hover{color:#0C603F}.list td{font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:19px;padding:9px 10px;border-bottom:1px solid #E8E6E7;color:#1B1A1A;word-break:break-word}\n@media only screen and (max-width:620px){.container{width:100%!important;max-width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}.hero{padding:24px 20px!important}.h1{font-size:23px!important;line-height:30px!important}.ref{font-size:19px!important;line-height:26px!important}.code{font-size:32px!important;letter-spacing:8px!important}.stack,.stack>tbody,.stack>tbody>tr,.stack>tr{display:block!important;width:100%!important}.stack>tbody>tr>td,.stack>tr>td{display:block!important;width:100%!important;box-sizing:border-box}.step{padding:0 0 14px 0!important}.tile{padding:0 0 8px 0!important}.cell-r{text-align:left!important;padding:10px 0 0 0!important}.kv-l,.kv-v{display:block!important;width:100%!important;box-sizing:border-box}.kv-l{padding:10px 0 0 0!important;border-bottom:0!important}.kv-v{padding:2px 0 10px 0!important}.btn{float:none!important;width:100%!important;margin:0 0 10px 0!important}.btn td,.btn a{display:block!important;width:100%!important;box-sizing:border-box;text-align:center!important}.hdr-r{display:none!important}.outer{padding:0!important}}</style></head>\n<body style=\"margin:0;padding:0;background:#F5F4F4;\">\n<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;\">@{concat('Your support case ',outputs('Compose_Case_Fields')?['reference'],' has been closed. Reply if it is not resolved.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#F5F4F4;\"><tr><td class=\"outer\" align=\"center\" style=\"padding:28px 12px;\">\n<!--[if mso]><table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td><![endif]-->\n<table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;border-collapse:separate;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:14px;overflow:hidden;\">\n<tr><td class=\"px\" bgcolor=\"#05583B\" style=\"padding:24px 32px 22px 32px;background:#05583B;border-bottom:3px solid #17B255;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td valign=\"middle\" style=\"padding:0;\"><img src=\"https://folio-portal.page.gd/email-assets/nitda-lockup-white.png\" width=\"168\" alt=\"NITDA\" style=\"display:block;width:168px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:700;color:#FFFFFF;\"></td></tr></table></td></tr>\n<tr><td class=\"hero px\" style=\"padding:30px 32px 28px 32px;background:#E6F7ED;border-top:1px solid #C2EED2;border-bottom:4px solid #119143;\"><p style=\"margin:0 0 12px 0;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#FFFFFF;border:1px solid #8BD9A9;color:#0D7234;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">&#10003;&nbsp; Case closed</span></p><h1 class=\"h1\" style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:27px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#07401D;word-break:break-word;overflow-wrap:anywhere;\">Your support case is closed</h1><p style=\"margin:10px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:22px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">If anything is still outstanding, tell us and we will pick it up again.</p></td></tr>\n<tr><td class=\"px\" style=\"padding:28px 32px 30px 32px;background:#FFFFFF;\"><p style=\"margin:0 0 12px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:24px;font-weight:600;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">Dear Sir/Madam,</p>",
+                        "runAfter": {
+                          "Compose_Case_Fields": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Compose_Case_Html_Part2": {
+                        "type": "Compose",
+                        "inputs": "<p style=\"margin:0 0 14px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:23px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">The NITDA portal helpdesk has closed your case.</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:8px 0 4px 0;border-collapse:separate;background:#E6F7ED;border:1px solid #C2EED2;border-radius:10px;\"><tr><td width=\"6\" style=\"width:6px;background:#119143;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:16px 18px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td valign=\"middle\" style=\"padding:0;\"><p style=\"margin:0 0 4px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#5F5C5D;\">Case reference</p><p class=\"ref\" style=\"margin:0;font-family:'Cascadia Mono',Consolas,'Courier New',monospace;font-size:22px;line-height:30px;font-weight:700;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{outputs('Compose_Case_Fields')?['reference']}</p></td><td class=\"cell-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#FFFFFF;border:1px solid #8BD9A9;color:#0D7234;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">&#10003; Closed</span></td></tr></table></td></tr></table><p style=\"margin:28px 0 10px 0;padding:0 0 8px 0;border-bottom:1px solid #E8E6E7;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#05583B;\">Your case</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"table-layout:fixed;\"><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Topic</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{outputs('Compose_Case_Fields')?['topic']}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Opened</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{outputs('Compose_Case_Fields')?['opened']}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Closed</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{outputs('Compose_Case_Fields')?['closed']}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Linked request</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{outputs('Compose_Case_Fields')?['aboutRef']}</td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:20px 0 4px 0;border-collapse:separate;background:#E6F7ED;border:1px solid #C2EED2;border-radius:10px;\"><tr><td width=\"5\" style=\"width:5px;background:#119143;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:14px 18px;\"><p style=\"margin:0 0 4px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#1B1A1A;\">Not resolved?</p><div style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:13px;line-height:20px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">Reply to this email quoting your case reference and the helpdesk will reopen it. There is no need to raise a new case.</div></td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:24px 0 4px 0;\"><tr><td class=\"btn-row\" style=\"padding:0;\">@{if(not(empty(outputs('Compose_Case_Fields')?['trackLink'])),concat('<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" align=\"left\" style=\"margin:4px 10px 4px 0;border-collapse:separate;\"><tr><td align=\"center\" style=\"border-radius:8px;background:#0D7234;border:1px solid #0D7234;\"><a href=\"',outputs('Compose_Case_Fields')?['trackLink'],'\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block;padding:13px 24px;font-family:Outfit,''Segoe UI'',Arial,sans-serif;font-size:15px;line-height:20px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:8px;white-space:nowrap;\">Track the linked request&nbsp;&rarr;</a></td></tr></table>'),'')}</td></tr></table></td></tr>\n<tr><td class=\"px\" style=\"padding:22px 32px 26px 32px;background:#F5F4F4;border-top:1px solid #E8E6E7;\">",
+                        "runAfter": {
+                          "Compose_Case_Html_Part1": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Compose_Case_Html_Part3": {
+                        "type": "Compose",
+                        "inputs": "<p style=\"margin:0 0 12px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">You received this because you raised a support case on the NITDA portal.</p><p style=\"margin:0 0 4px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:13px;line-height:18px;font-weight:700;color:#05583B;\">National Information Technology Development Agency</p><p style=\"margin:0 0 6px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">No. 28, Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja</p><p style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\"><a href=\"https://nitda.gov.ng\" target=\"_blank\" rel=\"noopener\" style=\"color:#05583B;text-decoration:underline;\">nitda.gov.ng</a> &nbsp;&middot;&nbsp; &copy; @{formatDateTime(utcNow(),'yyyy')} NITDA &nbsp;&middot;&nbsp; Automated message</p></td></tr>\n</table>\n<!--[if mso]></td></tr></table><![endif]-->\n</td></tr></table>\n</body></html>",
+                        "runAfter": {
+                          "Compose_Case_Html_Part2": [
+                            "Succeeded"
+                          ]
+                        }
+                      },
+                      "Create_Send_Case_Email_Receipt": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Send_Case_Email": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "PostItem"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                            "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                            "item/Title": "@concat('case:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                            "item/MessageType": "case",
+                            "item/RecipientEmail": "@if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),outputs('Compose_Notify_Config')?['opsTo'])",
+                            "item/Reference": "@string(workflow()?['run']?['name'])",
+                            "item/SentAtUtc": "@utcNow()",
+                            "item/Status": "@if(equals(actions('Send_Case_Email')?['status'],'Succeeded'),'sent','failed')",
+                            "item/Attempts": 1,
+                            "item/LastError": "@if(equals(actions('Send_Case_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Case_Email')?['error']?['message'],actions('Send_Case_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Case_Email')?['error']?['message'],actions('Send_Case_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                          }
+                        }
+                      },
+                      "Compose_Send_Case_Email_Outcome": {
+                        "type": "Compose",
+                        "runAfter": {
+                          "Create_Send_Case_Email_Receipt": [
+                            "Succeeded",
+                            "Failed",
+                            "Skipped",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": "@int(if(or(equals(actions('Send_Case_Email')?['status'],'Failed'),equals(actions('Send_Case_Email')?['status'],'TimedOut')),'send-failed','0'))"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Case_Receipt": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {}
+                    },
+                    "expression": {
+                      "or": [
+                        {
+                          "equals": [
+                            "@outputs('Compose_Case_Receipt')?['state']",
+                            "none"
+                          ]
+                        },
+                        {
+                          "equals": [
+                            "@outputs('Compose_Case_Receipt')?['state']",
+                            "retry"
+                          ]
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000189"
+                    },
+                    "type": "If"
+                  }
+                },
+                "else": {
+                  "actions": {}
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@and(not(or(empty(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],''))))),greater(length(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],''))))),255),not(equals(length(split(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),'@')),2)),startsWith(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),'@'),endsWith(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),'@'),contains(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),' '),contains(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),';'),contains(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),','),not(contains(string(last(split(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),'@'))),'.')),endsWith(toLower(trim(string(coalesce(items('Foreach_Closed_Case')?['Email'],'')))),'.'))),equals(outputs('Compose_Notify_Config')?['enabled'],true),not(empty(string(coalesce(items('Foreach_Closed_Case')?['Title'],'')))))",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000190"
+                },
+                "type": "If"
+              }
+            },
+            "runAfter": {
+              "Compose_Case_Receipts_Xml": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000191"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Compose_Sweep_Section_Support": {
+            "runAfter": {
+              "Foreach_Closed_Case": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ],
+              "Compose_Case_Receipts_Xml": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000192"
+            },
+            "type": "Compose",
+            "inputs": "@if(and(equals(string(coalesce(actions('Get_Closed_Support_Cases')?['status'],'')),'Succeeded'),equals(string(coalesce(actions('Compose_Case_Receipts_Xml')?['status'],'')),'Succeeded')),string(coalesce(actions('Foreach_Closed_Case')?['status'],'Skipped')),'Failed')"
+          },
+          "Get_Undeliverable_Receipts": {
+            "runAfter": {
+              "Compose_Sweep_Section_Support": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000193"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "$filter": "Status eq 'failed' and Attempts ge 3",
+                "$orderby": "SentAtUtc asc",
+                "$top": 100
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Select_Undeliverable_Rows": {
+            "runAfter": {
+              "Get_Undeliverable_Receipts": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000194"
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(outputs('Get_Undeliverable_Receipts')?['body/value'],json('[]'))",
+              "select": "@concat(concat('<div style=\"padding:7px 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:12px;line-height:17px;font-weight:700;color:#1B1A1A;word-break:break-all;\">',replace(replace(replace(replace(replace(string(string(coalesce(item()?['Reference'],'—'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),' <span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;line-height:14px;font-weight:700;color:#780820;background:#FBE7EB;border-radius:4px;padding:1px 6px;margin-left:6px;\">',replace(replace(replace(replace(replace(string(string(coalesce(item()?['MessageType'],'message'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</span></p><p style=\"margin:1px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;line-height:17px;color:#1B1A1A;word-break:break-word;\">',replace(replace(replace(replace(replace(string(string(coalesce(item()?['RecipientEmail'],'(no address)'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'<span style=\"color:#5F5C5D;\"> &middot; ',concat(replace(replace(replace(replace(replace(string(concat(substring(string(coalesce(item()?['LastError'],'no error recorded')),0,min(length(string(coalesce(item()?['LastError'],'no error recorded'))),70)))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</span></p></div>')),'<!--i-->')"
+            }
+          },
+          "Condition_Any_Undeliverable": {
+            "actions": {
+              "Compose_Undeliverable_Fields": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000195"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "count": "@length(coalesce(outputs('Get_Undeliverable_Receipts')?['body/value'],json('[]')))",
+                  "items": "@join(body('Select_Undeliverable_Rows'),'')"
+                }
+              },
+              "Compose_Undeliverable_Html": {
+                "runAfter": {
+                  "Compose_Undeliverable_Html_Part3": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000198"
+                },
+                "type": "Compose",
+                "inputs": "@{outputs('Compose_Undeliverable_Html_Part1')}@{outputs('Compose_Undeliverable_Html_Part2')}@{outputs('Compose_Undeliverable_Html_Part3')}"
+              },
+              "Send_Undeliverable_Alert_Email": {
+                "runAfter": {
+                  "Compose_Undeliverable_Html": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000199"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "emailMessage/To": "@outputs('Compose_Notify_Config')?['opsTo']",
+                    "emailMessage/Subject": "@concat('Action required: ',string(length(coalesce(outputs('Get_Undeliverable_Receipts')?['body/value'],json('[]')))),' undeliverable notification(s)')",
+                    "emailMessage/Body": "@outputs('Compose_Undeliverable_Html')",
+                    "emailMessage/Importance": "High"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                    "connection": "shared_office365",
+                    "operationId": "SendEmailV2"
+                  }
+                }
+              },
+              "Foreach_Mark_Abandoned": {
+                "foreach": "@coalesce(outputs('Get_Undeliverable_Receipts')?['body/value'],json('[]'))",
+                "actions": {
+                  "Mark_Receipt_Abandoned": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000200"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                        "id": "@items('Foreach_Mark_Abandoned')?['ID']",
+                        "item/Title": "@items('Foreach_Mark_Abandoned')?['Title']",
+                        "item/Status": "abandoned"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "PatchItem"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Send_Undeliverable_Alert_Email": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000201"
+                },
+                "type": "Foreach"
+              },
+              "Compose_Undeliverable_Html_Part1": {
+                "type": "Compose",
+                "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,date=no,address=no,email=no,url=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Undeliverable notifications</title><!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,span,h1{font-family:'Segoe UI',Arial,sans-serif!important}</style><![endif]--><style>body{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}a{color:#05583B}a:hover{color:#0C603F}.list td{font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:19px;padding:9px 10px;border-bottom:1px solid #E8E6E7;color:#1B1A1A;word-break:break-word}\n@media only screen and (max-width:620px){.container{width:100%!important;max-width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}.hero{padding:24px 20px!important}.h1{font-size:23px!important;line-height:30px!important}.ref{font-size:19px!important;line-height:26px!important}.code{font-size:32px!important;letter-spacing:8px!important}.stack,.stack>tbody,.stack>tbody>tr,.stack>tr{display:block!important;width:100%!important}.stack>tbody>tr>td,.stack>tr>td{display:block!important;width:100%!important;box-sizing:border-box}.step{padding:0 0 14px 0!important}.tile{padding:0 0 8px 0!important}.cell-r{text-align:left!important;padding:10px 0 0 0!important}.kv-l,.kv-v{display:block!important;width:100%!important;box-sizing:border-box}.kv-l{padding:10px 0 0 0!important;border-bottom:0!important}.kv-v{padding:2px 0 10px 0!important}.btn{float:none!important;width:100%!important;margin:0 0 10px 0!important}.btn td,.btn a{display:block!important;width:100%!important;box-sizing:border-box;text-align:center!important}.hdr-r{display:none!important}.outer{padding:0!important}}</style></head>\n<body style=\"margin:0;padding:0;background:#F5F4F4;\">\n<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;\">@{concat(string(outputs('Compose_Undeliverable_Fields')?['count']),' notification(s) failed three times and will not be retried.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#F5F4F4;\"><tr><td class=\"outer\" align=\"center\" style=\"padding:28px 12px;\">\n<!--[if mso]><table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td><![endif]-->\n<table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;border-collapse:separate;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:14px;overflow:hidden;\">\n<tr><td class=\"px\" bgcolor=\"#05583B\" style=\"padding:24px 32px 22px 32px;background:#05583B;border-bottom:3px solid #17B255;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td valign=\"middle\" style=\"padding:0;\"><img src=\"https://folio-portal.page.gd/email-assets/nitda-lockup-white.png\" width=\"168\" alt=\"NITDA\" style=\"display:block;width:168px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:700;color:#FFFFFF;\"></td><td class=\"hdr-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><img src=\"https://folio-portal.page.gd/email-assets/dgo-logo-whiteout.png\" width=\"150\" alt=\"DGO Digital Ops, an initiative of NITDA\" style=\"display:block;width:150px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:13px;font-weight:700;color:#FFFFFF;\"></td></tr></table></td></tr>\n<tr><td class=\"hero px\" style=\"padding:30px 32px 28px 32px;background:#FBF1D8;border-top:1px solid #F7E2A8;border-bottom:4px solid #A87500;\"><p style=\"margin:0 0 12px 0;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#FFFFFF;border:1px solid #E1A100;color:#5A3F00;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">&#9993;&nbsp; Action required</span></p><h1 class=\"h1\" style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:27px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#5A3F00;word-break:break-word;overflow-wrap:anywhere;\">Some notifications could not be delivered</h1>",
+                "runAfter": {
+                  "Compose_Undeliverable_Fields": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Undeliverable_Html_Part2": {
+                "type": "Compose",
+                "inputs": "<p style=\"margin:10px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:22px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">@{concat(string(outputs('Compose_Undeliverable_Fields')?['count']),if(equals(outputs('Compose_Undeliverable_Fields')?['count'],1),' message has',' messages have'),' failed 3 times and will not be retried automatically.')}</p></td></tr>\n<tr><td class=\"px\" style=\"padding:28px 32px 30px 32px;background:#FFFFFF;\"><p style=\"margin:0 0 12px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:24px;font-weight:600;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">Dear Operations Team,</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\" style=\"table-layout:fixed;\"><tr><td class=\"tile\" valign=\"top\" style=\"padding:0 8px 0 0;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:separate;background:#FBF1D8;border:1px solid #F7E2A8;border-radius:10px;\"><tr><td style=\"padding:14px 16px;\"><p style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:30px;line-height:36px;font-weight:700;color:#5A3F00;\">@{string(outputs('Compose_Undeliverable_Fields')?['count'])}</p><p style=\"margin:2px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:17px;color:#373435;\">Undeliverable</p></td></tr></table></td><td class=\"tile\" valign=\"top\" style=\"padding:0 0px 0 0;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:separate;background:#F5F4F4;border:1px solid #E8E6E7;border-radius:10px;\"><tr><td style=\"padding:14px 16px;\"><p style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:30px;line-height:36px;font-weight:700;color:#373435;\">3</p><p style=\"margin:2px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:17px;color:#373435;\">Attempts each</p></td></tr></table></td></tr></table><p style=\"margin:28px 0 10px 0;padding:0 0 8px 0;border-bottom:1px solid #E8E6E7;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#05583B;\">Messages</p>@{join(take(split(outputs('Compose_Undeliverable_Fields')?['items'],'<!--i-->'),6),'')}@{if(greater(outputs('Compose_Undeliverable_Fields')?['count'],6),concat('<p style=\"margin:8px 0 0 0;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">+ ',string(sub(outputs('Compose_Undeliverable_Fields')?['count'],6)),' more in the list.</p>'),'')}<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:20px 0 4px 0;border-collapse:separate;background:#FBF1D8;border:1px solid #F7E2A8;border-radius:10px;\"><tr><td width=\"5\" style=\"width:5px;background:#A87500;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:14px 18px;\"><p style=\"margin:0 0 4px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#1B1A1A;\">What to do</p><div style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:13px;line-height:20px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">Check the address and the last error for each. Contact the person another way if it matters, and fix the Office 365 connection if every message shows the same error. These rows are now marked Abandoned, so this alert is not repeated.</div></td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:24px 0 4px 0;\"><tr><td class=\"btn-row\" style=\"padding:0;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" align=\"left\" style=\"margin:4px 10px 4px 0;border-collapse:separate;\"><tr><td align=\"center\" style=\"border-radius:8px;background:#5A3F00;border:1px solid #5A3F00;\"><a href=\"https://folio-platform.page.gd/?notice=portal-outbox-receipts\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block;padding:13px 24px;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:20px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:8px;white-space:nowrap;\">Review in the Folio Admin Suite&nbsp;&rarr;</a></td></tr></table></td></tr></table><p style=\"margin:26px 0 0 0;padding:12px 0 0 0;border-top:1px dashed #C4C3C3;font-family:'Cascadia Mono',Consolas,'Courier New',monospace;font-size:11px;line-height:18px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Run&nbsp;<strong style=\"color:#373435;font-weight:600;\">@{string(workflow()?['run']?['name'])}</strong> &nbsp;&middot;&nbsp; Checked&nbsp;<strong style=\"color:#373435;font-weight:600;\">@{concat(convertFromUtc(utcNow(),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT')}</strong></p></td></tr>\n<tr><td class=\"px\" style=\"padding:22px 32px 26px 32px;background:#F5F4F4;border-top:1px solid #E8E6E7;\"><p style=\"margin:0 0 10px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Sent to the operations mailbox by the scheduled sweep.</p><p style=\"margin:0 0 6px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\"><strong style=\"color:#373435;\">DGO Digital Ops &middot; NITDA</strong> &nbsp;&middot;&nbsp; Internal operational message. Do not forward outside NITDA.</p><p style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">National Information Technology Development Agency &nbsp;&middot;&nbsp; &copy; @{formatDateTime(utcNow(),'yyyy')} &nbsp;&middot;&nbsp; Automated message</p></td></tr>\n</table>",
+                "runAfter": {
+                  "Compose_Undeliverable_Html_Part1": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Undeliverable_Html_Part3": {
+                "type": "Compose",
+                "inputs": "\n<!--[if mso]></td></tr></table><![endif]-->\n</td></tr></table>\n</body></html>",
+                "runAfter": {
+                  "Compose_Undeliverable_Html_Part2": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Create_Send_Undeliverable_Alert_Email_Receipt": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Send_Undeliverable_Alert_Email": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "PostItem"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                    "item/Title": "@concat('undeliverable-alert:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                    "item/MessageType": "undeliverable-alert",
+                    "item/RecipientEmail": "@outputs('Compose_Notify_Config')?['opsTo']",
+                    "item/Reference": "@string(workflow()?['run']?['name'])",
+                    "item/SentAtUtc": "@utcNow()",
+                    "item/Status": "@if(equals(actions('Send_Undeliverable_Alert_Email')?['status'],'Succeeded'),'sent','failed')",
+                    "item/Attempts": 1,
+                    "item/LastError": "@if(equals(actions('Send_Undeliverable_Alert_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Undeliverable_Alert_Email')?['error']?['message'],actions('Send_Undeliverable_Alert_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Undeliverable_Alert_Email')?['error']?['message'],actions('Send_Undeliverable_Alert_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                  }
+                }
+              },
+              "Compose_Send_Undeliverable_Alert_Email_Outcome": {
+                "type": "Compose",
+                "runAfter": {
+                  "Create_Send_Undeliverable_Alert_Email_Receipt": [
+                    "Succeeded",
+                    "Failed",
+                    "Skipped",
+                    "TimedOut"
+                  ]
+                },
+                "inputs": "@int(if(or(equals(actions('Send_Undeliverable_Alert_Email')?['status'],'Failed'),equals(actions('Send_Undeliverable_Alert_Email')?['status'],'TimedOut')),'send-failed','0'))"
+              }
+            },
+            "runAfter": {
+              "Select_Undeliverable_Rows": [
+                "Succeeded"
+              ]
+            },
+            "else": {
+              "actions": {}
+            },
+            "expression": {
+              "and": [
+                {
+                  "greater": [
+                    "@length(coalesce(outputs('Get_Undeliverable_Receipts')?['body/value'],json('[]')))",
+                    0
+                  ]
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000202"
+            },
+            "type": "If"
+          },
+          "Compose_Sweep_Section_Undeliverable": {
+            "runAfter": {
+              "Condition_Any_Undeliverable": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ],
+              "Select_Undeliverable_Rows": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000203"
+            },
+            "type": "Compose",
+            "inputs": "@if(and(equals(string(coalesce(actions('Get_Undeliverable_Receipts')?['status'],'')),'Succeeded'),equals(string(coalesce(actions('Select_Undeliverable_Rows')?['status'],'')),'Succeeded')),string(coalesce(actions('Condition_Any_Undeliverable')?['status'],'Skipped')),'Failed')"
+          },
+          "Compose_Sweep_Sections": {
+            "runAfter": {
+              "Compose_Sweep_Section_Undeliverable": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000204"
+            },
+            "type": "Compose",
+            "inputs": {
+              "digest": "@outputs('Compose_Sweep_Section_Digest')",
+              "reminders": "@outputs('Compose_Sweep_Section_Reminders')",
+              "remindersDue": "@length(coalesce(outputs('Get_Due_Reminders')?['body/value'],json('[]')))",
+              "digestRecipients": "@length(coalesce(outputs('Compose_Digest_Recipients'),json('[]')))",
+              "staffRecipients": "@outputs('Compose_Notify_Config')?['staffRecipients']",
+              "supportClosed": "@outputs('Compose_Sweep_Section_Support')",
+              "undeliverable": "@outputs('Compose_Sweep_Section_Undeliverable')",
+              "workingHours": "@outputs('Compose_In_Working_Hours')"
+            }
+          },
+          "Condition_Sweep_Healthy": {
+            "actions": {
+              "Compose_Result_ScheduledSweep_200": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000205"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "status": 200,
+                  "data": "@outputs('Compose_Sweep_Sections')",
+                  "errors": [],
+                  "event": "none"
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Sweep_Sections": [
+                "Succeeded"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Compose_Result_ScheduledSweep_500_Section": {
+                  "metadata": {
+                    "operationMetadataId": "a0000000-0000-4000-8000-000000000206"
+                  },
+                  "type": "Compose",
+                  "inputs": {
+                    "status": 500,
+                    "data": "@outputs('Compose_Sweep_Sections')",
+                    "errors": [],
+                    "event": "server_error"
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@contains(string(outputs('Compose_Sweep_Sections')),'Failed')",
+                    false
+                  ]
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000207"
+            },
+            "type": "If"
+          },
+          "Filter_Digest_Ack": {
+            "type": "Query",
+            "runAfter": {
+              "Get_Due_Tasks": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(outputs('Get_Ack_Tasks')?['body/value'],json('[]'))",
+              "where": "@and(not(equals(toLower(string(coalesce(item()?['Acknowledge_x0020_Task']?['Value'],''))),'acknowledged')),not(contains(toLower(string(coalesce(item()?['Progress']?['Value'],''))),'complet')),not(or(empty(toLower(trim(string(coalesce(item()?['AssignedTo'],''))))),greater(length(toLower(trim(string(coalesce(item()?['AssignedTo'],''))))),255),not(equals(length(split(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@')),2)),startsWith(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@'),endsWith(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@'),contains(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),' '),contains(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),';'),contains(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),','),not(contains(string(last(split(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@'))),'.')),endsWith(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'.'))))"
+            }
+          },
+          "Filter_Digest_Due": {
+            "type": "Query",
+            "runAfter": {
+              "Filter_Digest_Ack": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(outputs('Get_Due_Tasks')?['body/value'],json('[]'))",
+              "where": "@and(not(contains(toLower(string(coalesce(item()?['Progress']?['Value'],''))),'complet')),not(or(empty(toLower(trim(string(coalesce(item()?['AssignedTo'],''))))),greater(length(toLower(trim(string(coalesce(item()?['AssignedTo'],''))))),255),not(equals(length(split(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@')),2)),startsWith(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@'),endsWith(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@'),contains(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),' '),contains(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),';'),contains(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),','),not(contains(string(last(split(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'@'))),'.')),endsWith(toLower(trim(string(coalesce(item()?['AssignedTo'],'')))),'.'))))"
+            }
+          },
+          "Select_Digest_Ack": {
+            "type": "Select",
+            "runAfter": {
+              "Filter_Digest_Due": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@body('Filter_Digest_Ack')",
+              "select": {
+                "to": "@toLower(trim(string(coalesce(item()?['AssignedTo'],''))))",
+                "kind": "Acknowledge receipt",
+                "ref": "@replace(replace(replace(replace(replace(string(if(not(empty(string(coalesce(item()?['TaskRef'],'')))),string(item()?['TaskRef']),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),string(item()?['Reference_ID']),string(item()?['ID'])))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                "title": "@if(empty(string(coalesce(item()?['Title'],''))),'(untitled task)',replace(replace(replace(replace(replace(string(item()?['Title']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))",
+                "date": "@if(empty(string(coalesce(item()?['Acknowledgement_x0020_Due_x0020_'],''))),'',formatDateTime(convertFromUtc(if(empty(string(coalesce(item()?['Acknowledgement_x0020_Due_x0020_'],''))),'1970-01-01T00:00:00Z',if(endsWith(string(item()?['Acknowledgement_x0020_Due_x0020_']),'Z'),string(item()?['Acknowledgement_x0020_Due_x0020_']),concat(string(item()?['Acknowledgement_x0020_Due_x0020_']),'Z'))),'W. Central Africa Standard Time'),'d MMM yyyy'))"
+              }
+            }
+          },
+          "Select_Digest_Due": {
+            "type": "Select",
+            "runAfter": {
+              "Select_Digest_Ack": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@body('Filter_Digest_Due')",
+              "select": {
+                "to": "@toLower(trim(string(coalesce(item()?['AssignedTo'],''))))",
+                "kind": "Overdue",
+                "ref": "@replace(replace(replace(replace(replace(string(if(not(empty(string(coalesce(item()?['TaskRef'],'')))),string(item()?['TaskRef']),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),string(item()?['Reference_ID']),string(item()?['ID'])))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                "title": "@if(empty(string(coalesce(item()?['Title'],''))),'(untitled task)',replace(replace(replace(replace(replace(string(item()?['Title']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))",
+                "date": "@if(empty(string(coalesce(item()?['DueDate'],''))),'',formatDateTime(convertFromUtc(if(empty(string(coalesce(item()?['DueDate'],''))),'1970-01-01T00:00:00Z',if(endsWith(string(item()?['DueDate']),'Z'),string(item()?['DueDate']),concat(string(item()?['DueDate']),'Z'))),'W. Central Africa Standard Time'),'d MMM yyyy'))"
+              }
+            }
+          },
+          "Compose_Digest_Items": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_Digest_Due": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@union(coalesce(body('Select_Digest_Ack'),json('[]')),coalesce(body('Select_Digest_Due'),json('[]')))"
+          },
+          "Select_Digest_Recipients": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_Digest_Items": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@outputs('Compose_Digest_Items')",
+              "select": "@item()?['to']"
+            }
+          },
+          "Compose_Digest_Recipients": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_Digest_Recipients": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@union(body('Select_Digest_Recipients'),body('Select_Digest_Recipients'))"
+          },
+          "Get_Digest_Receipts": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Compose_Digest_Recipients": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "$filter": "@concat('MessageType eq ''task-digest'' and SentAtUtc ge ''',formatDateTime(addDays(utcNow(),-1),'yyyy-MM-ddTHH:mm:ssZ'),'''')",
+                "$top": 5000
+              }
+            }
+          },
+          "Select_Digest_Sent": {
+            "type": "Select",
+            "runAfter": {
+              "Get_Digest_Receipts": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(outputs('Get_Digest_Receipts')?['body/value'],json('[]'))",
+              "select": "@if(equals(toLower(string(coalesce(item()?['Status'],''))),'sent'),string(item()?['Title']),'')"
+            }
+          },
+          "Condition_Digest_Window": {
+            "type": "If",
+            "runAfter": {
+              "Select_Digest_Sent": [
+                "Succeeded"
+              ]
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@outputs('Compose_In_Working_Hours')",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@outputs('Compose_Notify_Config')?['enabled']",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Foreach_Digest_Recipient": {
+                "type": "Foreach",
+                "runAfter": {},
+                "foreach": "@coalesce(outputs('Compose_Digest_Recipients'),json('[]'))",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                },
+                "actions": {
+                  "Compose_Digest_Key": {
+                    "type": "Compose",
+                    "runAfter": {},
+                    "inputs": "@concat('task-digest:',items('Foreach_Digest_Recipient'),':',formatDateTime(convertFromUtc(utcNow(),'W. Central Africa Standard Time'),'yyyy-MM-dd'))"
+                  },
+                  "Condition_Digest_Not_Sent": {
+                    "type": "If",
+                    "runAfter": {
+                      "Compose_Digest_Key": [
+                        "Succeeded"
+                      ]
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@contains(body('Select_Digest_Sent'),outputs('Compose_Digest_Key'))",
+                            false
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Filter_Digest_Mine": {
+                        "type": "Query",
+                        "runAfter": {},
+                        "inputs": {
+                          "from": "@outputs('Compose_Digest_Items')",
+                          "where": "@equals(item()?['to'],items('Foreach_Digest_Recipient'))"
+                        }
+                      },
+                      "Select_Digest_Rows": {
+                        "type": "Select",
+                        "runAfter": {
+                          "Filter_Digest_Mine": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "from": "@body('Filter_Digest_Mine')",
+                          "select": "@concat('<tr><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:600 13px Arial,sans-serif;color:#05583B;white-space:nowrap\">',item()?['ref'],'</td><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:13px Arial,sans-serif;color:#1B1A1A\">',item()?['title'],'</td><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:13px Arial,sans-serif;color:#1B1A1A;white-space:nowrap\">',item()?['kind'],'</td><td style=\"padding:8px 10px;border-bottom:1px solid #E8E6E7;font:13px Arial,sans-serif;color:#5F5C5D;white-space:nowrap\">',item()?['date'],'</td></tr>')"
+                        }
+                      },
+                      "Compose_Digest_Html": {
+                        "type": "Compose",
+                        "runAfter": {
+                          "Select_Digest_Rows": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,date=no,address=no,email=no,url=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Your tasks needing attention</title><!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,span,h1{font-family:'Segoe UI',Arial,sans-serif!important}</style><![endif]--><style>body{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}a{color:#05583B}a:hover{color:#0C603F}.list td{font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:19px;padding:9px 10px;border-bottom:1px solid #E8E6E7;color:#1B1A1A;word-break:break-word}\n@media only screen and (max-width:620px){.container{width:100%!important;max-width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}.hero{padding:24px 20px!important}.h1{font-size:23px!important;line-height:30px!important}.ref{font-size:19px!important;line-height:26px!important}.code{font-size:32px!important;letter-spacing:8px!important}.stack,.stack>tbody,.stack>tbody>tr,.stack>tr{display:block!important;width:100%!important}.stack>tbody>tr>td,.stack>tr>td{display:block!important;width:100%!important;box-sizing:border-box}.step{padding:0 0 14px 0!important}.tile{padding:0 0 8px 0!important}.cell-r{text-align:left!important;padding:10px 0 0 0!important}.kv-l,.kv-v{display:block!important;width:100%!important;box-sizing:border-box}.kv-l{padding:10px 0 0 0!important;border-bottom:0!important}.kv-v{padding:2px 0 10px 0!important}.btn{float:none!important;width:100%!important;margin:0 0 10px 0!important}.btn td,.btn a{display:block!important;width:100%!important;box-sizing:border-box;text-align:center!important}.hdr-r{display:none!important}.outer{padding:0!important}}</style></head>\n<body style=\"margin:0;padding:0;background:#F5F4F4;\">\n<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;\">@{concat(string(length(body('Filter_Digest_Mine'))),' task(s) in Folio are overdue or not yet acknowledged.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#F5F4F4;\"><tr><td class=\"outer\" align=\"center\" style=\"padding:28px 12px;\">\n<!--[if mso]><table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td><![endif]-->\n<table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;border-collapse:separate;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:14px;overflow:hidden;\">\n<tr><td class=\"px\" bgcolor=\"#05583B\" style=\"padding:24px 32px 22px;background:#05583B;border-bottom:3px solid #17B255\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"vertical-align:middle\"><img src=\"https://folio-portal.page.gd/email-assets/nitda-lockup-white.png\" width=\"140\" alt=\"NITDA — National Information Technology Development Agency\" style=\"display:block;width:140px;max-width:100%;height:auto;border:0;color:#FFFFFF;font-family:Verdana,sans-serif;font-size:13px\"></td><td align=\"right\" style=\"vertical-align:middle\"><img src=\"https://folio-portal.page.gd/email-assets/dgo-logo-whiteout.png\" width=\"150\" alt=\"DGO Digital Ops\" style=\"display:block;width:150px;max-width:100%;height:auto;border:0;color:#FFFFFF;font-family:Verdana,sans-serif;font-size:13px\"></td></tr></table></td></tr>\n<tr><td class=\"hero px\" style=\"padding:30px 32px 28px 32px;background:#1A7250;border-top:1px solid #CFE3D8;border-bottom:4px solid #C2EED2;\"><p style=\"margin:0 0 12px 0;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#033F2A;border:1px solid #8BD9A9;color:#FFFFFF;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">Daily task digest</span></p><h1 class=\"h1\" style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:27px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#FFFFFF;word-break:break-word;overflow-wrap:anywhere;\">Your tasks needing attention</h1><p style=\"margin:10px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:22px;color:#EAF3EF;word-break:break-word;overflow-wrap:anywhere;\">One email each working day lists everything that needs you.</p></td></tr>\n<tr><td class=\"px\" style=\"padding:28px 32px 30px 32px;background:#FFFFFF;\"><p style=\"margin:0 0 12px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:24px;font-weight:600;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">Dear Colleague,</p>@{if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),'',concat('<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:20px 0 4px 0;border-collapse:separate;background:#FBF1D8;border:1px solid #F7E2A8;border-radius:10px;\"><tr><td width=\"5\" style=\"width:5px;background:#E1A100;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:14px 18px;\"><p style=\"margin:0 0 4px 0;font-family:Outfit,''Segoe UI'',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#1B1A1A;\">Commissioning mode</p><div style=\"margin:0;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:13px;line-height:20px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">This digest is for ',items('Foreach_Digest_Recipient'),'. It comes to the registry until Flow Configuration NOTIFY_SWEEP_RECIPIENTS is staff.</div></td></tr></table>'))}<p style=\"margin:0 0 14px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:23px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">You have <strong style=\"font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:16px;color:#05583B;\">@{length(body('Filter_Digest_Mine'))} task(s)</strong> in Folio that are overdue or not yet acknowledged. Open each one in Folio to acknowledge it or bring it up to date.</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"list\" style=\"border-collapse:collapse;table-layout:auto;\"><tr><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Reference</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Task</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Needs</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Due</th></tr>@{join(body('Select_Digest_Rows'),'')}</table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:24px 0 4px 0;\"><tr><td class=\"btn-row\" style=\"padding:0;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" align=\"left\" style=\"margin:4px 10px 4px 0;border-collapse:separate;\"><tr><td align=\"center\" style=\"border-radius:8px;background:#05583B;border:1px solid #05583B;\"><a href=\"https://folio-platform.page.gd/acknowledge.html\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block;padding:13px 24px;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:20px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:8px;white-space:nowrap;\">Open Folio&nbsp;&rarr;</a></td></tr></table></td></tr></table></td></tr>\n<tr><td class=\"px\" bgcolor=\"#F5F4F4\" style=\"padding:22px 32px 26px;background:#F5F4F4;border-top:1px solid #E8E6E7\"><p style=\"margin:0 0 10px;font-family:Verdana,Geneva,sans-serif;font-size:12px;line-height:17px;color:#5F5C5D\">Sent by the Folio scheduled sweep.</p><p style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:13px;line-height:18px;font-weight:700;color:#1B1A1A\">National Information Technology Development Agency</p><p style=\"margin:4px 0 0;font-family:Verdana,Geneva,sans-serif;font-size:12px;line-height:17px;color:#5F5C5D\">DGO Digital Ops · No. 28, Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja</p><p style=\"margin:4px 0 0;font-family:Verdana,Geneva,sans-serif;font-size:12px;line-height:17px;color:#5F5C5D\"><a href=\"https://nitda.gov.ng\" style=\"color:#05583B;text-decoration:underline\">nitda.gov.ng</a> · Internal: for NITDA staff only · Automated message</p></td></tr>\n</table>\n<!--[if mso]></td></tr></table><![endif]-->\n</td></tr></table>\n</body></html>"
+                      },
+                      "Send_Digest_Email": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Compose_Digest_Html": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connection": "shared_office365",
+                            "operationId": "SendEmailV2"
+                          },
+                          "parameters": {
+                            "emailMessage/To": "@if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),items('Foreach_Digest_Recipient'),outputs('Compose_Notify_Config')?['opsTo'])",
+                            "emailMessage/Subject": "@concat('Folio: ',string(length(body('Filter_Digest_Mine'))),' task(s) need your attention',if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),'',concat(' (for ',items('Foreach_Digest_Recipient'),')')))",
+                            "emailMessage/Body": "@outputs('Compose_Digest_Html')",
+                            "emailMessage/ReplyTo": "@outputs('Compose_Notify_Config')?['replyTo']",
+                            "emailMessage/Importance": "Normal"
+                          }
+                        }
+                      },
+                      "Create_Digest_Receipt": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Send_Digest_Email": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "PostItem"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                            "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                            "item/Title": "@outputs('Compose_Digest_Key')",
+                            "item/MessageType": "task-digest",
+                            "item/RecipientEmail": "@if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),items('Foreach_Digest_Recipient'),outputs('Compose_Notify_Config')?['opsTo'])",
+                            "item/Reference": "@items('Foreach_Digest_Recipient')",
+                            "item/SentAtUtc": "@utcNow()",
+                            "item/Status": "@if(equals(string(coalesce(actions('Send_Digest_Email')?['status'],'')),'Succeeded'),'sent','failed')",
+                            "item/Attempts": 1,
+                            "item/LastError": "@if(equals(string(coalesce(actions('Send_Digest_Email')?['status'],'')),'Succeeded'),'',substring(string(coalesce(actions('Send_Digest_Email')?['error']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Digest_Email')?['error']?['message'],'send failed'))),900)))"
+                          }
+                        }
+                      },
+                      "Compose_Send_Digest_Email_Outcome": {
+                        "type": "Compose",
+                        "runAfter": {
+                          "Create_Digest_Receipt": [
+                            "Succeeded",
+                            "Failed",
+                            "Skipped",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": "@int(if(or(equals(actions('Send_Digest_Email')?['status'],'Failed'),equals(actions('Send_Digest_Email')?['status'],'TimedOut')),'send-failed','0'))"
+                      }
+                    },
+                    "else": {
+                      "actions": {}
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Compose_Sweep_Section_Digest": {
+            "type": "Compose",
+            "runAfter": {
+              "Condition_Digest_Window": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ],
+              "Select_Digest_Sent": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "inputs": "@if(and(equals(string(coalesce(actions('Get_Ack_Tasks')?['status'],'')),'Succeeded'),equals(string(coalesce(actions('Get_Due_Tasks')?['status'],'')),'Succeeded'),equals(string(coalesce(actions('Get_Digest_Receipts')?['status'],'')),'Succeeded')),string(coalesce(actions('Condition_Digest_Window')?['status'],'Skipped')),'Failed')"
+          },
+          "Get_Due_Reminders": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Compose_Sweep_Section_Digest": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "2f42abf5-f425-4714-9046-ffa6c0bb7151",
+                "$filter": "@concat('ReminderStatus eq ''scheduled'' and DueAtUtc le ''',formatDateTime(utcNow(),'yyyy-MM-ddTHH:mm:ssZ'),'''')",
+                "$top": 200
+              }
+            }
+          },
+          "Condition_Reminder_Window": {
+            "type": "If",
+            "runAfter": {
+              "Get_Due_Reminders": [
+                "Succeeded"
+              ]
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@outputs('Compose_In_Working_Hours')",
+                    true
+                  ]
+                },
+                {
+                  "equals": [
+                    "@outputs('Compose_Notify_Config')?['enabled']",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Foreach_Due_Reminder": {
+                "type": "Foreach",
+                "runAfter": {},
+                "foreach": "@coalesce(outputs('Get_Due_Reminders')?['body/value'],json('[]'))",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                },
+                "actions": {
+                  "Compose_Reminder_Row": {
+                    "type": "Compose",
+                    "runAfter": {},
+                    "inputs": "@concat('<tr><td style=\"padding:9px 10px;border-bottom:1px solid #E8E6E7;font:600 13px Verdana,Geneva,sans-serif;color:#05583B;white-space:nowrap\">',replace(replace(replace(replace(replace(string(coalesce(items('Foreach_Due_Reminder')?['RefIDD'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td style=\"padding:9px 10px;border-bottom:1px solid #E8E6E7;font:13px Verdana,Geneva,sans-serif;color:#1B1A1A\">',replace(replace(replace(replace(replace(string(coalesce(items('Foreach_Due_Reminder')?['Title'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td style=\"padding:9px 10px;border-bottom:1px solid #E8E6E7;font:13px Verdana,Geneva,sans-serif;color:#1B1A1A\">',replace(replace(replace(replace(replace(string(coalesce(items('Foreach_Due_Reminder')?['Note'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td style=\"padding:9px 10px;border-bottom:1px solid #E8E6E7;font:13px Verdana,Geneva,sans-serif;color:#1B1A1A;white-space:nowrap\">',formatDateTime(convertFromUtc(if(empty(string(coalesce(items('Foreach_Due_Reminder')?['DueAtUtc'],''))),'1970-01-01T00:00:00Z',if(endsWith(string(items('Foreach_Due_Reminder')?['DueAtUtc']),'Z'),string(items('Foreach_Due_Reminder')?['DueAtUtc']),concat(string(items('Foreach_Due_Reminder')?['DueAtUtc']),'Z'))),'W. Central Africa Standard Time'),'d MMM yyyy HH:mm'),'</td></tr>')"
+                  },
+                  "Compose_Task_Reminder_Html": {
+                    "type": "Compose",
+                    "runAfter": {
+                      "Compose_Reminder_Row": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,date=no,address=no,email=no,url=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Your task reminder</title><!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,span,h1{font-family:'Segoe UI',Arial,sans-serif!important}</style><![endif]--><style>body{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}a{color:#05583B}a:hover{color:#0C603F}.list td{font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:19px;padding:9px 10px;border-bottom:1px solid #E8E6E7;color:#1B1A1A;word-break:break-word}\n@media only screen and (max-width:620px){.container{width:100%!important;max-width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}.hero{padding:24px 20px!important}.h1{font-size:23px!important;line-height:30px!important}.ref{font-size:19px!important;line-height:26px!important}.code{font-size:32px!important;letter-spacing:8px!important}.stack,.stack>tbody,.stack>tbody>tr,.stack>tr{display:block!important;width:100%!important}.stack>tbody>tr>td,.stack>tr>td{display:block!important;width:100%!important;box-sizing:border-box}.step{padding:0 0 14px 0!important}.tile{padding:0 0 8px 0!important}.cell-r{text-align:left!important;padding:10px 0 0 0!important}.kv-l,.kv-v{display:block!important;width:100%!important;box-sizing:border-box}.kv-l{padding:10px 0 0 0!important;border-bottom:0!important}.kv-v{padding:2px 0 10px 0!important}.btn{float:none!important;width:100%!important;margin:0 0 10px 0!important}.btn td,.btn a{display:block!important;width:100%!important;box-sizing:border-box;text-align:center!important}.hdr-r{display:none!important}.outer{padding:0!important}}</style></head>\n<body style=\"margin:0;padding:0;background:#F5F4F4;\">\n<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;\">@{concat('Reminder: ',string(coalesce(items('Foreach_Due_Reminder')?['RefIDD'],'')),' — ',string(coalesce(items('Foreach_Due_Reminder')?['Title'],'')))}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#F5F4F4;\"><tr><td class=\"outer\" align=\"center\" style=\"padding:28px 12px;\">\n<!--[if mso]><table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td><![endif]-->\n<table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;border-collapse:separate;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:14px;overflow:hidden;\">\n<tr><td class=\"px\" bgcolor=\"#05583B\" style=\"padding:24px 32px 22px;background:#05583B;border-bottom:3px solid #17B255\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"vertical-align:middle\"><img src=\"https://folio-portal.page.gd/email-assets/nitda-lockup-white.png\" width=\"140\" alt=\"NITDA — National Information Technology Development Agency\" style=\"display:block;width:140px;max-width:100%;height:auto;border:0;color:#FFFFFF;font-family:Verdana,sans-serif;font-size:13px\"></td><td align=\"right\" style=\"vertical-align:middle\"><img src=\"https://folio-portal.page.gd/email-assets/dgo-logo-whiteout.png\" width=\"150\" alt=\"DGO Digital Ops\" style=\"display:block;width:150px;max-width:100%;height:auto;border:0;color:#FFFFFF;font-family:Verdana,sans-serif;font-size:13px\"></td></tr></table></td></tr>\n<tr><td class=\"hero px\" style=\"padding:30px 32px 28px 32px;background:#1A7250;border-top:1px solid #CFE3D8;border-bottom:4px solid #C2EED2;\"><p style=\"margin:0 0 12px 0;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#033F2A;border:1px solid #8BD9A9;color:#FFFFFF;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">Task reminder</span></p><h1 class=\"h1\" style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:27px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#FFFFFF;word-break:break-word;overflow-wrap:anywhere;\">A reminder on your task</h1><p style=\"margin:10px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:22px;color:#EAF3EF;word-break:break-word;overflow-wrap:anywhere;\">A reminder set in Folio on a task assigned to you.</p></td></tr>\n<tr><td class=\"px\" style=\"padding:28px 32px 30px 32px;background:#FFFFFF;\"><p style=\"margin:0 0 12px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:24px;font-weight:600;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">Dear Colleague,</p>@{if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),'',concat('<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:20px 0 4px 0;border-collapse:separate;background:#FBF1D8;border:1px solid #F7E2A8;border-radius:10px;\"><tr><td width=\"5\" style=\"width:5px;background:#E1A100;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:14px 18px;\"><p style=\"margin:0 0 4px 0;font-family:Outfit,''Segoe UI'',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#1B1A1A;\">Commissioning mode</p><div style=\"margin:0;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:13px;line-height:20px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">This reminder is for ',toLower(trim(string(coalesce(items('Foreach_Due_Reminder')?['AssignedTo'],'')))),'. It comes to the registry until Flow Configuration NOTIFY_SWEEP_RECIPIENTS is staff.</div></td></tr></table>'))}<p style=\"margin:0 0 14px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:23px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">The reminder set on this task has fallen due. Open the task in Folio to act on it.</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"list\" style=\"border-collapse:collapse;table-layout:auto;\"><tr><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Reference</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Task</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Reminder</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Due</th></tr>@{outputs('Compose_Reminder_Row')}</table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:24px 0 4px 0;\"><tr><td class=\"btn-row\" style=\"padding:0;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" align=\"left\" style=\"margin:4px 10px 4px 0;border-collapse:separate;\"><tr><td align=\"center\" style=\"border-radius:8px;background:#05583B;border:1px solid #05583B;\"><a href=\"https://folio-platform.page.gd/acknowledge.html\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block;padding:13px 24px;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:20px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:8px;white-space:nowrap;\">Open Folio&nbsp;&rarr;</a></td></tr></table></td></tr></table></td></tr>\n<tr><td class=\"px\" bgcolor=\"#F5F4F4\" style=\"padding:22px 32px 26px;background:#F5F4F4;border-top:1px solid #E8E6E7\"><p style=\"margin:0 0 10px;font-family:Verdana,Geneva,sans-serif;font-size:12px;line-height:17px;color:#5F5C5D\">Sent by the Folio scheduled sweep.</p><p style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:13px;line-height:18px;font-weight:700;color:#1B1A1A\">National Information Technology Development Agency</p><p style=\"margin:4px 0 0;font-family:Verdana,Geneva,sans-serif;font-size:12px;line-height:17px;color:#5F5C5D\">DGO Digital Ops · No. 28, Port Harcourt Crescent, Off Gimbiya Street, Area 11, Garki, Abuja</p><p style=\"margin:4px 0 0;font-family:Verdana,Geneva,sans-serif;font-size:12px;line-height:17px;color:#5F5C5D\"><a href=\"https://nitda.gov.ng\" style=\"color:#05583B;text-decoration:underline\">nitda.gov.ng</a> · Internal: for NITDA staff only · Automated message</p></td></tr>\n</table>\n<!--[if mso]></td></tr></table><![endif]-->\n</td></tr></table>\n</body></html>"
+                  },
+                  "Send_Task_Reminder_Email": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Compose_Task_Reminder_Html": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                        "connection": "shared_office365",
+                        "operationId": "SendEmailV2"
+                      },
+                      "parameters": {
+                        "emailMessage/To": "@if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),toLower(trim(string(coalesce(items('Foreach_Due_Reminder')?['AssignedTo'],'')))),outputs('Compose_Notify_Config')?['opsTo'])",
+                        "emailMessage/Subject": "@concat('Reminder: ',string(coalesce(items('Foreach_Due_Reminder')?['RefIDD'],'')),' — ',string(coalesce(items('Foreach_Due_Reminder')?['Title'],'')),if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),'',concat(' (for ',toLower(trim(string(coalesce(items('Foreach_Due_Reminder')?['AssignedTo'],'')))),')')))",
+                        "emailMessage/Body": "@outputs('Compose_Task_Reminder_Html')",
+                        "emailMessage/ReplyTo": "@outputs('Compose_Notify_Config')?['replyTo']",
+                        "emailMessage/Importance": "Normal"
+                      }
+                    }
+                  },
+                  "Patch_Reminder_Status": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Send_Task_Reminder_Email": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "PatchItem"
+                      },
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "2f42abf5-f425-4714-9046-ffa6c0bb7151",
+                        "id": "@items('Foreach_Due_Reminder')?['ID']",
+                        "item/Title": "@items('Foreach_Due_Reminder')?['Title']",
+                        "item/ReminderStatus": "@if(equals(string(coalesce(actions('Send_Task_Reminder_Email')?['status'],'')),'Succeeded'),'sent','failed')",
+                        "item/SentAtUtc": "@utcNow()"
+                      }
+                    }
+                  },
+                  "Create_Send_Task_Reminder_Email_Receipt": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Send_Task_Reminder_Email": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "PostItem"
+                      },
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                        "item/Title": "@concat('task-reminder:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                        "item/MessageType": "task-reminder",
+                        "item/RecipientEmail": "@if(equals(outputs('Compose_Notify_Config')?['staffRecipients'],true),toLower(trim(string(coalesce(items('Foreach_Due_Reminder')?['AssignedTo'],'')))),outputs('Compose_Notify_Config')?['opsTo'])",
+                        "item/Reference": "@string(workflow()?['run']?['name'])",
+                        "item/SentAtUtc": "@utcNow()",
+                        "item/Status": "@if(equals(actions('Send_Task_Reminder_Email')?['status'],'Succeeded'),'sent','failed')",
+                        "item/Attempts": 1,
+                        "item/LastError": "@if(equals(actions('Send_Task_Reminder_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Task_Reminder_Email')?['error']?['message'],actions('Send_Task_Reminder_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Task_Reminder_Email')?['error']?['message'],actions('Send_Task_Reminder_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                      }
+                    }
+                  },
+                  "Compose_Send_Task_Reminder_Email_Outcome": {
+                    "type": "Compose",
+                    "runAfter": {
+                      "Create_Send_Task_Reminder_Email_Receipt": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": "@int(if(or(equals(actions('Send_Task_Reminder_Email')?['status'],'Failed'),equals(actions('Send_Task_Reminder_Email')?['status'],'TimedOut')),'send-failed','0'))"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          },
+          "Compose_Sweep_Section_Reminders": {
+            "type": "Compose",
+            "runAfter": {
+              "Condition_Reminder_Window": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "inputs": "@if(equals(string(coalesce(actions('Get_Due_Reminders')?['status'],'')),'Succeeded'),string(coalesce(actions('Condition_Reminder_Window')?['status'],'Skipped')),'Failed')"
+          }
+        },
+        "runAfter": {
+          "Compose_Request_Context": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000208"
+        },
+        "type": "Scope"
+      },
+      "Scope_Catch_ScheduledSweep": {
+        "actions": {
+          "Compose_Result_ScheduledSweep_500": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000209"
+            },
+            "type": "Compose",
+            "inputs": {
+              "status": 500,
+              "data": {
+                "status": "failed"
+              },
+              "errors": [
+                {
+                  "scope": "ScheduledSweep",
+                  "stage": "processing",
+                  "status": "failed",
+                  "message": "ScheduledSweep processing failed, skipped, or timed out.",
+                  "details": "@result('Scope_Global_ScheduledSweep')",
+                  "trackedAtUtc": "@utcNow()"
+                }
+              ],
+              "event": "server_error"
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Global_ScheduledSweep": [
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000210"
+        },
+        "type": "Scope"
+      },
+      "Scope_Finalize_ScheduledSweep": {
+        "actions": {
+          "Compose_Outcome": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000211"
+            },
+            "type": "Compose",
+            "inputs": "@coalesce(actions('Compose_Result_ScheduledSweep_500')?['outputs'],actions('Compose_Result_ScheduledSweep_200')?['outputs'],actions('Compose_Result_ScheduledSweep_500_Section')?['outputs'],json('{\"status\":500,\"data\":{\"status\":\"failed\"},\"errors\":[],\"event\":\"none\"}'))"
+          },
+          "Compose_Completed_At": {
+            "runAfter": {
+              "Compose_Outcome": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000212"
+            },
+            "type": "Compose",
+            "inputs": "@utcNow()"
+          },
+          "Compose_Duration_Ms": {
+            "runAfter": {
+              "Compose_Completed_At": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000213"
+            },
+            "type": "Compose",
+            "inputs": "@max(div(sub(ticks(outputs('Compose_Completed_At')),outputs('Compose_Request_Context')?['startTicks']),10000),0)"
+          }
+        },
+        "runAfter": {
+          "Scope_Global_ScheduledSweep": [
+            "Succeeded",
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ],
+          "Scope_Catch_ScheduledSweep": [
+            "Succeeded",
+            "Skipped"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000214"
+        },
+        "type": "Scope"
+      },
+      "Scope_Notifications": {
+        "actions": {
+          "Get_Notification_Config_C5": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000215"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                "$filter": "startswith(Title,'NOTIFY_')",
+                "$top": 50
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItems"
+              }
+            }
+          },
+          "Select_Notify_Config_C5": {
+            "runAfter": {
+              "Get_Notification_Config_C5": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000216"
+            },
+            "type": "Select",
+            "inputs": {
+              "from": "@coalesce(actions('Get_Notification_Config_C5')?['outputs']?['body']?['value'],json('[]'))",
+              "select": {
+                "k": "@toUpper(trim(string(item()?['Title'])))",
+                "v": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+              }
+            }
+          },
+          "Compose_Notify_Config_Xml_C5": {
+            "runAfter": {
+              "Select_Notify_Config_C5": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000217"
+            },
+            "type": "Compose",
+            "inputs": "@xml(json(concat('{\"r\":{\"i\":',string(body('Select_Notify_Config_C5')),'}}')))"
+          },
+          "Compose_Notify_Logo_Default_C5": {
+            "runAfter": {
+              "Compose_Notify_Config_Xml_C5": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000218"
+            },
+            "type": "Compose",
+            "inputs": "data:image/png;base64,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"
+          },
+          "Compose_Notify_Config_C5": {
+            "runAfter": {
+              "Compose_Notify_Logo_Default_C5": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000219"
+            },
+            "type": "Compose",
+            "inputs": {
+              "enabled": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml_C5'),'string(/r/i[k=\"NOTIFY_ENABLED\"]/v)')))),'false'))",
+              "opsTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml_C5'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml_C5'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)'))))",
+              "replyTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml_C5'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml_C5'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)'))))",
+              "logoSrc": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml_C5'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)')))),outputs('Compose_Notify_Logo_Default_C5'),trim(string(xpath(outputs('Compose_Notify_Config_Xml_C5'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)'))))"
+            }
+          },
+          "Switch_Notification_Event": {
+            "runAfter": {
+              "Compose_Notify_Config_C5": [
+                "Succeeded"
+              ]
+            },
+            "cases": {
+              "Case_Server_Error": {
+                "case": "server_error",
+                "actions": {
+                  "Select_Failed_Step_Rows": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000220"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@result('Scope_Global_ScheduledSweep')",
+                      "select": "@if(equals(string(item()?['status']),'Failed'),concat('<tr><td valign=\"top\" width=\"38%\" style=\"padding:8px 12px 8px 0;border-bottom:1px solid #F2F4F7;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:12px;line-height:18px;font-weight:700;color:#1B1A1A;word-break:break-all;\">',replace(replace(replace(replace(replace(string(string(item()?['name'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td valign=\"top\" style=\"padding:8px 0;border-bottom:1px solid #F0EFEF;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;line-height:18px;color:#373435;word-break:break-word;\"><span style=\"display:inline-block;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:10px;font-weight:700;color:#780820;background:#FBE7EB;border-radius:4px;padding:1px 6px;margin-bottom:3px;\">',replace(replace(replace(replace(replace(string(string(coalesce(item()?['error']?['code'],item()?['code'],'Failed'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</span><br>',replace(replace(replace(replace(replace(string(concat(substring(string(coalesce(item()?['error']?['message'],'No message returned.')),0,min(length(string(coalesce(item()?['error']?['message'],'No message returned.'))),120)),if(greater(length(string(coalesce(item()?['error']?['message'],''))),120),' …',''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td></tr>'),'')"
+                    }
+                  },
+                  "Select_Failed_Flags": {
+                    "runAfter": {
+                      "Select_Failed_Step_Rows": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000221"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@result('Scope_Global_ScheduledSweep')",
+                      "select": "@if(equals(string(item()?['status']),'Failed'),'1','')"
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html": {
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html_Part3": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000225"
+                    },
+                    "type": "Compose",
+                    "inputs": "@{outputs('Compose_Server_Error_Alert_Html_Part1')}@{outputs('Compose_Server_Error_Alert_Html_Part2')}@{outputs('Compose_Server_Error_Alert_Html_Part3')}"
+                  },
+                  "Send_Server_Error_Alert_Email": {
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000226"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "emailMessage/To": "@outputs('Compose_Notify_Config_C5')?['opsTo']",
+                        "emailMessage/Subject": "@concat('Action required: scheduled sweep run failed (run ',outputs('Compose_Request_Context')?['requestId'],')')",
+                        "emailMessage/Body": "@outputs('Compose_Server_Error_Alert_Html')",
+                        "emailMessage/Importance": "High"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                        "connection": "shared_office365",
+                        "operationId": "SendEmailV2"
+                      }
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html_Part1": {
+                    "type": "Compose",
+                    "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,date=no,address=no,email=no,url=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Action required: The scheduled sweep run did not complete</title><!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,th,p,a,span,h1{font-family:'Segoe UI',Arial,sans-serif!important}</style><![endif]--><style>body{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}a{color:#05583B}a:hover{color:#0C603F}.list td{font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:19px;padding:9px 10px;border-bottom:1px solid #E8E6E7;color:#1B1A1A;word-break:break-word}\n@media only screen and (max-width:620px){.container{width:100%!important;max-width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}.hero{padding:24px 20px!important}.h1{font-size:23px!important;line-height:30px!important}.ref{font-size:19px!important;line-height:26px!important}.code{font-size:32px!important;letter-spacing:8px!important}.stack,.stack>tbody,.stack>tbody>tr,.stack>tr{display:block!important;width:100%!important}.stack>tbody>tr>td,.stack>tr>td{display:block!important;width:100%!important;box-sizing:border-box}.step{padding:0 0 14px 0!important}.tile{padding:0 0 8px 0!important}.cell-r{text-align:left!important;padding:10px 0 0 0!important}.kv-l,.kv-v{display:block!important;width:100%!important;box-sizing:border-box}.kv-l{padding:10px 0 0 0!important;border-bottom:0!important}.kv-v{padding:2px 0 10px 0!important}.btn{float:none!important;width:100%!important;margin:0 0 10px 0!important}.btn td,.btn a{display:block!important;width:100%!important;box-sizing:border-box;text-align:center!important}.hdr-r{display:none!important}.outer{padding:0!important}}</style></head>\n<body style=\"margin:0;padding:0;background:#F5F4F4;\">\n<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;\">@{concat('The scheduled sweep run did not complete (run ',replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'). Action may be required.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#F5F4F4;\"><tr><td class=\"outer\" align=\"center\" style=\"padding:28px 12px;\">\n<!--[if mso]><table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td><![endif]-->\n<table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;border-collapse:separate;background:#FFFFFF;border:1px solid #E8E6E7;border-radius:14px;overflow:hidden;\">\n<tr><td class=\"px\" bgcolor=\"#05583B\" style=\"padding:24px 32px 22px 32px;background:#05583B;border-bottom:3px solid #17B255;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td valign=\"middle\" style=\"padding:0;\"><img src=\"https://folio-portal.page.gd/email-assets/nitda-lockup-white.png\" width=\"168\" alt=\"NITDA\" style=\"display:block;width:168px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:700;color:#FFFFFF;\"></td><td class=\"hdr-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><img src=\"https://folio-portal.page.gd/email-assets/dgo-logo-whiteout.png\" width=\"150\" alt=\"DGO Digital Ops, an initiative of NITDA\" style=\"display:block;width:150px;max-width:100%;height:auto;border:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:13px;font-weight:700;color:#FFFFFF;\"></td></tr></table></td></tr>\n<tr><td class=\"hero px\" style=\"padding:30px 32px 28px 32px;background:#C8102E;border-top:1px solid #F6C2CB;border-bottom:4px solid #F6C2CB;\"><p style=\"margin:0 0 12px 0;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#780820;border:1px solid #F6C2CB;color:#FFFFFF;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">&#9888;&nbsp; Action required</span></p><h1 class=\"h1\" style=\"margin:0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:27px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#FFFFFF;word-break:break-word;overflow-wrap:anywhere;\">The scheduled sweep run did not complete</h1>",
+                    "runAfter": {
+                      "Select_Failed_Flags": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html_Part2": {
+                    "type": "Compose",
+                    "inputs": "<p style=\"margin:10px 0 0 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:22px;color:#FBE7EB;word-break:break-word;overflow-wrap:anywhere;\">@{concat('A run started ',concat(convertFromUtc(outputs('Compose_Request_Context')?['receivedAtUtc'],'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT'),' failed. No member of the public saw an error; the next run will try again, but anything this run missed waits until then.')}</p></td></tr>\n<tr><td class=\"px\" style=\"padding:28px 32px 30px 32px;background:#FFFFFF;\"><p style=\"margin:0 0 12px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:24px;font-weight:600;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">Dear Operations Team,</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:8px 0 4px 0;border-collapse:separate;background:#FBE7EB;border:1px solid #F6C2CB;border-radius:10px;\"><tr><td width=\"6\" style=\"width:6px;background:#F6C2CB;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:16px 18px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td valign=\"middle\" style=\"padding:0;\"><p style=\"margin:0 0 4px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#5F5C5D;\">Run</p><p class=\"ref\" style=\"margin:0;font-family:'Cascadia Mono',Consolas,'Courier New',monospace;font-size:22px;line-height:30px;font-weight:700;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td class=\"cell-r\" align=\"right\" valign=\"middle\" style=\"padding:0 0 0 12px;\"><span style=\"display:inline-block;padding:5px 12px;border-radius:999px;background:#FBE7EB;border:1px solid #F6C2CB;color:#C8102E;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;\">Run failed</span></td></tr></table></td></tr></table><p style=\"margin:28px 0 10px 0;padding:0 0 8px 0;border-bottom:1px solid #E8E6E7;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#05583B;\">Failed steps</p>@{if(greater(length(join(body('Select_Failed_Flags'),'')),0),concat('<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"list\" style=\"border-collapse:collapse;table-layout:auto;\"><tr><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Step</th><th align=\"left\" style=\"padding:9px 10px;background:#F5F4F4;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:11px;line-height:15px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#4A4849;\">Error</th></tr>',if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat(join(take(split(join(body('Select_Failed_Step_Rows'),''),'</tr>'),2),'</tr>'),'</tr>'),join(body('Select_Failed_Step_Rows'),'')),if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat('<tr><td colspan=\"2\" style=\"padding:9px 10px;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:12px;line-height:18px;color:#5F5C5D;\">+ ',string(sub(length(join(body('Select_Failed_Flags'),'')),2)),' more &mdash; open the run for the full list.</td></tr>'),''),'</table>'),'<p style=\"margin:0 0 14px 0;font-family:Verdana,Geneva,''DejaVu Sans'',sans-serif;font-size:13px;line-height:23px;color:#4A4849;word-break:break-word;overflow-wrap:anywhere;\">No failed step was reported at the top level (the run may have timed out). Open the run for details.</p>')}<p style=\"margin:28px 0 10px 0;padding:0 0 8px 0;border-bottom:1px solid #E8E6E7;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#05583B;\">Request context</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"table-layout:fixed;\"><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Acknowledgement reminders</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{string(coalesce(actions('Compose_Sweep_Sections')?['outputs'],json('{}'))?['acknowledgementOverdue'])}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Overdue reminders</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{string(coalesce(actions('Compose_Sweep_Sections')?['outputs'],json('{}'))?['taskOverdue'])}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Support closures</td>",
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html_Part1": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Compose_Server_Error_Alert_Html_Part3": {
+                    "type": "Compose",
+                    "inputs": "<td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{string(coalesce(actions('Compose_Sweep_Sections')?['outputs'],json('{}'))?['supportClosed'])}</td></tr><tr><td class=\"kv-l\" width=\"34%\" valign=\"top\" style=\"width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Undeliverable check</td><td class=\"kv-v\" valign=\"top\" style=\"padding:10px 0;border-bottom:1px solid #E8E6E7;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;line-height:21px;color:#1B1A1A;word-break:break-word;overflow-wrap:anywhere;\">@{string(coalesce(actions('Compose_Sweep_Sections')?['outputs'],json('{}'))?['undeliverable'])}</td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:20px 0 4px 0;border-collapse:separate;background:#F5F4F4;border:1px solid #E8E6E7;border-radius:10px;\"><tr><td width=\"5\" style=\"width:5px;background:#807D7E;border-radius:10px 0 0 10px;font-size:0;line-height:0;\">&nbsp;</td><td style=\"padding:14px 18px;\"><p style=\"margin:0 0 4px 0;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:21px;font-weight:700;color:#1B1A1A;\">Next step</p><div style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:13px;line-height:20px;color:#373435;word-break:break-word;overflow-wrap:anywhere;\">Open the failed run in Power Automate to see the failing action and its error output.</div></td></tr></table><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:24px 0 4px 0;\"><tr><td class=\"btn-row\" style=\"padding:0;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" align=\"left\" style=\"margin:4px 10px 4px 0;border-collapse:separate;\"><tr><td align=\"center\" style=\"border-radius:8px;background:#780820;border:1px solid #780820;\"><a href=\"@{concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))}\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block;padding:13px 24px;font-family:Outfit,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:20px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:8px;white-space:nowrap;\">Open failed run in Power Automate&nbsp;&rarr;</a></td></tr></table></td></tr></table><p style=\"margin:26px 0 0 0;padding:12px 0 0 0;border-top:1px dashed #C4C3C3;font-family:'Cascadia Mono',Consolas,'Courier New',monospace;font-size:11px;line-height:18px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Run&nbsp;<strong style=\"color:#373435;font-weight:600;\">@{string(workflow()?['run']?['name'])}</strong> &nbsp;&middot;&nbsp; Flow&nbsp;<strong style=\"color:#373435;font-weight:600;\">@{replace(replace(replace(replace(replace(string(string(workflow()?['tags']?['flowDisplayName'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</strong></p></td></tr>\n<tr><td class=\"px\" style=\"padding:22px 32px 26px 32px;background:#F5F4F4;border-top:1px solid #E8E6E7;\"><p style=\"margin:0 0 10px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">Sent to the operations mailbox because a portal flow run failed.</p><p style=\"margin:0 0 6px 0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\"><strong style=\"color:#373435;\">DGO Digital Ops &middot; NITDA</strong> &nbsp;&middot;&nbsp; Internal operational message. Do not forward outside NITDA.</p><p style=\"margin:0;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;word-break:break-word;overflow-wrap:anywhere;\">National Information Technology Development Agency &nbsp;&middot;&nbsp; &copy; @{formatDateTime(utcNow(),'yyyy')} &nbsp;&middot;&nbsp; Automated message</p></td></tr>\n</table>\n<!--[if mso]></td></tr></table><![endif]-->\n</td></tr></table>\n</body></html>",
+                    "runAfter": {
+                      "Compose_Server_Error_Alert_Html_Part2": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Create_Send_Server_Error_Alert_Email_Receipt": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Send_Server_Error_Alert_Email": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "PostItem"
+                      },
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                        "item/Title": "@concat('server-error-alert:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                        "item/MessageType": "server-error-alert",
+                        "item/RecipientEmail": "@outputs('Compose_Notify_Config_C5')?['opsTo']",
+                        "item/Reference": "@string(workflow()?['run']?['name'])",
+                        "item/SentAtUtc": "@utcNow()",
+                        "item/Status": "@if(equals(actions('Send_Server_Error_Alert_Email')?['status'],'Succeeded'),'sent','failed')",
+                        "item/Attempts": 1,
+                        "item/LastError": "@if(equals(actions('Send_Server_Error_Alert_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Server_Error_Alert_Email')?['error']?['message'],actions('Send_Server_Error_Alert_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Server_Error_Alert_Email')?['error']?['message'],actions('Send_Server_Error_Alert_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                      }
+                    }
+                  },
+                  "Compose_Send_Server_Error_Alert_Email_Outcome": {
+                    "type": "Compose",
+                    "runAfter": {
+                      "Create_Send_Server_Error_Alert_Email_Receipt": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": "@int(if(or(equals(actions('Send_Server_Error_Alert_Email')?['status'],'Failed'),equals(actions('Send_Server_Error_Alert_Email')?['status'],'TimedOut')),'send-failed','0'))"
+                  }
+                }
+              }
+            },
+            "default": {
+              "actions": {}
+            },
+            "expression": "@if(equals(outputs('Compose_Notify_Config_C5')?['enabled'],true),coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none'),'disabled')",
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000227"
+            },
+            "type": "Switch"
+          }
+        },
+        "runAfter": {
+          "Scope_Finalize_ScheduledSweep": [
+            "Succeeded",
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000228"
+        },
+        "type": "Scope"
+      },
+      "Scope_Flow_Data_Capture": {
+        "actions": {
+          "Compose_Flow_Run_Record": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000229"
+            },
+            "type": "Compose",
+            "inputs": {
+              "capture_metadata": {
+                "telemetry_kind": "flow_run_record",
+                "capture_version": "2.1.0",
+                "standard_version": "1.0.0",
+                "captured_at_utc": "@utcNow()",
+                "capture_scope": "Scope_Flow_Data_Capture"
+              },
+              "workflow_identity": {
+                "internal_name": "@workflow()?['name']",
+                "full_resource_id": "@workflow()?['id']",
+                "type": "@workflow()?['type']",
+                "location": "@workflow()?['location']",
+                "tags": "@coalesce(workflow()?['tags'],json('{}'))"
+              },
+              "run_identity": {
+                "run_name": "@workflow()?['run']?['name']",
+                "run_resource_id": "@workflow()?['run']?['id']",
+                "request_id": "@outputs('Compose_Request_Context')?['requestId']"
+              },
+              "trigger_record": {
+                "kind": "event",
+                "note": "triggered or scheduled run; no request headers or body"
+              },
+              "request": {
+                "body_redacted": {
+                  "sections": "@coalesce(actions('Compose_Sweep_Sections')?['outputs'],json('{}'))"
+                }
+              },
+              "design_definition": {
+                "contract_version": "2026-08-21.1",
+                "endpoint": "ScheduledSweep"
+              },
+              "response_record": {
+                "status_code_sent": "@coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)",
+                "error_count": "@length(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))"
+              },
+              "outcome": {
+                "flow_outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')"
+              },
+              "timing": {
+                "received_at_utc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                "completed_at_utc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                "duration_ms": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)"
+              },
+              "notifications": {
+                "event": "@coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none')",
+                "scope_status": "@coalesce(actions('Scope_Notifications')?['status'],'Unknown')"
+              }
+            }
+          },
+          "Create_Flow_Telemetry": {
+            "runAfter": {
+              "Compose_Flow_Run_Record": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000230"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                "item/RunId": "@workflow()?['run']?['name']",
+                "item/StartedAtUtc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                "item/CompletedAtUtc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                "item/Outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')",
+                "item/DurationMs": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)",
+                "item/ErrorMessage": "@string(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))",
+                "item/RunRecordJson": "@string(outputs('Compose_Flow_Run_Record'))"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "PostItem"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Notifications": [
+            "Succeeded",
+            "Failed",
+            "TimedOut",
+            "Skipped"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000231"
+        },
+        "type": "Scope"
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000232"
+    },
+    "type": "Scope"
+  },
+  "allConnectionData": {
+    "Get_Notification_Config": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Ack_Tasks": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Ack_Receipts": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Ack_Email": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    },
+    "Update_Ack_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Ack_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Due_Tasks": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Due_Receipts": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Due_Email": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    },
+    "Update_Due_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Due_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Closed_Support_Cases": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Case_Receipts": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Case_Email": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    },
+    "Update_Case_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Case_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Undeliverable_Receipts": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Undeliverable_Alert_Email": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    },
+    "Mark_Receipt_Abandoned": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Notification_Config_C5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Server_Error_Alert_Email": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    },
+    "Create_Flow_Telemetry": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Send_Case_Email_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Send_Undeliverable_Alert_Email_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Digest_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Send_Task_Reminder_Email_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Send_Server_Error_Alert_Email_Receipt": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

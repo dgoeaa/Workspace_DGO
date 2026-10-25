@@ -1,0 +1,672 @@
+{
+  "nodeId": "Scope_DGO_Endpoint_Values_Delivery",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Endpoint_Values_Registry": {
+        "type": "Compose",
+        "inputs": [
+          {
+            "contractKey": "DGO_ENDPOINT_FETCH_ACTIVITIES",
+            "applicationWorkflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+            "flowName": "IP_Get_Docs_Endpoint",
+            "tenantFlowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_GET_DOCS",
+            "applicationWorkflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+            "flowName": "IP_Get_Docs_Endpoint",
+            "tenantFlowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_SUBSIDIARY_ACTIONS",
+            "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+            "flowName": "IP_Subsidiary_Actions_Endpoint",
+            "tenantFlowId": "08da1783-927f-4662-a429-45e1249a989f",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_SUBSIDIARY_ACTIONS",
+            "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+            "flowName": "IP_Dynamic_Global_Actions_Endpoint",
+            "tenantFlowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_DYNAMIC_ACTIONS",
+            "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+            "flowName": "IP_Subsidiary_Actions_Endpoint",
+            "tenantFlowId": "08da1783-927f-4662-a429-45e1249a989f",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_DYNAMIC_ACTIONS",
+            "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+            "flowName": "IP_Dynamic_Global_Actions_Endpoint",
+            "tenantFlowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_FETCH_ALL",
+            "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+            "flowName": "IP_FETCH_ALL_ENDPOINT",
+            "tenantFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_FETCH_ALL",
+            "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+            "flowName": "IP_Fetch_All_Endpoint",
+            "tenantFlowId": "be1f89bd-d7ea-4a15-87c9-2ce6fd4d0eaa",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "Unknown",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_REFERENCE_DATA",
+            "applicationWorkflowId": "885fad5ec91f460490e8c772d5d10cb8",
+            "flowName": "IP_Reference_Data_Endpoint",
+            "tenantFlowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_FETCH_EMAIL_ATTACHMENTS",
+            "applicationWorkflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+            "flowName": "IP_Retrieve_Email_Attachment_Endpoint",
+            "tenantFlowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_SINGLE_ASSIGNMENT",
+            "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+            "flowName": "IP_Single_Assignment_Endpoint",
+            "tenantFlowId": "05825db0-c806-4974-807c-c062f386cc41",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_SINGLE_ASSIGNMENT",
+            "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+            "flowName": "Single_Task_Assignment",
+            "tenantFlowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_BULK_ASSIGNMENT",
+            "applicationWorkflowId": "a705e453f922457c95ca19f32731e4d7",
+            "flowName": "BULK OPS DATA RETRIEVAL HTTP",
+            "tenantFlowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_EMAIL",
+            "applicationWorkflowId": "378b491ec39a4beca886ddec250e6961",
+            "flowName": "IP_SEND_EMAIL",
+            "tenantFlowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_EMAIL_RELATED_TASK",
+            "applicationWorkflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+            "flowName": "IP_Create_Email_Assignment_Endpoint",
+            "tenantFlowId": "2fbb5485-6244-46eb-8a38-48e443a1d9fb",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "Unknown",
+            "candidateOf": 1,
+            "candidates": 3
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_EMAIL_RELATED_TASK",
+            "applicationWorkflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+            "flowName": "IP_Create__Task__for_received_Email_Endpoint",
+            "tenantFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 3
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_EMAIL_RELATED_TASK",
+            "applicationWorkflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+            "flowName": "IP_Create__Task__for_received_Email_Endpoint",
+            "tenantFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 3,
+            "candidates": 3
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_AI_EMAIL_ANALYSIS",
+            "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+            "flowName": "AI_Document_Processing",
+            "tenantFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_AI_DOC_ANALYSIS",
+            "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+            "flowName": "AI_Document_Processing",
+            "tenantFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_AI_CHAT",
+            "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+            "flowName": "AI_Document_Processing",
+            "tenantFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_OTP_VERIFY",
+            "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+            "flowName": "IP_OTP_VERIFY",
+            "tenantFlowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_OTP_VERIFY",
+            "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+            "flowName": "IP_OTP_Endpoint",
+            "tenantFlowId": "913bd078-5411-404f-85ac-507c10fe1a09",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_SCAN_INTAKE",
+            "applicationWorkflowId": "88401ce1f44148539c0da53c9491f8e6",
+            "flowName": "IP_SCAN_INTAKE",
+            "tenantFlowId": "5504d7f9-cc96-470c-be79-217582faf415",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "Tenant",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "PF_ENDPOINT_SUBMISSION",
+            "applicationWorkflowId": "1041ed37ce924e3c886d891f23e8142c",
+            "flowName": "CG_Submission_Endpoint",
+            "tenantFlowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "PF_ENDPOINT_UPLOAD",
+            "applicationWorkflowId": "62fe121e5a95416bb91275e43dd0e37e",
+            "flowName": "CG_Upload_Endpoint",
+            "tenantFlowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "PF_ENDPOINT_SUPPORT",
+            "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+            "flowName": "CG_Support_Endpoint",
+            "tenantFlowId": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "PF_ENDPOINT_SUPPORT",
+            "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+            "flowName": "CG_Portal_Support_Endpoint",
+            "tenantFlowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "PF_ENDPOINT_VERIFY",
+            "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+            "flowName": "CG_Verification_Endpoint",
+            "tenantFlowId": "86897b2f-9770-4efa-8486-2642f24bb947",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "PF_ENDPOINT_VERIFY",
+            "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+            "flowName": "CG_Portal_Verification_Endpoint",
+            "tenantFlowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "PF_ENDPOINT_VERIFY_CONFIRM",
+            "applicationWorkflowId": "b270894ff410499ebbc090e32ffe899b",
+            "flowName": "CG_Portal_Verification_Confirmation_Endpoint",
+            "tenantFlowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "PF_ENDPOINT_STATUS",
+            "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+            "flowName": "CG_Portal_Status_Check_Endpoint",
+            "tenantFlowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 2
+          },
+          {
+            "contractKey": "PF_ENDPOINT_STATUS",
+            "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+            "flowName": "CG_Status_Check_Endpoint",
+            "tenantFlowId": "badb65d8-f472-407e-8975-c29d77b855d7",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 2,
+            "candidates": 2
+          },
+          {
+            "contractKey": "PF_ENDPOINT_WRITEBACK",
+            "applicationWorkflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+            "flowName": "CG_Portal_Writeback_Endpoint",
+            "tenantFlowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "All",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_USER_ADMIN",
+            "applicationWorkflowId": "466cf7ea66c54240aaede85a5a500f1c",
+            "flowName": "IP_User_Admin_Endpoint",
+            "tenantFlowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "Unknown",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_ACTIVITY_LIFECYCLE",
+            "applicationWorkflowId": "35fa90bfad8f4a639cc20882f1688149",
+            "flowName": "IP_Activity_Lifecycle_Endpoint",
+            "tenantFlowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "Unknown",
+            "candidateOf": 1,
+            "candidates": 1
+          },
+          {
+            "contractKey": "DGO_ENDPOINT_OTP_GENERATE",
+            "applicationWorkflowId": "741465e483714d48a07e336eb4571b89",
+            "flowName": "IP_OTP_GENERATE",
+            "tenantFlowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+            "evidence": "crosswalk",
+            "triggerAuthentication": "Unknown",
+            "candidateOf": 1,
+            "candidates": 1
+          }
+        ],
+        "metadata": {
+          "operationMetadataId": "dgo-values-registry"
+        }
+      },
+      "Compose_Expected_Contract_Keys": {
+        "type": "Compose",
+        "inputs": [
+          "DGO_ENDPOINT_FETCH_ACTIVITIES",
+          "DGO_ENDPOINT_GET_DOCS",
+          "DGO_ENDPOINT_SUBSIDIARY_ACTIONS",
+          "DGO_ENDPOINT_DYNAMIC_ACTIONS",
+          "DGO_ENDPOINT_FETCH_ALL",
+          "DGO_ENDPOINT_REFERENCE_DATA",
+          "DGO_ENDPOINT_FETCH_EMAIL_ATTACHMENTS",
+          "DGO_ENDPOINT_SINGLE_ASSIGNMENT",
+          "DGO_ENDPOINT_BULK_ASSIGNMENT",
+          "DGO_ENDPOINT_EMAIL",
+          "DGO_ENDPOINT_EMAIL_RELATED_TASK",
+          "DGO_ENDPOINT_AI_EMAIL_ANALYSIS",
+          "DGO_ENDPOINT_AI_DOC_ANALYSIS",
+          "DGO_ENDPOINT_AI_CHAT",
+          "DGO_ENDPOINT_OTP_VERIFY",
+          "DGO_ENDPOINT_SCAN_INTAKE",
+          "PF_ENDPOINT_SUBMISSION",
+          "PF_ENDPOINT_UPLOAD",
+          "PF_ENDPOINT_SUPPORT",
+          "PF_ENDPOINT_VERIFY",
+          "PF_ENDPOINT_VERIFY_CONFIRM",
+          "PF_ENDPOINT_STATUS",
+          "PF_ENDPOINT_WRITEBACK",
+          "DGO_ENDPOINT_USER_ADMIN",
+          "DGO_ENDPOINT_ACTIVITY_LIFECYCLE",
+          "DGO_ENDPOINT_OTP_GENERATE"
+        ],
+        "runAfter": {
+          "Compose_Endpoint_Values_Registry": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Apply_to_each_Endpoint_Values_Record": {
+        "type": "Foreach",
+        "foreach": "@outputs('Compose_Endpoint_Values_Registry')",
+        "operationOptions": "Sequential",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        },
+        "runAfter": {
+          "Compose_Expected_Contract_Keys": [
+            "Succeeded"
+          ]
+        },
+        "actions": {
+          "Scope_One_Endpoint_Values_Record": {
+            "type": "Scope",
+            "actions": {
+              "List_Callback_URL_For_Values": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "environmentName": "@variables('EnvironmentName')",
+                    "flowName": "@items('Apply_to_each_Endpoint_Values_Record')?['tenantFlowId']"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                    "connection": "shared_flowmanagement",
+                    "operationId": "ListCallbackUrl"
+                  }
+                }
+              },
+              "Compose_Values_Callback_URL": {
+                "type": "Compose",
+                "inputs": "@coalesce(outputs('List_Callback_URL_For_Values')?['body']?['response']?['value'], outputs('List_Callback_URL_For_Values')?['body']?['value'], '')",
+                "runAfter": {
+                  "List_Callback_URL_For_Values": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                }
+              },
+              "Compose_Values_Observed_Workflow_Id": {
+                "type": "Compose",
+                "inputs": "@if(and(not(empty(outputs('Compose_Values_Callback_URL'))),contains(outputs('Compose_Values_Callback_URL'),'/workflows/')),first(split(last(split(outputs('Compose_Values_Callback_URL'),'/workflows/')),'/')),'')",
+                "runAfter": {
+                  "Compose_Values_Callback_URL": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Condition_Values_URL_Verifies": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@not(empty(outputs('Compose_Values_Callback_URL')))",
+                        true
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@contains(outputs('Compose_Values_Callback_URL'),'sig=')",
+                        true
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@equals(outputs('Compose_Values_Observed_Workflow_Id'),items('Apply_to_each_Endpoint_Values_Record')?['applicationWorkflowId'])",
+                        true
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@not(contains(variables('ValuesResolvedKeys'),items('Apply_to_each_Endpoint_Values_Record')?['contractKey']))",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Append_Endpoint_Values_Line": {
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "ValuesLines",
+                      "value": "@concat(items('Apply_to_each_Endpoint_Values_Record')?['contractKey'],'=',outputs('Compose_Values_Callback_URL'))"
+                    }
+                  },
+                  "Append_Endpoint_Values_Resolved_Key": {
+                    "type": "AppendToArrayVariable",
+                    "inputs": {
+                      "name": "ValuesResolvedKeys",
+                      "value": "@items('Apply_to_each_Endpoint_Values_Record')?['contractKey']"
+                    },
+                    "runAfter": {
+                      "Append_Endpoint_Values_Line": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Append_Endpoint_Values_Rejection": {
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "ValuesRejections",
+                        "value": {
+                          "contractKey": "@items('Apply_to_each_Endpoint_Values_Record')?['contractKey']",
+                          "flowName": "@items('Apply_to_each_Endpoint_Values_Record')?['flowName']",
+                          "tenantFlowId": "@items('Apply_to_each_Endpoint_Values_Record')?['tenantFlowId']",
+                          "candidate": "@concat(string(items('Apply_to_each_Endpoint_Values_Record')?['candidateOf']),' of ',string(items('Apply_to_each_Endpoint_Values_Record')?['candidates']))",
+                          "evidence": "@items('Apply_to_each_Endpoint_Values_Record')?['evidence']",
+                          "triggerAuthentication": "@items('Apply_to_each_Endpoint_Values_Record')?['triggerAuthentication']",
+                          "diagnosis": "@if(equals(actions('List_Callback_URL_For_Values')?['status'],'Failed'),'THE_CALLBACK_CALL_ITSELF_FAILED - the flow id may be dead, or not owned by this connection',if(equals(outputs('Compose_Values_Observed_Workflow_Id'),items('Apply_to_each_Endpoint_Values_Record')?['applicationWorkflowId']),if(contains(outputs('Compose_Values_Callback_URL'),'sig='),'RESOLVED_BY_ANOTHER_CANDIDATE_OR_ALREADY_HELD',concat('RIGHT_FLOW_BUT_ITS_URL_CARRIES_NO_SIGNATURE - this trigger is ',items('Apply_to_each_Endpoint_Values_Record')?['triggerAuthentication'],'-authenticated. A browser with no proxy cannot call it. Set \"Who can trigger the flow\" to Anyone, or accept that this endpoint needs an Entra token.')),'SERVES_A_DIFFERENT_WORKFLOW - this flow is not the one the register names for this key'))",
+                          "expectedApplicationWorkflowId": "@items('Apply_to_each_Endpoint_Values_Record')?['applicationWorkflowId']",
+                          "observedApplicationWorkflowId": "@outputs('Compose_Values_Observed_Workflow_Id')",
+                          "signaturePresent": "@contains(outputs('Compose_Values_Callback_URL'),'sig=')",
+                          "callbackActionStatus": "@actions('List_Callback_URL_For_Values')?['status']",
+                          "alreadyResolvedByAnotherCandidate": "@contains(variables('ValuesResolvedKeys'),items('Apply_to_each_Endpoint_Values_Record')?['contractKey'])"
+                        }
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Compose_Values_Observed_Workflow_Id": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            }
+          },
+          "Scope_Endpoint_Values_Record_Failed": {
+            "type": "Scope",
+            "runAfter": {
+              "Scope_One_Endpoint_Values_Record": [
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "actions": {
+              "Append_Endpoint_Values_Record_Failure": {
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "ValuesRejections",
+                  "value": {
+                    "contractKey": "@items('Apply_to_each_Endpoint_Values_Record')?['contractKey']",
+                    "flowName": "@items('Apply_to_each_Endpoint_Values_Record')?['flowName']",
+                    "tenantFlowId": "@items('Apply_to_each_Endpoint_Values_Record')?['tenantFlowId']",
+                    "expectedApplicationWorkflowId": "@items('Apply_to_each_Endpoint_Values_Record')?['applicationWorkflowId']",
+                    "reason": "RECORD_SCOPE_FAILED",
+                    "scopeResult": "@result('Scope_One_Endpoint_Values_Record')"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Filter_Missing_Contract_Keys": {
+        "type": "Query",
+        "inputs": {
+          "from": "@outputs('Compose_Expected_Contract_Keys')",
+          "where": "@not(contains(variables('ValuesResolvedKeys'), item()))"
+        },
+        "runAfter": {
+          "Apply_to_each_Endpoint_Values_Record": [
+            "Succeeded",
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Endpoint_Values_File": {
+        "type": "Compose",
+        "inputs": "@join(createArray('# DGO endpoint values - harvested in the tenant by the flow exporter.',concat('# Environment: ',variables('EnvironmentName')),concat('# Generated:   ',utcNow()),concat('# Keys:        ',string(length(variables('ValuesResolvedKeys')))),concat('# Scope build: ', '1d8e0d44e714'),'#','# Every key below was verified in-flow: the invoke URL it carries names the','# application workflow id the endpoint register holds for that key.','#','# EVERY LINE BELOW ENDS IN A SIGNATURE AND IS A BEARER CREDENTIAL.','# Save as ~/dgo-values.txt. Never commit it, paste it into a chat, or attach it','# to an issue. Deleting the file revokes nothing: only regenerating the trigger does.','',join(variables('ValuesLines'),decodeUriComponent('%0A'))),decodeUriComponent('%0A'))",
+        "runAfter": {
+          "Filter_Missing_Contract_Keys": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Condition_Endpoint_Values_Complete": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@length(body('Filter_Missing_Contract_Keys'))",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Response_Endpoint_Values_Complete": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 200,
+              "headers": {
+                "Content-Type": "text/plain; charset=utf-8"
+              },
+              "body": "@outputs('Compose_Endpoint_Values_File')"
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Response_Endpoint_Values_Incomplete": {
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 409,
+                "headers": {
+                  "Content-Type": "application/json; charset=utf-8"
+                },
+                "body": {
+                  "status": "INCOMPLETE_NOTHING_RETURNED",
+                  "expectedKeys": "@length(outputs('Compose_Expected_Contract_Keys'))",
+                  "resolvedKeys": "@length(variables('ValuesResolvedKeys'))",
+                  "missingKeys": "@body('Filter_Missing_Contract_Keys')",
+                  "rejections": "@variables('ValuesRejections')",
+                  "note": "No URL appears in this response. A half-complete values file is worse than none.",
+                  "scopeBuild": "1d8e0d44e714"
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_Endpoint_Values_File": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "metadata": {
+      "operationMetadataId": "dgo-endpoint-values-delivery"
+    }
+  },
+  "allConnectionData": {
+    "List_Callback_URL_For_Values": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement/connections/shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+        },
+        "connectionName": "shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+      },
+      "referenceKey": "shared_flowmanagement"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

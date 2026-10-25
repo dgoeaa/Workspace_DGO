@@ -1,0 +1,29 @@
+Microsoft365Name,UnitKey,Status,Confidence,Basis
+Cyber Security,CS,confirmed,high,Spelling of the unit's own name (Cybersecurity Department); confirmed by owner 26 Sep 2026
+Cybersecurity,CS,confirmed,high,"The unit's own name without ""Department""; confirmed by owner 26 Sep 2026"
+Corporate Planning & Strategy,CPS,confirmed,high,"The unit's own name without ""Department""; confirmed by owner 26 Sep 2026"
+Corporate Planning and Strategy,CPS,confirmed,high,"The unit's own name without ""Department""; confirmed by owner 26 Sep 2026"
+"Finance, Management and Control",FMC,confirmed,high,The unit's own name (Finance Management and Control Department); confirmed by owner 26 Sep 2026
+DG'S OFFICE,DGO,confirmed,high,The unit's own name (DGs Office); confirmed by owner 26 Sep 2026
+Regulations and Compliance,RC,confirmed,high,"The unit's own name without ""Department""; confirmed by owner 26 Sep 2026"
+R&D,RD,confirmed,high,Abbreviation of Research and Development Department; confirmed by owner 26 Sep 2026
+Special Duties,SDO,confirmed,high,Special Duties Office; confirmed by owner 26 Sep 2026
+Internal Audit,AIC,confirmed,medium,Audit and Internal Control Department; confirmed by owner 26 Sep 2026
+HR,HRM,confirmed,medium,Human Resource Management; HRA -> HRM is already adopted in approved/dsu-key-corrections.csv; confirmed by owner 26 Sep 2026
+Human Resource and Administration,HRM,confirmed,medium,HRA spelled out; approved/dsu-key-corrections.csv adopts HRA -> HRM; confirmed by owner 26 Sep 2026
+IT,ITD,confirmed,medium,Information Technology Department; confirmed by owner 26 Sep 2026
+ITIS,ITD,confirmed,low,IT Infrastructure Solutions; confirmed by owner 26 Sep 2026
+IT Infrastructure Solutions,ITD,confirmed,low,As ITIS; confirmed by owner 26 Sep 2026
+e-Government Development and Regulation,eGD,confirmed,low,Earlier name of the e-Government Department; confirmed by owner 26 Sep 2026
+e-Government Development and Regulations,RC,confirmed,owner,Owner decision 26 Sep 2026 (proposed eGD; owner chose RC)
+ZOD,ZOC,confirmed,low,Abbreviation of Zonal Office Coordination Department; confirmed by owner 26 Sep 2026
+DED,DDSD,confirmed,low,Earlier name of the Digital Development Services Department; confirmed by owner 26 Sep 2026
+Digital Literacy & Capacity Development,DDSD,confirmed,owner,Owner decision 26 Sep 2026
+CAER,CCMR,confirmed,owner,Owner decision 26 Sep 2026
+OIIE,ONDI,confirmed,owner,Owner decision 26 Sep 2026
+ONC,ONDI,confirmed,owner,Owner decision 26 Sep 2026
+NWZO,ZOC,confirmed,owner,Owner decision 26 Sep 2026
+NW Zonal Office,ZOC,confirmed,owner,Owner decision 26 Sep 2026
+Standards Guidelines and Frameworks,RC,confirmed,owner,Owner decision 26 Sep 2026
+National Information Technology Development Agency,DGO,confirmed,owner,Owner decision 26 Sep 2026
+Special Duties Directorate,SDO,confirmed,memo,"Memo NITDA/HQ/NB/105 of 11 Sep 2026 names the unit Special Duties Directorate; it remains DSU_KEY SDO in the approved list"

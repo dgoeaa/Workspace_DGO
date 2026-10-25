@@ -1,0 +1,277 @@
+{
+  "schema": "dgo-inventory-flow-candidates/v1",
+  "capturedAt": "2026-09-08",
+  "purpose": "Tenant-side evidence this repository holds nowhere else: which Power Automate flow GUID(s) each application workflow id is believed to correspond to, and what the correspondence rests on. Consumed by scripts/build-inventory-flow.mjs, which joins it to docs/folio-Master-Flows-and-Endpoints/registers/endpoint-workflow-ids.json to build the inventory flow registry.",
+  "authority": {
+    "file": "docs/folio-Master-Flows-and-Endpoints/registers/endpoint-workflow-ids.json",
+    "note": "Contract keys, application workflow ids, categories, HTTP methods and canonical flow names are NOT recorded here. They come from the register, which is the authority for them, and are joined in at build time. This file records only the tenant flow GUIDs, which the register does not carry."
+  },
+  "credentialPolicy": "No trigger URL and no signature is recorded here or anywhere in this repository. A flow GUID addresses a flow; it does not authorize invoking it.",
+  "mappingTypes": {
+    "EXACT_MATCH": "The exported flow name equals the canonical flow name.",
+    "ALIAS_ALIGNED": "The exported flow name is a known alias of the canonical name.",
+    "CONSOLIDATED_ALIGNMENT": "Several contract keys were consolidated onto one flow; the export reflects the pre-consolidation naming.",
+    "NOT_EVIDENCED": "No export names a flow GUID for this workflow. Recorded as an absence, not guessed at."
+  },
+  "confirmationStatus": "UNCONFIRMED_AGAINST_TENANT. Every pairing below is drawn from export files, not from a live read of the environment. Confirming them is what the inventory flow is for: it calls GetFlow on each GUID and reports what the tenant actually returns.",
+  "candidates": {
+    "c4c26f93ba1e4d7db5247536c30cdc11": [],
+    "d5e4b3da41e34819b3f953d2acbc2dd7": [
+      {
+        "powerAutomateFlowId": "08da1783-927f-4662-a429-45e1249a989f",
+        "exportedFlowName": "IP_Subsidiary_Actions_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "aa662769f13a4666bfadf3039cd8d247": [
+      {
+        "powerAutomateFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+        "exportedFlowName": "IP_FETCH_ALL_ENDPOINT",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      },
+      {
+        "powerAutomateFlowId": "be1f89bd-d7ea-4a15-87c9-2ce6fd4d0eaa",
+        "exportedFlowName": "IP_Fetch_All_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "885fad5ec91f460490e8c772d5d10cb8": [
+      {
+        "powerAutomateFlowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+        "exportedFlowName": "IP_Reference_Data_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "d2c773332f6f4fbf97ee4a5baa01f70b": [
+      {
+        "powerAutomateFlowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+        "exportedFlowName": "IP_Retrieve_Email_Attachment_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "72acfc6a694f414f9fe39c939ead7f08": [
+      {
+        "powerAutomateFlowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+        "exportedFlowName": "Single_Task_Assignment",
+        "mappingType": "CONSOLIDATED_ALIGNMENT",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      },
+      {
+        "powerAutomateFlowId": "05825db0-c806-4974-807c-c062f386cc41",
+        "exportedFlowName": "IP_Single_Assignment_Endpoint",
+        "mappingType": "CONSOLIDATED_ALIGNMENT",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "a705e453f922457c95ca19f32731e4d7": [],
+    "8f6a40a682bb4e79acd2ac5d42f15705": [
+      {
+        "powerAutomateFlowId": "0d1e8df5-30b3-4069-8903-665b87c197eb",
+        "exportedFlowName": "IP_Bulk_Assign_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "378b491ec39a4beca886ddec250e6961": [
+      {
+        "powerAutomateFlowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+        "exportedFlowName": "IP_SEND_EMAIL",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "a942d230337c4ddfa9a386e92bbd048b": [
+      {
+        "powerAutomateFlowId": "2fbb5485-6244-46eb-8a38-48e443a1d9fb",
+        "exportedFlowName": "IP_Create_Email_Assignment_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "3f018fea1031490fb73dff6a8d6341f2": [],
+    "b372d45e4b2a47d88b8e8b032da67fcd": [
+      {
+        "powerAutomateFlowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+        "exportedFlowName": "IP_OTP_VERIFY",
+        "mappingType": "CONSOLIDATED_ALIGNMENT",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      },
+      {
+        "powerAutomateFlowId": "913bd078-5411-404f-85ac-507c10fe1a09",
+        "exportedFlowName": "IP_OTP_Endpoint",
+        "mappingType": "CONSOLIDATED_ALIGNMENT",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "88401ce1f44148539c0da53c9491f8e6": [
+      {
+        "powerAutomateFlowId": "5504d7f9-cc96-470c-be79-217582faf415",
+        "exportedFlowName": "IP_SCAN_INTAKE",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "1041ed37ce924e3c886d891f23e8142c": [
+      {
+        "powerAutomateFlowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+        "exportedFlowName": "CG_Submission_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "62fe121e5a95416bb91275e43dd0e37e": [
+      {
+        "powerAutomateFlowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+        "exportedFlowName": "CG_Upload_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "052013da80724713a4285edee72ccb4a": [
+      {
+        "powerAutomateFlowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+        "exportedFlowName": "CG_Portal_Support_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      },
+      {
+        "powerAutomateFlowId": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+        "exportedFlowName": "CG_Support_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "c0d58004c53348539d0d5aeaf49dcded": [
+      {
+        "powerAutomateFlowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+        "exportedFlowName": "CG_Portal_Verification_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      },
+      {
+        "powerAutomateFlowId": "86897b2f-9770-4efa-8486-2642f24bb947",
+        "exportedFlowName": "CG_Verification_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "b270894ff410499ebbc090e32ffe899b": [
+      {
+        "powerAutomateFlowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+        "exportedFlowName": "CG_Portal_Verification_Confirmation_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "34dd28b4a5664927b66e581c74a0ab94": [
+      {
+        "powerAutomateFlowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+        "exportedFlowName": "CG_Portal_Status_Check_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      },
+      {
+        "powerAutomateFlowId": "badb65d8-f472-407e-8975-c29d77b855d7",
+        "exportedFlowName": "CG_Status_Check_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "abf3a3ca53e64ba58c9ce5933e4e97e3": [
+      {
+        "powerAutomateFlowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+        "exportedFlowName": "CG_Portal_Writeback_Endpoint",
+        "mappingType": "EXACT_MATCH",
+        "sourceFiles": [
+          "Endpoints_for_25__FULL_EMBEDDED_CONTENTS.json",
+          "Encpoint_Exports_Mopup__FULL_EMBEDDED_CONTENTS.json"
+        ]
+      }
+    ],
+    "8fbf2896fceb4567afe9ebf47628c3a1": [
+      {
+        "powerAutomateFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+        "exportedFlowName": "IP_Create_Task_for_received_Email_Endpoint",
+        "mappingType": "ALIAS_ALIGNED",
+        "sourceFiles": [
+          "EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261006205908.zip",
+          "2026-10-07-endpoint-values-read.json"
+        ]
+      }
+    ],
+    "466cf7ea66c54240aaede85a5a500f1c": [],
+    "741465e483714d48a07e336eb4571b89": [],
+    "35fa90bfad8f4a639cc20882f1688149": []
+  }
+}

@@ -1,0 +1,2991 @@
+{
+  "specVersion": "1.0.0",
+  "generator": "scripts/build-http-flow-registry-spec.mjs",
+  "sourceWorkbook": "docs/folio-Master-Flows-and-Endpoints/registers/http-flow-registry-workbook.xlsx",
+  "extractionPurpose": "Machine-readable extraction of the DGO HTTP Flow Registry provisioning workbook: the seven DGO_HTTPFlow* governance lists, their 101 custom fields and schema XML, configuration seeds, views, unique-key controls, list settings, action graph, REST request catalogue, status vocabulary, final-report contract and recorded design observations.",
+  "integrityPolicy": {
+    "cellValueHandling": "Cell values are extracted as stored, with null for blank cells. Numbers stay numbers and text stays text; nothing is coerced, reworded or reordered.",
+    "noSummarization": true,
+    "noIntentionalTruncation": true,
+    "blankCellsPreservedAsNull": true,
+    "designTimeOnly": "Every executionEvidence value is the workbook's own design-time wording. \"Defined\" means the flow is configured to create the resource, not that the resource exists. Run history or the Compose_Final_Report_JSON output is the only evidence of an actual outcome."
+  },
+  "registry": {
+    "targetSite": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+    "scopeNode": "Scope_01_GOV_Provision_HTTP_Flow_Registry_COMPLETE_UPDATED",
+    "reportSchemaVersion": "5.0.0",
+    "flowDisplayName": "01 - GOV - Provision HTTP Flow Registry",
+    "fieldGroup": "DGO HTTP Flow Governance",
+    "expectedResources": "7 lists; 101 custom fields; 7 unique keys; 12 enabled seeds; 7 custom views",
+    "executionStatus": "Not determinable from the design-time definition. “Defined” means intended/configured in the flow, not proven created. Use the final report JSON or Power Automate run history to populate actual Succeeded, Failed, Skipped, or TimedOut outcomes.",
+    "securityNote": "The source definition contains tenant site and connection identifiers. This workbook records functional connection references but does not include credentials or secret values."
+  },
+  "totals": {
+    "lists": 7,
+    "fields": 102,
+    "configSeeds": 12,
+    "views": 7,
+    "uniqueKeys": 7,
+    "listSettings": 49,
+    "workflowActions": 22,
+    "restRequests": 15
+  },
+  "workbookMetadata": {
+    "sheetNames": [
+      "00_Read_Me",
+      "01_Overview",
+      "02_Lists",
+      "03_Fields",
+      "04_Config_Seeds",
+      "05_Views",
+      "06_Unique_Keys",
+      "07_List_Settings",
+      "08_Workflow",
+      "09_REST_Parameters",
+      "10_Status_Logging",
+      "11_Final_Report",
+      "12_Risks_Controls",
+      "13_Connections"
+    ],
+    "sheetCount": 14,
+    "dimensions": {
+      "00_Read_Me": "A1:H11",
+      "01_Overview": "A1:G10",
+      "02_Lists": "A1:M11",
+      "03_Fields": "A1:M105",
+      "04_Config_Seeds": "A1:I16",
+      "05_Views": "A1:F11",
+      "06_Unique_Keys": "A1:G11",
+      "07_List_Settings": "A1:E53",
+      "08_Workflow": "A1:D26",
+      "09_REST_Parameters": "A1:E19",
+      "10_Status_Logging": "A1:C16",
+      "11_Final_Report": "A1:C30",
+      "12_Risks_Controls": "A1:C17",
+      "13_Connections": "A1:B26"
+    },
+    "maxRows": {
+      "00_Read_Me": 11,
+      "01_Overview": 10,
+      "02_Lists": 11,
+      "03_Fields": 105,
+      "04_Config_Seeds": 16,
+      "05_Views": 11,
+      "06_Unique_Keys": 11,
+      "07_List_Settings": 53,
+      "08_Workflow": 26,
+      "09_REST_Parameters": 19,
+      "10_Status_Logging": 16,
+      "11_Final_Report": 30,
+      "12_Risks_Controls": 17,
+      "13_Connections": 26
+    },
+    "maxColumns": {
+      "00_Read_Me": 8,
+      "01_Overview": 7,
+      "02_Lists": 13,
+      "03_Fields": 13,
+      "04_Config_Seeds": 9,
+      "05_Views": 6,
+      "06_Unique_Keys": 7,
+      "07_List_Settings": 5,
+      "08_Workflow": 4,
+      "09_REST_Parameters": 5,
+      "10_Status_Logging": 3,
+      "11_Final_Report": 3,
+      "12_Risks_Controls": 3,
+      "13_Connections": 2
+    }
+  },
+  "readMe": {
+    "title": "DGO HTTP Flow Registry | Full Documentation",
+    "subtitle": "Design-time inventory reconstructed from the supplied Power Automate serialized scope. Actual run outcomes require run-history outputs.",
+    "entries": [
+      {
+        "property": "Document purpose",
+        "value": "Complete Excel documentation of the seven SharePoint lists, 101 custom fields, list settings, seeds, views, unique keys, workflow actions, REST parameters, validation, reporting, and known execution-state limitations."
+      },
+      {
+        "property": "Target site",
+        "value": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+      },
+      {
+        "property": "Scope node",
+        "value": "Scope_01_GOV_Provision_HTTP_Flow_Registry_COMPLETE_UPDATED"
+      },
+      {
+        "property": "Report schema version",
+        "value": "5.0.0"
+      },
+      {
+        "property": "Expected resources",
+        "value": "7 lists; 101 custom fields; 7 unique keys; 12 enabled seeds; 7 custom views"
+      },
+      {
+        "property": "Execution status",
+        "value": "Not determinable from the design-time definition. “Defined” means intended/configured in the flow, not proven created. Use the final report JSON or Power Automate run history to populate actual Succeeded, Failed, Skipped, or TimedOut outcomes."
+      },
+      {
+        "property": "Workbook navigation",
+        "value": "01_Overview summarizes controls; 02_Lists documents lists; 03_Fields contains all 101 fields and schema XML; subsequent sheets cover settings, seeds, views, workflow, REST requests, reporting, and risks."
+      },
+      {
+        "property": "Security note",
+        "value": "The source definition contains tenant site and connection identifiers. This workbook records functional connection references but does not include credentials or secret values."
+      }
+    ]
+  },
+  "overview": [
+    {
+      "metric": "Lists",
+      "expected": 7,
+      "documented": 7,
+      "variance": 0,
+      "pass": "Yes",
+      "interpretation": "Required SharePoint lists",
+      "sourceArea": "Compose_List_Definitions"
+    },
+    {
+      "metric": "Custom fields",
+      "expected": 101,
+      "documented": 101,
+      "variance": 0,
+      "pass": "Yes",
+      "interpretation": "Custom fields across all lists",
+      "sourceArea": "Compose_Field_Definitions"
+    },
+    {
+      "metric": "Unique keys",
+      "expected": 7,
+      "documented": 7,
+      "variance": 0,
+      "pass": "Yes",
+      "interpretation": "Indexed and unique key fields",
+      "sourceArea": "Compose_Unique_Key_Definitions"
+    },
+    {
+      "metric": "Configuration seeds",
+      "expected": 12,
+      "documented": 12,
+      "variance": 0,
+      "pass": "Yes",
+      "interpretation": "Enabled initial settings",
+      "sourceArea": "Compose_Config_Seeds"
+    },
+    {
+      "metric": "Custom views",
+      "expected": 7,
+      "documented": 7,
+      "variance": 0,
+      "pass": "Yes",
+      "interpretation": "Governance views",
+      "sourceArea": "Compose_View_Definitions"
+    },
+    {
+      "metric": "Configured list settings",
+      "expected": 7,
+      "documented": 7,
+      "variance": 0,
+      "pass": "Yes",
+      "interpretation": "Expected settings template coverage",
+      "sourceArea": "Configure_List"
+    }
+  ],
+  "lists": [
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "description": "Current authoritative HTTP flow truth",
+      "baseTemplate": 100,
+      "customFieldCount": 36,
+      "uniqueKey": "RegistryKey",
+      "customViews": "4 custom views",
+      "attachmentsEnabled": "No",
+      "folderCreationEnabled": "No",
+      "versioningEnabled": "Yes",
+      "majorVersionLimit": 100,
+      "forceCheckout": "No",
+      "titleRequired": "No",
+      "executionEvidence": "Defined; actual run status unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "description": "Immutable contracts",
+      "baseTemplate": 100,
+      "customFieldCount": 13,
+      "uniqueKey": "ContractKey",
+      "customViews": "No custom view",
+      "attachmentsEnabled": "No",
+      "folderCreationEnabled": "No",
+      "versioningEnabled": "Yes",
+      "majorVersionLimit": 100,
+      "forceCheckout": "No",
+      "titleRequired": "No",
+      "executionEvidence": "Defined; actual run status unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "description": "Execution ledger",
+      "baseTemplate": 100,
+      "customFieldCount": 15,
+      "uniqueKey": "ExecutionKey",
+      "customViews": "Recent Failures",
+      "attachmentsEnabled": "No",
+      "folderCreationEnabled": "No",
+      "versioningEnabled": "Yes",
+      "majorVersionLimit": 100,
+      "forceCheckout": "No",
+      "titleRequired": "No",
+      "executionEvidence": "Defined; actual run status unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "description": "Flow dependencies",
+      "baseTemplate": 100,
+      "customFieldCount": 9,
+      "uniqueKey": "DependencyKey",
+      "customViews": "No custom view",
+      "attachmentsEnabled": "No",
+      "folderCreationEnabled": "No",
+      "versioningEnabled": "Yes",
+      "majorVersionLimit": 100,
+      "forceCheckout": "No",
+      "titleRequired": "No",
+      "executionEvidence": "Defined; actual run status unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "description": "Governance exceptions",
+      "baseTemplate": 100,
+      "customFieldCount": 12,
+      "uniqueKey": "ExceptionKey",
+      "customViews": "Open Exceptions",
+      "attachmentsEnabled": "No",
+      "folderCreationEnabled": "No",
+      "versioningEnabled": "Yes",
+      "majorVersionLimit": 100,
+      "forceCheckout": "No",
+      "titleRequired": "No",
+      "executionEvidence": "Defined; actual run status unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "description": "Registry configuration",
+      "baseTemplate": 100,
+      "customFieldCount": 6,
+      "uniqueKey": "ConfigKey",
+      "customViews": "No custom view",
+      "attachmentsEnabled": "No",
+      "folderCreationEnabled": "No",
+      "versioningEnabled": "Yes",
+      "majorVersionLimit": 100,
+      "forceCheckout": "No",
+      "titleRequired": "No",
+      "executionEvidence": "Defined; actual run status unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "description": "Consumer registry",
+      "baseTemplate": 100,
+      "customFieldCount": 11,
+      "uniqueKey": "ConsumerKey",
+      "customViews": "Unapproved Consumers",
+      "attachmentsEnabled": "No",
+      "folderCreationEnabled": "No",
+      "versioningEnabled": "Yes",
+      "majorVersionLimit": 100,
+      "forceCheckout": "No",
+      "titleRequired": "No",
+      "executionEvidence": "Defined; actual run status unavailable"
+    }
+  ],
+  "fields": [
+    {
+      "fieldNumber": 1,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "RegistryKey",
+      "displayName": "RegistryKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "Yes",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Primary generated/composite registry identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 2,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "FlowId",
+      "displayName": "FlowId",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Power Automate flow identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 3,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "EnvironmentId",
+      "displayName": "EnvironmentId",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Environment identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='EnvironmentId' Name='EnvironmentId' StaticName='EnvironmentId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 4,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "EnvironmentName",
+      "displayName": "EnvironmentName",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Human-readable environment name",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='EnvironmentName' Name='EnvironmentName' StaticName='EnvironmentName' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 5,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "FlowName",
+      "displayName": "FlowName",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Flow display name",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='FlowName' Name='FlowName' StaticName='FlowName' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 6,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "SystemName",
+      "displayName": "SystemName",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Associated business or technical system",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='SystemName' Name='SystemName' StaticName='SystemName' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 7,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "BusinessProcess",
+      "displayName": "BusinessProcess",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Supported business process",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='BusinessProcess' Name='BusinessProcess' StaticName='BusinessProcess' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 8,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "FlowDescription",
+      "displayName": "FlowDescription",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Functional or technical description",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='FlowDescription' Name='FlowDescription' StaticName='FlowDescription' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 9,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "TechnicalOwnerEmail",
+      "displayName": "TechnicalOwnerEmail",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Technical owner email",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='TechnicalOwnerEmail' Name='TechnicalOwnerEmail' StaticName='TechnicalOwnerEmail' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 10,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "BusinessOwnerEmail",
+      "displayName": "BusinessOwnerEmail",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Business owner email",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='BusinessOwnerEmail' Name='BusinessOwnerEmail' StaticName='BusinessOwnerEmail' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 11,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "SupportEmail",
+      "displayName": "SupportEmail",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Support mailbox",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='SupportEmail' Name='SupportEmail' StaticName='SupportEmail' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 12,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "HttpMethod",
+      "displayName": "HttpMethod",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "HTTP method",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='HttpMethod' Name='HttpMethod' StaticName='HttpMethod' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 13,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "EndpointRedacted",
+      "displayName": "EndpointRedacted",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Sanitized endpoint",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='EndpointRedacted' Name='EndpointRedacted' StaticName='EndpointRedacted' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 14,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "EndpointFingerprint",
+      "displayName": "EndpointFingerprint",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Stable endpoint fingerprint/hash",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='EndpointFingerprint' Name='EndpointFingerprint' StaticName='EndpointFingerprint' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 15,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "AuthenticationMode",
+      "displayName": "AuthenticationMode",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Authentication arrangement",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='AuthenticationMode' Name='AuthenticationMode' StaticName='AuthenticationMode' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 16,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "DataClassification",
+      "displayName": "DataClassification",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Information classification",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DataClassification' Name='DataClassification' StaticName='DataClassification' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 17,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "Criticality",
+      "displayName": "Criticality",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Business/technical criticality",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='Criticality' Name='Criticality' StaticName='Criticality' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 18,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "LifecycleStatus",
+      "displayName": "LifecycleStatus",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Lifecycle state",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='LifecycleStatus' Name='LifecycleStatus' StaticName='LifecycleStatus' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 19,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "DefinitionVersion",
+      "displayName": "DefinitionVersion",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Current definition version",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DefinitionVersion' Name='DefinitionVersion' StaticName='DefinitionVersion' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 20,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "DefinitionFingerprint",
+      "displayName": "DefinitionFingerprint",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Definition hash",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DefinitionFingerprint' Name='DefinitionFingerprint' StaticName='DefinitionFingerprint' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 21,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "RequestSchemaJson",
+      "displayName": "RequestSchemaJson",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Request schema JSON",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='RequestSchemaJson' Name='RequestSchemaJson' StaticName='RequestSchemaJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 22,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "ResponseContractJson",
+      "displayName": "ResponseContractJson",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Response contract JSON",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='ResponseContractJson' Name='ResponseContractJson' StaticName='ResponseContractJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 23,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "LastRegisteredUtc",
+      "displayName": "LastRegisteredUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Latest registration UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='LastRegisteredUtc' Name='LastRegisteredUtc' StaticName='LastRegisteredUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 24,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "LastSeenUtc",
+      "displayName": "LastSeenUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Latest observed activity UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='LastSeenUtc' Name='LastSeenUtc' StaticName='LastSeenUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 25,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "LastSuccessfulCallUtc",
+      "displayName": "LastSuccessfulCallUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Latest successful call UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='LastSuccessfulCallUtc' Name='LastSuccessfulCallUtc' StaticName='LastSuccessfulCallUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 26,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "LastFailureUtc",
+      "displayName": "LastFailureUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Latest failure UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='LastFailureUtc' Name='LastFailureUtc' StaticName='LastFailureUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 27,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "LastAuditUtc",
+      "displayName": "LastAuditUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Latest audit UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='LastAuditUtc' Name='LastAuditUtc' StaticName='LastAuditUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 28,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "TotalExecutions",
+      "displayName": "TotalExecutions",
+      "expectedTypeAsString": "Number",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "Total executions",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='TotalExecutions' Name='TotalExecutions' StaticName='TotalExecutions' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 29,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "SuccessfulExecutions",
+      "displayName": "SuccessfulExecutions",
+      "expectedTypeAsString": "Number",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "Successful executions",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='SuccessfulExecutions' Name='SuccessfulExecutions' StaticName='SuccessfulExecutions' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 30,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "FailedExecutions",
+      "displayName": "FailedExecutions",
+      "expectedTypeAsString": "Number",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "Failed executions",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='FailedExecutions' Name='FailedExecutions' StaticName='FailedExecutions' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 31,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "ConsecutiveFailures",
+      "displayName": "ConsecutiveFailures",
+      "expectedTypeAsString": "Number",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "Current consecutive failures",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='ConsecutiveFailures' Name='ConsecutiveFailures' StaticName='ConsecutiveFailures' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 32,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "AverageDurationMs",
+      "displayName": "AverageDurationMs",
+      "expectedTypeAsString": "Number",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "Average duration in milliseconds",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='AverageDurationMs' Name='AverageDurationMs' StaticName='AverageDurationMs' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 33,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "IsCompliant",
+      "displayName": "IsCompliant",
+      "expectedTypeAsString": "Boolean",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": null,
+      "purpose": "Compliance indicator",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Boolean' DisplayName='IsCompliant' Name='IsCompliant' StaticName='IsCompliant' Required='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 34,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "ComplianceIssues",
+      "displayName": "ComplianceIssues",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Compliance issue details",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='ComplianceIssues' Name='ComplianceIssues' StaticName='ComplianceIssues' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 35,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "RecordVersion",
+      "displayName": "RecordVersion",
+      "expectedTypeAsString": "Number",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "Application-level record version",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='RecordVersion' Name='RecordVersion' StaticName='RecordVersion' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 36,
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "internalName": "WorkflowId",
+      "displayName": "WorkflowId",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=32",
+      "purpose": "The Logic Apps workflow id: 32 hexadecimal characters, no dashes, recorded alongside FlowId so the exported definitions and the tenant register can be joined. GOV-06 measured the gap: 77 exported definitions keyed by a 36-character dashed Power Automate flow GUID, a register of 51 workflows keyed by a 32-hex workflow id, and ZERO exported definitions carrying an id the register knows. Joining on normalised display name matches 13. This column is where the two identifiers sit in one row. Optional, because 21 of the 77 carry no HTTP trigger and so have no trigger URL to read an id from.",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='WorkflowId' Name='WorkflowId' StaticName='WorkflowId' Required='FALSE' MaxLength='32' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Added 2026-09-10 to close GOV-06 blocker 1. Not in the workbook, and not yet provisioned to any tenant."
+    },
+    {
+      "fieldNumber": 37,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "ContractKey",
+      "displayName": "ContractKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "Yes",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Unique contract snapshot key",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ContractKey' Name='ContractKey' StaticName='ContractKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 38,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "RegistryKey",
+      "displayName": "RegistryKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Logical registry reference",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 39,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "FlowId",
+      "displayName": "FlowId",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Flow identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 40,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "EnvironmentId",
+      "displayName": "EnvironmentId",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Environment identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='EnvironmentId' Name='EnvironmentId' StaticName='EnvironmentId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 41,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "DefinitionVersion",
+      "displayName": "DefinitionVersion",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Definition version",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DefinitionVersion' Name='DefinitionVersion' StaticName='DefinitionVersion' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 42,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "DefinitionFingerprint",
+      "displayName": "DefinitionFingerprint",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Definition hash",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DefinitionFingerprint' Name='DefinitionFingerprint' StaticName='DefinitionFingerprint' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 43,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "RequestSchemaJson",
+      "displayName": "RequestSchemaJson",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Request schema",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='RequestSchemaJson' Name='RequestSchemaJson' StaticName='RequestSchemaJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 44,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "ResponseContractJson",
+      "displayName": "ResponseContractJson",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Response contract",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='ResponseContractJson' Name='ResponseContractJson' StaticName='ResponseContractJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 45,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "DependenciesJson",
+      "displayName": "DependenciesJson",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Dependencies at version time",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='DependenciesJson' Name='DependenciesJson' StaticName='DependenciesJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 46,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "SnapshotJson",
+      "displayName": "SnapshotJson",
+      "expectedTypeAsString": "Note",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Complete immutable snapshot payload",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='SnapshotJson' Name='SnapshotJson' StaticName='SnapshotJson' Required='TRUE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 47,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "EffectiveFromUtc",
+      "displayName": "EffectiveFromUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Effective start UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='EffectiveFromUtc' Name='EffectiveFromUtc' StaticName='EffectiveFromUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 48,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "EffectiveToUtc",
+      "displayName": "EffectiveToUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Effective end UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='EffectiveToUtc' Name='EffectiveToUtc' StaticName='EffectiveToUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 49,
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "internalName": "IsCurrent",
+      "displayName": "IsCurrent",
+      "expectedTypeAsString": "Boolean",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": null,
+      "purpose": "Current-version indicator",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Boolean' DisplayName='IsCurrent' Name='IsCurrent' StaticName='IsCurrent' Required='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 50,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "ExecutionKey",
+      "displayName": "ExecutionKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "Yes",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Unique execution key",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ExecutionKey' Name='ExecutionKey' StaticName='ExecutionKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 51,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "RegistryKey",
+      "displayName": "RegistryKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Logical registry reference",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 52,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "FlowId",
+      "displayName": "FlowId",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Flow identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 53,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "EnvironmentId",
+      "displayName": "EnvironmentId",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Environment identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='EnvironmentId' Name='EnvironmentId' StaticName='EnvironmentId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 54,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "RunId",
+      "displayName": "RunId",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Flow run identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RunId' Name='RunId' StaticName='RunId' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 55,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "CorrelationId",
+      "displayName": "CorrelationId",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Cross-system correlation identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='CorrelationId' Name='CorrelationId' StaticName='CorrelationId' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 56,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "StartedUtc",
+      "displayName": "StartedUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Start UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='StartedUtc' Name='StartedUtc' StaticName='StartedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 57,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "CompletedUtc",
+      "displayName": "CompletedUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Completion UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='CompletedUtc' Name='CompletedUtc' StaticName='CompletedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 58,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "DurationMs",
+      "displayName": "DurationMs",
+      "expectedTypeAsString": "Number",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "Duration in milliseconds",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='DurationMs' Name='DurationMs' StaticName='DurationMs' Required='TRUE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 59,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "Outcome",
+      "displayName": "Outcome",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Execution outcome",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='Outcome' Name='Outcome' StaticName='Outcome' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 60,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "HttpStatusCode",
+      "displayName": "HttpStatusCode",
+      "expectedTypeAsString": "Number",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Decimals=0; Min=0",
+      "purpose": "HTTP response status",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Number' DisplayName='HttpStatusCode' Name='HttpStatusCode' StaticName='HttpStatusCode' Required='FALSE' Decimals='0' Min='0' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 61,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "CallerSystem",
+      "displayName": "CallerSystem",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Calling system",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='CallerSystem' Name='CallerSystem' StaticName='CallerSystem' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 62,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "ErrorCode",
+      "displayName": "ErrorCode",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Error code",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ErrorCode' Name='ErrorCode' StaticName='ErrorCode' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 63,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "ErrorMessage",
+      "displayName": "ErrorMessage",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Error details",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='ErrorMessage' Name='ErrorMessage' StaticName='ErrorMessage' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 64,
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "internalName": "ExecutionMetadataJson",
+      "displayName": "ExecutionMetadataJson",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Sanitized execution metadata",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='ExecutionMetadataJson' Name='ExecutionMetadataJson' StaticName='ExecutionMetadataJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 65,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "DependencyKey",
+      "displayName": "DependencyKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "Yes",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Unique dependency key",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DependencyKey' Name='DependencyKey' StaticName='DependencyKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 66,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "RegistryKey",
+      "displayName": "RegistryKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Logical registry reference",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 67,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "Direction",
+      "displayName": "Direction",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Upstream/downstream direction",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='Direction' Name='Direction' StaticName='Direction' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 68,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "DependencyType",
+      "displayName": "DependencyType",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Dependency resource type",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DependencyType' Name='DependencyType' StaticName='DependencyType' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 69,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "DependencyIdentifier",
+      "displayName": "DependencyIdentifier",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Dependency identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='DependencyIdentifier' Name='DependencyIdentifier' StaticName='DependencyIdentifier' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 70,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "DependencyEndpointRedacted",
+      "displayName": "DependencyEndpointRedacted",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Sanitized dependency endpoint",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='DependencyEndpointRedacted' Name='DependencyEndpointRedacted' StaticName='DependencyEndpointRedacted' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 71,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "IsCritical",
+      "displayName": "IsCritical",
+      "expectedTypeAsString": "Boolean",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": null,
+      "purpose": "Critical dependency indicator",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Boolean' DisplayName='IsCritical' Name='IsCritical' StaticName='IsCritical' Required='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 72,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "LifecycleStatus",
+      "displayName": "LifecycleStatus",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Dependency lifecycle state",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='LifecycleStatus' Name='LifecycleStatus' StaticName='LifecycleStatus' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 73,
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "internalName": "LastConfirmedUtc",
+      "displayName": "LastConfirmedUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Last confirmation UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='LastConfirmedUtc' Name='LastConfirmedUtc' StaticName='LastConfirmedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 74,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "ExceptionKey",
+      "displayName": "ExceptionKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "Yes",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Unique exception key",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ExceptionKey' Name='ExceptionKey' StaticName='ExceptionKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 75,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "RegistryKey",
+      "displayName": "RegistryKey",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Optional registry reference",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 76,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "FlowId",
+      "displayName": "FlowId",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Optional flow identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='FlowId' Name='FlowId' StaticName='FlowId' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 77,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "RunId",
+      "displayName": "RunId",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Optional run identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RunId' Name='RunId' StaticName='RunId' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 78,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "ExceptionType",
+      "displayName": "ExceptionType",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Exception category",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ExceptionType' Name='ExceptionType' StaticName='ExceptionType' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 79,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "Severity",
+      "displayName": "Severity",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Severity",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='Severity' Name='Severity' StaticName='Severity' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 80,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "Status",
+      "displayName": "Status",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Resolution status",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='Status' Name='Status' StaticName='Status' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 81,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "Details",
+      "displayName": "Details",
+      "expectedTypeAsString": "Note",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Exception description",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='Details' Name='Details' StaticName='Details' Required='TRUE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 82,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "DetectedUtc",
+      "displayName": "DetectedUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Detection UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='DetectedUtc' Name='DetectedUtc' StaticName='DetectedUtc' Required='TRUE' Format='DateTime' FriendlyDisplayFormat='Disabled' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 83,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "ResolvedUtc",
+      "displayName": "ResolvedUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Resolution UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='ResolvedUtc' Name='ResolvedUtc' StaticName='ResolvedUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 84,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "AssignedToEmail",
+      "displayName": "AssignedToEmail",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Assignee email",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='AssignedToEmail' Name='AssignedToEmail' StaticName='AssignedToEmail' Required='FALSE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 85,
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "internalName": "DiagnosticJson",
+      "displayName": "DiagnosticJson",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Diagnostic payload",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='DiagnosticJson' Name='DiagnosticJson' StaticName='DiagnosticJson' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 86,
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "internalName": "ConfigKey",
+      "displayName": "ConfigKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "Yes",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Unique configuration key",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ConfigKey' Name='ConfigKey' StaticName='ConfigKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 87,
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "internalName": "ConfigValue",
+      "displayName": "ConfigValue",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Configuration value",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='ConfigValue' Name='ConfigValue' StaticName='ConfigValue' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 88,
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "internalName": "ValueType",
+      "displayName": "ValueType",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Declared value type",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ValueType' Name='ValueType' StaticName='ValueType' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 89,
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "internalName": "IsSecret",
+      "displayName": "IsSecret",
+      "expectedTypeAsString": "Boolean",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": null,
+      "purpose": "Secret indicator",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Boolean' DisplayName='IsSecret' Name='IsSecret' StaticName='IsSecret' Required='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 90,
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "internalName": "ConfigDescription",
+      "displayName": "ConfigDescription",
+      "expectedTypeAsString": "Note",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "NumLines=10; RichText=FALSE; AppendOnly=FALSE",
+      "purpose": "Configuration description",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Note' DisplayName='ConfigDescription' Name='ConfigDescription' StaticName='ConfigDescription' Required='FALSE' NumLines='10' RichText='FALSE' AppendOnly='FALSE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 91,
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "internalName": "IsEnabled",
+      "displayName": "IsEnabled",
+      "expectedTypeAsString": "Boolean",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": null,
+      "purpose": "Enabled indicator",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Boolean' DisplayName='IsEnabled' Name='IsEnabled' StaticName='IsEnabled' Required='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 92,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "ConsumerKey",
+      "displayName": "ConsumerKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "Yes",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Unique consumer key",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ConsumerKey' Name='ConsumerKey' StaticName='ConsumerKey' Required='TRUE' MaxLength='255' Indexed='TRUE' EnforceUniqueValues='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 93,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "RegistryKey",
+      "displayName": "RegistryKey",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Logical registry reference",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='RegistryKey' Name='RegistryKey' StaticName='RegistryKey' Required='TRUE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 94,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "ConsumerName",
+      "displayName": "ConsumerName",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Consumer display name",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ConsumerName' Name='ConsumerName' StaticName='ConsumerName' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 95,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "ConsumerType",
+      "displayName": "ConsumerType",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Consumer category",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ConsumerType' Name='ConsumerType' StaticName='ConsumerType' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 96,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "ConsumerIdentifier",
+      "displayName": "ConsumerIdentifier",
+      "expectedTypeAsString": "Text",
+      "required": "No",
+      "indexed": "Yes",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Consumer technical identifier",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ConsumerIdentifier' Name='ConsumerIdentifier' StaticName='ConsumerIdentifier' Required='FALSE' MaxLength='255' Indexed='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 97,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "OwnerEmail",
+      "displayName": "OwnerEmail",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Owner email",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='OwnerEmail' Name='OwnerEmail' StaticName='OwnerEmail' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 98,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "ExpectedAuthentication",
+      "displayName": "ExpectedAuthentication",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Expected authentication mode",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='ExpectedAuthentication' Name='ExpectedAuthentication' StaticName='ExpectedAuthentication' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 99,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "IsApproved",
+      "displayName": "IsApproved",
+      "expectedTypeAsString": "Boolean",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": null,
+      "purpose": "Approval indicator",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Boolean' DisplayName='IsApproved' Name='IsApproved' StaticName='IsApproved' Required='TRUE' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 100,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "ApprovedUtc",
+      "displayName": "ApprovedUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Approval UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='ApprovedUtc' Name='ApprovedUtc' StaticName='ApprovedUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 101,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "LastObservedUtc",
+      "displayName": "LastObservedUtc",
+      "expectedTypeAsString": "DateTime",
+      "required": "No",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "Format=DateTime; FriendlyDisplayFormat=Disabled",
+      "purpose": "Latest observation UTC",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='DateTime' DisplayName='LastObservedUtc' Name='LastObservedUtc' StaticName='LastObservedUtc' Required='FALSE' Format='DateTime' FriendlyDisplayFormat='Disabled' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    },
+    {
+      "fieldNumber": 102,
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "internalName": "LifecycleStatus",
+      "displayName": "LifecycleStatus",
+      "expectedTypeAsString": "Text",
+      "required": "Yes",
+      "indexed": "No",
+      "unique": "No",
+      "typeParameters": "MaxLength=255",
+      "purpose": "Consumer lifecycle state",
+      "fieldGroup": "DGO HTTP Flow Governance",
+      "schemaXml": "<Field Type='Text' DisplayName='LifecycleStatus' Name='LifecycleStatus' StaticName='LifecycleStatus' Required='TRUE' MaxLength='255' Group='DGO HTTP Flow Governance' />",
+      "executionEvidence": "Defined; validation outcome requires run history"
+    }
+  ],
+  "configSeeds": [
+    {
+      "title": "RegistrySchemaVersion",
+      "configKey": "RegistrySchemaVersion",
+      "configValue": "1.0",
+      "valueType": "String",
+      "isSecret": "No",
+      "description": "Current DGO HTTP flow registry contract version.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "StaleAfterDays",
+      "configKey": "StaleAfterDays",
+      "configValue": "7",
+      "valueType": "Integer",
+      "isSecret": "No",
+      "description": "Days without registration or execution activity before an active flow is stale.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "ExecutionRetentionDays",
+      "configKey": "ExecutionRetentionDays",
+      "configValue": "180",
+      "valueType": "Integer",
+      "isSecret": "No",
+      "description": "Approved retention period for execution-ledger records.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "ConsecutiveFailureThreshold",
+      "configKey": "ConsecutiveFailureThreshold",
+      "configValue": "3",
+      "valueType": "Integer",
+      "isSecret": "No",
+      "description": "Consecutive failures required before creating a governance exception.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "GovernanceNotificationEmail",
+      "configKey": "GovernanceNotificationEmail",
+      "configValue": "dgsRegistry@nitda.gov.ng",
+      "valueType": "Email",
+      "isSecret": "No",
+      "description": "Mailbox for registry, exception and provisioning notifications.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "CaptureRequestBody",
+      "configKey": "CaptureRequestBody",
+      "configValue": "false",
+      "valueType": "Boolean",
+      "isSecret": "No",
+      "description": "Raw HTTP request-body capture is disabled.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "CaptureHeaders",
+      "configKey": "CaptureHeaders",
+      "configValue": "false",
+      "valueType": "Boolean",
+      "isSecret": "No",
+      "description": "Raw HTTP header capture is disabled.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "CaptureQueries",
+      "configKey": "CaptureQueries",
+      "configValue": "true",
+      "valueType": "Boolean",
+      "isSecret": "No",
+      "description": "Sanitized query metadata may be captured.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "RegistryEnabled",
+      "configKey": "RegistryEnabled",
+      "configValue": "true",
+      "valueType": "Boolean",
+      "isSecret": "No",
+      "description": "Master switch for flow-truth registration.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "ExecutionLedgerEnabled",
+      "configKey": "ExecutionLedgerEnabled",
+      "configValue": "true",
+      "valueType": "Boolean",
+      "isSecret": "No",
+      "description": "Master switch for execution-ledger persistence.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "ProvisioningSchemaExpectedListCount",
+      "configKey": "ProvisioningSchemaExpectedListCount",
+      "configValue": "7",
+      "valueType": "Integer",
+      "isSecret": "No",
+      "description": "Expected number of registry SharePoint lists.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    },
+    {
+      "title": "ProvisioningSchemaExpectedFieldCount",
+      "configKey": "ProvisioningSchemaExpectedFieldCount",
+      "configValue": "101",
+      "valueType": "Integer",
+      "isSecret": "No",
+      "description": "Expected number of custom registry fields.",
+      "isEnabled": "Yes",
+      "upsertBehavior": "Create when missing; MERGE update when present",
+      "executionEvidence": "Defined; actual upsert outcome unavailable"
+    }
+  ],
+  "views": [
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "viewTitle": "Active HTTP Flows",
+      "camlViewQuery": "<Where><Eq><FieldRef Name='LifecycleStatus'/><Value Type='Text'>Active</Value></Eq></Where>",
+      "viewFieldsInOrder": "LinkTitle; RegistryKey; SystemName; Criticality; LifecycleStatus; LastSeenUtc; IsCompliant",
+      "provisioningBehavior": "Create if missing; otherwise MERGE ViewQuery; remove all fields; add expected fields sequentially",
+      "executionEvidence": "Defined; actual outcome unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "viewTitle": "Noncompliant Flows",
+      "camlViewQuery": "<Where><Eq><FieldRef Name='IsCompliant'/><Value Type='Boolean'>0</Value></Eq></Where>",
+      "viewFieldsInOrder": "LinkTitle; RegistryKey; SystemName; TechnicalOwnerEmail; ComplianceIssues; LastAuditUtc",
+      "provisioningBehavior": "Create if missing; otherwise MERGE ViewQuery; remove all fields; add expected fields sequentially",
+      "executionEvidence": "Defined; actual outcome unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "viewTitle": "Critical Flows",
+      "camlViewQuery": "<Where><Eq><FieldRef Name='Criticality'/><Value Type='Text'>Critical</Value></Eq></Where>",
+      "viewFieldsInOrder": "LinkTitle; RegistryKey; SystemName; TechnicalOwnerEmail; LastSeenUtc",
+      "provisioningBehavior": "Create if missing; otherwise MERGE ViewQuery; remove all fields; add expected fields sequentially",
+      "executionEvidence": "Defined; actual outcome unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "viewTitle": "Retired Flows",
+      "camlViewQuery": "<Where><Eq><FieldRef Name='LifecycleStatus'/><Value Type='Text'>Retired</Value></Eq></Where>",
+      "viewFieldsInOrder": "LinkTitle; RegistryKey; SystemName; LastRegisteredUtc",
+      "provisioningBehavior": "Create if missing; otherwise MERGE ViewQuery; remove all fields; add expected fields sequentially",
+      "executionEvidence": "Defined; actual outcome unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "viewTitle": "Open Exceptions",
+      "camlViewQuery": "<Where><Eq><FieldRef Name='Status'/><Value Type='Text'>Open</Value></Eq></Where>",
+      "viewFieldsInOrder": "LinkTitle; ExceptionKey; Severity; ExceptionType; RegistryKey; DetectedUtc; AssignedToEmail",
+      "provisioningBehavior": "Create if missing; otherwise MERGE ViewQuery; remove all fields; add expected fields sequentially",
+      "executionEvidence": "Defined; actual outcome unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "viewTitle": "Recent Failures",
+      "camlViewQuery": "<Where><Eq><FieldRef Name='Outcome'/><Value Type='Text'>Failed</Value></Eq></Where>",
+      "viewFieldsInOrder": "LinkTitle; RegistryKey; FlowId; Outcome; CompletedUtc; ErrorCode",
+      "provisioningBehavior": "Create if missing; otherwise MERGE ViewQuery; remove all fields; add expected fields sequentially",
+      "executionEvidence": "Defined; actual outcome unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "viewTitle": "Unapproved Consumers",
+      "camlViewQuery": "<Where><Eq><FieldRef Name='IsApproved'/><Value Type='Boolean'>0</Value></Eq></Where>",
+      "viewFieldsInOrder": "LinkTitle; ConsumerKey; RegistryKey; ConsumerType; OwnerEmail; LastObservedUtc",
+      "provisioningBehavior": "Create if missing; otherwise MERGE ViewQuery; remove all fields; add expected fields sequentially",
+      "executionEvidence": "Defined; actual outcome unavailable"
+    }
+  ],
+  "uniqueKeys": [
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "field": "RegistryKey",
+      "expectedIndexed": "Yes",
+      "expectedUnique": "Yes",
+      "validationTest": "GET field properties; require Indexed=true AND EnforceUniqueValues=true",
+      "successEffect": "Increments varValidatedUniqueKeys when valid",
+      "executionEvidence": "Defined; actual validation unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "field": "ContractKey",
+      "expectedIndexed": "Yes",
+      "expectedUnique": "Yes",
+      "validationTest": "GET field properties; require Indexed=true AND EnforceUniqueValues=true",
+      "successEffect": "Increments varValidatedUniqueKeys when valid",
+      "executionEvidence": "Defined; actual validation unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "field": "ExecutionKey",
+      "expectedIndexed": "Yes",
+      "expectedUnique": "Yes",
+      "validationTest": "GET field properties; require Indexed=true AND EnforceUniqueValues=true",
+      "successEffect": "Increments varValidatedUniqueKeys when valid",
+      "executionEvidence": "Defined; actual validation unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "field": "DependencyKey",
+      "expectedIndexed": "Yes",
+      "expectedUnique": "Yes",
+      "validationTest": "GET field properties; require Indexed=true AND EnforceUniqueValues=true",
+      "successEffect": "Increments varValidatedUniqueKeys when valid",
+      "executionEvidence": "Defined; actual validation unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "field": "ExceptionKey",
+      "expectedIndexed": "Yes",
+      "expectedUnique": "Yes",
+      "validationTest": "GET field properties; require Indexed=true AND EnforceUniqueValues=true",
+      "successEffect": "Increments varValidatedUniqueKeys when valid",
+      "executionEvidence": "Defined; actual validation unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "field": "ConfigKey",
+      "expectedIndexed": "Yes",
+      "expectedUnique": "Yes",
+      "validationTest": "GET field properties; require Indexed=true AND EnforceUniqueValues=true",
+      "successEffect": "Increments varValidatedUniqueKeys when valid",
+      "executionEvidence": "Defined; actual validation unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "field": "ConsumerKey",
+      "expectedIndexed": "Yes",
+      "expectedUnique": "Yes",
+      "validationTest": "GET field properties; require Indexed=true AND EnforceUniqueValues=true",
+      "successEffect": "Increments varValidatedUniqueKeys when valid",
+      "executionEvidence": "Defined; actual validation unavailable"
+    }
+  ],
+  "listSettings": [
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "property": "EnableAttachments",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "property": "EnableFolderCreation",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "property": "EnableVersioning",
+      "expectedValue": "true",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "property": "MajorVersionLimit",
+      "expectedValue": "100",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "property": "ForceCheckout",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "property": "Hidden",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistry",
+      "property": "Title.Required",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "property": "EnableAttachments",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "property": "EnableFolderCreation",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "property": "EnableVersioning",
+      "expectedValue": "true",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "property": "MajorVersionLimit",
+      "expectedValue": "100",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "property": "ForceCheckout",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "property": "Hidden",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowContractVersions",
+      "property": "Title.Required",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "property": "EnableAttachments",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "property": "EnableFolderCreation",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "property": "EnableVersioning",
+      "expectedValue": "true",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "property": "MajorVersionLimit",
+      "expectedValue": "100",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "property": "ForceCheckout",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "property": "Hidden",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowExecutionLedger",
+      "property": "Title.Required",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "property": "EnableAttachments",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "property": "EnableFolderCreation",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "property": "EnableVersioning",
+      "expectedValue": "true",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "property": "MajorVersionLimit",
+      "expectedValue": "100",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "property": "ForceCheckout",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "property": "Hidden",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowDependencies",
+      "property": "Title.Required",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "property": "EnableAttachments",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "property": "EnableFolderCreation",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "property": "EnableVersioning",
+      "expectedValue": "true",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "property": "MajorVersionLimit",
+      "expectedValue": "100",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "property": "ForceCheckout",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "property": "Hidden",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryExceptions",
+      "property": "Title.Required",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "property": "EnableAttachments",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "property": "EnableFolderCreation",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "property": "EnableVersioning",
+      "expectedValue": "true",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "property": "MajorVersionLimit",
+      "expectedValue": "100",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "property": "ForceCheckout",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "property": "Hidden",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowRegistryConfiguration",
+      "property": "Title.Required",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "property": "EnableAttachments",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "property": "EnableFolderCreation",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "property": "EnableVersioning",
+      "expectedValue": "true",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "property": "MajorVersionLimit",
+      "expectedValue": "100",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "property": "ForceCheckout",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "property": "Hidden",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    },
+    {
+      "listTitle": "DGO_HTTPFlowConsumerRegistry",
+      "property": "Title.Required",
+      "expectedValue": "false",
+      "method": "MERGE list or Title field configuration",
+      "executionEvidence": "Defined; actual result unavailable"
+    }
+  ],
+  "workflowActions": [
+    {
+      "action": "Compose_List_Definitions",
+      "type": "Compose",
+      "purpose": "Defines seven list titles/descriptions",
+      "runAfter": "After Initialize_Validated_Unique_Keys succeeds"
+    },
+    {
+      "action": "Apply_to_each_List",
+      "type": "Foreach",
+      "purpose": "Checks, creates, configures lists and Title fields",
+      "runAfter": "Sequential concurrency=1"
+    },
+    {
+      "action": "Compose_Field_Definitions",
+      "type": "Compose",
+      "purpose": "Defines 101 fields",
+      "runAfter": "After list loop succeeds"
+    },
+    {
+      "action": "Apply_to_each_Field",
+      "type": "Foreach",
+      "purpose": "Checks, creates, validates every field",
+      "runAfter": "Sequential concurrency=1"
+    },
+    {
+      "action": "Compose_Config_Seeds",
+      "type": "Compose",
+      "purpose": "Defines 12 seeds",
+      "runAfter": "After field loop succeeds"
+    },
+    {
+      "action": "Apply_to_each_Seed",
+      "type": "Foreach",
+      "purpose": "Creates or updates configuration items",
+      "runAfter": "Sequential concurrency=1"
+    },
+    {
+      "action": "Compose_View_Definitions",
+      "type": "Compose",
+      "purpose": "Defines seven views",
+      "runAfter": "After seed loop succeeds"
+    },
+    {
+      "action": "Apply_to_each_View",
+      "type": "Foreach",
+      "purpose": "Creates/updates views, resets fields, adds ordered fields",
+      "runAfter": "Sequential concurrency=1"
+    },
+    {
+      "action": "Compose_Unique_Key_Definitions",
+      "type": "Compose",
+      "purpose": "Defines seven unique-key checks",
+      "runAfter": "After view loop succeeds"
+    },
+    {
+      "action": "Apply_to_each_Unique_Key",
+      "type": "Foreach",
+      "purpose": "Validates Indexed and EnforceUniqueValues",
+      "runAfter": "Sequential concurrency=1"
+    },
+    {
+      "action": "Final_Get_Lists",
+      "type": "SharePoint HTTP",
+      "purpose": "Retrieves DGO_HTTPFlow* lists and settings",
+      "runAfter": "After unique-key loop"
+    },
+    {
+      "action": "Final_Get_Seeds",
+      "type": "SharePoint HTTP",
+      "purpose": "Retrieves enabled seeds",
+      "runAfter": "After Final_Get_Lists"
+    },
+    {
+      "action": "Final_Get_*_Views",
+      "type": "SharePoint HTTP",
+      "purpose": "Retrieves views from four lists",
+      "runAfter": "Sequential chain"
+    },
+    {
+      "action": "Compose_All_Views",
+      "type": "Compose",
+      "purpose": "Unions view responses",
+      "runAfter": "After consumer views"
+    },
+    {
+      "action": "Filter_Required_Views",
+      "type": "Query",
+      "purpose": "Filters seven required titles",
+      "runAfter": "After view union"
+    },
+    {
+      "action": "Filter_Required_Lists",
+      "type": "Query",
+      "purpose": "Filters seven required list titles",
+      "runAfter": "After required views"
+    },
+    {
+      "action": "Filter_Valid_List_Settings",
+      "type": "Query",
+      "purpose": "Checks five core settings",
+      "runAfter": "After required lists"
+    },
+    {
+      "action": "Filter_Validated_Fields",
+      "type": "Query",
+      "purpose": "Selects FieldValidation result records",
+      "runAfter": "After list settings filter"
+    },
+    {
+      "action": "Compose_Final_Report_JSON",
+      "type": "Compose",
+      "purpose": "Builds structured execution report and status",
+      "runAfter": "After validated fields filter"
+    },
+    {
+      "action": "Compose_Final_Report_HTML",
+      "type": "Compose",
+      "purpose": "Builds HTML email report",
+      "runAfter": "After JSON report"
+    },
+    {
+      "action": "Send_Final_Report_Email",
+      "type": "Office 365 Outlook",
+      "purpose": "Sends report and JSON attachment",
+      "runAfter": "After HTML report"
+    },
+    {
+      "action": "If_Provisioning_Failed",
+      "type": "Condition",
+      "purpose": "Terminates Failed or Succeeded",
+      "runAfter": "Runs after email Succeeded, Failed, or TimedOut"
+    }
+  ],
+  "restRequests": [
+    {
+      "operation": "Check list",
+      "httpMethod": "GET",
+      "relativeUriPattern": "_api/web/lists?$select=Id,Title&$filter=Title eq '<escaped title>'&$top=1",
+      "headers": "Accept: application/json;odata=nometadata",
+      "bodyParameters": "None"
+    },
+    {
+      "operation": "Create list",
+      "httpMethod": "POST",
+      "relativeUriPattern": "_api/web/lists",
+      "headers": "Accept + Content-Type: application/json;odata=nometadata",
+      "bodyParameters": "BaseTemplate=100; Title; Description"
+    },
+    {
+      "operation": "Configure list",
+      "httpMethod": "POST/MERGE",
+      "relativeUriPattern": "_api/web/lists/getByTitle('<escaped title>')",
+      "headers": "IF-MATCH=*; X-HTTP-Method=MERGE",
+      "bodyParameters": "EnableAttachments=false; EnableFolderCreation=false; EnableVersioning=true; MajorVersionLimit=100; ForceCheckout=false; Hidden=false"
+    },
+    {
+      "operation": "Configure Title",
+      "httpMethod": "POST/MERGE",
+      "relativeUriPattern": ".../fields/getByInternalNameOrTitle('Title')",
+      "headers": "IF-MATCH=*; X-HTTP-Method=MERGE",
+      "bodyParameters": "Required=false"
+    },
+    {
+      "operation": "Check field",
+      "httpMethod": "GET",
+      "relativeUriPattern": ".../fields?$select=Id,InternalName,TypeAsString,Required,Indexed,EnforceUniqueValues&$filter=InternalName eq '<name>'&$top=1",
+      "headers": "Accept nometadata",
+      "bodyParameters": "None"
+    },
+    {
+      "operation": "Create field",
+      "httpMethod": "POST",
+      "relativeUriPattern": ".../fields/createfieldasxml",
+      "headers": "Accept + Content-Type nometadata",
+      "bodyParameters": "parameters.Options=12; parameters.SchemaXml=<definition>"
+    },
+    {
+      "operation": "Validate field",
+      "httpMethod": "GET",
+      "relativeUriPattern": ".../fields/getByInternalNameOrTitle('<name>')?$select=InternalName,TypeAsString,Required,Indexed,EnforceUniqueValues",
+      "headers": "Accept nometadata",
+      "bodyParameters": "None"
+    },
+    {
+      "operation": "Check seed",
+      "httpMethod": "GET",
+      "relativeUriPattern": ".../items?$select=Id,ConfigKey&$filter=ConfigKey eq '<key>'&$top=1",
+      "headers": "Accept nometadata",
+      "bodyParameters": "None"
+    },
+    {
+      "operation": "Create seed",
+      "httpMethod": "POST",
+      "relativeUriPattern": ".../DGO_HTTPFlowRegistryConfiguration/items",
+      "headers": "Accept + Content-Type nometadata",
+      "bodyParameters": "Entire seed object"
+    },
+    {
+      "operation": "Update seed",
+      "httpMethod": "POST/MERGE",
+      "relativeUriPattern": ".../items(<Id>)",
+      "headers": "IF-MATCH=*; X-HTTP-Method=MERGE",
+      "bodyParameters": "Entire seed object"
+    },
+    {
+      "operation": "Check view",
+      "httpMethod": "GET",
+      "relativeUriPattern": ".../views?$select=Id,Title&$filter=Title eq '<title>'&$top=1",
+      "headers": "Accept nometadata",
+      "bodyParameters": "None"
+    },
+    {
+      "operation": "Create view",
+      "httpMethod": "POST",
+      "relativeUriPattern": ".../views",
+      "headers": "Accept + Content-Type nometadata",
+      "bodyParameters": "Title; PersonalView=false; ViewQuery"
+    },
+    {
+      "operation": "Update view",
+      "httpMethod": "POST/MERGE",
+      "relativeUriPattern": ".../views/getByTitle('<title>')",
+      "headers": "IF-MATCH=*; X-HTTP-Method=MERGE",
+      "bodyParameters": "ViewQuery"
+    },
+    {
+      "operation": "Clear view fields",
+      "httpMethod": "POST",
+      "relativeUriPattern": ".../viewfields/removeAllViewFields",
+      "headers": "Accept + Content-Type nometadata",
+      "bodyParameters": "{}"
+    },
+    {
+      "operation": "Add view field",
+      "httpMethod": "POST",
+      "relativeUriPattern": ".../viewfields/addViewField('<field>')",
+      "headers": "Accept + Content-Type nometadata",
+      "bodyParameters": "{}"
+    }
+  ],
+  "statusVocabulary": [
+    {
+      "status": "Created",
+      "meaning": "Missing list/field was successfully created",
+      "recordedIn": "varProvisioningResults"
+    },
+    {
+      "status": "AlreadyExists",
+      "meaning": "List/field already existed",
+      "recordedIn": "varProvisioningResults"
+    },
+    {
+      "status": "Configured",
+      "meaning": "List and Title configuration succeeded",
+      "recordedIn": "varProvisioningResults"
+    },
+    {
+      "status": "CreateFailed",
+      "meaning": "Creation failed or timed out",
+      "recordedIn": "varProvisioningErrors"
+    },
+    {
+      "status": "ConfigurationFailed",
+      "meaning": "List configuration failed or timed out",
+      "recordedIn": "varProvisioningErrors"
+    },
+    {
+      "status": "TitleConfigurationFailed",
+      "meaning": "Title configuration failed or timed out",
+      "recordedIn": "varProvisioningErrors"
+    },
+    {
+      "status": "Validated",
+      "meaning": "Field matches expected properties",
+      "recordedIn": "varProvisioningResults"
+    },
+    {
+      "status": "Mismatch",
+      "meaning": "Field or unique key differs from expected",
+      "recordedIn": "varProvisioningErrors"
+    },
+    {
+      "status": "Upserted",
+      "meaning": "Seed or view condition completed successfully",
+      "recordedIn": "varProvisioningResults"
+    },
+    {
+      "status": "UpsertFailed",
+      "meaning": "Seed upsert failed or timed out",
+      "recordedIn": "varProvisioningErrors"
+    },
+    {
+      "status": "Skipped",
+      "meaning": "Action dependency or alternate branch prevented execution",
+      "recordedIn": "Run history only"
+    },
+    {
+      "status": "TimedOut",
+      "meaning": "Action exceeded execution allowance",
+      "recordedIn": "Run history/errors"
+    }
+  ],
+  "finalReportContract": [
+    {
+      "jsonPath": "reportType",
+      "valueOrExpression": "DGO HTTP Flow Registry Complete Provisioning Report",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "schemaVersion",
+      "valueOrExpression": "5.0.0",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "flow.displayName",
+      "valueOrExpression": "01 - GOV - Provision HTTP Flow Registry",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "flow.flowId",
+      "valueOrExpression": "workflow()?['name']",
+      "classification": "Runtime"
+    },
+    {
+      "jsonPath": "flow.environmentId",
+      "valueOrExpression": "workflow()?['tags']?['environmentName']",
+      "classification": "Runtime"
+    },
+    {
+      "jsonPath": "flow.runId",
+      "valueOrExpression": "workflow()?['run']?['name']",
+      "classification": "Runtime"
+    },
+    {
+      "jsonPath": "flow.runUrl",
+      "valueOrExpression": "Power Automate run URL constructed from environment, flow and run",
+      "classification": "Runtime"
+    },
+    {
+      "jsonPath": "timing.startedUtc",
+      "valueOrExpression": "variables('varProvisioningStartUtc')",
+      "classification": "Runtime"
+    },
+    {
+      "jsonPath": "timing.completedUtc",
+      "valueOrExpression": "utcNow()",
+      "classification": "Runtime"
+    },
+    {
+      "jsonPath": "timing.durationMs",
+      "valueOrExpression": "(ticks(now)-ticks(start))/10000",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "validation.expectedLists",
+      "valueOrExpression": "7",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "validation.validatedLists",
+      "valueOrExpression": "Required-list filter count",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "validation.expectedFields",
+      "valueOrExpression": "101",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "validation.validatedFields",
+      "valueOrExpression": "FieldValidation result count",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "validation.expectedUniqueKeys",
+      "valueOrExpression": "7",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "validation.validatedUniqueKeys",
+      "valueOrExpression": "varValidatedUniqueKeys",
+      "classification": "Runtime"
+    },
+    {
+      "jsonPath": "validation.expectedSeeds",
+      "valueOrExpression": "12",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "validation.validatedSeeds",
+      "valueOrExpression": "Required enabled-seed count",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "validation.expectedViews",
+      "valueOrExpression": "7",
+      "classification": "Static"
+    },
+    {
+      "jsonPath": "validation.validatedViews",
+      "valueOrExpression": "Required-view count",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "validation.validatedListSettings",
+      "valueOrExpression": "Valid-list-settings count",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "validation.errorCount",
+      "valueOrExpression": "varProvisioningErrors length",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "status",
+      "valueOrExpression": "Succeeded only when all expected counts match and errors=0",
+      "classification": "Derived"
+    },
+    {
+      "jsonPath": "results",
+      "valueOrExpression": "varProvisioningResults",
+      "classification": "Runtime array"
+    },
+    {
+      "jsonPath": "errors",
+      "valueOrExpression": "varProvisioningErrors",
+      "classification": "Runtime array"
+    },
+    {
+      "jsonPath": "generatedAtUtc",
+      "valueOrExpression": "utcNow()",
+      "classification": "Runtime"
+    }
+  ],
+  "risksAndControls": [
+    {
+      "area": "Execution evidence",
+      "observation": "Definition does not contain actual run outputs",
+      "recommendedControl": "Do not treat Defined as Created. Export Compose_Final_Report_JSON and run history."
+    },
+    {
+      "area": "Required defaults",
+      "observation": "Required numeric and Boolean fields have no declared defaults",
+      "recommendedControl": "All item-creation flows must supply values explicitly."
+    },
+    {
+      "area": "Controlled vocabulary",
+      "observation": "Many governance dimensions are unrestricted Text fields",
+      "recommendedControl": "Use Choice fields or enforce value dictionaries in producer flows."
+    },
+    {
+      "area": "Email identity",
+      "observation": "Owner fields are Text rather than Person/Group",
+      "recommendedControl": "Add validation or migrate to directory-backed person fields where appropriate."
+    },
+    {
+      "area": "Referential integrity",
+      "observation": "RegistryKey relationships are logical Text links",
+      "recommendedControl": "Implement validation and orphan detection."
+    },
+    {
+      "area": "Contract immutability",
+      "observation": "Immutability is descriptive, not technically enforced",
+      "recommendedControl": "Use permissions, retention/record controls, or append-only integration design."
+    },
+    {
+      "area": "Retention",
+      "observation": "ExecutionRetentionDays is only configuration",
+      "recommendedControl": "Implement a scheduled retention/archive flow."
+    },
+    {
+      "area": "View validation",
+      "observation": "Final validation checks titles, not CAML or field order",
+      "recommendedControl": "Add query and view-field validation."
+    },
+    {
+      "area": "Seed validation",
+      "observation": "Final validation checks key/enabled only",
+      "recommendedControl": "Validate ConfigValue, ValueType, IsSecret and description."
+    },
+    {
+      "area": "Email attachment",
+      "observation": "ContentBytes is populated with string JSON",
+      "recommendedControl": "Confirm connector accepts this; Base64 may be required depending on action behavior."
+    },
+    {
+      "area": "Failure propagation",
+      "observation": "Many downstream actions require prior Succeeded",
+      "recommendedControl": "A single unhandled HTTP failure can skip the remaining provisioning chain."
+    },
+    {
+      "area": "Existing field mismatch",
+      "observation": "Existing fields are validated but not remediated",
+      "recommendedControl": "Add controlled ALTER/update procedures or fail with actionable remediation."
+    },
+    {
+      "area": "Privacy/security",
+      "observation": "Endpoint and execution metadata can contain sensitive data",
+      "recommendedControl": "Maintain redaction, avoid secrets, and apply least privilege and retention."
+    }
+  ],
+  "connections": [
+    {
+      "property": "SharePoint target site",
+      "value": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE"
+    },
+    {
+      "property": "SharePoint API",
+      "value": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+    },
+    {
+      "property": "SharePoint reference key",
+      "value": "shared_sharepointonline-1"
+    },
+    {
+      "property": "Office 365 Outlook API",
+      "value": "/providers/Microsoft.PowerApps/apis/shared_office365"
+    },
+    {
+      "property": "Office 365 reference key",
+      "value": "shared_office365-1"
+    },
+    {
+      "property": "Report recipient",
+      "value": "dgsRegistry@nitda.gov.ng"
+    },
+    {
+      "property": "Report attachment pattern",
+      "value": "DGO_HTTP_Flow_Registry_Complete_Provisioning_yyyyMMdd_HHmmss_UTC.json"
+    }
+  ],
+  "workbookSheetIndex": [
+    "01_Overview",
+    "02_Lists",
+    "03_Fields",
+    "04_Config_Seeds",
+    "05_Views",
+    "06_Unique_Keys",
+    "07_List_Settings",
+    "08_Workflow",
+    "09_REST_Parameters",
+    "10_Status_Logging",
+    "11_Final_Report",
+    "12_Risks_Controls",
+    "13_Connections"
+  ],
+  "amendments": {
+    "note": "Columns added by scripts/lib/registry-spec-amendments.mjs after extraction. `totals` counts them; the workbook overview, the final-report contract and the configuration seeds do not, because those are statements the workbook and the deployed flow make and neither has been revised.",
+    "fieldsAdded": 1,
+    "workbookFieldCount": 101,
+    "applied": [
+      "GOV-06: DGO_HTTPFlowRegistry.WorkflowId (Text, indexed)"
+    ],
+    "runtimeDivergence": "flow 01 Compose_Final_Report_JSON.validation.expectedFields and the configuration seed ProvisioningSchemaExpectedFieldCount both still state the workbook count. Update both when the amended columns are provisioned, or flow 01 reports a variance against a correct run."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "nitda-notification-processor/v1",
+  "deploymentState": "NOT_APPLIED",
+  "trigger": {
+    "type": "Recurrence",
+    "schedule": "AGENCY_DECISION_REQUIRED"
+  },
+  "controls": {
+    "idempotency": true,
+    "atomicClaim": true,
+    "maxAttempts": "AGENCY_DECISION_REQUIRED",
+    "retryDelays": "AGENCY_DECISION_REQUIRED"
+  }
+}

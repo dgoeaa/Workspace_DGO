@@ -1,0 +1,24 @@
+{
+  "generatedFrom": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+  "registerVersion": "1.12.115",
+  "totals": {
+    "registerItems": 83,
+    "closed": 82,
+    "open": 1,
+    "securityAuthority": 0,
+    "agencyDecision": 0,
+    "tenantExecution": 1
+  },
+  "rule": "Every open item carries a named accountable party and a stated closing condition. None is closable from this repository; each requires the authority named. P-17 requires one risk-acceptance record per row that is still open at authorisation.",
+  "items": [
+    {
+      "id": "ITEM-93",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "The e-mail template revision of 2026-10-21 is in the tenant's flows and the hosts",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "Platform owner (release and paste); flow builder.",
+      "closes": "The paste ledger records release 44's seven packages as pasted; the govmail report shows GOV-01 to GOV-08 APPLIED; the config build ledger records a build carrying this revision; T5's e-mails are recorded as evidence.",
+      "riskAcceptanceRequired": true
+    }
+  ]
+}

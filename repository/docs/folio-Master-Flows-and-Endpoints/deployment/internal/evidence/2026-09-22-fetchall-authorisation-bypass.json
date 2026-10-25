@@ -1,0 +1,81 @@
+{
+  "recordVersion": "1.0.0",
+  "what": "A TEST run of the wired FETCH_ALL endpoint, performed by the operator at this repository's request, in which the flow computed the correct authorisation answer, discarded it, and returned the data anyway. Both values are in the flow's own telemetry, side by side. The defect it demonstrates is real and was fixed on 2026-09-24. The run itself is a test, not an incident.",
+  "capturedUtc": "2026-09-22T04:13:56Z",
+  "runIdentity": {
+    "flow": "IP_FETCH_ALL_BOOTSTRAP",
+    "powerAutomateFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+    "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+    "contractKey": "FETCH_ALL",
+    "runId": "08584115564651739687523527063CU26",
+    "startedAtUtc": "2026-09-22T04:13:41Z",
+    "completedAtUtc": "2026-09-22T04:13:52Z",
+    "outcome": "Succeeded",
+    "durationMs": 11298.0
+  },
+  "source": {
+    "files": [
+      {
+        "name": "IP_FETCH_ALL_BOOTSTRAP__08584115564651739687523527063CU26__sharepoint_item_1.json",
+        "sha256": "11b323cb5537f51abeca0c71fdb98462bbdf40ecc9930c37ceb61a5e25b95661",
+        "bytes": 8686064,
+        "what": "the DGO_Flow_Telemetry list item the flow wrote about its own run, base64-encoded; RunRecordJson inside it is the run record"
+      },
+      {
+        "name": "IP_FETCH_ALL_BOOTSTRAP__08584115564651739687523527063CU26__full_definition.json",
+        "sha256": "735434a699a3bffbbd9ddcf363264fccebac1b726597985039e05f382799a54f",
+        "bytes": 47680,
+        "what": "the flow definition as it stood for that run, base64-encoded"
+      }
+    ],
+    "supplied": "by the operator, 2026-09-24. Neither file is committed: the run record is 6.1 MB and its response body carries live records including a directory user. This file is the distillation.",
+    "credentialScan": "both files were decoded recursively — nested JSON and nested base64, to depth 8 — before scanning, because a first pass over an outer layer is how this work previously missed a live signature. After full decoding: 0 trigger signatures, 0 JWT-shaped tokens, 0 platform hostnames."
+  },
+  "theBypass": {
+    "whatTheFlowDoes": "Compose_FetchAll_Caller reads the caller's email from the REQUEST BODY. Get_FetchAll_Directory_User looks it up in DGO_UserDirectory. Compose_FetchAll_Role reads the role off that row. Get_FetchAll_Role_Permissions reads what the role may do. Then Compose_FetchAll_Permitted_actual__permission_condition_expression computes whether the caller is permitted — and Compose_FetchAll_Permitted, which is the value the gate actually reads, is the literal true.",
+    "orderOfExecution": "Get_FetchAll_Role_Permissions -> Compose_FetchAll_Permitted_actual__permission_condition_expression -> Compose_FetchAll_Permitted -> Condition_FetchAll_Authorised. The real answer is computed immediately before the decision and then overwritten by the constant. This is not a leftover that never runs; it runs, in sequence, and its result is dropped.",
+    "theConditionItself": "Condition_FetchAll_Authorised tests only that Compose_FetchAll_Permitted equals true, so it cannot be false. Its else branch contains no actions, so there is no refusal path to reach."
+  },
+  "whatTheRunRecorded": {
+    "Compose_FetchAll_Caller": "",
+    "Compose_FetchAll_Role": "",
+    "directoryRowsMatched": 0,
+    "Compose_FetchAll_Permitted_actual__permission_condition_expression": false,
+    "Compose_FetchAll_Permitted": true,
+    "reads": "The caller was empty. The role was empty. The directory matched nobody. The real expression evaluated to false. The value the gate read was true, and the flow returned 200."
+  },
+  "whatWasReturned": {
+    "statusCode": 200,
+    "ok": true,
+    "accessControlAllowOrigin": "*",
+    "requestOriginHeader": "null",
+    "collectionSizes": {
+      "docs": 500,
+      "tasks": 500,
+      "users": 1,
+      "categories": 45,
+      "departments": 50,
+      "comments": 3,
+      "emails": 0,
+      "approvals": 0
+    },
+    "note": "Record contents are deliberately not reproduced here. The users collection carries FullName, Email, Role, Persona and AccessScope per row; that is personal data and DGO_UserDirectory is where it belongs."
+  },
+  "whatThisEstablishes": [
+    "That the deployed FETCH_ALL flow would serve the estate to a caller with no identity, demonstrated on a test call rather than inferred from the definition.",
+    "That the refusal was computed and discarded rather than absent. The flow knows the answer is false; the gate did not read it.",
+    "That the response carried Access-Control-Allow-Origin: * against a request whose Origin was null, so no browser-side origin restriction applied either."
+  ],
+  "whatItExplicitlyDoesNotEstablish": [
+    "That any data reached anyone outside the platform team. It did not: the operator made this call themselves to produce the record.",
+    "That any other endpoint behaves this way. A scan of every flow definition in this repository finds exactly one authorisation decision pinned to a constant, and it was this one.",
+    "Why the decision was pinned. The action name says 'actual permission condition expression', which reads like a value parked during debugging, but that is a reading of a name."
+  ],
+  "supersedes": "An earlier reading in this work reported that a FETCH_ALL run showed enforcement working — Permitted false, the request refused. That described the other FETCH_ALL build. IP_FETCH_ALL__EXTENDED_ENDPOINTFlow_20260911185117.zip carries the real expression in Compose_FetchAll_Permitted and enforces; IP_FETCH_ALL_BOOTSTRAP_20260917225904.zip, six days later, carries the constant and does not. The tenant reading of 2026-09-18 and this run both resolve the wired FETCH_ALL workflow to the BOOTSTRAP flow. The enforcing build is not the deployed one.",
+  "whoRanIt": {
+    "actor": "the operator, on 2026-09-22, to supply a run record this repository asked for",
+    "why": "It is recorded because an earlier version of this file left it open whether the caller was a tester or a third party, and the register then carried a notifiable-disclosure question built on that ambiguity. The ambiguity was this repository's, not the evidence's: an unauthenticated call from an Android browser at the moment a run record was requested is a test, and reading it as a possible external access was an escalation of the operator's own output.",
+    "consequence": "No disclosure occurred. The data went to the person who runs the platform, from their own device, in the course of producing evidence."
+  },
+  "collectionSizesNote": "The sizes below are what a test call returned. They describe the endpoint's behaviour, not a quantity of data that left the tenant."
+}

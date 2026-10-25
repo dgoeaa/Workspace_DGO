@@ -1,0 +1,330 @@
+{
+  "nodeId": "Scope_Case_Reference",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_EntityKey_Case": {
+        "type": "Compose",
+        "inputs": "@guid()",
+        "runAfter": {}
+      },
+      "Scope_Case_Case_1": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Case_Candidate_Case_1": {
+            "type": "Compose",
+            "inputs": "@{outputs('Compose_Environment_Prefix')}CASE-@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}",
+            "runAfter": {}
+          },
+          "Get_Case_Collision_Case_1": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID']}')/items?$select=ID&$top=1&$filter=CaseRef%20eq%20'@{outputs('Compose_Case_Candidate_Case_1')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Case_Candidate_Case_1": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Case_Unique_Case_1": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Get_Case_Collision_Case_1')?['value']), outputs('Compose_Case_Candidate_Case_1'), int('CASE_REFERENCE_COLLISION'))",
+            "runAfter": {
+              "Get_Case_Collision_Case_1": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_EntityKey_Case": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Case_Case_2": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Case_Candidate_Case_2": {
+            "type": "Compose",
+            "inputs": "@{outputs('Compose_Environment_Prefix')}CASE-@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}",
+            "runAfter": {}
+          },
+          "Get_Case_Collision_Case_2": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID']}')/items?$select=ID&$top=1&$filter=CaseRef%20eq%20'@{outputs('Compose_Case_Candidate_Case_2')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Case_Candidate_Case_2": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Case_Unique_Case_2": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Get_Case_Collision_Case_2')?['value']), outputs('Compose_Case_Candidate_Case_2'), int('CASE_REFERENCE_COLLISION'))",
+            "runAfter": {
+              "Get_Case_Collision_Case_2": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Case_Case_1": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Case_Case_3": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Case_Candidate_Case_3": {
+            "type": "Compose",
+            "inputs": "@{outputs('Compose_Environment_Prefix')}CASE-@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}",
+            "runAfter": {}
+          },
+          "Get_Case_Collision_Case_3": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID']}')/items?$select=ID&$top=1&$filter=CaseRef%20eq%20'@{outputs('Compose_Case_Candidate_Case_3')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Case_Candidate_Case_3": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Case_Unique_Case_3": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Get_Case_Collision_Case_3')?['value']), outputs('Compose_Case_Candidate_Case_3'), int('CASE_REFERENCE_COLLISION'))",
+            "runAfter": {
+              "Get_Case_Collision_Case_3": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Case_Case_2": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Case_Case_4": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Case_Candidate_Case_4": {
+            "type": "Compose",
+            "inputs": "@{outputs('Compose_Environment_Prefix')}CASE-@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}",
+            "runAfter": {}
+          },
+          "Get_Case_Collision_Case_4": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID']}')/items?$select=ID&$top=1&$filter=CaseRef%20eq%20'@{outputs('Compose_Case_Candidate_Case_4')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Case_Candidate_Case_4": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Case_Unique_Case_4": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Get_Case_Collision_Case_4')?['value']), outputs('Compose_Case_Candidate_Case_4'), int('CASE_REFERENCE_COLLISION'))",
+            "runAfter": {
+              "Get_Case_Collision_Case_4": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Case_Case_3": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Case_Case_5": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Case_Candidate_Case_5": {
+            "type": "Compose",
+            "inputs": "@{outputs('Compose_Environment_Prefix')}CASE-@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}@{substring('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rand(0, 32), 1)}",
+            "runAfter": {}
+          },
+          "Get_Case_Collision_Case_5": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID']}')/items?$select=ID&$top=1&$filter=CaseRef%20eq%20'@{outputs('Compose_Case_Candidate_Case_5')}'",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Case_Candidate_Case_5": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Case_Unique_Case_5": {
+            "type": "Compose",
+            "inputs": "@if(empty(body('Get_Case_Collision_Case_5')?['value']), outputs('Compose_Case_Candidate_Case_5'), int('CASE_REFERENCE_COLLISION'))",
+            "runAfter": {
+              "Get_Case_Collision_Case_5": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Case_Case_4": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_CaseRef_Case": {
+        "type": "Compose",
+        "inputs": "@coalesce(actions('Compose_Case_Unique_Case_1')?['outputs'], actions('Compose_Case_Unique_Case_2')?['outputs'], actions('Compose_Case_Unique_Case_3')?['outputs'], actions('Compose_Case_Unique_Case_4')?['outputs'], actions('Compose_Case_Unique_Case_5')?['outputs'])",
+        "runAfter": {
+          "Scope_Case_Case_5": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Case_Collision_Case_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Case_Collision_Case_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Case_Collision_Case_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Case_Collision_Case_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Case_Collision_Case_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

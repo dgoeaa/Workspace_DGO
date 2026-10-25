@@ -1,0 +1,391 @@
+{
+  "schema": "dgo-identification-status/v1",
+  "generatedBy": "scripts/build-identification-phase4.mjs",
+  "phase": 4,
+  "packages": [
+    {
+      "flow": "Single_Task_Assignment",
+      "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "key": "SINGLE_ASSIGNMENT",
+      "file": "SINGLE_ASSIGNMENT__Single_Task_Assignment__3caf9458.paste.json",
+      "root": "Scope_Global",
+      "steps": 188,
+      "edits": 16,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "1f2bfe10c2818109",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: Single_Task_Assignment read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_to_array_variable_varErrrors_(array)__Validation_error",
+        "Set_variable_varData_Validation_Failure",
+        "Set_variable_varRequestId",
+        "Set_variable_varStatusCode"
+      ]
+    },
+    {
+      "flow": "BULK_OPS_DATA_RETRIEVAL_HTTP",
+      "flowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+      "key": "BULK_ASSIGNMENT",
+      "file": "BULK_ASSIGNMENT__BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61.paste.json",
+      "root": "Scope_Global",
+      "steps": 175,
+      "edits": 11,
+      "sends": 2,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "09d0a24052ba9814",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: BULK OPS DATA RETRIEVAL HTTP read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Set_variable_varData_Bulk_Accepted",
+        "Set_variable_varData_Bulk_Empty",
+        "Set_variable_varData_Bulk_Invalid",
+        "Set_variable_varData_Bulk_Retry"
+      ]
+    },
+    {
+      "flow": "IP_FETCH_ALL_BOOTSTRAP",
+      "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "key": "FETCH_ALL",
+      "file": "FETCH_ALL__IP_FETCH_ALL_BOOTSTRAP__b79e6707.paste.json",
+      "root": "Scope",
+      "steps": 96,
+      "edits": 12,
+      "sends": 0,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "01c2a838617f7903",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_FETCH_ALL_BOOTSTRAP read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Set_variable_varData_FetchAll_Catch",
+        "Set_variable_varData_FetchAll_Denied_401",
+        "Set_variable_varData_FetchAll_Denied_403",
+        "Set_variable_varData_FetchAll_Success",
+        "Set_variable_varRequestId"
+      ]
+    },
+    {
+      "flow": "IP_Dynamic_Global_Actions_Endpoint",
+      "flowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "key": "DYNAMIC_ACTIONS",
+      "file": "DYNAMIC_ACTIONS__IP_Dynamic_Global_Actions_Endpoint__31c0aaf0.paste.json",
+      "root": "Scope_Dynamic_Flow",
+      "steps": 480,
+      "edits": 21,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "12b4e01076a45306",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Dynamic_Global_Actions_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "replaces": [
+        "Scope_Dynamic_Flow_Production_Hardened"
+      ],
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "IP_User_Admin_Endpoint",
+      "flowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+      "key": "USER_ADMIN",
+      "file": "USER_ADMIN__IP_User_Admin_Endpoint__e3e5c825.paste.json",
+      "root": "Scope_Dynamic_Flow",
+      "steps": 97,
+      "edits": 19,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "1e9cbb576cfeb11f",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_User_Admin_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "replaces": [
+        "Scope_Dynamic_Flow_Production_Hardened"
+      ],
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "IP_Activity_Lifecycle_Endpoint",
+      "flowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+      "key": "ACTIVITY_LIFECYCLE",
+      "file": "ACTIVITY_LIFECYCLE__IP_Activity_Lifecycle_Endpoint__b4db02d8.paste.json",
+      "root": "Scope_Dynamic_Flow",
+      "steps": 90,
+      "edits": 19,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "0d2de979ee3e0b15",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Activity_Lifecycle_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "replaces": [
+        "Scope_Dynamic_Flow_Production_Hardened"
+      ],
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "IP_Create__Task__for_received_Email_Endpoint",
+      "flowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+      "key": "EMAIL_RELATED_TASK",
+      "file": "EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555.paste.json",
+      "root": "Scope_Global",
+      "steps": 179,
+      "edits": 17,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "14a350e305e01705",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Create__Task__for_received_Email_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_to_array_variable_varErrors_Validation_Failur",
+        "Set_variable_varData_Success",
+        "Set_variable_varData_Task_Processing_Catch",
+        "Set_variable_varEmailId",
+        "Set_variable_varRequestId",
+        "Set_variable_varStatusCode"
+      ]
+    },
+    {
+      "flow": "IP_OTP_VERIFY",
+      "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "key": "OTP_VERIFY",
+      "file": "OTP_VERIFY__IP_OTP_VERIFY__4dbe6dde.paste.json",
+      "root": "Scope_Global",
+      "steps": 51,
+      "edits": 6,
+      "sends": 0,
+      "office365": [],
+      "onRegistryMailbox": true,
+      "fingerprint": "1c6655ae8be15503",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_OTP_VERIFY read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_to_string_variable_Verification_Not_A_Directory_User",
+        "Append_to_string_variable_Verification_Successful",
+        "Set_variable_Verification_Not_A_Directory_User",
+        "Set_variable_varData"
+      ]
+    },
+    {
+      "flow": "IP_OTP_GENERATE",
+      "flowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+      "key": "OTP_GENERATE",
+      "file": "OTP_GENERATE__IP_OTP_GENERATE__e5632336.paste.json",
+      "root": "Scope_Global",
+      "steps": 29,
+      "edits": 4,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "07c6727ff971c701",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_OTP_GENERATE read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_to_string_variable_varResponse_Generate_OTP"
+      ]
+    },
+    {
+      "flow": "IP_Reference_Data_Endpoint",
+      "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "key": "REFERENCE_DATA",
+      "file": "REFERENCE_DATA__IP_Reference_Data_Endpoint__9a4dea8e.paste.json",
+      "root": "Scope_Global",
+      "steps": 56,
+      "edits": 9,
+      "sends": 0,
+      "office365": [],
+      "onRegistryMailbox": true,
+      "fingerprint": "178eac8c90727b19",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Reference_Data_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_Lookups_Denied_Error",
+        "Set_Lookups_Catch_Data",
+        "Set_Lookups_Denied_Data",
+        "Set_Lookups_Denied_Status",
+        "Set_Lookups_Success_Data",
+        "Set_variable_varRequestId"
+      ]
+    },
+    {
+      "flow": "IP_Get_Docs_Endpoint",
+      "flowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "key": "GET_DOCS",
+      "file": "GET_DOCS__IP_Get_Docs_Endpoint__28f6e62a.paste.json",
+      "root": "Scope_Global",
+      "steps": 52,
+      "edits": 7,
+      "sends": 0,
+      "office365": [],
+      "onRegistryMailbox": true,
+      "fingerprint": "1a4ba31f5953e610",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Get_Docs_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_GetDocs_Denied_Error",
+        "Set_GetDocs_Catch_Data",
+        "Set_GetDocs_Denied_Data",
+        "Set_GetDocs_Denied_Status",
+        "Set_GetDocs_Success_Data",
+        "Set_variable_varRequestId"
+      ]
+    },
+    {
+      "flow": "IP_Retrieve_Email_Attachment_Endpoint",
+      "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "key": "FETCH_EMAIL_ATTACHMENTS",
+      "file": "FETCH_EMAIL_ATTACHMENTS__IP_Retrieve_Email_Attachment_Endpoint__5bc87cf3.paste.json",
+      "root": "Scope_Email_Attachment_Endpoint_REBUILT",
+      "steps": 38,
+      "edits": 2,
+      "sends": 0,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "1446a2b78727dc03",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_Retrieve_Email_Attachment_Endpoint read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Append_Invalid_Request_Error",
+        "Set_Catch_Data",
+        "Set_Invalid_Data",
+        "Set_Invalid_Outcome",
+        "Set_Invalid_Status",
+        "Set_Success_Data"
+      ]
+    },
+    {
+      "flow": "IP_SEND_EMAIL",
+      "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "key": "EMAIL",
+      "file": "EMAIL__IP_SEND_EMAIL__df59a69f.paste.json",
+      "root": "Scope_Send_Email_Flow",
+      "steps": 75,
+      "edits": 5,
+      "sends": 2,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "06cd604661d1921c",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: IP_SEND_EMAIL read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": [
+        "Set_variable_varData_SendEmail_Attached",
+        "Set_variable_varData_SendEmail_Catch",
+        "Set_variable_varData_SendEmail_Denied_401",
+        "Set_variable_varData_SendEmail_Duplicate",
+        "Set_variable_varData_SendEmail_Invalid",
+        "Set_variable_varData_SendEmail_Plain",
+        "Set_variable_varRequestId"
+      ]
+    },
+    {
+      "flow": "AI_Document_Processing",
+      "flowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "key": "AI_DOC_ANALYSIS",
+      "file": "AI_DOC_ANALYSIS__AI_Document_Processing__fefa43c6.paste.json",
+      "root": "Scope_AI_Caller_Gate",
+      "steps": 12,
+      "edits": 2,
+      "sends": 0,
+      "office365": [],
+      "onRegistryMailbox": true,
+      "fingerprint": "196182c15102a70c",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: AI_Document_Processing read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "requires": "Flow Configuration holds a row OPENROUTER_API_KEY with a new OpenRouter key (ITEM-75). After the write, set the HTTP action's Authorization header to @{outputs('Compose_OpenRouter_Authorization')} and revoke the old key.",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "Folio_Incoming_Correspondence_Scan_Processing_Flow",
+      "flowId": "197527c8-e76c-4f7d-81b8-3cb5c88b1c6c",
+      "key": "NOKEY",
+      "file": "NOKEY__Folio_Incoming_Correspondence_Scan_Processing_Flow__197527c8.paste.json",
+      "root": "Scope_Scan_Processing",
+      "steps": 212,
+      "edits": 12,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "19a978696dcfeb08",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: Folio_Incoming_Correspondence_Scan_Processing_Flow read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "AUTO_SCHEDULED_SWEEP",
+      "flowId": "8c19b45c-4174-4d2f-9429-ffd08dd1a5ae",
+      "key": "NOKEY",
+      "file": "NOKEY__AUTO_SCHEDULED_SWEEP__8c19b45c.paste.json",
+      "root": "Scope_ScheduledSweep_Flow",
+      "steps": 103,
+      "edits": 3,
+      "sends": 5,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "15fe577f07aed414",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: AUTO_SCHEDULED_SWEEP read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    },
+    {
+      "flow": "Folio_Failure_Watch",
+      "flowId": "c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6",
+      "key": "NOKEY",
+      "file": "NOKEY__Folio_Failure_Watch__c38bfeaa.paste.json",
+      "root": "Scope_Failure_Watch",
+      "steps": 34,
+      "edits": 5,
+      "sends": 1,
+      "office365": [
+        "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      ],
+      "onRegistryMailbox": true,
+      "fingerprint": "1342cf76e91fb70d",
+      "action": "in-tenant",
+      "tenant": "In the tenant (2026-10-22)",
+      "evidence": "npm run flows:update apply, 2026-10-22: Folio_Failure_Watch read live from the tenant (evidence/2026-10-22-flows-apply.json); it runs this package",
+      "variableStepsChanged": []
+    }
+  ]
+}

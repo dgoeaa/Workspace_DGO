@@ -1,0 +1,569 @@
+{
+  "circlesVersion": "1.1.0",
+  "purpose": "The end-to-end loops the portal estate exists to serve: who starts each one, what it touches in order, what closes it, and which key joins its rows. Derived from the 01-09 design, the deployed definitions and the field specification. A circle that does not close is stated as not closing rather than left to be inferred from a gap register.",
+  "readWith": [
+    "portal-wiring.json - the per-endpoint operations these circles are built from",
+    "portal-field-spec.json - the columns each list carries",
+    "docs/folio-Master-Flows-and-Endpoints/registers/flow-list-map.json - what every definition actually touches today"
+  ],
+  "circles": [
+    {
+      "id": "C1",
+      "name": "Verification",
+      "actor": "anonymous citizen",
+      "endpoints": [
+        "VERIFY",
+        "VERIFY_CONFIRM"
+      ],
+      "closes": "When the minted proof is consumed by C2 or C4, or expires. Terminal states: consumed, expired, attempts exceeded.",
+      "joinKey": "Portal OTP Codes.Title = the lower-cased email; Portal Verification Proofs.Title = the opaque proof token",
+      "steps": [
+        {
+          "n": 1,
+          "by": "VERIFY",
+          "does": "Bucket the caller",
+          "on": [
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "update"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "by": "VERIFY",
+          "does": "Supersede any live code for this address, then mint one",
+          "on": [
+            {
+              "list": "Portal OTP Codes",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+              "operation": "read"
+            },
+            {
+              "list": "Portal OTP Codes",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+              "operation": "update"
+            },
+            {
+              "list": "Portal OTP Codes",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 3,
+          "by": "VERIFY",
+          "does": "Mail the code and record the send",
+          "on": [
+            {
+              "list": "Portal Outbox Receipts",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+              "operation": "create",
+              "note": "UNWIRED - no flow writes this list"
+            }
+          ]
+        },
+        {
+          "n": 4,
+          "by": "VERIFY_CONFIRM",
+          "does": "Read the latest unconsumed code for the address",
+          "on": [
+            {
+              "list": "Portal OTP Codes",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+              "operation": "read"
+            }
+          ]
+        },
+        {
+          "n": 5,
+          "by": "VERIFY_CONFIRM",
+          "does": "Expired, or attempts exhausted, or wrong: consume or increment. Right: consume.",
+          "on": [
+            {
+              "list": "Portal OTP Codes",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+              "operation": "update"
+            }
+          ]
+        },
+        {
+          "n": 6,
+          "by": "VERIFY_CONFIRM",
+          "does": "Mint the single-use proof",
+          "on": [
+            {
+              "list": "Portal Verification Proofs",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+              "operation": "create"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "name": "Submission",
+      "actor": "anonymous citizen",
+      "endpoints": [
+        "SUBMISSION"
+      ],
+      "closes": "When the reference is returned and every issued ticket is redeemed (C3) or expires.",
+      "joinKey": "Portal Registry.Title = the minted reference, and every child row carries it as SubmissionRef",
+      "steps": [
+        {
+          "n": 1,
+          "by": "SUBMISSION",
+          "does": "Bucket the caller",
+          "on": [
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "update"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "by": "SUBMISSION",
+          "does": "Redeem the verification proof exactly once",
+          "on": [
+            {
+              "list": "Portal Verification Proofs",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Verification Proofs",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+              "operation": "update"
+            }
+          ]
+        },
+        {
+          "n": 3,
+          "by": "SUBMISSION",
+          "does": "Create the registry row, Title PENDING until minted",
+          "on": [
+            {
+              "list": "Portal Registry",
+              "site": "NEDMS",
+              "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 4,
+          "by": "SUBMISSION",
+          "does": "Take the next number for the year under optimistic concurrency",
+          "on": [
+            {
+              "list": "Portal Sequence Counters",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Sequence Counters",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+              "operation": "create"
+            },
+            {
+              "list": "Portal Sequence Counters",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+              "operation": "update"
+            }
+          ]
+        },
+        {
+          "n": 5,
+          "by": "SUBMISSION",
+          "does": "Patch the minted reference back onto the row",
+          "on": [
+            {
+              "list": "Portal Registry",
+              "site": "NEDMS",
+              "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+              "operation": "update"
+            }
+          ]
+        },
+        {
+          "n": 6,
+          "by": "SUBMISSION",
+          "does": "Append the first public timeline event",
+          "on": [
+            {
+              "list": "Portal Status Timeline",
+              "site": "NEDMS",
+              "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 7,
+          "by": "SUBMISSION",
+          "does": "Issue one ticket per declared attachment",
+          "on": [
+            {
+              "list": "Portal Upload Tickets",
+              "site": "NEDMS",
+              "listGuid": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+              "operation": "create"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "name": "Upload",
+      "actor": "anonymous citizen",
+      "endpoints": [
+        "UPLOAD"
+      ],
+      "closes": "When the ticket is marked redeemed. A ticket is single-use by construction.",
+      "joinKey": "Portal Upload Tickets.Title = the opaque ticket; SubmissionRef joins back to the registry",
+      "steps": [
+        {
+          "n": 1,
+          "by": "UPLOAD",
+          "does": "Bucket the caller",
+          "on": [
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "update"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "by": "UPLOAD",
+          "does": "Read the ticket; expired or already redeemed stops here",
+          "on": [
+            {
+              "list": "Portal Upload Tickets",
+              "site": "NEDMS",
+              "listGuid": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+              "operation": "read"
+            }
+          ]
+        },
+        {
+          "n": 3,
+          "by": "UPLOAD",
+          "does": "Store the bytes",
+          "on": [],
+          "outside": "NITDA_Central_Registry (NEDMS document library) - the one sanctioned write outside the portal estate"
+        },
+        {
+          "n": 4,
+          "by": "UPLOAD",
+          "does": "Record the stored attachment",
+          "on": [
+            {
+              "list": "Portal Attachments",
+              "site": "NEDMS",
+              "listGuid": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 5,
+          "by": "UPLOAD",
+          "does": "Mark the ticket redeemed",
+          "on": [
+            {
+              "list": "Portal Upload Tickets",
+              "site": "NEDMS",
+              "listGuid": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+              "operation": "update"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "name": "Status",
+      "actor": "anonymous citizen",
+      "endpoints": [
+        "STATUS"
+      ],
+      "closes": "Read-only. Leaves nothing behind but the consumed proof.",
+      "joinKey": "reference + SenderEmail must both match; Portal Status Timeline read by SubmissionRef",
+      "steps": [
+        {
+          "n": 1,
+          "by": "STATUS",
+          "does": "Bucket by source and by reference",
+          "on": [
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "update"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "by": "STATUS",
+          "does": "Redeem the verification proof",
+          "on": [
+            {
+              "list": "Portal Verification Proofs",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Verification Proofs",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+              "operation": "update"
+            }
+          ]
+        },
+        {
+          "n": 3,
+          "by": "STATUS",
+          "does": "Read the row, matching the resolved address",
+          "on": [
+            {
+              "list": "Portal Registry",
+              "site": "NEDMS",
+              "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+              "operation": "read"
+            }
+          ]
+        },
+        {
+          "n": 4,
+          "by": "STATUS",
+          "does": "Read the public timeline",
+          "on": [
+            {
+              "list": "Portal Status Timeline",
+              "site": "NEDMS",
+              "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+              "operation": "read"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "name": "Support",
+      "actor": "anonymous citizen",
+      "endpoints": [
+        "SUPPORT"
+      ],
+      "closes": "Returns a CASE reference. Never enters the registry - a case is not correspondence.",
+      "joinKey": "Portal Support Cases.Title = NITDA-S-XXXXXX; AboutReference optionally points at a registry reference",
+      "steps": [
+        {
+          "n": 1,
+          "by": "SUPPORT",
+          "does": "Bucket the caller",
+          "on": [
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "read"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "update"
+            },
+            {
+              "list": "Portal Rate Limits",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "by": "SUPPORT",
+          "does": "Create the case",
+          "on": [
+            {
+              "list": "Portal Support Cases",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "b984645b-8e3a-457f-a305-b95650fd3f23",
+              "operation": "create"
+            }
+          ]
+        },
+        {
+          "n": 3,
+          "by": "SUPPORT",
+          "does": "Mail the acknowledgement and record the send",
+          "on": [
+            {
+              "list": "Portal Outbox Receipts",
+              "site": "Global_Digital_Documents_Centre",
+              "listGuid": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+              "operation": "create",
+              "note": "UNWIRED - no flow writes this list"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C6",
+      "name": "Intake - the crossing",
+      "actor": "internal platform, tenant-authenticated",
+      "endpoints": [],
+      "flow": "ECM_DOCS_INTAKE",
+      "closes": "Read-only. The only crossing between the public estate and the internal platform.",
+      "joinKey": "Projects ReferenceId three ways - Reference_ID, RefIDD, ReferenceId - because the internal normalisers read it under all three aliases",
+      "built": true,
+      "steps": [
+        {
+          "n": 1,
+          "by": "ECM_DOCS_INTAKE",
+          "does": "Read the registry, newest first",
+          "on": [
+            {
+              "list": "Portal Registry",
+              "site": "NEDMS",
+              "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+              "operation": "read"
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "by": "ECM_DOCS_INTAKE",
+          "does": "Project 22 columns for the internal platform",
+          "on": []
+        }
+      ]
+    },
+    {
+      "id": "C7",
+      "name": "Triage write-back",
+      "actor": "internal registry officer",
+      "endpoints": [],
+      "flow": "ECM_DOCS_INTAKE (writeback branch)",
+      "closes": "Once the writeback branch exists: an internal status change patches the registry and appends a public timeline event, and the citizen sees it through C4.",
+      "joinKey": "Would join on ReferenceId, the same key C6 projects out",
+      "built": false,
+      "consequence": "A citizen calling STATUS can only ever be told what SUBMISSION wrote at the moment of submission. Acknowledgement, review, action-required and closure are invisible to them however far the item progresses internally. The field specification records the gap without assigning it - AcknowledgedAtUtc and ClosedAtUtc are annotated \"never written by these six flows, populated by internal triage\" - and no artifact names the flow that would.",
+      "steps": [
+        {
+          "n": 1,
+          "by": "ECM_DOCS_INTAKE (writeback branch)",
+          "does": "On an internal status change, patch the registry row",
+          "on": [
+            {
+              "list": "Portal Registry",
+              "site": "NEDMS",
+              "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+              "operation": "update",
+              "note": "D1 - to be built"
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "by": "ECM_DOCS_INTAKE (writeback branch)",
+          "does": "Append the corresponding public timeline event",
+          "on": [
+            {
+              "list": "Portal Status Timeline",
+              "site": "NEDMS",
+              "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+              "operation": "create",
+              "note": "D1 - to be built"
+            }
+          ]
+        }
+      ],
+      "decision": "D1 - a second branch on the existing crossing, selected by a top-level action. Not a new flow and not a SharePoint trigger; see DECISIONS.md."
+    }
+  ],
+  "totals": {
+    "circles": 7,
+    "built": 6,
+    "open": 1,
+    "steps": 29,
+    "assigned": 1
+  }
+}

@@ -1,0 +1,6 @@
+<!--
+  Appended by the IP_SEND_EMAIL flow (Compose_SendEmail_Attachment_Section) after the desk's HTML,
+  whenever payload.email.attachments is non-empty. One <li> per attachment reference, as sent.
+  Note: it is concatenated after the desk's closing </html>. Outlook renders it; a strict parser would not.
+-->
+<div style="margin-top:18px;padding-top:12px;border-top:1px solid #E8E6E7;font-family:Arial,Segoe UI,sans-serif;font-size:13px"><b>Attachments</b><ul><li>{{attachment1}}</li><li>{{attachment2}}</li></ul></div>

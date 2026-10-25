@@ -1,0 +1,2615 @@
+{
+  "nodeId": "Scope",
+  "serializedValue": {
+    "actions": {
+      "Scope_Global_FetchAll": {
+        "actions": {
+          "Scope_FetchAll_Data_Processing": {
+            "actions": {
+              "Compose_FetchAll_Caller": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000015"
+                },
+                "type": "Compose",
+                "inputs": "@outputs('Compose_FetchAll_Gate_Caller')",
+                "runAfter": {
+                  "Compose_FetchAll_Gate_Caller": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Get_FetchAll_Directory_User": {
+                "runAfter": {
+                  "Compose_FetchAll_Caller": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000016"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "table": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+                    "$filter": "@concat('Email eq ''',replace(outputs('Compose_FetchAll_Caller'),'''',''''''),''' and Status eq ''active''')",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  }
+                }
+              },
+              "Compose_FetchAll_Role": {
+                "runAfter": {
+                  "Get_FetchAll_Directory_User": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000017"
+                },
+                "type": "Compose",
+                "inputs": "@toLower(trim(string(coalesce(json(if(startsWith(string(coalesce(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Role'],'')),'{'),string(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Role']),concat('{\"Value\":\"',replace(string(coalesce(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Role'],'')),'\"',''),'\"}')))?['Value'],''))))"
+              },
+              "Get_FetchAll_Role_Permissions": {
+                "runAfter": {
+                  "Compose_FetchAll_Role": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000018"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "table": "f675598b-271d-4200-8d75-2597aad4057f",
+                    "$filter": "@concat('RoleId eq ''',replace(outputs('Compose_FetchAll_Role'),'''',''''''),''' and Active eq 1')",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  }
+                }
+              },
+              "Compose_FetchAll_Permitted": {
+                "runAfter": {
+                  "Get_FetchAll_Role_Permissions": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000019"
+                },
+                "type": "Compose",
+                "inputs": true
+              },
+              "Condition_FetchAll_Authorised": {
+                "actions": {
+                  "Get_All_Docs": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000001"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+                        "$orderby": "Modified desc",
+                        "$top": 500
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_FetchAll_Scope": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Get_All_Tasks": {
+                    "runAfter": {
+                      "Get_All_Docs": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000002"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "ee82725a-c408-45e2-a8e8-facf7a092047",
+                        "$orderby": "ID desc",
+                        "$top": 500
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      }
+                    }
+                  },
+                  "Get_All_Users": {
+                    "runAfter": {
+                      "Get_All_Tasks": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000003"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "table": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+                        "$top": 5000
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      }
+                    },
+                    "runtimeConfiguration": {
+                      "paginationPolicy": {
+                        "minimumItemCount": 5000
+                      }
+                    }
+                  },
+                  "Get_All_Categories": {
+                    "runAfter": {
+                      "Get_All_Users": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000004"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "f64c8b65-c921-46e9-8814-a8cef61f6016",
+                        "$top": 500
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      }
+                    }
+                  },
+                  "Get_All_Departments": {
+                    "runAfter": {
+                      "Get_All_Categories": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000005"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "8aab9c4e-001f-4e32-862c-8a50e750f04e",
+                        "$top": 200
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      }
+                    }
+                  },
+                  "Get_All_Comments": {
+                    "runAfter": {
+                      "Get_All_Departments": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000006"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "1932d687-e77a-4929-9047-a1f544c68a0b",
+                        "$orderby": "Created desc",
+                        "$top": 500
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      }
+                    }
+                  },
+                  "Select_Docs": {
+                    "runAfter": {
+                      "Get_All_Comments": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000007"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(outputs('Get_All_Docs')?['body/value'],json('[]'))",
+                      "select": {
+                        "ID": "@item()?['ID']",
+                        "Title": "@item()?['Title']",
+                        "RefIDD": "@item()?['RefIDD']",
+                        "Category": "@item()?['Category0']",
+                        "Status": "@item()?['Status']?['Value']",
+                        "AssignedTo": "@item()?['AssignedTo']",
+                        "Assigned": "@item()?['Assigned']",
+                        "RoutedToDSU": "@item()?['RoutedToDSU']",
+                        "CC_x0027_dTo": "@item()?['CC_x0027_dTo']",
+                        "OverallStatus": "@item()?['OverallStatus']?['Value']",
+                        "StartDate": "@item()?['StartDate']",
+                        "BodyExtract": "@item()?['BodyExtract']",
+                        "EntityKey": "@item()?['EntityKey']",
+                        "ReferenceId": "@item()?['ReferenceId']",
+                        "IdState": "@item()?['IdState']?['Value']"
+                      }
+                    }
+                  },
+                  "Select_Tasks": {
+                    "runAfter": {
+                      "Select_Docs": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000008"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(outputs('Get_All_Tasks')?['body/value'],json('[]'))",
+                      "select": {
+                        "ID": "@item()?['ID']",
+                        "Title": "@item()?['Title']",
+                        "RefIDD": "@item()?['RefIDD']",
+                        "Reference_ID": "@item()?['Reference_ID']",
+                        "AssignedTo": "@item()?['AssignedTo']",
+                        "Assigned": "@item()?['Assigned']",
+                        "AssignedBy": "@item()?['AssignedBy']",
+                        "RoutedToDSU": "@item()?['RoutedToDSU']",
+                        "Classification": "@item()?['Classification']",
+                        "Description": "@item()?['Description']",
+                        "DueDate": "@item()?['DueDate']",
+                        "StartDate": "@item()?['StartDate']",
+                        "Priority": "@item()?['Priority']?['Value']",
+                        "Progress": "@item()?['Progress']?['Value']",
+                        "TaskType": "@item()?['TaskType']?['Value']",
+                        "AttachmentLink": "@item()?['AttachmentLink']",
+                        "ActivityTrackingID": "@item()?['ActivityTrackingID']",
+                        "EntityKey": "@item()?['EntityKey']",
+                        "TaskRef": "@item()?['TaskRef']",
+                        "ParentKey": "@item()?['ParentKey']",
+                        "RootKey": "@item()?['RootKey']",
+                        "RootRef": "@item()?['RootRef']",
+                        "IdState": "@item()?['IdState']?['Value']",
+                        "Rev": "@item()?['Rev']",
+                        "RoutedDsu": "@item()?['GDSUROUT']"
+                      }
+                    }
+                  },
+                  "Select_Users": {
+                    "runAfter": {
+                      "Select_Tasks": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000009"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(outputs('Get_All_Users')?['body/value'],json('[]'))",
+                      "select": {
+                        "UserId": "@item()?['UserId']",
+                        "FullName": "@item()?['FullName']",
+                        "Email": "@item()?['Email']",
+                        "Directorate": "@item()?['Directorate']",
+                        "Department": "@item()?['Department']",
+                        "Role": "@string(coalesce(json(if(startsWith(string(coalesce(item()?['Role'],'')),'{'),string(item()?['Role']),concat('{\"Value\":\"',replace(string(coalesce(item()?['Role'],'')),'\"',''),'\"}')))?['Value'],''))",
+                        "Persona": "@string(coalesce(json(if(startsWith(string(coalesce(item()?['Persona'],'')),'{'),string(item()?['Persona']),concat('{\"Value\":\"',replace(string(coalesce(item()?['Persona'],'')),'\"',''),'\"}')))?['Value'],''))",
+                        "Status": "@string(coalesce(json(if(startsWith(string(coalesce(item()?['Status'],'')),'{'),string(item()?['Status']),concat('{\"Value\":\"',replace(string(coalesce(item()?['Status'],'')),'\"',''),'\"}')))?['Value'],''))",
+                        "AccessScope": "@item()?['AccessScope']",
+                        "PilotCohort": "@item()?['PilotCohort']"
+                      }
+                    }
+                  },
+                  "Select_Categories": {
+                    "runAfter": {
+                      "Select_Users": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000010"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(outputs('Get_All_Categories')?['body/value'],json('[]'))",
+                      "select": {
+                        "ID": "@item()?['ID']",
+                        "Title": "@item()?['Title']",
+                        "Category": "@item()?['Title']",
+                        "Subcategory": "@item()?['field_2']",
+                        "Category Code": "@item()?['field_1']",
+                        "SubCategory Code": "@item()?['field_3']",
+                        "DSU_KEY": "@item()?['field_4']",
+                        "Default Primary Responsible": "@item()?['field_4']",
+                        "Default Supporting Department/Unit": "@item()?['field_5']",
+                        "INFORMDSU1": "@item()?['field_6']",
+                        "INFORMDSU2": "@item()?['field_7']",
+                        "INFORMDSU3": "@item()?['field_8']",
+                        "Priority": "@item()?['field_14']",
+                        "Timeline": "@item()?['field_9']"
+                      }
+                    }
+                  },
+                  "Select_Departments": {
+                    "runAfter": {
+                      "Select_Categories": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000011"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(outputs('Get_All_Departments')?['body/value'],json('[]'))",
+                      "select": {
+                        "ID": "@item()?['ID']",
+                        "Title": "@item()?['Title']",
+                        "DSU_KEY": "@item()?['field_1']",
+                        "DSU_Email": "@item()?['field_2']",
+                        "DSU_HeadEmail": "@item()?['field_3']",
+                        "DSU_HeadTitle": "@item()?['field_6']"
+                      }
+                    }
+                  },
+                  "Select_Comments": {
+                    "runAfter": {
+                      "Select_Departments": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000012"
+                    },
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(outputs('Get_All_Comments')?['body/value'],json('[]'))",
+                      "select": {
+                        "ID": "@item()?['ID']",
+                        "Title": "@item()?['Title']",
+                        "RefIDD": "@item()?['RefIDD']",
+                        "Description": "@item()?['Description']",
+                        "Created": "@item()?['Created']",
+                        "EntityKey": "@item()?['EntityKey']",
+                        "ParentKey": "@item()?['ParentKey']",
+                        "RootKey": "@item()?['RootKey']",
+                        "RootRef": "@item()?['RootRef']",
+                        "AuthorKey": "@item()?['AuthorKey']",
+                        "AuthorName": "@item()?['Author']?['DisplayName']",
+                        "AuthorEmail": "@toLower(string(coalesce(item()?['Author']?['Email'],'')))"
+                      }
+                    }
+                  },
+                  "Set_variable_varStatusCode_FetchAll_200": {
+                    "runAfter": {
+                      "Get_FetchAll_Failure_Health": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000013"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varStatusCode",
+                      "value": 200
+                    }
+                  },
+                  "Set_variable_varData_FetchAll_Success": {
+                    "runAfter": {
+                      "Compose_Value_Set_variable_varData_FetchAll_Success": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000014"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "varData",
+                      "value": "@outputs('Compose_Value_Set_variable_varData_FetchAll_Success')"
+                    }
+                  },
+                  "Get_Dataset_Bindings": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists/getbytitle('Flow%20Configuration')/items?$select=Title,ConfigValue&$top=500&$filter=Title%20eq%20'ENVIRONMENT_CODE'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_SITE_URL'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_LIST_ID'%20or%20Title%20eq%20'DATASET_BRIEFS_SITE_URL'%20or%20Title%20eq%20'DATASET_BRIEFS_LIST_ID'%20or%20Title%20eq%20'DATASET_MEETINGS_SITE_URL'%20or%20Title%20eq%20'DATASET_MEETINGS_LIST_ID'%20or%20Title%20eq%20'DATASET_PROJECTS_SITE_URL'%20or%20Title%20eq%20'DATASET_PROJECTS_LIST_ID'%20or%20Title%20eq%20'DATASET_APPROVALS_SITE_URL'%20or%20Title%20eq%20'DATASET_APPROVALS_LIST_ID'%20or%20Title%20eq%20'DATASET_REGISTRY_FILES_SITE_URL'%20or%20Title%20eq%20'DATASET_REGISTRY_FILES_LIST_ID'",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=minimalmetadata"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Select_Comments": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Select_Dataset_Bindings": {
+                    "type": "Select",
+                    "inputs": {
+                      "from": "@coalesce(body('Get_Dataset_Bindings')?['value'], json('[]'))",
+                      "select": "@concat('\"', trim(string(item()?['Title'])), '\":\"', replace(trim(string(coalesce(item()?['ConfigValue'], ''))), '\"', ''), '\"')"
+                    },
+                    "runAfter": {
+                      "Get_Dataset_Bindings": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    }
+                  },
+                  "Compose_Dataset_Bindings": {
+                    "type": "Compose",
+                    "inputs": "@json(concat('{', join(body('Select_Dataset_Bindings'), ','), '}'))",
+                    "runAfter": {
+                      "Select_Dataset_Bindings": [
+                        "Succeeded"
+                      ]
+                    }
+                  },
+                  "Get_FetchAll_Register": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Compose_Dataset_Bindings": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_SITE_URL']",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_LIST_ID']}')/items?$top=500&$orderby=Modified%20desc",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    }
+                  },
+                  "Select_FetchAll_Register": {
+                    "type": "Select",
+                    "runAfter": {
+                      "Get_FetchAll_Register": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "inputs": {
+                      "from": "@coalesce(body('Get_FetchAll_Register')?['value'],json('[]'))",
+                      "select": {
+                        "id": "@item()?['EntityKey']",
+                        "entityKey": "@item()?['EntityKey']",
+                        "referenceId": "@item()?['ReferenceId']",
+                        "title": "@item()?['Title']",
+                        "subject": "@item()?['Subject']",
+                        "channel": "@item()?['Channel']",
+                        "status": "@item()?['Status']",
+                        "statusLabel": "@item()?['StatusLabel']",
+                        "senderEmail": "@item()?['SenderEmail']",
+                        "submittedAtUtc": "@item()?['SubmittedAtUtc']",
+                        "idState": "@item()?['IdState']",
+                        "rev": "@item()?['Rev']",
+                        "supersededBy": "@item()?['SupersededBy']"
+                      }
+                    }
+                  },
+                  "Get_FetchAll_Briefs": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Select_FetchAll_Register": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_BRIEFS_SITE_URL']",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_BRIEFS_LIST_ID']}')/items?$top=500&$orderby=Modified%20desc",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    }
+                  },
+                  "Select_FetchAll_Briefs": {
+                    "type": "Select",
+                    "runAfter": {
+                      "Get_FetchAll_Briefs": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "inputs": {
+                      "from": "@coalesce(body('Get_FetchAll_Briefs')?['value'],json('[]'))",
+                      "select": {
+                        "id": "@item()?['EntityKey']",
+                        "entityKey": "@item()?['EntityKey']",
+                        "title": "@item()?['Title']",
+                        "idState": "@item()?['IdState']",
+                        "rev": "@item()?['Rev']",
+                        "supersededBy": "@item()?['SupersededBy']",
+                        "modified": "@item()?['Modified']"
+                      }
+                    }
+                  },
+                  "Get_FetchAll_Meetings": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Select_FetchAll_Briefs": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_MEETINGS_SITE_URL']",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_MEETINGS_LIST_ID']}')/items?$top=500&$orderby=Modified%20desc",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    }
+                  },
+                  "Select_FetchAll_Meetings": {
+                    "type": "Select",
+                    "runAfter": {
+                      "Get_FetchAll_Meetings": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "inputs": {
+                      "from": "@coalesce(body('Get_FetchAll_Meetings')?['value'],json('[]'))",
+                      "select": {
+                        "id": "@item()?['EntityKey']",
+                        "entityKey": "@item()?['EntityKey']",
+                        "title": "@item()?['Title']",
+                        "idState": "@item()?['IdState']",
+                        "rev": "@item()?['Rev']",
+                        "supersededBy": "@item()?['SupersededBy']",
+                        "modified": "@item()?['Modified']"
+                      }
+                    }
+                  },
+                  "Get_FetchAll_Projects": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Select_FetchAll_Meetings": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_PROJECTS_SITE_URL']",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_PROJECTS_LIST_ID']}')/items?$top=500&$orderby=Modified%20desc",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    }
+                  },
+                  "Select_FetchAll_Projects": {
+                    "type": "Select",
+                    "runAfter": {
+                      "Get_FetchAll_Projects": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "inputs": {
+                      "from": "@coalesce(body('Get_FetchAll_Projects')?['value'],json('[]'))",
+                      "select": {
+                        "id": "@item()?['EntityKey']",
+                        "entityKey": "@item()?['EntityKey']",
+                        "title": "@item()?['Title']",
+                        "idState": "@item()?['IdState']",
+                        "rev": "@item()?['Rev']",
+                        "supersededBy": "@item()?['SupersededBy']",
+                        "modified": "@item()?['Modified']"
+                      }
+                    }
+                  },
+                  "Get_FetchAll_Approvals": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Select_FetchAll_Projects": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_APPROVALS_SITE_URL']",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_APPROVALS_LIST_ID']}')/items?$top=500&$orderby=Modified%20desc",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    }
+                  },
+                  "Select_FetchAll_Approvals": {
+                    "type": "Select",
+                    "runAfter": {
+                      "Get_FetchAll_Approvals": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "inputs": {
+                      "from": "@coalesce(body('Get_FetchAll_Approvals')?['value'],json('[]'))",
+                      "select": {
+                        "id": "@item()?['EntityKey']",
+                        "entityKey": "@item()?['EntityKey']",
+                        "title": "@item()?['Title']",
+                        "status": "@toLower(string(coalesce(item()?['Decision'],'Pending')))",
+                        "ref": "@item()?['RootRef']",
+                        "parentKey": "@item()?['ParentKey']",
+                        "rootKey": "@item()?['RootKey']",
+                        "idState": "@item()?['IdState']",
+                        "rev": "@item()?['Rev']",
+                        "ts": "@item()?['Modified']"
+                      }
+                    }
+                  },
+                  "Get_FetchAll_Files": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Select_FetchAll_Approvals": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      },
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_REGISTRY_FILES_SITE_URL']",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_REGISTRY_FILES_LIST_ID']}')/items?$top=500&$orderby=Modified%20desc",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "retryPolicy": {
+                        "type": "none"
+                      }
+                    }
+                  },
+                  "Select_FetchAll_Files": {
+                    "type": "Select",
+                    "runAfter": {
+                      "Get_FetchAll_Files": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    },
+                    "inputs": {
+                      "from": "@coalesce(body('Get_FetchAll_Files')?['value'],json('[]'))",
+                      "select": {
+                        "id": "@item()?['EntityKey']",
+                        "entityKey": "@item()?['EntityKey']",
+                        "fileRef": "@item()?['RegistryFileRef']",
+                        "title": "@item()?['Title']",
+                        "currentHolder": "@item()?['CurrentHolder']",
+                        "idState": "@item()?['IdState']",
+                        "rev": "@item()?['Rev']",
+                        "supersededBy": "@item()?['SupersededBy']"
+                      }
+                    }
+                  },
+                  "Compose_FetchAll_Scope": {
+                    "type": "Compose",
+                    "runAfter": {},
+                    "inputs": {
+                      "tier": "@if(or(contains(createArray('systemadmin','useradmin','executive','operator'),toLower(string(outputs('Compose_FetchAll_Role')))),contains(createArray('admin','executive','registry'),toLower(trim(string(coalesce(json(if(startsWith(string(coalesce(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Persona'],'')),'{'),string(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Persona']),concat('{\"Value\":\"',replace(string(coalesce(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Persona'],'')),'\"',''),'\"}')))?['Value'],'')))))),'all',if(equals(toLower(string(outputs('Compose_FetchAll_Role'))),'director'),'directorate','own'))",
+                      "caller": "@toLower(string(outputs('Compose_FetchAll_Caller')))"
+                    }
+                  },
+                  "Condition_FetchAll_Own": {
+                    "type": "If",
+                    "runAfter": {
+                      "Select_FetchAll_Files": [
+                        "Succeeded"
+                      ]
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@equals(outputs('Compose_FetchAll_Scope')?['tier'],'all')",
+                            false
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Get_FetchAll_Own_Tasks": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {},
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                            "table": "ee82725a-c408-45e2-a8e8-facf7a092047",
+                            "$filter": "@concat('AssignedTo eq ''',replace(outputs('Compose_FetchAll_Scope')?['caller'],'''',''''''),'''')",
+                            "$top": 500
+                          }
+                        }
+                      },
+                      "Select_FetchAll_Own_Tasks": {
+                        "type": "Select",
+                        "runAfter": {
+                          "Get_FetchAll_Own_Tasks": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "from": "@coalesce(outputs('Get_FetchAll_Own_Tasks')?['body/value'],json('[]'))",
+                          "select": {
+                            "ID": "@item()?['ID']",
+                            "Title": "@item()?['Title']",
+                            "RefIDD": "@item()?['RefIDD']",
+                            "Reference_ID": "@item()?['Reference_ID']",
+                            "AssignedTo": "@item()?['AssignedTo']",
+                            "Assigned": "@item()?['Assigned']",
+                            "AssignedBy": "@item()?['AssignedBy']",
+                            "RoutedToDSU": "@item()?['RoutedToDSU']",
+                            "Classification": "@item()?['Classification']",
+                            "Description": "@item()?['Description']",
+                            "DueDate": "@item()?['DueDate']",
+                            "StartDate": "@item()?['StartDate']",
+                            "Priority": "@item()?['Priority']?['Value']",
+                            "Progress": "@item()?['Progress']?['Value']",
+                            "TaskType": "@item()?['TaskType']?['Value']",
+                            "AttachmentLink": "@item()?['AttachmentLink']",
+                            "ActivityTrackingID": "@item()?['ActivityTrackingID']",
+                            "EntityKey": "@item()?['EntityKey']",
+                            "TaskRef": "@item()?['TaskRef']",
+                            "ParentKey": "@item()?['ParentKey']",
+                            "RootKey": "@item()?['RootKey']",
+                            "RootRef": "@item()?['RootRef']",
+                            "IdState": "@item()?['IdState']?['Value']",
+                            "Rev": "@item()?['Rev']",
+                            "RoutedDsu": "@item()?['GDSUROUT']"
+                          }
+                        }
+                      },
+                      "Get_FetchAll_Unit_Map": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Select_FetchAll_Own_Tasks": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                            "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                            "$filter": "Title eq 'DIRECTORATE_UNIT_MAP'",
+                            "$top": 5
+                          }
+                        }
+                      },
+                      "Compose_FetchAll_Units": {
+                        "type": "Compose",
+                        "runAfter": {
+                          "Get_FetchAll_Unit_Map": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": "@if(not(equals(outputs('Compose_FetchAll_Scope')?['tier'],'directorate')),json('[]'),if(empty(trim(string(coalesce(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Directorate'],'')))),json('[]'),coalesce(json(string(coalesce(first(coalesce(outputs('Get_FetchAll_Unit_Map')?['body/value'],json('[]')))?['ConfigValue'],'{}')))?[trim(string(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Directorate']))],createArray(trim(string(first(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))?['Directorate']))))))"
+                      },
+                      "Get_FetchAll_Directorate_Tasks": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Compose_FetchAll_Units": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                            "table": "ee82725a-c408-45e2-a8e8-facf7a092047",
+                            "$filter": "@if(empty(outputs('Compose_FetchAll_Units')),'ID eq 0',concat('GDSUROUT eq ''',join(take(outputs('Compose_FetchAll_Units'),20),''' or GDSUROUT eq '''),''''))",
+                            "$top": 500
+                          }
+                        }
+                      },
+                      "Select_FetchAll_Directorate_Tasks": {
+                        "type": "Select",
+                        "runAfter": {
+                          "Get_FetchAll_Directorate_Tasks": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "from": "@coalesce(outputs('Get_FetchAll_Directorate_Tasks')?['body/value'],json('[]'))",
+                          "select": {
+                            "ID": "@item()?['ID']",
+                            "Title": "@item()?['Title']",
+                            "RefIDD": "@item()?['RefIDD']",
+                            "Reference_ID": "@item()?['Reference_ID']",
+                            "AssignedTo": "@item()?['AssignedTo']",
+                            "Assigned": "@item()?['Assigned']",
+                            "AssignedBy": "@item()?['AssignedBy']",
+                            "RoutedToDSU": "@item()?['RoutedToDSU']",
+                            "Classification": "@item()?['Classification']",
+                            "Description": "@item()?['Description']",
+                            "DueDate": "@item()?['DueDate']",
+                            "StartDate": "@item()?['StartDate']",
+                            "Priority": "@item()?['Priority']?['Value']",
+                            "Progress": "@item()?['Progress']?['Value']",
+                            "TaskType": "@item()?['TaskType']?['Value']",
+                            "AttachmentLink": "@item()?['AttachmentLink']",
+                            "ActivityTrackingID": "@item()?['ActivityTrackingID']",
+                            "EntityKey": "@item()?['EntityKey']",
+                            "TaskRef": "@item()?['TaskRef']",
+                            "ParentKey": "@item()?['ParentKey']",
+                            "RootKey": "@item()?['RootKey']",
+                            "RootRef": "@item()?['RootRef']",
+                            "IdState": "@item()?['IdState']?['Value']",
+                            "Rev": "@item()?['Rev']",
+                            "RoutedDsu": "@item()?['GDSUROUT']"
+                          }
+                        }
+                      },
+                      "Compose_FetchAll_Scope_Tasks": {
+                        "type": "Compose",
+                        "runAfter": {
+                          "Select_FetchAll_Directorate_Tasks": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": "@union(coalesce(body('Select_FetchAll_Own_Tasks'),json('[]')),coalesce(body('Select_FetchAll_Directorate_Tasks'),json('[]')))"
+                      },
+                      "Select_FetchAll_Own_Doc_Ids": {
+                        "type": "Select",
+                        "runAfter": {
+                          "Compose_FetchAll_Scope_Tasks": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "from": "@outputs('Compose_FetchAll_Scope_Tasks')",
+                          "select": "@if(empty(string(coalesce(item()?['RefIDD'],''))),'0',string(item()?['RefIDD']))"
+                        }
+                      },
+                      "Get_FetchAll_Own_Docs": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Select_FetchAll_Own_Doc_Ids": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                            "table": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+                            "$filter": "@if(empty(union(body('Select_FetchAll_Own_Doc_Ids'),json('[]'))),'ID eq 0',concat('ID eq ',join(take(union(body('Select_FetchAll_Own_Doc_Ids'),json('[]')),60),' or ID eq ')))",
+                            "$top": 500
+                          }
+                        }
+                      },
+                      "Select_FetchAll_Own_Docs": {
+                        "type": "Select",
+                        "runAfter": {
+                          "Get_FetchAll_Own_Docs": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "from": "@coalesce(outputs('Get_FetchAll_Own_Docs')?['body/value'],json('[]'))",
+                          "select": {
+                            "ID": "@item()?['ID']",
+                            "Title": "@item()?['Title']",
+                            "RefIDD": "@item()?['RefIDD']",
+                            "Category": "@item()?['Category0']",
+                            "Status": "@item()?['Status']?['Value']",
+                            "AssignedTo": "@item()?['AssignedTo']",
+                            "Assigned": "@item()?['Assigned']",
+                            "RoutedToDSU": "@item()?['RoutedToDSU']",
+                            "CC_x0027_dTo": "@item()?['CC_x0027_dTo']",
+                            "OverallStatus": "@item()?['OverallStatus']?['Value']",
+                            "StartDate": "@item()?['StartDate']",
+                            "BodyExtract": "@item()?['BodyExtract']",
+                            "EntityKey": "@item()?['EntityKey']",
+                            "ReferenceId": "@item()?['ReferenceId']",
+                            "IdState": "@item()?['IdState']?['Value']"
+                          }
+                        }
+                      },
+                      "Get_FetchAll_Own_Comments": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Select_FetchAll_Own_Docs": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "connection": "shared_sharepointonline",
+                            "operationId": "GetItems"
+                          },
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                            "table": "1932d687-e77a-4929-9047-a1f544c68a0b",
+                            "$filter": "@concat('RefIDD eq ''',join(take(union(body('Select_FetchAll_Own_Doc_Ids'),json('[]')),60),''' or RefIDD eq '''),'''')",
+                            "$top": 500
+                          }
+                        }
+                      },
+                      "Select_FetchAll_Own_Comments": {
+                        "type": "Select",
+                        "runAfter": {
+                          "Get_FetchAll_Own_Comments": [
+                            "Succeeded",
+                            "Failed",
+                            "TimedOut"
+                          ]
+                        },
+                        "inputs": {
+                          "from": "@coalesce(outputs('Get_FetchAll_Own_Comments')?['body/value'],json('[]'))",
+                          "select": {
+                            "ID": "@item()?['ID']",
+                            "Title": "@item()?['Title']",
+                            "RefIDD": "@item()?['RefIDD']",
+                            "Description": "@item()?['Description']",
+                            "Created": "@item()?['Created']",
+                            "EntityKey": "@item()?['EntityKey']",
+                            "ParentKey": "@item()?['ParentKey']",
+                            "RootKey": "@item()?['RootKey']",
+                            "RootRef": "@item()?['RootRef']",
+                            "AuthorKey": "@item()?['AuthorKey']",
+                            "AuthorName": "@item()?['Author']?['DisplayName']",
+                            "AuthorEmail": "@toLower(string(coalesce(item()?['Author']?['Email'],'')))"
+                          }
+                        }
+                      }
+                    },
+                    "else": {
+                      "actions": {}
+                    }
+                  },
+                  "Select_FetchAll_Scoped_Users": {
+                    "type": "Select",
+                    "runAfter": {
+                      "Condition_FetchAll_Own": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                      ]
+                    },
+                    "inputs": {
+                      "from": "@coalesce(body('Select_Users'),json('[]'))",
+                      "select": {
+                        "UserId": "@item()?['UserId']",
+                        "FullName": "@item()?['FullName']",
+                        "Email": "@if(or(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),equals(toLower(string(coalesce(item()?['Email'],''))),outputs('Compose_FetchAll_Scope')?['caller'])),item()?['Email'],'')",
+                        "Directorate": "@item()?['Directorate']",
+                        "Department": "@item()?['Department']",
+                        "Role": "@item()?['Role']",
+                        "Persona": "@item()?['Persona']",
+                        "Status": "@item()?['Status']",
+                        "AccessScope": "@item()?['AccessScope']",
+                        "PilotCohort": "@item()?['PilotCohort']"
+                      }
+                    }
+                  },
+                  "Get_FetchAll_Failure_Health": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Select_FetchAll_Scoped_Users": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "GetItems"
+                      },
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                        "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                        "$filter": "Title eq 'NOTIFY_FAILURE_HEALTH'",
+                        "$top": 1
+                      }
+                    }
+                  },
+                  "Condition_FetchAll_Read_Emails": {
+                    "type": "If",
+                    "runAfter": {
+                      "Set_variable_varStatusCode_FetchAll_200": [
+                        "Succeeded"
+                      ]
+                    },
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@outputs('Compose_FetchAll_Scope')?['tier']",
+                            "all"
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Get_FetchAll_Registry_Emails": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {},
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connection": "shared_office365-1",
+                            "operationId": "GetEmailsV3"
+                          },
+                          "parameters": {
+                            "folderPath": "Inbox",
+                            "fetchOnlyUnread": false,
+                            "includeAttachments": false,
+                            "top": 50,
+                            "importance": "Any",
+                            "fetchOnlyWithAttachment": false
+                          }
+                        }
+                      },
+                      "Select_FetchAll_Emails": {
+                        "type": "Select",
+                        "runAfter": {
+                          "Get_FetchAll_Registry_Emails": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "from": "@coalesce(outputs('Get_FetchAll_Registry_Emails')?['body/value'],json('[]'))",
+                          "select": {
+                            "id": "@item()?['id']",
+                            "subject": "@item()?['subject']",
+                            "fromAddress": "@toLower(string(coalesce(item()?['from'],'')))",
+                            "receivedDateTime": "@item()?['receivedDateTime']",
+                            "bodyPreview": "@substring(string(coalesce(item()?['bodyPreview'],'')),0,min(length(string(coalesce(item()?['bodyPreview'],''))),400))",
+                            "hasAttachments": "@item()?['hasAttachments']",
+                            "importance": "@item()?['importance']",
+                            "conversationId": "@item()?['conversationId']",
+                            "internetMessageId": "@item()?['internetMessageId']",
+                            "toRecipients": "@split(string(coalesce(item()?['toRecipients'],'')),';')"
+                          }
+                        }
+                      }
+                    },
+                    "else": {
+                      "actions": {}
+                    }
+                  },
+                  "Compose_Value_Set_variable_varData_FetchAll_Success": {
+                    "type": "Compose",
+                    "inputs": {
+                      "docs": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_Docs'),coalesce(body('Select_FetchAll_Own_Docs'),json('[]')))",
+                      "tasks": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_Tasks'),coalesce(outputs('Compose_FetchAll_Scope_Tasks'),json('[]')))",
+                      "users": "@body('Select_FetchAll_Scoped_Users')",
+                      "categories": "@body('Select_Categories')",
+                      "departments": "@body('Select_Departments')",
+                      "comments": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_Comments'),coalesce(body('Select_FetchAll_Own_Comments'),json('[]')))",
+                      "emails": "@if(and(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),equals(actions('Select_FetchAll_Emails')?['status'],'Succeeded')),body('Select_FetchAll_Emails'),json('[]'))",
+                      "approvals": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'own'),json('[]'),body('Select_FetchAll_Approvals'))",
+                      "register": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_FetchAll_Register'),json('[]'))",
+                      "briefs": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_FetchAll_Briefs'),json('[]'))",
+                      "meetings": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_FetchAll_Meetings'),json('[]'))",
+                      "projects": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_FetchAll_Projects'),json('[]'))",
+                      "files": "@if(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),body('Select_FetchAll_Files'),json('[]'))",
+                      "failureHealth": "@json(if(and(equals(outputs('Compose_FetchAll_Scope')?['tier'],'all'),startsWith(string(coalesce(first(coalesce(actions('Get_FetchAll_Failure_Health')?['outputs']?['body']?['value'],json('[]')))?['ConfigValue'],'')),'{')),string(coalesce(first(coalesce(actions('Get_FetchAll_Failure_Health')?['outputs']?['body']?['value'],json('[]')))?['ConfigValue'],'')),'null'))"
+                    },
+                    "runAfter": {
+                      "Condition_FetchAll_Read_Emails": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut",
+                        "Skipped"
+                      ]
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Compose_FetchAll_Permitted": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Condition_FetchAll_Known_Caller": {
+                      "actions": {
+                        "Set_variable_varStatusCode_FetchAll_403": {
+                          "metadata": {
+                            "operationMetadataId": "a0000000-0000-4000-8000-000000000020"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varStatusCode",
+                            "value": 403
+                          }
+                        },
+                        "Append_to_array_variable_varErrors_FetchAll_Denied_403": {
+                          "runAfter": {
+                            "Set_variable_varStatusCode_FetchAll_403": [
+                              "Succeeded"
+                            ]
+                          },
+                          "metadata": {
+                            "operationMetadataId": "a0000000-0000-4000-8000-000000000021"
+                          },
+                          "type": "AppendToArrayVariable",
+                          "inputs": {
+                            "name": "varErrors",
+                            "value": {
+                              "scope": "FetchAll",
+                              "stage": "authorisation",
+                              "status": "failed",
+                              "message": "The caller's role does not carry user:view.",
+                              "trackedAtUtc": "@utcNow()"
+                            }
+                          }
+                        },
+                        "Set_variable_varData_FetchAll_Denied_403": {
+                          "runAfter": {
+                            "Compose_Value_Set_variable_varData_FetchAll_Denied_403": [
+                              "Succeeded"
+                            ]
+                          },
+                          "metadata": {
+                            "operationMetadataId": "a0000000-0000-4000-8000-000000000022"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "varData",
+                            "value": "@outputs('Compose_Value_Set_variable_varData_FetchAll_Denied_403')"
+                          }
+                        },
+                        "Compose_Value_Set_variable_varData_FetchAll_Denied_403": {
+                          "type": "Compose",
+                          "inputs": {
+                            "code": "FORBIDDEN",
+                            "message": "The caller's role does not carry user:view."
+                          },
+                          "runAfter": {
+                            "Append_to_array_variable_varErrors_FetchAll_Denied_403": [
+                              "Succeeded"
+                            ]
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Set_variable_varStatusCode_FetchAll_401": {
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000023"
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "varStatusCode",
+                              "value": 401
+                            }
+                          },
+                          "Append_to_array_variable_varErrors_FetchAll_Denied_401": {
+                            "runAfter": {
+                              "Set_variable_varStatusCode_FetchAll_401": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000024"
+                            },
+                            "type": "AppendToArrayVariable",
+                            "inputs": {
+                              "name": "varErrors",
+                              "value": {
+                                "scope": "FetchAll",
+                                "stage": "authorisation",
+                                "status": "failed",
+                                "message": "The caller is not in DGO_UserDirectory, or is not active.",
+                                "trackedAtUtc": "@utcNow()"
+                              }
+                            }
+                          },
+                          "Set_variable_varData_FetchAll_Denied_401": {
+                            "runAfter": {
+                              "Compose_Value_Set_variable_varData_FetchAll_Denied_401": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000025"
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "varData",
+                              "value": "@outputs('Compose_Value_Set_variable_varData_FetchAll_Denied_401')"
+                            }
+                          },
+                          "Compose_Value_Set_variable_varData_FetchAll_Denied_401": {
+                            "type": "Compose",
+                            "inputs": {
+                              "code": "UNAUTHENTICATED",
+                              "message": "The caller is not in DGO_UserDirectory, or is not active."
+                            },
+                            "runAfter": {
+                              "Append_to_array_variable_varErrors_FetchAll_Denied_401": [
+                                "Succeeded"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "greater": [
+                              "@length(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]')))",
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "a0000000-0000-4000-8000-000000000026"
+                      },
+                      "type": "If"
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@outputs('Compose_FetchAll_Permitted')",
+                        "@greater(length(coalesce(outputs('Get_FetchAll_Directory_User')?['body/value'],json('[]'))),0)"
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000027"
+                },
+                "type": "If"
+              },
+              "Get_FetchAll_Gate_Proof_Mode": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "$filter": "Title eq 'IDENTITY_PROOF_REQUIRED'",
+                    "$top": 1
+                  }
+                }
+              },
+              "Compose_FetchAll_Gate_Proof_Token": {
+                "type": "Compose",
+                "inputs": "@trim(replace(replace(string(coalesce(triggerOutputs()?['headers']?['X-DGO-Proof'],triggerOutputs()?['headers']?['x-dgo-proof'],triggerOutputs()?['headers']?['Authorization'],triggerOutputs()?['headers']?['authorization'],'')),'Bearer ',''),'bearer ',''))",
+                "runAfter": {
+                  "Get_FetchAll_Gate_Proof_Mode": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Get_FetchAll_Gate_Proof": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Compose_FetchAll_Gate_Proof_Token": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  },
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "table": "444102d6-2c29-45cf-8b59-52774d7c4dd4",
+                    "$filter": "@if(empty(outputs('Compose_FetchAll_Gate_Proof_Token')),'ID eq 0',concat('Title eq ''',replace(outputs('Compose_FetchAll_Gate_Proof_Token'),'''',''''''),''' and Consumed eq 0 and Purpose eq ''internal-session'''))",
+                    "$top": 1
+                  }
+                }
+              },
+              "Compose_FetchAll_Gate_Identity": {
+                "type": "Compose",
+                "inputs": {
+                  "proofRequired": "@equals(toLower(trim(string(coalesce(first(coalesce(outputs('Get_FetchAll_Gate_Proof_Mode')?['body/value'],json('[]')))?['ConfigValue'],'')))),'true')",
+                  "proofValid": "@and(not(empty(outputs('Compose_FetchAll_Gate_Proof_Token'))),greater(length(coalesce(outputs('Get_FetchAll_Gate_Proof')?['body/value'],json('[]'))),0),greater(ticks(coalesce(first(coalesce(outputs('Get_FetchAll_Gate_Proof')?['body/value'],json('[]')))?['ExpiresAtUtc'],'1900-01-01T00:00:00Z')),ticks(utcNow())))"
+                },
+                "runAfter": {
+                  "Get_FetchAll_Gate_Proof": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_FetchAll_Gate_Caller": {
+                "type": "Compose",
+                "inputs": "@if(outputs('Compose_FetchAll_Gate_Identity')?['proofValid'],toLower(trim(string(coalesce(first(coalesce(outputs('Get_FetchAll_Gate_Proof')?['body/value'],json('[]')))?['Email'],'')))),if(outputs('Compose_FetchAll_Gate_Identity')?['proofRequired'],'',toLower(trim(string(coalesce(coalesce(triggerBody()?['payload']?['userEmail'],triggerBody()?['userEmail']),''))))))",
+                "runAfter": {
+                  "Compose_FetchAll_Gate_Identity": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000238"
+            },
+            "type": "Scope"
+          },
+          "Scope_Catch_FetchAll": {
+            "actions": {
+              "Set_variable_varStatusCode_FetchAll_500": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000239"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "varStatusCode",
+                  "value": 500
+                }
+              },
+              "Append_to_array_variable_varErrors_FetchAll_Catch": {
+                "runAfter": {
+                  "Set_variable_varStatusCode_FetchAll_500": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000240"
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "varErrors",
+                  "value": {
+                    "scope": "FetchAll",
+                    "stage": "processing",
+                    "status": "failed",
+                    "message": "FetchAll processing failed, skipped, or timed out.",
+                    "details": "@result('Scope_FetchAll_Data_Processing')",
+                    "trackedAtUtc": "@utcNow()"
+                  }
+                }
+              },
+              "Set_variable_varData_FetchAll_Catch": {
+                "runAfter": {
+                  "Compose_Value_Set_variable_varData_FetchAll_Catch": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000241"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "varData",
+                  "value": "@outputs('Compose_Value_Set_variable_varData_FetchAll_Catch')"
+                }
+              },
+              "Compose_Value_Set_variable_varData_FetchAll_Catch": {
+                "type": "Compose",
+                "inputs": {
+                  "code": "SERVER_ERROR",
+                  "message": "FetchAll could not be completed."
+                },
+                "runAfter": {
+                  "Append_to_array_variable_varErrors_FetchAll_Catch": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_FetchAll_Data_Processing": [
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000242"
+            },
+            "type": "Scope"
+          },
+          "Scope_Finalize_Response_FetchAll": {
+            "actions": {
+              "Set_variable_varCompletedAtUtc_FetchAll": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000243"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "varCompletedAtUtc",
+                  "value": "@utcNow()"
+                }
+              },
+              "Set_variable_varDurationMs_FetchAll": {
+                "runAfter": {
+                  "Set_variable_varCompletedAtUtc_FetchAll": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000244"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "varDurationMs",
+                  "value": "@max(div(sub(ticks(variables('varCompletedAtUtc')),variables('varStartTicks')),10000),0)"
+                }
+              },
+              "Compose__Standard_Response_Revised": {
+                "runAfter": {
+                  "Set_variable_varDurationMs_FetchAll": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000245"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "ok": "@less(int(variables('varStatusCode')),400)",
+                  "status": {
+                    "http": "@variables('varStatusCode')",
+                    "code": "@if(less(int(variables('varStatusCode')),400),'OK',concat('ERR',string(variables('varStatusCode'))))",
+                    "message": "@if(less(int(variables('varStatusCode')),400),'Success','Failed')"
+                  },
+                  "request": {
+                    "requestId": "@variables('varRequestId')",
+                    "trackingId": "@trim(string(coalesce(triggerBody()?['payload']?['trackingId'],triggerBody()?['trackingId'],'')))",
+                    "action": "@coalesce(triggerBody()?['action'],'fetchAll')",
+                    "operation": "@coalesce(triggerBody()?['payload']?['operation'],triggerBody()?['operation'],'read')",
+                    "source": "@coalesce(triggerBody()?['payload']?['source'],triggerBody()?['source'],'portal')"
+                  },
+                  "timing": {
+                    "receivedAtUtc": "@variables('varReceivedAtUtc')",
+                    "completedAtUtc": "@variables('varCompletedAtUtc')",
+                    "durationMs": "@variables('varDurationMs')"
+                  },
+                  "data": "@variables('varData')",
+                  "errors": "@variables('varErrors')",
+                  "meta": {
+                    "ts": "@variables('varCompletedAtUtc')",
+                    "runId": "@workflow()?['run']?['name']",
+                    "flowName": "@workflow()?['name']",
+                    "contractVersion": "2026-08-21.1"
+                  }
+                }
+              },
+              "Compose_Response_Body": {
+                "runAfter": {
+                  "Compose__Standard_Response_Revised": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000246"
+                },
+                "type": "Compose",
+                "inputs": "@outputs('Compose__Standard_Response_Revised')"
+              },
+              "Get_Allowed_Origins_FetchAll": {
+                "runAfter": {
+                  "Compose_Response_Body": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000247"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "$filter": "startswith(Title,'ALLOWED_ORIGIN')",
+                    "$top": 20
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "GetItems"
+                  }
+                }
+              },
+              "Select_Allowed_Origins_FetchAll": {
+                "runAfter": {
+                  "Get_Allowed_Origins_FetchAll": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000248"
+                },
+                "type": "Select",
+                "inputs": {
+                  "from": "@coalesce(outputs('Get_Allowed_Origins_FetchAll')?['body/value'],json('[]'))",
+                  "select": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+                }
+              },
+              "Compose_Request_Origin_FetchAll": {
+                "runAfter": {
+                  "Select_Allowed_Origins_FetchAll": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000249"
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['Origin'],triggerOutputs()?['headers']?['origin'],'')))"
+              },
+              "Compose_Allowed_Origin_FetchAll": {
+                "runAfter": {
+                  "Compose_Request_Origin_FetchAll": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000250"
+                },
+                "type": "Compose",
+                "inputs": "@if(contains(coalesce(body('Select_Allowed_Origins_FetchAll'),json('[]')),outputs('Compose_Request_Origin_FetchAll')),outputs('Compose_Request_Origin_FetchAll'),string(coalesce(first(coalesce(body('Select_Allowed_Origins_FetchAll'),json('[]'))),'')))"
+              },
+              "Response_FetchAll": {
+                "runAfter": {
+                  "Compose_Allowed_Origin_FetchAll": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000251"
+                },
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": "@variables('varStatusCode')",
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "@outputs('Compose_Allowed_Origin_FetchAll')",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID",
+                    "Vary": "Origin"
+                  },
+                  "body": "@outputs('Compose_Response_Body')"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_FetchAll_Data_Processing": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ],
+              "Scope_Catch_FetchAll": [
+                "Succeeded",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000252"
+            },
+            "type": "Scope"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000258"
+        },
+        "type": "Scope",
+        "runAfter": {
+          "Set_variable_varRequestId": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Flow_Data_Capture": {
+        "actions": {
+          "Compose_Redacted_Queries": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000251"
+            },
+            "type": "Compose",
+            "inputs": "@setProperty(setProperty(coalesce(triggerOutputs()?['queries'], json('{}')), 'sig', '***REDACTED***'), 'code', '***REDACTED***')"
+          },
+          "Compose_Redacted_Headers": {
+            "runAfter": {
+              "Compose_Redacted_Queries": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000252"
+            },
+            "type": "Compose",
+            "inputs": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(coalesce(triggerOutputs()?['headers'], json('{}')), 'Authorization', '***REDACTED***'), 'Cookie', '***REDACTED***'), 'x-api-key', '***REDACTED***'), 'Ocp-Apim-Subscription-Key', '***REDACTED***'), 'x-ms-igw-external-uri', '***REDACTED***'), 'x-ms-igw-raw-target', '***REDACTED***'), 'x-dgo-proof', '***REDACTED***'), 'X-DGO-Proof', '***REDACTED***')"
+          },
+          "Get_Flow_Definition": {
+            "runAfter": {
+              "Compose_Redacted_Headers": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000253"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "environmentName": "@coalesce(workflow()?['tags']?['environmentName'], 'Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1')",
+                "flowName": "@workflow()?['name']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                "connection": "shared_flowmanagement-1",
+                "operationId": "GetFlow"
+              }
+            }
+          },
+          "Compose_Flow_Run_Record": {
+            "runAfter": {
+              "Get_Flow_Definition": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000254"
+            },
+            "type": "Compose",
+            "inputs": {
+              "capture_metadata": {
+                "telemetry_kind": "flow_run_record",
+                "capture_version": "2.1.0",
+                "contract_version": "2026-08-21.1",
+                "captured_at_utc": "@{utcNow()}",
+                "capture_scope": "Scope_Flow_Data_Capture"
+              },
+              "workflow_identity": {
+                "internal_name": "@{workflow()?['name']}",
+                "display_name": "@{coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])}",
+                "full_resource_id": "@{workflow()?['id']}",
+                "type": "@{workflow()?['type']}",
+                "location": "@{workflow()?['location']}",
+                "tags": "@coalesce(workflow()?['tags'], json('{}'))"
+              },
+              "run_identity": {
+                "run_name": "@{workflow()?['run']?['name']}",
+                "run_resource_id": "@{workflow()?['run']?['id']}",
+                "run_type": "@{workflow()?['run']?['type']}",
+                "environment_id": "@{workflow()?['tags']?['environmentName']}",
+                "run_url": "@{concat('https://make.powerautomate.com/environments/', coalesce(workflow()?['tags']?['environmentName'], ''), '/flows/', coalesce(workflow()?['name'], ''), '/runs/', coalesce(workflow()?['run']?['name'], ''))}"
+              },
+              "trigger_record": {
+                "name": "@{trigger()?['name']}",
+                "start_time": "@{trigger()?['startTime']}",
+                "end_time": "@{trigger()?['endTime']}",
+                "scheduled_time": "@{trigger()?['scheduledTime']}",
+                "status": "@{trigger()?['status']}",
+                "code": "@{trigger()?['code']}",
+                "tracking_id": "@{trigger()?['trackingId']}",
+                "client_tracking_id": "@{trigger()?['clientTrackingId']}",
+                "origin_history_name": "@{trigger()?['originHistoryName']}",
+                "correlation": "@coalesce(trigger()?['correlation'], json('{}'))"
+              },
+              "request": {
+                "method": "@{triggerOutputs()?['method']}",
+                "relative_path_parameters": "@coalesce(triggerOutputs()?['relativePathParameters'], json('{}'))",
+                "headers_redacted": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))",
+                "queries_redacted": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))",
+                "caller": "@coalesce(outputs('Compose_FetchAll_Caller'), json('{}'))",
+                "body": "@triggerBody()"
+              },
+              "design_definition": {
+                "endpoint": "FetchAll",
+                "display_name": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['displayName']}",
+                "state": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['state']}",
+                "provisioning_method": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['provisioningMethod']}",
+                "created_time": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['createdTime']}",
+                "last_modified_time": "@{outputs('Get_Flow_Definition')?['body']?['properties']?['lastModifiedTime']}",
+                "creator": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['creator'], json('{}'))",
+                "definition": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition'], json('{}'))",
+                "trigger_definition": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers'], json('{}'))",
+                "trigger_input_schema": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['triggers']?['manual']?['inputs']?['schema'], json('{}'))",
+                "action_definitions": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['definition']?['actions'], json('{}'))",
+                "connection_references": "@coalesce(outputs('Get_Flow_Definition')?['body']?['properties']?['connectionReferences'], json('{}'))"
+              },
+              "Response_FetchAll_record": {
+                "action_status": "@{actions('Response_FetchAll')?['status']}",
+                "action_code": "@{actions('Response_FetchAll')?['code']}",
+                "action_start_time": "@{actions('Response_FetchAll')?['startTime']}",
+                "action_end_time": "@{actions('Response_FetchAll')?['endTime']}",
+                "tracking_id": "@{actions('Response_FetchAll')?['trackingId']}",
+                "client_tracking_id": "@{actions('Response_FetchAll')?['clientTrackingId']}",
+                "correlation": "@coalesce(actions('Response_FetchAll')?['correlation'], json('{}'))",
+                "status_code_sent": "@int(coalesce(variables('varStatusCode'), actions('Response_FetchAll')?['inputs']?['statusCode'], 500))",
+                "headers_sent": "@coalesce(actions('Response_FetchAll')?['inputs']?['headers'], json('{}'))",
+                "body_sent_bytes": "@length(string(coalesce(actions('Response_FetchAll')?['inputs']?['body'], json('{}'))))"
+              },
+              "outcome": {
+                "flow_outcome": "@if(less(int(coalesce(variables('varStatusCode'), 500)), 400), 'Succeeded', 'Failed')",
+                "error_count": "@length(coalesce(variables('varErrors'), json('[]')))",
+                "errors": "@coalesce(variables('varErrors'), json('[]'))",
+                "all_scope_action_results": "@coalesce(result('Scope_FetchAll_Data_Processing'), json('[]'))"
+              },
+              "timing": {
+                "trigger_start_time": "@{trigger()?['startTime']}",
+                "received_at_utc": "@{variables('varReceivedAtUtc')}",
+                "completed_at_utc": "@{variables('varCompletedAtUtc')}",
+                "captured_at_utc": "@{utcNow()}",
+                "duration_ms": "@variables('varDurationMs')",
+                "total_elapsed_ms": "@div(sub(ticks(utcNow()), ticks(trigger()?['startTime'])), 10000)",
+                "total_elapsed_seconds": "@div(sub(ticks(utcNow()), ticks(trigger()?['startTime'])), 10000000)",
+                "Response_FetchAll_action_duration_ms": "@if(empty(coalesce(actions('Response_FetchAll')?['endTime'], '')), 0, div(sub(ticks(actions('Response_FetchAll')?['endTime']), ticks(actions('Response_FetchAll')?['startTime'])), 10000))"
+              }
+            }
+          },
+          "Compose_Flow_Run_Record_Schema": {
+            "runAfter": {
+              "Compose_Flow_Run_Record": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000255"
+            },
+            "type": "Compose",
+            "inputs": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "title": "flow_run_record",
+              "type": "object",
+              "required": [
+                "capture_metadata",
+                "workflow_identity",
+                "run_identity",
+                "trigger_record",
+                "request",
+                "design_definition",
+                "Response_FetchAll_record",
+                "outcome",
+                "timing"
+              ],
+              "properties": {
+                "capture_metadata": {
+                  "type": "object",
+                  "properties": {
+                    "telemetry_kind": {
+                      "type": "string",
+                      "enum": [
+                        "flow_run_record"
+                      ]
+                    },
+                    "capture_version": {
+                      "type": "string"
+                    },
+                    "contract_version": {
+                      "type": "string"
+                    },
+                    "captured_at_utc": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "capture_scope": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "workflow_identity": {
+                  "type": "object",
+                  "properties": {
+                    "internal_name": {
+                      "type": "string"
+                    },
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "full_resource_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "run_identity": {
+                  "type": "object",
+                  "properties": {
+                    "run_name": {
+                      "type": "string"
+                    },
+                    "run_resource_id": {
+                      "type": "string"
+                    },
+                    "run_type": {
+                      "type": "string"
+                    },
+                    "environment_id": {
+                      "type": "string"
+                    },
+                    "run_url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                },
+                "trigger_record": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "start_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "end_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "scheduled_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "tracking_id": {
+                      "type": "string"
+                    },
+                    "client_tracking_id": {
+                      "type": "string"
+                    },
+                    "origin_history_name": {
+                      "type": "string"
+                    },
+                    "correlation": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "request": {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string"
+                    },
+                    "relative_path_parameters": {
+                      "type": "object"
+                    },
+                    "headers_redacted": {
+                      "type": "object"
+                    },
+                    "queries_redacted": {
+                      "type": "object"
+                    },
+                    "caller": {
+                      "type": "object"
+                    },
+                    "body": {}
+                  }
+                },
+                "design_definition": {
+                  "type": "object",
+                  "properties": {
+                    "endpoint": {
+                      "type": "string"
+                    },
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "provisioning_method": {
+                      "type": "string"
+                    },
+                    "created_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "last_modified_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "creator": {
+                      "type": "object"
+                    },
+                    "definition": {
+                      "type": "object"
+                    },
+                    "trigger_definition": {
+                      "type": "object"
+                    },
+                    "trigger_input_schema": {
+                      "type": "object"
+                    },
+                    "action_definitions": {
+                      "type": "object"
+                    },
+                    "connection_references": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "Response_FetchAll_record": {
+                  "type": "object",
+                  "properties": {
+                    "action_status": {
+                      "type": "string"
+                    },
+                    "action_code": {
+                      "type": "string"
+                    },
+                    "action_start_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "action_end_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tracking_id": {
+                      "type": "string"
+                    },
+                    "client_tracking_id": {
+                      "type": "string"
+                    },
+                    "correlation": {
+                      "type": "object"
+                    },
+                    "status_code_sent": {
+                      "type": "integer"
+                    },
+                    "headers_sent": {
+                      "type": "object"
+                    },
+                    "body_sent_bytes": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "outcome": {
+                  "type": "object",
+                  "properties": {
+                    "flow_outcome": {
+                      "type": "string",
+                      "enum": [
+                        "Succeeded",
+                        "Failed"
+                      ]
+                    },
+                    "error_count": {
+                      "type": "integer"
+                    },
+                    "errors": {
+                      "type": "array"
+                    },
+                    "all_scope_action_results": {
+                      "type": "array"
+                    }
+                  }
+                },
+                "timing": {
+                  "type": "object",
+                  "properties": {
+                    "trigger_start_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "received_at_utc": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "completed_at_utc": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "captured_at_utc": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "duration_ms": {
+                      "type": "number"
+                    },
+                    "total_elapsed_ms": {
+                      "type": "number"
+                    },
+                    "total_elapsed_seconds": {
+                      "type": "number"
+                    },
+                    "Response_FetchAll_action_duration_ms": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "Create_Flow_Telemetry": {
+            "runAfter": {
+              "Compose_Flow_Run_Record_Schema": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000256"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+                "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+                "item/RunId": "@workflow()?['run']?['name']",
+                "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+                "item/CompletedAtUtc": "@variables('varCompletedAtUtc')",
+                "item/Outcome": "@if(less(int(coalesce(variables('varStatusCode'), 500)), 400), 'Succeeded', 'Failed')",
+                "item/DurationMs": "@variables('varDurationMs')",
+                "item/ErrorMessage": "@string(coalesce(variables('varErrors'), json('[]')))",
+                "item/RunRecordJson": "@string(outputs('Compose_Flow_Run_Record'))"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "PostItem"
+              }
+            }
+          },
+          "Get_item_Flow_Telemetry": {
+            "runAfter": {
+              "Create_Flow_Telemetry": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000257"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                "id": "@body('Create_Flow_Telemetry')?['ID']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "GetItem"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Global_FetchAll": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000250"
+        },
+        "type": "Scope"
+      },
+      "Set_variable_varRequestId": {
+        "type": "SetVariable",
+        "inputs": {
+          "name": "varRequestId",
+          "value": "@outputs('Compose_Value_Set_variable_varRequestId')"
+        },
+        "runAfter": {
+          "Compose_Value_Set_variable_varRequestId": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Value_Set_variable_varRequestId": {
+        "type": "Compose",
+        "inputs": "@guid()",
+        "runAfter": {}
+      }
+    },
+    "runAfter": {},
+    "type": "Scope"
+  },
+  "allConnectionData": {
+    "Get_FetchAll_Directory_User": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Role_Permissions": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_All_Docs": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_All_Tasks": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_All_Users": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_All_Categories": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_All_Departments": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_All_Comments": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Allowed_Origins_FetchAll": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Flow_Definition": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement/connections/shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+        },
+        "connectionName": "shared-flowmanagemen-6a2f7a95-3886-4631-b8ca-bd6b5e9bf5c2"
+      },
+      "referenceKey": "shared_flowmanagement-1"
+    },
+    "Create_Flow_Telemetry": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_item_Flow_Telemetry": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Dataset_Bindings": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Register": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Briefs": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Meetings": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Projects": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Approvals": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Files": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Own_Tasks": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Unit_Map": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Directorate_Tasks": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Own_Docs": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Own_Comments": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Failure_Health": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Registry_Emails": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365-1"
+    },
+    "Get_FetchAll_Gate_Proof_Mode": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_FetchAll_Gate_Proof": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

@@ -1,0 +1,295 @@
+{
+  "schema": "dgo-rotation-worksheet/v1",
+  "purpose": "Which endpoint keys need a new trigger URL after ITEM-22 rotation, and which do not. Computed from endpoint-workflow-ids.json and the disclosed signatures under docs/reference/foundational. Workflow ids and verdicts only — no signature is ever written here.",
+  "generatedBy": "scripts/build-rotation-worksheet.mjs",
+  "disclosure": {
+    "workflowsCarryingASignature": 35,
+    "distinctSignatures": 48,
+    "filesTouched": 25,
+    "note": "Counted by the URL form above. The register headline of 55 was counted differently; this file states its own method rather than restating that number."
+  },
+  "endpointKeys": {
+    "total": 26,
+    "mustRecapture": 0,
+    "unaffected": 26,
+    "undetermined": 0
+  },
+  "distinctFlowsBehindAKey": 0,
+  "flowsBehindNoKey": {
+    "count": 35,
+    "meaning": "These carry a disclosed signature but no endpoint key in either client points at them. Rotating them cannot break the internal runtime or the portal, so they need no re-capture and no configuration change. It does NOT establish that they are unused — something outside this repository may call them.",
+    "workflowIds": [
+      "02a3a70f3dec4dcd9a85a244a60c65b9",
+      "1154b50e1d17420dadb3b012e7e2a02c",
+      "1d56be97cd184fd9b2facede12b17c34",
+      "1ff7714c11a74fa4a876f8f6a79b64d2",
+      "20e6340941ce4b1bbb87b43c9102a777",
+      "2e37b6310842410eb15c4561f2b0c1eb",
+      "314aaf27593147089b38322e5ca25936",
+      "31e02518075940d2bcfa9bdb0e9b0b8d",
+      "37642ba3597f4cf58288cc71b5e6b519",
+      "3931e2ff995242b6b2c920c8b2209797",
+      "3c7094de10ce473e985e5cadcf66bc67",
+      "3cea46a4f06748cb8a680ee1532d73cb",
+      "4f733288d90e49a68d4d5715d9198d40",
+      "5729f50aa0fc4248be30ed4e9d7a7a4f",
+      "5b29edc84b5d4a8db3c885d8441aa977",
+      "5de1fc934e2944bb9cf9d9a0f9bd38e3",
+      "607795813ee14d8abee6d1b4e8dd866b",
+      "6b3bad3005b44bf6bced0f8074d3f2ed",
+      "6d78b1940f4447b8b31b49657fe9c19c",
+      "7995c1eb50d94d5daa2780e71391d874",
+      "7e71fffe770a45ccb93bf216bb53786e",
+      "7ee91bdefd3c449889d680c722a99d05",
+      "818ec4053f1e4f0b87845114241d8b74",
+      "820c4a576cbb4a948d6a99dd85721e71",
+      "85c556f10b8244ba9d839a2ebe240b91",
+      "9df45c5086ea42f2ab2b6ee9afae3f29",
+      "a13c8b577bd44f8787c50d095ea3faf9",
+      "a942d230337c4ddfa9a386e92bbd048b",
+      "bc83d98acf474a088832d78f50085388",
+      "c43388639d14452faef4ca3042a95b23",
+      "cae7796c721b47bc9aa95159eeb16081",
+      "f480ade951a1437c91604bee33279b0e",
+      "f71397ff3ca145059dc8f78c04923e9f",
+      "fe794e0139784ac694768e5a716e0be7",
+      "ff455c68e9ac493e858fb984bcfd01fb"
+    ]
+  },
+  "rows": [
+    {
+      "scope": "internal",
+      "key": "ACTIVITY_LIFECYCLE",
+      "workflowId": "35fa90bfad8f4a639cc20882f1688149",
+      "flow": "IP_Activity_Lifecycle_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "AI_CHAT",
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "flow": "AI_Document_Processing",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "AI_DOC_ANALYSIS",
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "flow": "AI_Document_Processing",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "AI_EMAIL_ANALYSIS",
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "flow": "AI_Document_Processing",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "BULK_ASSIGNMENT",
+      "workflowId": "a705e453f922457c95ca19f32731e4d7",
+      "flow": "BULK OPS DATA RETRIEVAL HTTP",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "DYNAMIC_ACTIONS",
+      "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "flow": "IP_Dynamic_Global_Actions_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "EMAIL",
+      "workflowId": "378b491ec39a4beca886ddec250e6961",
+      "flow": "IP_SEND_EMAIL",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "EMAIL_RELATED_TASK",
+      "workflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+      "flow": "IP_Create__Task__for_received_Email_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "FETCH_ACTIVITIES",
+      "workflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "flow": "IP_Get_Docs_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "FETCH_ALL",
+      "workflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "flow": "FETCH_ALL",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "FETCH_EMAIL_ATTACHMENTS",
+      "workflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+      "flow": "IP_Retrieve_Email_Attachment_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "GET_DOCS",
+      "workflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "flow": "IP_Get_Docs_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "OTP_GENERATE",
+      "workflowId": "741465e483714d48a07e336eb4571b89",
+      "flow": "IP_OTP_GENERATE",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "OTP_VERIFY",
+      "workflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "flow": "IP_OTP_VERIFY",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "REFERENCE_DATA",
+      "workflowId": "885fad5ec91f460490e8c772d5d10cb8",
+      "flow": "IP_Reference_Data_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "SCAN_INTAKE",
+      "workflowId": "88401ce1f44148539c0da53c9491f8e6",
+      "flow": "IP_SCAN_INTAKE",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "SINGLE_ASSIGNMENT",
+      "workflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "flow": "Single_Task_Assignment",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "SUBSIDIARY_ACTIONS",
+      "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "flow": "IP_Dynamic_Global_Actions_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "internal",
+      "key": "USER_ADMIN",
+      "workflowId": "466cf7ea66c54240aaede85a5a500f1c",
+      "flow": "IP_User_Admin_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "portal",
+      "key": "STATUS",
+      "workflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "flow": "CG_Portal_Status_Check_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "portal",
+      "key": "SUBMISSION",
+      "workflowId": "1041ed37ce924e3c886d891f23e8142c",
+      "flow": "CG_Submission_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "portal",
+      "key": "SUPPORT",
+      "workflowId": "052013da80724713a4285edee72ccb4a",
+      "flow": "CG_Portal_Support_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "portal",
+      "key": "UPLOAD",
+      "workflowId": "62fe121e5a95416bb91275e43dd0e37e",
+      "flow": "CG_Upload_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "portal",
+      "key": "VERIFY",
+      "workflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "flow": "CG_Portal_Verification_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "portal",
+      "key": "VERIFY_CONFIRM",
+      "workflowId": "b270894ff410499ebbc090e32ffe899b",
+      "flow": "CG_Portal_Verification_Confirmation_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    },
+    {
+      "scope": "portal",
+      "key": "WRITEBACK",
+      "workflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+      "flow": "CG_Portal_Writeback_Endpoint",
+      "action": "",
+      "status": "UNAFFECTED",
+      "signatures": 0
+    }
+  ]
+}

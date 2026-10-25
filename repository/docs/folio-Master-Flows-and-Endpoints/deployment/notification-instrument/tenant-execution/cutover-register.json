@@ -1,0 +1,49 @@
+{
+  "schema": "nitda-notification-cutover/v1",
+  "environment": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1",
+  "releaseId": "notification-remediation/1.0.0",
+  "status": "COMMISSIONED",
+  "flows": [
+    {
+      "flow": "AUTO_SCHEDULED_SWEEP",
+      "id": "8c19b45c-4174-4d2f-9429-ffd08dd1a5ae",
+      "state": "Started"
+    },
+    {
+      "flow": "CG_Portal_Daily_Sweep",
+      "id": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "state": "Started"
+    },
+    {
+      "flow": "Folio_Failure_Watch",
+      "id": "c38bfeaa-4c88-47a5-a9e2-f5d0e610efb6",
+      "state": "Started"
+    }
+  ],
+  "rollbackRehearsed": true,
+  "rollbackEvidence": "evidence/rollback-rehearsal-2026-10-17.json",
+  "hypercare": {
+    "businessOwner": "Office of the Director-General/CEO (dgsregistry@nitda.gov.ng)",
+    "technicalOwner": "Hamza Kani (hkani@nitda.gov.ng)",
+    "startUtc": "2026-10-19T07:00:00Z",
+    "endCriteria": "ten working days with no open citizen-outcome failure older than one working day in the failure register, and no broken-connection alert unresolved",
+    "dailyReviewTime": "09:30 WAT: the registry reads the 07:05 failure summary and System Health",
+    "escalationRoute": "registry (dgsregistry@nitda.gov.ng) -> technical owner Hamza Kani -> Office of the DG/CEO",
+    "namedBy": "owner, 2026-10-17"
+  },
+  "commissionedAtUtc": "2026-10-18T19:30:00Z",
+  "switches": [
+    "Workspace config/notification-delivery.config.js StaffNoticeDelivery.recipients: staff from 2026-10-18; held at registry 2026-10-19 (owner, until their own testing is done; evidence/2026-10-19-staff-notice-hold.json)",
+    "Flow Configuration NOTIFY_SWEEP_RECIPIENTS (item 78): staff from 2026-10-18; registry 2026-10-19 (owner hold, read back)",
+    "AUTO_SCHEDULED_SWEEP (8c19b45c) Started: weekdays 08:45 WAT",
+    "CG_Portal_Daily_Sweep (f12aec6d) Started: daily 08:00 UTC",
+    "Folio_Failure_Watch (c38bfeaa) Started: hourly 07:05-18:05 WAT weekdays",
+    "test records removed and counters recorded (evidence/2026-10-18-test-record-cleanup.json)"
+  ],
+  "staffNoticeHold": {
+    "since": "2026-10-19",
+    "by": "owner",
+    "evidence": "evidence/2026-10-19-staff-notice-hold.json",
+    "release": "the owner sets both switches to staff when their own testing is done"
+  }
+}

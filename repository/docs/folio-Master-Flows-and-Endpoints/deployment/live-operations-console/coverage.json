@@ -1,0 +1,288 @@
+{
+  "schema": "dgo-live-operations-coverage/v1",
+  "purpose": "Which instrument now carries each of the fourteen operations the live-operations console was built to drive. The console itself is not in this repository and cannot be rebuilt from it; this declares, from outside the specification, where its work went.",
+  "whyThisExists": "docs/folio-Master-Flows-and-Endpoints/deployment/live-operations-console/SHA256_MANIFEST.json declares six files. Four are present and every digest matches. Two are absent: README.md and index.html — and index.html IS the console. ACTIVATION_AND_VALIDATION.md line 2 says \"Open index.html\"; there is no index.html anywhere in the tree and no ZIP to extract one from. Until 2026-09-15 docs/deployment/OUTSTANDING_SOURCES.json explained the specification as \"a specification of what exists\", which was false: the thing it specifies does not exist here.",
+  "whatCarriedByMeans": "NOT closed. Every operation below is still outstanding work in the tenant. `carriedBy` names the register entry that counts it and the runbook section that carries its steps, so the operation is tracked somewhere a command can see. The console was a fifth view of a workstream three instruments already describe; losing the view lost no obligation. Counting these fourteen again alongside the readiness items would count the same work twice, which is why the specification stays uncounted in OUTSTANDING_SOURCES.json. Since 2026-10-02 each carriedBy names a readiness-register item; 'was' keeps the P- or F- entry it replaced.",
+  "specification": "docs/folio-Master-Flows-and-Endpoints/deployment/live-operations-console/EXPLICIT_EXECUTION_SPECIFICATION.md",
+  "registers": {
+    "readiness": "docs/deployment/PRODUCTION_READINESS_REGISTER.json"
+  },
+  "runbook": "docs/deployment/RUNBOOK.md",
+  "consoleIsAbsent": {
+    "declaredByManifest": [
+      "README.md",
+      "index.html"
+    ],
+    "replacedInPlace": [
+      {
+        "file": "README.md",
+        "why": "The manifest's README.md shipped in the delivered package and does not survive. A NEW README.md was written here on 2026-09-16 to tell a reader what happened. It stands in the same place under the same name and is not the same document — its bytes will never match the digest the manifest records, and that mismatch is the truth rather than a fault. The manifest is a record of what was delivered and is not edited to agree with today."
+      }
+    ],
+    "reconstructable": false,
+    "why": "index.html embedded its own operational model — ACTIVATION_AND_VALIDATION.md line 2: \"The console can also run when only index.html is copied because the operational model is embedded.\" EMBEDDED_DATA_MODEL.json and IMPLEMENTATION_PARAMETER_REGISTER.md describe what it held and what it rendered; neither is the renderer. Rebuilding would mean writing a new console to a specification of an old one, and reproducing a dashboard whose figures were true on its own date.",
+    "decision": "Superseded rather than rebuilt, 2026-09-15. The four remaining files are a record: read them, never edit them."
+  },
+  "operations": [
+    {
+      "id": "OP-001",
+      "title": "Approve operational parameters",
+      "requires": "21 named parameters, three named owners, and approval evidence for a specific environment and release.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-71",
+          "title": "The notification release gates are not complete",
+          "was": "P-02"
+        }
+      ],
+      "runbookSection": "§1 · Baseline and connections",
+      "note": "P-02 approves the operational values (administrator and intake targets, recurrence, retry attempts and delays, claim expiry, concurrency). P-16 names the business and technical owners. Between them they carry every parameter OP-001 lists."
+    },
+    {
+      "id": "OP-002",
+      "title": "Capture authoritative tenant inventory",
+      "requires": "Export and classify every active flow, endpoint, connection reference, environment variable, owner, trigger and definition hash; block while any active flow is unknown.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-71",
+          "title": "The notification release gates are not complete",
+          "was": "P-01"
+        }
+      ],
+      "runbookSection": "§1 · Baseline and connections",
+      "note": "P-01 names the same capture in the same terms — environment, commit, active flow inventory, enabled state, owners, triggers, connection references and endpoint mappings."
+    },
+    {
+      "id": "OP-003",
+      "title": "Prove endpoint-to-flow routing",
+      "requires": "Map every endpoint operation to exactly one enabled authoritative flow, proven by correlation ID through a live run.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-71",
+          "title": "The notification release gates are not complete",
+          "was": "P-01"
+        },
+        {
+          "register": "readiness",
+          "id": "ITEM-70",
+          "title": "The only scheduled carrier has no health check",
+          "was": "F-07"
+        }
+      ],
+      "runbookSection": "§1 · Baseline and connections",
+      "note": "P-01 carries the endpoint mappings. F-07 is the specific routing concentration OP-003 would expose: nine matrix rows resting on a single flow."
+    },
+    {
+      "id": "OP-004",
+      "title": "Verify Outlook service identity",
+      "requires": "Every production mail carrier uses the approved durable Agency identity, with send-as authority, delivery and rejection proven.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-67",
+          "title": "A second mail connector sends under an identity no control asserts",
+          "was": "P-03"
+        }
+      ],
+      "runbookSection": "§1 · Baseline and connections",
+      "note": "P-03 states the same checks: authenticated account, send-as or send-on-behalf authority, internal and external delivery, rejection behaviour, message traces and reply routing."
+    },
+    {
+      "id": "OP-005",
+      "title": "Correct citizen verification and officer OTP",
+      "requires": "Bind recipient to the validated requesting person, remove fixed registry recipients, remove codes from subjects.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-50",
+          "title": "Verification codes, correspondence, reports and assignment notices go to a fixed mailbox",
+          "was": "P-04"
+        }
+      ],
+      "runbookSection": "§2 · Release 0 containment — do this first",
+      "note": "This is the containment the runbook says to do first and not batch: a verification code delivered to a fixed mailbox instead of the person who asked for it."
+    },
+    {
+      "id": "OP-006",
+      "title": "Correct bulk, correspondence, report and intake recipients",
+      "requires": "Replace fixed recipients with validated dynamic audiences or approved role targets; remove the empty-recipient action.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-50",
+          "title": "Verification codes, correspondence, reports and assignment notices go to a fixed mailbox",
+          "was": "P-04"
+        }
+      ],
+      "runbookSection": "§2 · Release 0 containment — do this first",
+      "note": "P-04 names bulk assignment, official correspondence, report/statistics and intake recipients, and the removal of personal fixed dependencies and the empty action."
+    },
+    {
+      "id": "OP-007",
+      "title": "Protect RN-009 and RN-025",
+      "requires": "Block replacement until equivalent or better assignment delivery and upload/writeback observability pass acceptance; prove rollback before route change.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-66",
+          "title": "Most mail sends write no delivery receipt, and nothing proves a message arrived",
+          "was": "P-05"
+        }
+      ],
+      "runbookSection": "§2 · Release 0 containment — do this first",
+      "note": "P-05 names both requirement rows explicitly — RN-009 surviving replacement, RN-025 preserved until structured telemetry is operational and searchable."
+    },
+    {
+      "id": "OP-008",
+      "title": "Implement immediate event carriers",
+      "requires": "Transactional carriers at authoritative event boundaries, with idempotency key and recorded failure.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-48",
+          "title": "The portal promises citizens four emails the estate does not send",
+          "was": "P-06"
+        },
+        {
+          "register": "readiness",
+          "id": "ITEM-51",
+          "title": "Officers are never told of assignments, approvals, escalations, delegations or reminders",
+          "was": "P-06"
+        }
+      ],
+      "runbookSection": "§3 · Event carriers and the scheduled processor",
+      "note": "The runbook carries this under its \"Immediate carriers\" subsection."
+    },
+    {
+      "id": "OP-009",
+      "title": "Implement lifecycle carriers",
+      "requires": "Controlled lifecycle events with one delivery per event version; stale events cancelled or superseded.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-51",
+          "title": "Officers are never told of assignments, approvals, escalations, delegations or reminders",
+          "was": "P-07"
+        }
+      ],
+      "runbookSection": "§3 · Event carriers and the scheduled processor",
+      "note": "The runbook carries this under its \"Lifecycle carriers\" subsection."
+    },
+    {
+      "id": "OP-010",
+      "title": "Implement governed dispatch",
+      "requires": "One canonical authorized dispatch operation replacing the 501 path, with evidence and failure classification.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-25",
+          "title": "15 of 19 DYNAMIC_ACTIONS operations answer 501",
+          "was": "P-08"
+        },
+        {
+          "register": "readiness",
+          "id": "ITEM-51",
+          "title": "Officers are never told of assignments, approvals, escalations, delegations or reminders",
+          "was": "P-08"
+        }
+      ],
+      "runbookSection": "§3 · Event carriers and the scheduled processor",
+      "note": "P-08 names the same defect — dispatch and dispatchoutbound reaching 501 — and the same required behaviour."
+    },
+    {
+      "id": "OP-011",
+      "title": "Build scheduled notification processor",
+      "requires": "A governed recurrence processor using only approved timing and retry values, with atomic claim and crash recovery.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-70",
+          "title": "The only scheduled carrier has no health check",
+          "was": "P-09"
+        }
+      ],
+      "runbookSection": "§3 · Event carriers and the scheduled processor",
+      "note": "The runbook carries this under its \"Scheduled processor\" subsection; the specification it is built to is docs/folio-Master-Flows-and-Endpoints/deployment/notification-instrument/notification-processor/processor-spec.json."
+    },
+    {
+      "id": "OP-012",
+      "title": "Execute all 38 requirement acceptance cases",
+      "requires": "Complete evidence for every RN row and every mail-client scenario, with no result marked passed without an evidence reference.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-68",
+          "title": "The email template library is unwired and not accepted",
+          "was": "P-11"
+        },
+        {
+          "register": "readiness",
+          "id": "ITEM-71",
+          "title": "The notification release gates are not complete",
+          "was": "P-14"
+        },
+        {
+          "register": "readiness",
+          "id": "ITEM-66",
+          "title": "Most mail sends write no delivery receipt, and nothing proves a message arrived",
+          "was": "F-10"
+        }
+      ],
+      "runbookSection": "§4 · Cutover, rollback and hypercare",
+      "note": "P-11 carries the rendering and accessibility half (Outlook/Gmail/mobile, dark mode, images disabled, long content, row batches). P-14 carries the failure half (invalid recipients, unauthorized callers, retry, duplicate events, concurrency, crash recovery, idempotency). F-10 is why the evidence cannot come from this repository at all."
+    },
+    {
+      "id": "OP-013",
+      "title": "Execute cutover and rollback rehearsal",
+      "requires": "Deploy in dependency order, rehearse full rollback, reconcile in-flight work, disable rather than delete superseded flows.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-71",
+          "title": "The notification release gates are not complete",
+          "was": "P-15"
+        }
+      ],
+      "runbookSection": "§4 · Cutover, rollback and hypercare",
+      "note": "P-15 states the same sequence, including retiring superseded flows only after proof and preserving rollback for the approved period."
+    },
+    {
+      "id": "OP-014",
+      "title": "Activate hypercare and authorize production",
+      "requires": "Named owners, hypercare configured, one risk record per unresolved requirement, and a formal authorization naming the exact release.",
+      "carriedBy": [
+        {
+          "register": "readiness",
+          "id": "ITEM-71",
+          "title": "The notification release gates are not complete",
+          "was": "P-16"
+        }
+      ],
+      "runbookSection": "§4 · Cutover, rollback and hypercare",
+      "note": "P-16 carries hypercare — named owners, daily review, message-trace access, emergency correction, incident severity, escalation route, exit criteria. P-17 carries the risk-acceptance record per unresolved row and the production authorization."
+    }
+  ],
+  "notConsumedByThisMapping": {
+    "why": "The successor covers more than the console did, which is the right direction. These entries are counted work with no OP behind them.",
+    "entries": [
+      {
+        "register": "pending-work",
+        "id": "P-10",
+        "title": "Portal and status decisions"
+      },
+      {
+        "register": "pending-work",
+        "id": "P-12",
+        "title": "Telemetry and privacy"
+      },
+      {
+        "register": "pending-work",
+        "id": "P-13",
+        "title": "Procedures and readiness"
+      }
+    ]
+  }
+}

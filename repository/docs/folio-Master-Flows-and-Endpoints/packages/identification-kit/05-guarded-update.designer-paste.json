@@ -1,0 +1,294 @@
+{
+  "nodeId": "Scope_Guarded_Update",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Scope_Update_Task_1": {
+        "type": "Scope",
+        "actions": {
+          "Get_Row_Task_1": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items(@{triggerBody()?['itemId']})?$select=ID,Rev",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {}
+          },
+          "Merge_Row_Task_1": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "POST",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items(@{triggerBody()?['itemId']})",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata",
+                  "X-HTTP-Method": "MERGE",
+                  "IF-MATCH": "@{body('Get_Row_Task_1')?['odata.etag']}",
+                  "Content-Type": "application/json;odata=nometadata"
+                },
+                "parameters/body": "@setProperty(coalesce(triggerBody()?['changes'], json('{}')), 'Rev', add(int(coalesce(body('Get_Row_Task_1')?['Rev'], 0)), 1))"
+              }
+            },
+            "runAfter": {
+              "Get_Row_Task_1": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Rev_Task_1": {
+            "type": "Compose",
+            "inputs": "@add(int(coalesce(body('Get_Row_Task_1')?['Rev'], 0)), 1)",
+            "runAfter": {
+              "Merge_Row_Task_1": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {}
+      },
+      "Scope_Update_Task_2": {
+        "type": "Scope",
+        "actions": {
+          "Get_Row_Task_2": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items(@{triggerBody()?['itemId']})?$select=ID,Rev",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {}
+          },
+          "Merge_Row_Task_2": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "POST",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items(@{triggerBody()?['itemId']})",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata",
+                  "X-HTTP-Method": "MERGE",
+                  "IF-MATCH": "@{body('Get_Row_Task_2')?['odata.etag']}",
+                  "Content-Type": "application/json;odata=nometadata"
+                },
+                "parameters/body": "@setProperty(coalesce(triggerBody()?['changes'], json('{}')), 'Rev', add(int(coalesce(body('Get_Row_Task_2')?['Rev'], 0)), 1))"
+              }
+            },
+            "runAfter": {
+              "Get_Row_Task_2": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Rev_Task_2": {
+            "type": "Compose",
+            "inputs": "@add(int(coalesce(body('Get_Row_Task_2')?['Rev'], 0)), 1)",
+            "runAfter": {
+              "Merge_Row_Task_2": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Update_Task_1": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Scope_Update_Task_3": {
+        "type": "Scope",
+        "actions": {
+          "Get_Row_Task_3": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items(@{triggerBody()?['itemId']})?$select=ID,Rev",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata"
+                }
+              }
+            },
+            "runAfter": {}
+          },
+          "Merge_Row_Task_3": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "POST",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items(@{triggerBody()?['itemId']})",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=minimalmetadata",
+                  "X-HTTP-Method": "MERGE",
+                  "IF-MATCH": "@{body('Get_Row_Task_3')?['odata.etag']}",
+                  "Content-Type": "application/json;odata=nometadata"
+                },
+                "parameters/body": "@setProperty(coalesce(triggerBody()?['changes'], json('{}')), 'Rev', add(int(coalesce(body('Get_Row_Task_3')?['Rev'], 0)), 1))"
+              }
+            },
+            "runAfter": {
+              "Get_Row_Task_3": [
+                "Succeeded"
+              ]
+            }
+          },
+          "Compose_Rev_Task_3": {
+            "type": "Compose",
+            "inputs": "@add(int(coalesce(body('Get_Row_Task_3')?['Rev'], 0)), 1)",
+            "runAfter": {
+              "Merge_Row_Task_3": [
+                "Succeeded"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Update_Task_2": [
+            "Failed",
+            "TimedOut"
+          ]
+        }
+      },
+      "Compose_Updated_Task": {
+        "type": "Compose",
+        "inputs": {
+          "ok": "@not(equals(coalesce(actions('Compose_Rev_Task_1')?['outputs'], actions('Compose_Rev_Task_2')?['outputs'], actions('Compose_Rev_Task_3')?['outputs']), null))",
+          "revAfter": "@coalesce(actions('Compose_Rev_Task_1')?['outputs'], actions('Compose_Rev_Task_2')?['outputs'], actions('Compose_Rev_Task_3')?['outputs'])"
+        },
+        "runAfter": {
+          "Scope_Update_Task_3": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Row_Task_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Merge_Row_Task_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Row_Task_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Merge_Row_Task_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Row_Task_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Merge_Row_Task_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

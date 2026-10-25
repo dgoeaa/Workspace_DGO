@@ -1,0 +1,1661 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/CG_Portal_Support_Endpoint__4873c936-a2be-4726-8e69-426edb8f70e6.json",
+  "workflow_identity": {
+    "internal_name": "4873c936-a2be-4726-8e69-426edb8f70e6",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/4873c936-a2be-4726-8e69-426edb8f70e6",
+    "tags": {
+      "flowDisplayName": "CG_Portal_Support_Endpoint"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {
+          "operationMetadataId": "b4b2a44d-e4d2-4f17-bd9f-cf578f9f744a"
+        },
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "maxLength": 32
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "email": {
+                "type": "string",
+                "maxLength": 320
+              },
+              "topic": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "message": {
+                "type": "string",
+                "maxLength": 10000
+              },
+              "aboutReference": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "trackingId": {
+                "type": "string",
+                "maxLength": 128
+              },
+              "payload": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "Title": {
+                "type": "string"
+              },
+              "Priority": {
+                "type": "string"
+              },
+              "Category": {
+                "type": "string"
+              },
+              "Description": {
+                "type": "string"
+              },
+              "AssignedTo": {
+                "type": "string"
+              }
+            },
+            "required": [],
+            "additionalProperties": true
+          },
+          "method": "POST",
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Initialize_variable_varAction": {
+        "runAfter": {
+          "Initialize_variable_varStatusCode": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "729d1236-f829-4119-b270-f2ae0826048f"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varAction",
+              "type": "string",
+              "value": "support"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varStatusCode": {
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "cda418e4-f0e3-4e27-a2e0-334aea035ef3"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStatusCode",
+              "type": "integer",
+              "value": 500
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varResponse": {
+        "runAfter": {
+          "Initialize_variable_varAction": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "40dba050-0af1-4abc-8090-53b2c801d294"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varResponse",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varReceivedAtUtc_Submission": {
+        "runAfter": {
+          "Initialize_variable_varResponse": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "10000000-0000-4000-8000-000000000101"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varReceivedAtUtc",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varCompletedAtUtc_Submission": {
+        "runAfter": {
+          "Initialize_variable_varReceivedAtUtc_Submission": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "10000000-0000-4000-8000-000000000102"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varCompletedAtUtc",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varErrors_Submission": {
+        "runAfter": {
+          "Initialize_variable_varCompletedAtUtc_Submission": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "10000000-0000-4000-8000-000000000104"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varErrors",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varData_Submission": {
+        "runAfter": {
+          "Initialize_variable_varErrors_Submission": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "10000000-0000-4000-8000-000000000105"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varData",
+              "type": "object",
+              "value": {}
+            }
+          ]
+        }
+      },
+      "Initialize_variable_vardocId_Submission": {
+        "runAfter": {
+          "Initialize_variable_varData_Submission": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "10000000-0000-4000-8000-000000000106"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "vardocId",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varstatus_Submission": {
+        "runAfter": {
+          "Initialize_variable_vardocId_Submission": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "10000000-0000-4000-8000-000000000107"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varstatus",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varmessage_Submission": {
+        "runAfter": {
+          "Initialize_variable_varstatus_Submission": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "10000000-0000-4000-8000-000000000108"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varmessage",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varDurationMs": {
+        "runAfter": {
+          "Initialize_variable_varmessage_Submission": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "97ac73cf-cdad-448f-9ee7-8a2db75ea7ca"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varDurationMs",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varStartTicks": {
+        "runAfter": {
+          "Initialize_variable_varDurationMs": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "92764e8d-e27f-4ee9-bd8e-daec8fbf15bc"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStartTicks",
+              "type": "integer",
+              "value": "@ticks(utcNow())"
+            }
+          ]
+        }
+      },
+      "Initialize_variable_varRequestId": {
+        "runAfter": {
+          "Initialize_variable_varStartTicks": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "95504c08-58aa-4d6c-80fb-a756c05380a6"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varRequestId2",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "Set_variable_varAction": {
+        "runAfter": {
+          "Initialize_variable_varRequestId_1": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "0e9be95b-6069-488a-96f6-47a6e00a2df3"
+        },
+        "type": "SetVariable",
+        "inputs": {
+          "name": "varAction",
+          "value": "@toLower(trim(string(coalesce(triggerBody()?['action'],'support'))))"
+        }
+      },
+      "Initialize_variable_varRequestId_1": {
+        "runAfter": {
+          "Initialize_variable_varRequestId": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "84486cbc-c172-4233-9421-7d4763f23639"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varRequestId",
+              "type": "string",
+              "value": "@coalesce(triggerOutputs()?['headers']?['x-correlation-id'],triggerOutputs()?['headers']?['X-Correlation-ID'],triggerBody()?['trackingId'],triggerBody()?['payload']?['trackingId'],guid())"
+            }
+          ]
+        }
+      },
+      "Scope_Support_Flow": {
+        "actions": {
+          "Compose_Request_Context": {
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000133"
+            },
+            "type": "Compose",
+            "inputs": {
+              "requestId": "@string(coalesce(triggerOutputs()?['headers']?['X-Correlation-ID'],triggerBody()?['requestId'],guid()))",
+              "receivedAtUtc": "@utcNow()",
+              "startTicks": "@ticks(utcNow())"
+            }
+          },
+          "Scope_Global_Support": {
+            "actions": {
+              "Compose_Support_Name": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000134"
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerBody()?['name'],'')))"
+              },
+              "Compose_Support_Email": {
+                "runAfter": {
+                  "Compose_Support_Name": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000135"
+                },
+                "type": "Compose",
+                "inputs": "@toLower(trim(string(coalesce(triggerBody()?['email'],''))))"
+              },
+              "Compose_Support_Topic": {
+                "runAfter": {
+                  "Compose_Support_Email": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000136"
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerBody()?['topic'],'')))"
+              },
+              "Compose_Support_About_Ref": {
+                "runAfter": {
+                  "Compose_Support_Topic": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000137"
+                },
+                "type": "Compose",
+                "inputs": "@toUpper(trim(string(coalesce(triggerBody()?['aboutReference'],''))))"
+              },
+              "Compose_Support_Message": {
+                "runAfter": {
+                  "Compose_Support_About_Ref": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000138"
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerBody()?['message'],'')))"
+              },
+              "Compose_Support_Client_Ref": {
+                "runAfter": {
+                  "Compose_Support_Message": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000139"
+                },
+                "type": "Compose",
+                "inputs": "@toUpper(trim(string(coalesce(triggerBody()?['ref'],''))))"
+              },
+              "Compose_Support_Invalid": {
+                "runAfter": {
+                  "Compose_Support_Client_Ref": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000140"
+                },
+                "type": "Compose",
+                "inputs": "@or(less(length(outputs('Compose_Support_Name')),2),greater(length(outputs('Compose_Support_Name')),255),or(empty(outputs('Compose_Support_Email')),greater(length(outputs('Compose_Support_Email')),255),not(equals(length(split(outputs('Compose_Support_Email'),'@')),2)),startsWith(outputs('Compose_Support_Email'),'@'),endsWith(outputs('Compose_Support_Email'),'@'),contains(outputs('Compose_Support_Email'),' '),contains(outputs('Compose_Support_Email'),';'),contains(outputs('Compose_Support_Email'),','),not(contains(string(last(split(outputs('Compose_Support_Email'),'@'))),'.')),endsWith(outputs('Compose_Support_Email'),'.')),not(contains(createArray('Problem with a submission','Tracking ID not found','File upload or format issue','Question about a decision','Access or account issue','Something else'),outputs('Compose_Support_Topic'))),and(not(empty(outputs('Compose_Support_About_Ref'))),or(not(startsWith(outputs('Compose_Support_About_Ref'),'NITDA-')),greater(length(outputs('Compose_Support_About_Ref')),32),contains(outputs('Compose_Support_About_Ref'),' '))),less(length(outputs('Compose_Support_Message')),20),greater(length(outputs('Compose_Support_Message')),5000),and(not(empty(outputs('Compose_Support_Client_Ref'))),or(not(startsWith(outputs('Compose_Support_Client_Ref'),'NITDA-S-')),not(equals(length(outputs('Compose_Support_Client_Ref')),14)))))"
+              },
+              "Compose_Support_SourceIp": {
+                "runAfter": {
+                  "Compose_Support_Invalid": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000141"
+                },
+                "type": "Compose",
+                "inputs": "@if(startsWith(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),'['),substring(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),1,max(sub(indexOf(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),']'),1),0)),if(equals(length(split(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),':')),2),first(split(trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),','))),':')),trim(first(split(string(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')),',')))))"
+              },
+              "Compose_Bucket_Support": {
+                "runAfter": {
+                  "Compose_Support_SourceIp": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000142"
+                },
+                "type": "Compose",
+                "inputs": "@concat('SUPPORT_IP:',outputs('Compose_Support_SourceIp'))"
+              },
+              "Get_Rate_Limit_Support": {
+                "runAfter": {
+                  "Compose_Bucket_Support": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000143"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                    "$filter": "@concat('Title eq ''',replace(outputs('Compose_Bucket_Support'),'''',''''''),'''')",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "GetItems"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Condition_Rate_Limit_Support_Exists": {
+                "actions": {
+                  "Update_Rate_Limit_Support": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000144"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                        "id": "@first(outputs('Get_Rate_Limit_Support')?['body/value'])?['ID']",
+                        "item/Title": "@first(outputs('Get_Rate_Limit_Support')?['body/value'])?['Title']",
+                        "item/WindowStartUtc": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Support')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),first(outputs('Get_Rate_Limit_Support')?['body/value'])?['WindowStartUtc'],utcNow())",
+                        "item/UpdatedAtUtc": "@utcNow()",
+                        "item/RequestCount": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Support')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),add(int(concat('0',first(split(string(coalesce(first(outputs('Get_Rate_Limit_Support')?['body/value'])?['RequestCount'],'')),'.')))),1),1)"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "PatchItem"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_Rate_Limit_Support": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Create_Rate_Limit_Support": {
+                      "metadata": {
+                        "operationMetadataId": "a0000000-0000-4000-8000-000000000145"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+                          "item/Title": "@outputs('Compose_Bucket_Support')",
+                          "item/WindowStartUtc": "@utcNow()",
+                          "item/UpdatedAtUtc": "@utcNow()",
+                          "item/RequestCount": 1
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connectionName": "shared_sharepointonline-1",
+                          "operationId": "PostItem"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(coalesce(outputs('Get_Rate_Limit_Support')?['body/value'],json('[]')))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000146"
+                },
+                "type": "If"
+              },
+              "Compose_Rate_Limited_Support": {
+                "runAfter": {
+                  "Condition_Rate_Limit_Support_Exists": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000147"
+                },
+                "type": "Compose",
+                "inputs": "@and(greater(length(coalesce(outputs('Get_Rate_Limit_Support')?['body/value'],json('[]'))),0),greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Support')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')),ticks(addHours(utcNow(),-1))),greaterOrEquals(int(concat('0',first(split(string(coalesce(first(outputs('Get_Rate_Limit_Support')?['body/value'])?['RequestCount'],'')),'.')))),10))"
+              },
+              "Condition_Support_Gate": {
+                "actions": {
+                  "Compose_Result_Support_429": {
+                    "metadata": {
+                      "operationMetadataId": "a0000000-0000-4000-8000-000000000148"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "status": 429,
+                      "data": {
+                        "error": "rate_limited",
+                        "message": "Too many support requests from this source. Try again later."
+                      },
+                      "errors": [],
+                      "event": "@if(equals(int(concat('0',first(split(string(coalesce(first(coalesce(outputs('Get_Rate_Limit_Support')?['body/value'],json('[]')))?['RequestCount'],'')),'.')))),10),'rate_limited','none')"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Compose_Rate_Limited_Support": [
+                    "Succeeded"
+                  ]
+                },
+                "else": {
+                  "actions": {
+                    "Condition_Support_Input_Invalid": {
+                      "actions": {
+                        "Compose_Result_Support_400": {
+                          "metadata": {
+                            "operationMetadataId": "a0000000-0000-4000-8000-000000000149"
+                          },
+                          "type": "Compose",
+                          "inputs": {
+                            "status": 400,
+                            "data": {
+                              "error": "invalid_request",
+                              "message": "name (2+ characters), a valid email, a listed topic and a message of 20 to 5000 characters are required; aboutReference, when given, is a NITDA- tracking ID."
+                            },
+                            "errors": [],
+                            "event": "none"
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Compose_Support_Minted_Ref": {
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000150"
+                            },
+                            "type": "Compose",
+                            "inputs": "@concat('CASE-',formatDateTime(utcNow(),'yyyyMMdd'),'-',toUpper(substring(replace(guid(),'-',''),0,6)))"
+                          },
+                          "Compose_Support_Requested_Ref": {
+                            "runAfter": {
+                              "Compose_Support_Minted_Ref": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000151"
+                            },
+                            "type": "Compose",
+                            "inputs": "@if(empty(outputs('Compose_Support_Client_Ref')),outputs('Compose_Support_Minted_Ref'),outputs('Compose_Support_Client_Ref'))"
+                          },
+                          "Get_Existing_Case": {
+                            "runAfter": {
+                              "Compose_Support_Requested_Ref": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000152"
+                            },
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                "table": "b984645b-8e3a-457f-a305-b95650fd3f23",
+                                "$filter": "@concat('Title eq ''',replace(outputs('Compose_Support_Requested_Ref'),'''',''''''),'''')",
+                                "$top": 1
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                "connectionName": "shared_sharepointonline-1",
+                                "operationId": "GetItems"
+                              },
+                              "authentication": "@parameters('$authentication')"
+                            }
+                          },
+                          "Compose_Support_Case_State": {
+                            "runAfter": {
+                              "Get_Existing_Case": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000153"
+                            },
+                            "type": "Compose",
+                            "inputs": "@if(empty(first(coalesce(outputs('Get_Existing_Case')?['body/value'],json('[]')))),'new',if(equals(toLower(string(first(coalesce(outputs('Get_Existing_Case')?['body/value'],json('[]')))?['Email'])),outputs('Compose_Support_Email')),'replay','conflict'))"
+                          },
+                          "Compose_Support_Case_Ref": {
+                            "runAfter": {
+                              "Compose_Support_Case_State": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000154"
+                            },
+                            "type": "Compose",
+                            "inputs": "@if(equals(outputs('Compose_Support_Case_State'),'conflict'),outputs('Compose_Support_Minted_Ref'),outputs('Compose_Support_Requested_Ref'))"
+                          },
+                          "Condition_Support_Replay": {
+                            "actions": {
+                              "Compose_Result_Support_200_Replay": {
+                                "metadata": {
+                                  "operationMetadataId": "a0000000-0000-4000-8000-000000000155"
+                                },
+                                "type": "Compose",
+                                "inputs": {
+                                  "status": 200,
+                                  "data": {
+                                    "caseRef": "@outputs('Compose_Support_Case_Ref')"
+                                  },
+                                  "errors": [],
+                                  "event": "none"
+                                }
+                              }
+                            },
+                            "runAfter": {
+                              "Compose_Support_Case_Ref": [
+                                "Succeeded"
+                              ]
+                            },
+                            "else": {
+                              "actions": {
+                                "Create_Support_Case": {
+                                  "metadata": {
+                                    "operationMetadataId": "a0000000-0000-4000-8000-000000000156"
+                                  },
+                                  "type": "OpenApiConnection",
+                                  "inputs": {
+                                    "parameters": {
+                                      "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                                      "table": "b984645b-8e3a-457f-a305-b95650fd3f23",
+                                      "item/Title": "@outputs('Compose_Support_Case_Ref')",
+                                      "item/Name": "@outputs('Compose_Support_Name')",
+                                      "item/Email": "@outputs('Compose_Support_Email')",
+                                      "item/Topic": "@outputs('Compose_Support_Topic')",
+                                      "item/AboutReference": "@outputs('Compose_Support_About_Ref')",
+                                      "item/Message": "@outputs('Compose_Support_Message')",
+                                      "item/Status": "Open",
+                                      "item/SubmittedAtUtc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                                      "item/SourceIp": "@outputs('Compose_Support_SourceIp')"
+                                    },
+                                    "host": {
+                                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                      "connectionName": "shared_sharepointonline-1",
+                                      "operationId": "PostItem"
+                                    },
+                                    "authentication": "@parameters('$authentication')"
+                                  }
+                                },
+                                "Compose_Result_Support_200": {
+                                  "runAfter": {
+                                    "Create_Support_Case": [
+                                      "Succeeded"
+                                    ]
+                                  },
+                                  "metadata": {
+                                    "operationMetadataId": "a0000000-0000-4000-8000-000000000157"
+                                  },
+                                  "type": "Compose",
+                                  "inputs": {
+                                    "status": 200,
+                                    "data": {
+                                      "caseRef": "@outputs('Compose_Support_Case_Ref')"
+                                    },
+                                    "errors": [],
+                                    "event": "support_created"
+                                  }
+                                }
+                              }
+                            },
+                            "expression": {
+                              "and": [
+                                {
+                                  "equals": [
+                                    "@outputs('Compose_Support_Case_State')",
+                                    "replay"
+                                  ]
+                                }
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000158"
+                            },
+                            "type": "If"
+                          }
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@outputs('Compose_Support_Invalid')",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "a0000000-0000-4000-8000-000000000159"
+                      },
+                      "type": "If"
+                    }
+                  }
+                },
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@outputs('Compose_Rate_Limited_Support')",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000160"
+                },
+                "type": "If"
+              }
+            },
+            "runAfter": {
+              "Compose_Request_Context": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000161"
+            },
+            "type": "Scope"
+          },
+          "Scope_Catch_Support": {
+            "actions": {
+              "Compose_Result_Support_500": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000162"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "status": 500,
+                  "data": {
+                    "error": "server_error",
+                    "message": "The support request could not be recorded right now."
+                  },
+                  "errors": [
+                    {
+                      "scope": "Support",
+                      "stage": "processing",
+                      "status": "failed",
+                      "message": "Support processing failed, skipped, or timed out.",
+                      "details": "@result('Scope_Global_Support')",
+                      "trackedAtUtc": "@utcNow()"
+                    }
+                  ],
+                  "event": "server_error"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Global_Support": [
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000163"
+            },
+            "type": "Scope"
+          },
+          "Scope_Finalize_Response_Support": {
+            "actions": {
+              "Compose_Outcome": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000164"
+                },
+                "type": "Compose",
+                "inputs": "@coalesce(actions('Compose_Result_Support_500')?['outputs'],actions('Compose_Result_Support_200')?['outputs'],actions('Compose_Result_Support_200_Replay')?['outputs'],actions('Compose_Result_Support_400')?['outputs'],actions('Compose_Result_Support_429')?['outputs'],json('{\"status\":500,\"data\":{\"error\":\"server_error\",\"message\":\"The support request could not be recorded right now.\"},\"errors\":[],\"event\":\"none\"}'))"
+              },
+              "Compose_Completed_At": {
+                "runAfter": {
+                  "Compose_Outcome": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000165"
+                },
+                "type": "Compose",
+                "inputs": "@utcNow()"
+              },
+              "Compose_Duration_Ms": {
+                "runAfter": {
+                  "Compose_Completed_At": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000166"
+                },
+                "type": "Compose",
+                "inputs": "@max(div(sub(ticks(outputs('Compose_Completed_At')),outputs('Compose_Request_Context')?['startTicks']),10000),0)"
+              },
+              "Compose_Response_Body": {
+                "runAfter": {
+                  "Compose_Duration_Ms": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000167"
+                },
+                "type": "Compose",
+                "inputs": "@coalesce(actions('Compose_Outcome')?['outputs']?['data'],json('{}'))"
+              },
+              "Get_Allowed_Origins_Support": {
+                "runAfter": {
+                  "Compose_Response_Body": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000168"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "$filter": "startswith(Title,'ALLOWED_ORIGIN')",
+                    "$top": 20
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "GetItems"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Select_Allowed_Origins_Support": {
+                "runAfter": {
+                  "Get_Allowed_Origins_Support": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000169"
+                },
+                "type": "Select",
+                "inputs": {
+                  "from": "@coalesce(actions('Get_Allowed_Origins_Support')?['outputs']?['body']?['value'],json('[]'))",
+                  "select": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+                }
+              },
+              "Compose_Request_Origin_Support": {
+                "runAfter": {
+                  "Select_Allowed_Origins_Support": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000170"
+                },
+                "type": "Compose",
+                "inputs": "@trim(string(coalesce(triggerOutputs()?['headers']?['Origin'],triggerOutputs()?['headers']?['origin'],'')))"
+              },
+              "Compose_Allowed_Origin_Support": {
+                "runAfter": {
+                  "Compose_Request_Origin_Support": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000171"
+                },
+                "type": "Compose",
+                "inputs": "@if(contains(coalesce(body('Select_Allowed_Origins_Support'),json('[]')),outputs('Compose_Request_Origin_Support')),outputs('Compose_Request_Origin_Support'),string(coalesce(first(coalesce(body('Select_Allowed_Origins_Support'),json('[]'))),'')))"
+              },
+              "Response_Support": {
+                "runAfter": {
+                  "Compose_Allowed_Origin_Support": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000172"
+                },
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": "@coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)",
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "@{string(coalesce(actions('Compose_Allowed_Origin_Support')?['outputs'],'*'))}",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID",
+                    "Vary": "Origin"
+                  },
+                  "body": "@coalesce(actions('Compose_Response_Body')?['outputs'],json('{\"error\":\"server_error\",\"message\":\"The support request could not be recorded right now.\"}'))"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Global_Support": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ],
+              "Scope_Catch_Support": [
+                "Succeeded",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000173"
+            },
+            "type": "Scope"
+          },
+          "Scope_Notifications": {
+            "actions": {
+              "Get_Notification_Config": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000174"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                    "table": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+                    "$filter": "startswith(Title,'NOTIFY_')",
+                    "$top": 50
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "GetItems"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Select_Notify_Config": {
+                "runAfter": {
+                  "Get_Notification_Config": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000175"
+                },
+                "type": "Select",
+                "inputs": {
+                  "from": "@coalesce(actions('Get_Notification_Config')?['outputs']?['body']?['value'],json('[]'))",
+                  "select": {
+                    "k": "@toUpper(trim(string(item()?['Title'])))",
+                    "v": "@trim(string(coalesce(item()?['ConfigValue'],'')))"
+                  }
+                }
+              },
+              "Compose_Notify_Config_Xml": {
+                "runAfter": {
+                  "Select_Notify_Config": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000176"
+                },
+                "type": "Compose",
+                "inputs": "@xml(json(concat('{\"r\":{\"i\":',string(body('Select_Notify_Config')),'}}')))"
+              },
+              "Compose_Notify_Logo_Default": {
+                "runAfter": {
+                  "Compose_Notify_Config_Xml": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000177"
+                },
+                "type": "Compose",
+                "inputs": "data:image/png;base64,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"
+              },
+              "Compose_Notify_Config": {
+                "runAfter": {
+                  "Compose_Notify_Logo_Default": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000178"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "enabled": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_ENABLED\"]/v)')))),'false'))",
+                  "opsTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_OPS_TO\"]/v)'))))",
+                  "replyTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)'))))",
+                  "logoSrc": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)')))),outputs('Compose_Notify_Logo_Default'),trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_LOGO_URL\"]/v)'))))",
+                  "helpdeskTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_HELPDESK_TO\"]/v)')))),if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REGISTRY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REGISTRY_TO\"]/v)')))),trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_HELPDESK_TO\"]/v)'))))",
+                  "supportReplyTo": "@if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_SUPPORT_REPLY_TO\"]/v)')))),if(empty(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),'dgsRegistry@nitda.gov.ng',trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_REPLY_TO\"]/v)')))),trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_SUPPORT_REPLY_TO\"]/v)'))))",
+                  "supportAck": "@not(equals(toLower(trim(string(xpath(outputs('Compose_Notify_Config_Xml'),'string(/r/i[k=\"NOTIFY_SUPPORT_ACK\"]/v)')))),'false'))"
+                }
+              },
+              "Switch_Notification_Event": {
+                "runAfter": {
+                  "Compose_Notify_Config": [
+                    "Succeeded"
+                  ]
+                },
+                "cases": {
+                  "Case_Support_Created": {
+                    "case": "support_created",
+                    "actions": {
+                      "Compose_Notify_Support_Fields": {
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000179"
+                        },
+                        "type": "Compose",
+                        "inputs": {
+                          "caseRef": "@replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_Case_Ref')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                          "topic": "@replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_Topic')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                          "name": "@replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_Name')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                          "email": "@replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_Email')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                          "emailRaw": "@string(coalesce(actions('Compose_Support_Email')?['outputs'],''))",
+                          "aboutRef": "@if(empty(string(coalesce(actions('Compose_Support_About_Ref')?['outputs'],''))),'&mdash;',replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_About_Ref')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))",
+                          "message": "@replace(replace(replace(replace(replace(replace(string(concat(substring(string(coalesce(actions('Compose_Support_Message')?['outputs'],'')),0,min(length(string(coalesce(actions('Compose_Support_Message')?['outputs'],''))),700)),if(greater(length(string(coalesce(actions('Compose_Support_Message')?['outputs'],''))),700),' …',''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),decodeUriComponent('%0A'),'<br>')",
+                          "messageTruncated": "@greater(length(string(coalesce(actions('Compose_Support_Message')?['outputs'],''))),700)",
+                          "receivedWat": "@concat(convertFromUtc(outputs('Compose_Request_Context')?['receivedAtUtc'],'W. Central Africa Standard Time','dddd, d MMMM yyyy'),' at ',convertFromUtc(outputs('Compose_Request_Context')?['receivedAtUtc'],'W. Central Africa Standard Time','HH:mm'),' WAT')",
+                          "sourceIp": "@replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_SourceIp')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')",
+                          "caseLink": "@concat('https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre/Lists/Portal%20Support%20Cases/DispForm.aspx?ID=',string(coalesce(actions('Create_Support_Case')?['outputs']?['body']?['ID'],'')))",
+                          "portalRefSent": "@not(empty(string(coalesce(actions('Compose_Support_Client_Ref')?['outputs'],''))))",
+                          "logoSrc": "@outputs('Compose_Notify_Config')?['logoSrc']"
+                        }
+                      },
+                      "Compose_Helpdesk_Alert_Html_Part1": {
+                        "runAfter": {
+                          "Compose_Notify_Support_Fields": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000180"
+                        },
+                        "type": "Compose",
+                        "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,address=no,email=no,date=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>@{concat('Support case ',outputs('Compose_Notify_Support_Fields')?['caseRef'])}</title><style>\nbody{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}\ntable{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}\nimg{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}\na{color:#05583B}\n@page{size:A4;margin:8mm}\n@media print{.outer{padding:0!important}.card{border:0!important}}\n@media only screen and (max-width:620px){\n .container{width:100%!important;max-width:100%!important}\n .px{padding-left:20px!important;padding-right:20px!important}\n .h1{font-size:21px!important;line-height:28px!important}\n .ref{font-size:21px!important;line-height:28px!important}\n .ref.sm{font-size:15px!important;line-height:22px!important}\n .stack,.stack tbody,.stack tr{display:block!important;width:100%!important}\n .stack td{display:block!important;width:100%!important;box-sizing:border-box}\n .stack td.cell{padding-left:0!important;padding-right:0!important}\n .stack td.tile{padding-bottom:8px!important}\n .pill-cell{text-align:left!important;padding:0 20px 16px 20px!important}\n .step{padding:0 0 12px 0!important}\n .btn a{display:block!important;text-align:center!important}\n .hide-sm{display:none!important}\n}\n</style></head><body style=\"margin:0;padding:0;background:#F6F8F6;\"><div style=\"display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F6F8F6;opacity:0;\">@{concat(outputs('Compose_Notify_Support_Fields')?['topic'],' · ',outputs('Compose_Notify_Support_Fields')?['name'],' — reply to this email to answer the citizen.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#F6F8F6\" style=\"background:#F6F8F6;\"><tr><td align=\"center\" class=\"outer\" style=\"padding:20px 12px 24px 12px;\"><table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:600px;max-width:600px;\"><tr><td class=\"card\" style=\"background:#FFFFFF;border:1px solid #E8E6E7;border-radius:18px;overflow:hidden;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td height=\"5\" bgcolor=\"#05583B\" style=\"height:5px;line-height:5px;font-size:0;background:#05583B;background-image:linear-gradient(90deg,#05583B 0%,#05583B 60%,#17B255 100%);\">&nbsp;</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"left\" valign=\"middle\" width=\"106\" style=\"width:106px;\"><img src=\"@{replace(replace(replace(replace(replace(string(outputs('Compose_Notify_Support_Fields')?['logoSrc']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}\" width=\"106\" height=\"48\" alt=\"NITDA &ndash; National Information Technology Development Agency\" style=\"display:block;width:106px;height:48px;border:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;font-weight:800;color:#05583B;\"></td><td class=\"hide-sm\" align=\"left\" valign=\"middle\" style=\"padding-left:14px;\"><div style=\"border-left:1px solid #E8E6E7;padding-left:14px;\"><p style=\"margin:0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;line-height:19px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;white-space:nowrap;\">DGO Digital Ops</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;line-height:14px;letter-spacing:.13em;text-transform:uppercase;color:#5F5C5D;white-space:nowrap;\">Registry notifications</p></div></td><td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#05583B;background:#EAF3EF;border:1px solid #CFE3D8;border-radius:999px;padding:4px 10px;white-space:nowrap;\">New support case</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:12px 32px 0 32px;\"><div style=\"height:1px;line-height:1px;font-size:0;background:#E8E6E7;margin-bottom:14px;\">&nbsp;</div><h1 class=\"h1\" style=\"margin:0 0 6px 0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:22px;line-height:29px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['topic']}</h1><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:22px;color:#4A4849;\">@{concat('From ',outputs('Compose_Notify_Support_Fields')?['name'],' via the NITDA portal helpdesk form. Replying to this email answers them directly.')}</p></td></tr><tr><td class=\"px\" style=\"padding:18px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\" style=\"background:#EAF3EF;border:1px solid #CFE3D8;border-radius:12px;\"><tr><td valign=\"middle\" style=\"padding:14px 20px;\"><p style=\"margin:0 0 2px 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#4A4849;\">Case reference</p><p class=\"ref sm\" style=\"margin:0;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:22px;line-height:30px;font-weight:700;letter-spacing:1px;color:#1B1A1A;word-break:break-all;\">@{outputs('Compose_Notify_Support_Fields')?['caseRef']}</p></td><td valign=\"middle\" align=\"ri"
+                      },
+                      "Compose_Helpdesk_Alert_Html_Part2": {
+                        "runAfter": {
+                          "Compose_Helpdesk_Alert_Html_Part1": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000181"
+                        },
+                        "type": "Compose",
+                        "inputs": "ght\" class=\"pill-cell\" style=\"padding:14px 20px 14px 0;\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;color:#05583B;background:#FFFFFF;border:1px solid #CFE3D8;border-radius:999px;padding:4px 11px;white-space:nowrap;\">Open</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">Case details</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Name</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['name']}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Email</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['email']}</p></td></tr><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Linked request</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['aboutRef']}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Received</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['receivedWat']}</p></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">Message</p></td></tr><tr><td class=\"px\" style=\"padding:6px 32px 0 32px;\"><div style=\"font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;line-height:20px;color:#1B1A1A;background:#F5F4F4;border:1px solid #E8E6E7;border-radius:12px;padding:12px 14px;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['message']}</div></td></tr>@{if(equals(outputs('Compose_Notify_Support_Fields')?['messageTruncated'],true),'<tr><td class=\"px\" style=\"padding:6px 32px 0 32px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;line-height:18px;color:#5F5C5D;\">Shortened here; the full message is on the case.</td></tr>','')}<tr><td class=\"px\" style=\"padding:20px 32px 0 32px;\">@{if(not(empty(outputs('Compose_Notify_Support_Fields')?['caseLink'])),concat('<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" style=\"display:inline-table;\"><tr><td align=\"center\" bgcolor=\"#05583B\" style=\"border-radius:6px;background:#05583B;\"><a href=\"',outputs('Compose_Notify_Support_Fields')?['caseLink'],'\" target=\"_blank\" style=\"display:inline-block;padding:11px 22px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:6px;\">Open the case in SharePoint &rarr;</a></td></tr></table>'),'')}</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-top:12px;border-top:1px dashed #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:18px;word-break:break-all;\"><span style=\"color:#5F5C5D;\">Source IP</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{outputs('Compose_Notify_Support_Fields')?['sourceIp']}</span> &nbsp;&middot;&nbsp; <span style=\"color:#5F5C5D;\">Request</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</span></p></td></tr><tr><td style=\"height:18px;line-height:18px;font-size:0;\">&nbsp;</td></tr></table></td></tr><tr><td align=\"center\" class=\"px\" style=\"padding:14px 24px 0 24px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;\">National Information Technology Development Agency &middot; &copy; @{formatDateTime(utcNow(),'yyyy')} &middot; Automated message</td></tr></table></td></tr></table></body></html>"
+                      },
+                      "Compose_Helpdesk_Alert_Html": {
+                        "runAfter": {
+                          "Compose_Helpdesk_Alert_Html_Part2": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000182"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{outputs('Compose_Helpdesk_Alert_Html_Part1')}@{outputs('Compose_Helpdesk_Alert_Html_Part2')}"
+                      },
+                      "Send_Helpdesk_Alert_Email": {
+                        "runAfter": {
+                          "Compose_Helpdesk_Alert_Html": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000183"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@outputs('Compose_Notify_Config')?['helpdeskTo']",
+                            "emailMessage/Subject": "@concat('Support case ',outputs('Compose_Notify_Support_Fields')?['caseRef'],' · ',string(coalesce(actions('Compose_Support_Topic')?['outputs'],'')))",
+                            "emailMessage/Body": "@outputs('Compose_Helpdesk_Alert_Html')",
+                            "emailMessage/ReplyTo": "@outputs('Compose_Notify_Support_Fields')?['emailRaw']",
+                            "emailMessage/Importance": "Normal"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365-1",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Condition_Send_Support_Acknowledgement": {
+                        "actions": {
+                          "Compose_Support_Acknowledgement_Html_Part1": {
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000184"
+                            },
+                            "type": "Compose",
+                            "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,address=no,email=no,date=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>@{concat('Support case ',outputs('Compose_Notify_Support_Fields')?['caseRef'])}</title><style>\nbody{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}\ntable{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}\nimg{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}\na{color:#05583B}\n@page{size:A4;margin:8mm}\n@media print{.outer{padding:0!important}.card{border:0!important}}\n@media only screen and (max-width:620px){\n .container{width:100%!important;max-width:100%!important}\n .px{padding-left:20px!important;padding-right:20px!important}\n .h1{font-size:21px!important;line-height:28px!important}\n .ref{font-size:21px!important;line-height:28px!important}\n .ref.sm{font-size:15px!important;line-height:22px!important}\n .stack,.stack tbody,.stack tr{display:block!important;width:100%!important}\n .stack td{display:block!important;width:100%!important;box-sizing:border-box}\n .stack td.cell{padding-left:0!important;padding-right:0!important}\n .stack td.tile{padding-bottom:8px!important}\n .pill-cell{text-align:left!important;padding:0 20px 16px 20px!important}\n .step{padding:0 0 12px 0!important}\n .btn a{display:block!important;text-align:center!important}\n .hide-sm{display:none!important}\n}\n</style></head><body style=\"margin:0;padding:0;background:#F6F8F6;\"><div style=\"display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F6F8F6;opacity:0;\">@{concat('Your case reference is ',outputs('Compose_Notify_Support_Fields')?['caseRef'],'. The helpdesk replies within one working day.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#F6F8F6\" style=\"background:#F6F8F6;\"><tr><td align=\"center\" class=\"outer\" style=\"padding:20px 12px 24px 12px;\"><table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:600px;max-width:600px;\"><tr><td class=\"card\" style=\"background:#FFFFFF;border:1px solid #E8E6E7;border-radius:18px;overflow:hidden;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td height=\"5\" bgcolor=\"#05583B\" style=\"height:5px;line-height:5px;font-size:0;background:#05583B;background-image:linear-gradient(90deg,#05583B 0%,#05583B 60%,#17B255 100%);\">&nbsp;</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"left\" valign=\"middle\" width=\"106\" style=\"width:106px;\"><img src=\"@{replace(replace(replace(replace(replace(string(outputs('Compose_Notify_Support_Fields')?['logoSrc']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}\" width=\"106\" height=\"48\" alt=\"NITDA &ndash; National Information Technology Development Agency\" style=\"display:block;width:106px;height:48px;border:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;font-weight:800;color:#05583B;\"></td><td class=\"hide-sm\" align=\"left\" valign=\"middle\" style=\"padding-left:14px;\"><div style=\"border-left:1px solid #E8E6E7;padding-left:14px;\"><p style=\"margin:0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;line-height:19px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;white-space:nowrap;\">NITDA Intelligent Portal</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;line-height:14px;letter-spacing:.13em;text-transform:uppercase;color:#5F5C5D;white-space:nowrap;\">Submit &middot; Track &middot; Resolve</p></div></td><td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#0D7234;background:#E6F7ED;border:1px solid #C2EED2;border-radius:999px;padding:4px 10px;white-space:nowrap;\">Support request received</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:12px 32px 0 32px;\"><div style=\"height:1px;line-height:1px;font-size:0;background:#E8E6E7;margin-bottom:14px;\">&nbsp;</div><h1 class=\"h1\" style=\"margin:0 0 6px 0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:22px;line-height:29px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;word-break:break-word;\">We have your support request</h1><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:22px;color:#4A4849;\">The NITDA portal helpdesk has your case and replies to this address within one working day.</p></td></tr><tr><td class=\"px\" style=\"padding:18px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\" style=\"background:#E6F7ED;border:1px solid #C2EED2;border-radius:12px;\"><tr><td valign=\"middle\" style=\"padding:14px 20px;\"><p style=\"margin:0 0 2px 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#4A4849;\">Your case reference</p><p class=\"ref\" style=\"margin:0;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:26px;line-height:34px;font-weight:700;letter-spacing:1px;color:#1B1A1A;word-break:break-all;\">@{outputs('Compose_Notify_Support_Fields')?['caseRef']}</p></td><td valign=\"middle\" align=\"right\" class=\"pill-cell\" style=\"padding:14px 20px 14px 0;\"><span style=\"display:i"
+                          },
+                          "Compose_Support_Acknowledgement_Html_Part2": {
+                            "runAfter": {
+                              "Compose_Support_Acknowledgement_Html_Part1": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000185"
+                            },
+                            "type": "Compose",
+                            "inputs": "nline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;color:#0D7234;background:#FFFFFF;border:1px solid #C2EED2;border-radius:999px;padding:4px 11px;white-space:nowrap;\">&#10003;&nbsp; Received</span></td></tr></table></td></tr>@{if(not(equals(outputs('Compose_Notify_Support_Fields')?['portalRefSent'],true)),'<tr><td class=\"px\" style=\"padding:8px 32px 0 32px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;line-height:20px;color:#4A4849;\">Use this reference when you contact the helpdesk, even if the portal showed a different one.</td></tr>','')}<tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">Summary</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Topic</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['topic']}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Linked request</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['aboutRef']}</p></td></tr><tr><td class=\"cell\" colspan=\"2\" valign=\"top\" width=\"100%\" style=\"padding:6px 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Received</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{outputs('Compose_Notify_Support_Fields')?['receivedWat']}</p></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">What happens next</p></td></tr><tr><td class=\"px\" style=\"padding:12px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td class=\"step\" width=\"33%\" valign=\"top\" style=\"padding:0 10px 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;\"><div style=\"width:24px;height:24px;line-height:24px;border-radius:50%;background:#05583B;border:1px solid #05583B;color:#FFFFFF;text-align:center;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;margin-bottom:6px;\">&#10003;</div><p style=\"margin:0;font-size:13px;font-weight:700;color:#1B1A1A;\">Received</p><p style=\"margin:2px 0 0 0;font-size:12px;line-height:18px;color:#4A4849;\">Logged with the helpdesk.</p></td><td class=\"step\" width=\"33%\" valign=\"top\" style=\"padding:0 10px 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;\"><div style=\"width:24px;height:24px;line-height:24px;border-radius:50%;background:#E6F7ED;border:1px solid #0D7234;color:#0D7234;text-align:center;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;margin-bottom:6px;\">2</div><p style=\"margin:0;font-size:13px;font-weight:700;color:#1B1A1A;\">Helpdesk review</p><p style=\"margin:2px 0 0 0;font-size:12px;line-height:18px;color:#4A4849;\">An officer reads your case.</p></td><td class=\"step\" width=\"33%\" valign=\"top\" style=\"padding:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;\"><div style=\"width:24px;height:24px;line-height:24px;border-radius:50%;background:#FFFFFF;border:1px solid #C4C3C3;color:#5F5C5D;text-align:center;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;margin-bottom:6px;\">3</div><p style=\"margin:0;font-size:13px;font-weight:700;color:#1B1A1A;\">Reply</p><p style=\"margin:2px 0 0 0;font-size:12px;line-height:18px;color:#4A4849;\">Within one working day, by email.</p></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:18px 32px 0 32px;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;line-height:20px;color:#4A4849;\">To add documents, reply to this email and attach them, quoting your case reference. If you did not contact NITDA, you can ignore this message.</p></td></tr><tr><td style=\"height:18px;line-height:18px;font-size:0;\">&nbsp;</td></tr></table></td></tr><tr><td align=\"center\" class=\"px\" style=\"padding:14px 24px 0 24px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;\">You received this because this address was entered on the NITDA portal helpdesk form.<br>National Information Technology Development Agency &middot; &copy; @{formatDateTime(utcNow(),'yyyy')} &middot; Automated message</td></tr></table></td></tr></table></body></html>"
+                          },
+                          "Compose_Support_Acknowledgement_Html": {
+                            "runAfter": {
+                              "Compose_Support_Acknowledgement_Html_Part2": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000186"
+                            },
+                            "type": "Compose",
+                            "inputs": "@{outputs('Compose_Support_Acknowledgement_Html_Part1')}@{outputs('Compose_Support_Acknowledgement_Html_Part2')}"
+                          },
+                          "Send_Support_Acknowledgement_Email": {
+                            "runAfter": {
+                              "Compose_Support_Acknowledgement_Html": [
+                                "Succeeded"
+                              ]
+                            },
+                            "metadata": {
+                              "operationMetadataId": "a0000000-0000-4000-8000-000000000187"
+                            },
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "emailMessage/To": "@outputs('Compose_Notify_Support_Fields')?['emailRaw']",
+                                "emailMessage/Subject": "@concat('Support request received — case ',outputs('Compose_Notify_Support_Fields')?['caseRef'])",
+                                "emailMessage/Body": "@outputs('Compose_Support_Acknowledgement_Html')",
+                                "emailMessage/ReplyTo": "@outputs('Compose_Notify_Config')?['supportReplyTo']",
+                                "emailMessage/Importance": "Normal"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                "connectionName": "shared_office365-1",
+                                "operationId": "SendEmailV2"
+                              },
+                              "authentication": "@parameters('$authentication')"
+                            }
+                          }
+                        },
+                        "runAfter": {
+                          "Compose_Notify_Support_Fields": [
+                            "Succeeded"
+                          ]
+                        },
+                        "else": {
+                          "actions": {}
+                        },
+                        "expression": {
+                          "and": [
+                            {
+                              "equals": [
+                                "@outputs('Compose_Notify_Config')?['supportAck']",
+                                true
+                              ]
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000188"
+                        },
+                        "type": "If"
+                      }
+                    }
+                  },
+                  "Case_Rate_Limited": {
+                    "case": "rate_limited",
+                    "actions": {
+                      "Compose_Rate_Limit_Alert_Html_Part1": {
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000189"
+                        },
+                        "type": "Compose",
+                        "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,address=no,email=no,date=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Rate limit reached</title><style>\nbody{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}\ntable{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}\nimg{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}\na{color:#05583B}\n@page{size:A4;margin:8mm}\n@media print{.outer{padding:0!important}.card{border:0!important}}\n@media only screen and (max-width:620px){\n .container{width:100%!important;max-width:100%!important}\n .px{padding-left:20px!important;padding-right:20px!important}\n .h1{font-size:21px!important;line-height:28px!important}\n .ref{font-size:21px!important;line-height:28px!important}\n .ref.sm{font-size:15px!important;line-height:22px!important}\n .stack,.stack tbody,.stack tr{display:block!important;width:100%!important}\n .stack td{display:block!important;width:100%!important;box-sizing:border-box}\n .stack td.cell{padding-left:0!important;padding-right:0!important}\n .stack td.tile{padding-bottom:8px!important}\n .pill-cell{text-align:left!important;padding:0 20px 16px 20px!important}\n .step{padding:0 0 12px 0!important}\n .btn a{display:block!important;text-align:center!important}\n .hide-sm{display:none!important}\n}\n</style></head><body style=\"margin:0;padding:0;background:#F6F8F6;\"><div style=\"display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F6F8F6;opacity:0;\">@{concat('The support endpoint blocked ',replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_SourceIp')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),' after 10 requests in one hour.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#F6F8F6\" style=\"background:#F6F8F6;\"><tr><td align=\"center\" class=\"outer\" style=\"padding:20px 12px 24px 12px;\"><table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:600px;max-width:600px;\"><tr><td class=\"card\" style=\"background:#FFFFFF;border:1px solid #E8E6E7;border-radius:18px;overflow:hidden;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td height=\"5\" bgcolor=\"#A87500\" style=\"height:5px;line-height:5px;font-size:0;background:#A87500;background-image:linear-gradient(90deg,#A87500 0%,#A87500 60%,#E1A100 100%);\">&nbsp;</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"left\" valign=\"middle\" width=\"106\" style=\"width:106px;\"><img src=\"@{replace(replace(replace(replace(replace(string(outputs('Compose_Notify_Config')?['logoSrc']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}\" width=\"106\" height=\"48\" alt=\"NITDA &ndash; National Information Technology Development Agency\" style=\"display:block;width:106px;height:48px;border:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;font-weight:800;color:#05583B;\"></td><td class=\"hide-sm\" align=\"left\" valign=\"middle\" style=\"padding-left:14px;\"><div style=\"border-left:1px solid #E8E6E7;padding-left:14px;\"><p style=\"margin:0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;line-height:19px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;white-space:nowrap;\">DGO Digital Ops</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;line-height:14px;letter-spacing:.13em;text-transform:uppercase;color:#5F5C5D;white-space:nowrap;\">Registry notifications</p></div></td><td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#5A3F00;background:#FBF1D8;border:1px solid #F7E2A8;border-radius:999px;padding:4px 10px;white-space:nowrap;\">Security alert</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:12px 32px 0 32px;\"><div style=\"height:1px;line-height:1px;font-size:0;background:#E8E6E7;margin-bottom:14px;\">&nbsp;</div><h1 class=\"h1\" style=\"margin:0 0 6px 0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:22px;line-height:29px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;word-break:break-word;\">Rate limit reached on the support endpoint</h1><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:22px;color:#4A4849;\">One source address exceeded the limit. Further requests from it are refused until the window resets.</p></td></tr><tr><td class=\"px\" style=\"padding:18px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\" style=\"background:#FBF1D8;border:1px solid #F7E2A8;border-radius:12px;\"><tr><td valign=\"middle\" style=\"padding:14px 20px;\"><p style=\"margin:0 0 2px 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#4A4849;\">Blocked source</p><p class=\"ref\" style=\"margin:0;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:26px;line-height:34px;font-weight:700;letter-spacing:1px;color:#1B1A1A;word-break:break-all;\">"
+                      },
+                      "Compose_Rate_Limit_Alert_Html_Part2": {
+                        "runAfter": {
+                          "Compose_Rate_Limit_Alert_Html_Part1": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000190"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_SourceIp')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td valign=\"middle\" align=\"right\" class=\"pill-cell\" style=\"padding:14px 20px 14px 0;\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;color:#5A3F00;background:#FFFFFF;border:1px solid #F7E2A8;border-radius:999px;padding:4px 11px;white-space:nowrap;\">HTTP 429</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">What happened</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Limit</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">10 requests per hour</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Detected</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{concat(convertFromUtc(utcNow(),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT')}</p></td></tr><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Window started</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{concat(convertFromUtc(string(coalesce(first(coalesce(actions('Get_Rate_Limit_Support')?['outputs']?['body']?['value'],json('[]')))?['WindowStartUtc'],utcNow())),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT')}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Blocked until</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{concat(convertFromUtc(addHours(string(coalesce(first(coalesce(actions('Get_Rate_Limit_Support')?['outputs']?['body']?['value'],json('[]')))?['WindowStartUtc'],utcNow())),1),'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT')}</p></td></tr><tr><td class=\"cell\" colspan=\"2\" valign=\"top\" width=\"100%\" style=\"padding:6px 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Rate-limit key</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(concat('SUPPORT_IP:',string(coalesce(actions('Compose_Support_SourceIp')?['outputs'],'')))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:16px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#FBF1D8;border:1px solid #F7E2A8;border-radius:10px;\"><tr><td style=\"padding:11px 16px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;\"><p style=\"margin:0 0 2px 0;font-size:13px;font-weight:700;color:#5A3F00;\">Recommended action</p><p style=\"margin:0;font-size:13px;line-height:20px;color:#373435;\">If the traffic looks automated, block the address at the gateway. If it is legitimate (for example a shared office network), raise the limit or clear the entry in the Portal Rate Limits list.</p></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:8px 32px 0 32px;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;line-height:19px;color:#5F5C5D;\">Sent once per source per window, on the first refused request.</p></td></tr><tr><td class=\"px\" style=\"padding:20px 32px 0 32px;\">"
+                      },
+                      "Compose_Rate_Limit_Alert_Html_Part3": {
+                        "runAfter": {
+                          "Compose_Rate_Limit_Alert_Html_Part2": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000191"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{if(not(empty(replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))),concat('<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" style=\"display:inline-table;\"><tr><td align=\"center\" bgcolor=\"#E1A100\" style=\"border-radius:6px;background:#E1A100;\"><a href=\"',replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'\" target=\"_blank\" style=\"display:inline-block;padding:11px 22px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:700;color:#1B1A1A;text-decoration:none;border-radius:6px;\">Open run in Power Automate &rarr;</a></td></tr></table>'),'')}</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-top:12px;border-top:1px dashed #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:18px;word-break:break-all;\"><span style=\"color:#5F5C5D;\">Request</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</span> &nbsp;&middot;&nbsp; <span style=\"color:#5F5C5D;\">Run</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{string(workflow()?['run']?['name'])}</span></p></td></tr><tr><td style=\"height:18px;line-height:18px;font-size:0;\">&nbsp;</td></tr></table></td></tr><tr><td align=\"center\" class=\"px\" style=\"padding:14px 24px 0 24px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;\">National Information Technology Development Agency &middot; &copy; @{formatDateTime(utcNow(),'yyyy')} &middot; Automated message</td></tr></table></td></tr></table></body></html>"
+                      },
+                      "Compose_Rate_Limit_Alert_Html": {
+                        "runAfter": {
+                          "Compose_Rate_Limit_Alert_Html_Part3": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000192"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{outputs('Compose_Rate_Limit_Alert_Html_Part1')}@{outputs('Compose_Rate_Limit_Alert_Html_Part2')}@{outputs('Compose_Rate_Limit_Alert_Html_Part3')}"
+                      },
+                      "Send_Rate_Limit_Alert_Email": {
+                        "runAfter": {
+                          "Compose_Rate_Limit_Alert_Html": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000193"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@outputs('Compose_Notify_Config')?['opsTo']",
+                            "emailMessage/Subject": "@concat('Security alert: support rate limit reached by ',string(coalesce(actions('Compose_Support_SourceIp')?['outputs'],'')))",
+                            "emailMessage/Body": "@outputs('Compose_Rate_Limit_Alert_Html')",
+                            "emailMessage/Importance": "High"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365-1",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    }
+                  },
+                  "Case_Server_Error": {
+                    "case": "server_error",
+                    "actions": {
+                      "Select_Failed_Step_Rows": {
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000194"
+                        },
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@result('Scope_Global_Support')",
+                          "select": "@if(equals(string(item()?['status']),'Failed'),concat('<tr><td valign=\"top\" width=\"38%\" style=\"padding:8px 12px 8px 0;border-bottom:1px solid #F2F4F7;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:12px;line-height:18px;font-weight:700;color:#1B1A1A;word-break:break-all;\">',replace(replace(replace(replace(replace(string(string(item()?['name'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td><td valign=\"top\" style=\"padding:8px 0;border-bottom:1px solid #F0EFEF;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;line-height:18px;color:#373435;word-break:break-word;\"><span style=\"display:inline-block;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:10px;font-weight:700;color:#780820;background:#FBE7EB;border-radius:4px;padding:1px 6px;margin-bottom:3px;\">',replace(replace(replace(replace(replace(string(string(coalesce(item()?['error']?['code'],item()?['code'],'Failed'))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</span><br>',replace(replace(replace(replace(replace(string(concat(substring(string(coalesce(item()?['error']?['message'],'No message returned.')),0,min(length(string(coalesce(item()?['error']?['message'],'No message returned.'))),120)),if(greater(length(string(coalesce(item()?['error']?['message'],''))),120),' …',''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</td></tr>'),'')"
+                        }
+                      },
+                      "Select_Failed_Flags": {
+                        "runAfter": {
+                          "Select_Failed_Step_Rows": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000195"
+                        },
+                        "type": "Select",
+                        "inputs": {
+                          "from": "@result('Scope_Global_Support')",
+                          "select": "@if(equals(string(item()?['status']),'Failed'),'1','')"
+                        }
+                      },
+                      "Compose_Server_Error_Alert_Html_Part1": {
+                        "runAfter": {
+                          "Select_Failed_Flags": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000196"
+                        },
+                        "type": "Compose",
+                        "inputs": "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"x-apple-disable-message-reformatting\"><meta name=\"format-detection\" content=\"telephone=no,address=no,email=no,date=no\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>Support endpoint failure</title><style>\nbody{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}\ntable{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}\nimg{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}\na{color:#05583B}\n@page{size:A4;margin:8mm}\n@media print{.outer{padding:0!important}.card{border:0!important}}\n@media only screen and (max-width:620px){\n .container{width:100%!important;max-width:100%!important}\n .px{padding-left:20px!important;padding-right:20px!important}\n .h1{font-size:21px!important;line-height:28px!important}\n .ref{font-size:21px!important;line-height:28px!important}\n .ref.sm{font-size:15px!important;line-height:22px!important}\n .stack,.stack tbody,.stack tr{display:block!important;width:100%!important}\n .stack td{display:block!important;width:100%!important;box-sizing:border-box}\n .stack td.cell{padding-left:0!important;padding-right:0!important}\n .stack td.tile{padding-bottom:8px!important}\n .pill-cell{text-align:left!important;padding:0 20px 16px 20px!important}\n .step{padding:0 0 12px 0!important}\n .btn a{display:block!important;text-align:center!important}\n .hide-sm{display:none!important}\n}\n</style></head><body style=\"margin:0;padding:0;background:#F6F8F6;\"><div style=\"display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F6F8F6;opacity:0;\">@{concat('The support endpoint failed (request ',replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'). Action may be required.')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#F6F8F6\" style=\"background:#F6F8F6;\"><tr><td align=\"center\" class=\"outer\" style=\"padding:20px 12px 24px 12px;\"><table role=\"presentation\" class=\"container\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:600px;max-width:600px;\"><tr><td class=\"card\" style=\"background:#FFFFFF;border:1px solid #E8E6E7;border-radius:18px;overflow:hidden;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td height=\"5\" bgcolor=\"#C8102E\" style=\"height:5px;line-height:5px;font-size:0;background:#C8102E;background-image:linear-gradient(90deg,#C8102E 0%,#C8102E 60%,#DE3552 100%);\">&nbsp;</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"left\" valign=\"middle\" width=\"106\" style=\"width:106px;\"><img src=\"@{replace(replace(replace(replace(replace(string(outputs('Compose_Notify_Config')?['logoSrc']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}\" width=\"106\" height=\"48\" alt=\"NITDA &ndash; National Information Technology Development Agency\" style=\"display:block;width:106px;height:48px;border:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;font-weight:800;color:#05583B;\"></td><td class=\"hide-sm\" align=\"left\" valign=\"middle\" style=\"padding-left:14px;\"><div style=\"border-left:1px solid #E8E6E7;padding-left:14px;\"><p style=\"margin:0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:15px;line-height:19px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;white-space:nowrap;\">DGO Digital Ops</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;line-height:14px;letter-spacing:.13em;text-transform:uppercase;color:#5F5C5D;white-space:nowrap;\">Registry notifications</p></div></td><td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#780820;background:#FBE7EB;border:1px solid #F6C2CB;border-radius:999px;padding:4px 10px;white-space:nowrap;\">Action required</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:12px 32px 0 32px;\"><div style=\"height:1px;line-height:1px;font-size:0;background:#E8E6E7;margin-bottom:14px;\">&nbsp;</div><h1 class=\"h1\" style=\"margin:0 0 6px 0;font-family:Outfit,Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:22px;line-height:29px;font-weight:700;letter-spacing:-.01em;color:#1B1A1A;word-break:break-word;\">A portal support request could not be completed</h1><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:22px;color:#4A4849;\">@{concat('A request received ',concat(convertFromUtc(outputs('Compose_Request_Context')?['receivedAtUtc'],'W. Central Africa Standard Time','d MMM yyyy, HH:mm'),' WAT'),' failed. The caller got an HTTP 500 and the portal reported the service as unavailable.')}</p></td></tr><tr><td class=\"px\" style=\"padding:18px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\" style=\"background:#FBE7EB;border:1px solid #F6C2CB;border-radius:12px;\"><tr><td valign=\"middle\" style=\"padding:14px 20px;\"><p style=\"margin:0 0 2px 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#4A4849;\">Request ID</p><p class=\"ref sm\" style=\"margin:0;font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;font-size:16px;line-height:24px;font-weight:700;letter-spacing:1px;color:#1B1A1A;word-br"
+                      },
+                      "Compose_Server_Error_Alert_Html_Part2": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html_Part1": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000197"
+                        },
+                        "type": "Compose",
+                        "inputs": "eak:break-all;\">@{replace(replace(replace(replace(replace(string(outputs('Compose_Request_Context')?['requestId']),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td valign=\"middle\" align=\"right\" class=\"pill-cell\" style=\"padding:14px 20px 14px 0;\"><span style=\"display:inline-block;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;font-weight:700;color:#780820;background:#FFFFFF;border:1px solid #F6C2CB;border-radius:999px;padding:4px 11px;white-space:nowrap;\">HTTP 500</span></td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">Failed steps</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\">@{if(greater(length(join(body('Select_Failed_Flags'),'')),0),'<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">','<p style=\"margin:0;padding-top:8px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:13px;color:#5F5C5D;\">No failed step was reported at the top level (the run may have timed out). Open the run for details.</p>')}@{if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat(join(take(split(join(body('Select_Failed_Step_Rows'),''),'</tr>'),2),'</tr>'),'</tr>'),join(body('Select_Failed_Step_Rows'),''))}@{if(greater(length(join(body('Select_Failed_Flags'),'')),2),concat('<tr><td colspan=\"2\" style=\"padding:7px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:12px;color:#5F5C5D;\">+ ',string(sub(length(join(body('Select_Failed_Flags'),'')),2)),' more &mdash; open the run for the full list.</td></tr>'),'')}@{if(greater(length(join(body('Select_Failed_Flags'),'')),0),'</table>','')}</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-bottom:6px;border-bottom:1px solid #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5F5C5D;\">Request context</p></td></tr><tr><td class=\"px\" style=\"padding:2px 32px 0 32px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stack\"><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Email</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_Email')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 0 0 16px;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Topic</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_Topic')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td></tr><tr><td class=\"cell\" valign=\"top\" width=\"50%\" style=\"padding:6px 16px 0 0;border-bottom:1px solid #F0EFEF;\"><p style=\"margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:16px;color:#5F5C5D;text-transform:uppercase;letter-spacing:.6px;\">Source IP</p><p style=\"margin:2px 0 0 0;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#1B1A1A;word-break:break-word;\">@{replace(replace(replace(replace(replace(string(string(coalesce(actions('Compose_Support_SourceIp')?['outputs'],''))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</p></td><td class=\"cell hide-sm\" width=\"50%\" style=\"border-bottom:1px solid #F0EFEF;\">&nbsp;</td></tr></table></td></tr><tr><td class=\"px\" style=\"padding:20px 32px 0 32px;\">@{if(not(empty(replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'))),concat('<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"btn\" style=\"display:inline-table;\"><tr><td align=\"center\" bgcolor=\"#C8102E\" style=\"border-radius:6px;background:#C8102E;\"><a href=\"',replace(replace(replace(replace(replace(string(concat('https://make.powerautomate.com/environments/',string(workflow()?['tags']?['environmentName']),'/flows/',string(workflow()?['name']),'/runs/',string(workflow()?['run']?['name']))),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'\" target=\"_blank\" style=\"display:inline-block;padding:11px 22px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:6px;\">Open failed run in Power Automate &rarr;</a></td></tr></table>'),'')}</td></tr><tr><td class=\"px\" style=\"padding:14px 32px 0 32px;\"><p style=\"margin:0;padding-top:12px;border-top:1px dashed #E8E6E7;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:18px;word-break:break-all;\"><span style=\"color:#5F5C5D;\">Run</span> <span style=\"font-family:Cascadia"
+                      },
+                      "Compose_Server_Error_Alert_Html_Part3": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html_Part2": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000198"
+                        },
+                        "type": "Compose",
+                        "inputs": " Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{string(workflow()?['run']?['name'])}</span> &nbsp;&middot;&nbsp; <span style=\"color:#5F5C5D;\">Flow</span> <span style=\"font-family:Cascadia Mono,Consolas,SF Mono,Menlo,Courier New,monospace;color:#373435;\">@{replace(replace(replace(replace(replace(string(string(workflow()?['tags']?['flowDisplayName'])),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;')}</span></p></td></tr><tr><td style=\"height:18px;line-height:18px;font-size:0;\">&nbsp;</td></tr></table></td></tr><tr><td align=\"center\" class=\"px\" style=\"padding:14px 24px 0 24px;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:11px;line-height:17px;color:#5F5C5D;\">National Information Technology Development Agency &middot; &copy; @{formatDateTime(utcNow(),'yyyy')} &middot; Automated message</td></tr></table></td></tr></table></body></html>"
+                      },
+                      "Compose_Server_Error_Alert_Html": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html_Part3": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000199"
+                        },
+                        "type": "Compose",
+                        "inputs": "@{outputs('Compose_Server_Error_Alert_Html_Part1')}@{outputs('Compose_Server_Error_Alert_Html_Part2')}@{outputs('Compose_Server_Error_Alert_Html_Part3')}"
+                      },
+                      "Send_Server_Error_Alert_Email": {
+                        "runAfter": {
+                          "Compose_Server_Error_Alert_Html": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "a0000000-0000-4000-8000-000000000200"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@outputs('Compose_Notify_Config')?['opsTo']",
+                            "emailMessage/Subject": "@concat('Action required: support endpoint failure (request ',outputs('Compose_Request_Context')?['requestId'],')')",
+                            "emailMessage/Body": "@outputs('Compose_Server_Error_Alert_Html')",
+                            "emailMessage/Importance": "High"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "connectionName": "shared_office365-1",
+                            "operationId": "SendEmailV2"
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      }
+                    }
+                  }
+                },
+                "default": {
+                  "actions": {}
+                },
+                "expression": "@if(equals(outputs('Compose_Notify_Config')?['enabled'],true),coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none'),'disabled')",
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000201"
+                },
+                "type": "Switch"
+              }
+            },
+            "runAfter": {
+              "Scope_Finalize_Response_Support": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000202"
+            },
+            "type": "Scope"
+          },
+          "Scope_Flow_Data_Capture": {
+            "actions": {
+              "Compose_Redacted_Queries": {
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000203"
+                },
+                "type": "Compose",
+                "inputs": "@setProperty(setProperty(coalesce(triggerOutputs()?['queries'],json('{}')),'sig','***REDACTED***'),'code','***REDACTED***')"
+              },
+              "Compose_Redacted_Headers": {
+                "runAfter": {
+                  "Compose_Redacted_Queries": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000204"
+                },
+                "type": "Compose",
+                "inputs": "@setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(setProperty(coalesce(triggerOutputs()?['headers'],json('{}')),'Authorization','***REDACTED***'),'Cookie','***REDACTED***'),'x-api-key','***REDACTED***'),'Ocp-Apim-Subscription-Key','***REDACTED***'),'x-ms-igw-external-uri','***REDACTED***'),'x-ms-igw-raw-target','***REDACTED***'),'X-Upload-Ticket','***REDACTED***')"
+              },
+              "Compose_Flow_Run_Record": {
+                "runAfter": {
+                  "Compose_Redacted_Headers": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000205"
+                },
+                "type": "Compose",
+                "inputs": {
+                  "capture_metadata": {
+                    "telemetry_kind": "flow_run_record",
+                    "capture_version": "2.1.0",
+                    "standard_version": "1.0.0",
+                    "captured_at_utc": "@utcNow()",
+                    "capture_scope": "Scope_Flow_Data_Capture"
+                  },
+                  "workflow_identity": {
+                    "internal_name": "@workflow()?['name']",
+                    "full_resource_id": "@workflow()?['id']",
+                    "type": "@workflow()?['type']",
+                    "location": "@workflow()?['location']",
+                    "tags": "@coalesce(workflow()?['tags'],json('{}'))"
+                  },
+                  "run_identity": {
+                    "run_name": "@workflow()?['run']?['name']",
+                    "run_resource_id": "@workflow()?['run']?['id']",
+                    "request_id": "@outputs('Compose_Request_Context')?['requestId']"
+                  },
+                  "trigger_record": {
+                    "method": "@triggerOutputs()?['method']",
+                    "headers_redacted": "@coalesce(outputs('Compose_Redacted_Headers'),json('{}'))",
+                    "queries_redacted": "@coalesce(outputs('Compose_Redacted_Queries'),json('{}'))"
+                  },
+                  "request": {
+                    "body_redacted": {
+                      "topic": "@string(coalesce(actions('Compose_Support_Topic')?['outputs'],''))",
+                      "hasAboutReference": "@not(empty(string(coalesce(actions('Compose_Support_About_Ref')?['outputs'],''))))",
+                      "portalRefSent": "@not(empty(string(coalesce(actions('Compose_Support_Client_Ref')?['outputs'],''))))",
+                      "caseState": "@string(coalesce(actions('Compose_Support_Case_State')?['outputs'],''))"
+                    }
+                  },
+                  "design_definition": {
+                    "contract_version": "2026-08-21.1",
+                    "endpoint": "Support"
+                  },
+                  "response_record": {
+                    "status_code_sent": "@coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)",
+                    "error_count": "@length(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))"
+                  },
+                  "outcome": {
+                    "flow_outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')"
+                  },
+                  "timing": {
+                    "received_at_utc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                    "completed_at_utc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                    "duration_ms": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)"
+                  },
+                  "notifications": {
+                    "event": "@coalesce(actions('Compose_Outcome')?['outputs']?['event'],'none')",
+                    "scope_status": "@coalesce(actions('Scope_Notifications')?['status'],'Unknown')"
+                  }
+                }
+              },
+              "Create_Flow_Telemetry": {
+                "runAfter": {
+                  "Compose_Flow_Run_Record": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "a0000000-0000-4000-8000-000000000206"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                    "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+                    "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                    "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+                    "item/RunId": "@workflow()?['run']?['name']",
+                    "item/StartedAtUtc": "@outputs('Compose_Request_Context')?['receivedAtUtc']",
+                    "item/CompletedAtUtc": "@string(coalesce(actions('Compose_Completed_At')?['outputs'],utcNow()))",
+                    "item/Outcome": "@if(less(int(coalesce(actions('Compose_Outcome')?['outputs']?['status'],500)),400),'Succeeded','Failed')",
+                    "item/DurationMs": "@coalesce(actions('Compose_Duration_Ms')?['outputs'],0)",
+                    "item/ErrorMessage": "@string(coalesce(actions('Compose_Outcome')?['outputs']?['errors'],json('[]')))",
+                    "item/RunRecordJson": "@string(outputs('Compose_Flow_Run_Record'))"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "PostItem"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            },
+            "runAfter": {
+              "Scope_Notifications": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "a0000000-0000-4000-8000-000000000207"
+            },
+            "type": "Scope"
+          }
+        },
+        "runAfter": {
+          "Set_variable_varAction": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000208"
+        },
+        "type": "Scope"
+      }
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "specVersion": "1.0",
+  "supersededBy": "docs/folio-Master-Flows-and-Endpoints/deployment/sharepoint/portal-field-spec.json (specVersion 2.0.0)",
+  "supersededReason": "The seven listTitle values below exist in no NITDA tenant site. The estate holds twelve lists named \"Portal <something>\" across /sites/NEDMS and /sites/Global_Digital_Documents_Centre. Anything provisioning from this file addresses names that never resolve, and on the miss its next action is to create a new list rather than add a column to a real one. Retained because the six portal flows' field references were originally written against it; do not provision from it. See docs/folio-Master-Flows-and-Endpoints/deployment/sharepoint/README.md.",
+  "purpose": "Provisioning specification for the seven NITDA_Portal_* lists the six document-portal flows depend on. Field names, types and list purpose are traced field-for-field to docs/folio-Master-Flows-and-Endpoints/packages/README.md §\"Provision the SharePoint estate first\" and to the flow definitions themselves in codeview/*.definition.json — this file has no field that isn't read or written by one of the six flows.",
+  "targetSite": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+  "note": "Title is every SharePoint list's own native column and is never listed as a field to add below — only what each list's Title HOLDS is documented, per list. Indexed=Yes marks fields the flows filter on with $filter, so a $filter query keeps working past the 5,000-item list view threshold rather than only being 'faster' below it — that is a correctness requirement for RateLimits and VerificationChallenges in particular, both high-write-frequency lists, not a later optimisation.",
+  "lists": [
+    {
+      "listOrder": 1,
+      "listTitle": "NITDA_Portal_Submissions",
+      "description": "One row per registered piece of correspondence. Written once by SUBMISSION (create, then patch to set the minted reference); read by STATUS.",
+      "titleHolds": "PENDING until minted, then = ReferenceID",
+      "fields": [
+        { "internalName": "ReferenceID", "displayName": "Reference ID", "fieldType": "Text", "indexed": true, "note": "NITDA-<year>-<list item ID> — see README §Reference minting" },
+        { "internalName": "Subject", "displayName": "Subject", "fieldType": "Text" },
+        { "internalName": "Category", "displayName": "Category", "fieldType": "Text", "note": "One of the 7 public document kinds — config/correspondence-categories.config.js" },
+        { "internalName": "CorrespondenceType", "displayName": "Correspondence Type", "fieldType": "Text" },
+        { "internalName": "Channel", "displayName": "Channel", "fieldType": "Text", "note": "Always 'Portal'" },
+        { "internalName": "SenderName", "displayName": "Sender Name", "fieldType": "Text" },
+        { "internalName": "SenderEmail", "displayName": "Sender Email", "fieldType": "Text", "note": "What STATUS matches the resolved address against" },
+        { "internalName": "SenderPhone", "displayName": "Sender Phone", "fieldType": "Text" },
+        { "internalName": "SenderOrganisation", "displayName": "Sender Organisation", "fieldType": "Text" },
+        { "internalName": "SenderOrganisationType", "displayName": "Sender Organisation Type", "fieldType": "Text" },
+        { "internalName": "EventDate", "displayName": "Event Date", "fieldType": "Text" },
+        { "internalName": "Description", "displayName": "Description", "fieldType": "Note", "numLines": 6, "richText": false },
+        { "internalName": "AttachmentCount", "displayName": "Attachment Count", "fieldType": "Number" },
+        { "internalName": "SubmittedAtUtc", "displayName": "Submitted At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "UpdatedAtUtc", "displayName": "Updated At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "AcknowledgedAtUtc", "displayName": "Acknowledged At (UTC)", "fieldType": "DateTime", "note": "Never written by these six flows — populated by internal triage; STATUS reports it once filled in" },
+        { "internalName": "ClosedAtUtc", "displayName": "Closed At (UTC)", "fieldType": "DateTime", "note": "Same as AcknowledgedAtUtc — not written here" },
+        { "internalName": "Status", "displayName": "Status", "fieldType": "Text", "note": "config/status-vocabulary.config.js key" },
+        { "internalName": "StatusLabel", "displayName": "Status Label", "fieldType": "Text" },
+        { "internalName": "ActionRequired", "displayName": "Action Required", "fieldType": "Boolean" },
+        { "internalName": "VerifiedSubmission", "displayName": "Verified Submission", "fieldType": "Boolean" },
+        { "internalName": "SourceIp", "displayName": "Source IP", "fieldType": "Text" },
+        { "internalName": "LocalId", "displayName": "Local ID", "fieldType": "Text", "note": "Client-generated provisional id, correlation only" }
+      ]
+    },
+    {
+      "listOrder": 2,
+      "listTitle": "NITDA_Portal_SubmissionEvents",
+      "description": "The public timeline STATUS reads back. SUBMISSION writes exactly one 'received' row; an internal triage workflow would append the rest — out of scope for these six flows.",
+      "titleHolds": "= SubmissionRef (the reference)",
+      "fields": [
+        { "internalName": "SubmissionRef", "displayName": "Submission Reference", "fieldType": "Text", "indexed": true, "note": "Join column to NITDA_Portal_Submissions.Title" },
+        { "internalName": "AtUtc", "displayName": "At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "Status", "displayName": "Status", "fieldType": "Text" },
+        { "internalName": "Label", "displayName": "Label", "fieldType": "Text" },
+        { "internalName": "Actor", "displayName": "Actor", "fieldType": "Text" },
+        { "internalName": "Note", "displayName": "Note", "fieldType": "Note", "numLines": 4, "richText": false }
+      ]
+    },
+    {
+      "listOrder": 3,
+      "listTitle": "NITDA_Portal_Attachments",
+      "description": "One row per upload ticket, minted by SUBMISSION, redeemed exactly once by UPLOAD.",
+      "titleHolds": "The opaque ticket — a fresh guid(), unrelated to file content or name",
+      "fields": [
+        { "internalName": "SubmissionRef", "displayName": "Submission Reference", "fieldType": "Text", "indexed": true },
+        { "internalName": "DeclaredName", "displayName": "Declared Name", "fieldType": "Text", "note": "Exactly what the browser sent" },
+        { "internalName": "StoredName", "displayName": "Stored Name", "fieldType": "Text", "note": "Normalised to the Universal Filename Policy" },
+        { "internalName": "DeclaredSizeBytes", "displayName": "Declared Size (bytes)", "fieldType": "Number" },
+        { "internalName": "DeclaredSha256", "displayName": "Declared SHA-256", "fieldType": "Text", "note": "64 hex chars, or empty" },
+        { "internalName": "Redeemed", "displayName": "Redeemed", "fieldType": "Boolean" },
+        { "internalName": "RedeemedAtUtc", "displayName": "Redeemed At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "ExpiresAtUtc", "displayName": "Expires At (UTC)", "fieldType": "DateTime", "note": "+2 hours from mint" },
+        { "internalName": "CreatedAtUtc", "displayName": "Created At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "AttachmentLink", "displayName": "Attachment Link", "fieldType": "Text", "note": "Populated only on a successful store" },
+        { "internalName": "Status", "displayName": "Status", "fieldType": "Text", "note": "Pending / Stored / Expired" }
+      ]
+    },
+    {
+      "listOrder": 4,
+      "listTitle": "NITDA_Portal_SupportCases",
+      "description": "Helpdesk cases, written by SUPPORT only. Never touches the registry — a case is not correspondence.",
+      "titleHolds": "NITDA-S-XXXXXX (6 uppercase hex chars)",
+      "fields": [
+        { "internalName": "Name", "displayName": "Name", "fieldType": "Text" },
+        { "internalName": "Email", "displayName": "Email", "fieldType": "Text" },
+        { "internalName": "Topic", "displayName": "Topic", "fieldType": "Text" },
+        { "internalName": "AboutReference", "displayName": "About Reference", "fieldType": "Text" },
+        { "internalName": "Message", "displayName": "Message", "fieldType": "Note", "numLines": 6, "richText": false },
+        { "internalName": "Status", "displayName": "Status", "fieldType": "Text", "note": "'open'" },
+        { "internalName": "SubmittedAtUtc", "displayName": "Submitted At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "SourceIp", "displayName": "Source IP", "fieldType": "Text" }
+      ]
+    },
+    {
+      "listOrder": 5,
+      "listTitle": "NITDA_Portal_VerificationChallenges",
+      "description": "One row per mailed OTP code. Written by VERIFY, consumed by VERIFY_CONFIRM. The code itself is never stored — only its salted hash.",
+      "titleHolds": "= Email (lower-cased)",
+      "fields": [
+        { "internalName": "Email", "displayName": "Email", "fieldType": "Text", "indexed": true },
+        { "internalName": "CodeHash", "displayName": "Code Hash", "fieldType": "Text", "note": "Hex SHA-256 of pepper|email|code" },
+        { "internalName": "ExpiresAtUtc", "displayName": "Expires At (UTC)", "fieldType": "DateTime", "note": "+5 minutes" },
+        { "internalName": "CreatedAtUtc", "displayName": "Created At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "Attempts", "displayName": "Attempts", "fieldType": "Number", "note": "Locks at 5" },
+        { "internalName": "Consumed", "displayName": "Consumed", "fieldType": "Boolean" },
+        { "internalName": "SourceIp", "displayName": "Source IP", "fieldType": "Text" }
+      ]
+    },
+    {
+      "listOrder": 6,
+      "listTitle": "NITDA_Portal_VerificationProofs",
+      "description": "The single-use proof VERIFY_CONFIRM mints and SUBMISSION / STATUS redeem.",
+      "titleHolds": "The opaque proof token — two concatenated guid()s, hyphens stripped",
+      "fields": [
+        { "internalName": "Email", "displayName": "Email", "fieldType": "Text" },
+        { "internalName": "Purpose", "displayName": "Purpose", "fieldType": "Text", "note": "'portal-verification'" },
+        { "internalName": "ExpiresAtUtc", "displayName": "Expires At (UTC)", "fieldType": "DateTime", "note": "+15 minutes" },
+        { "internalName": "CreatedAtUtc", "displayName": "Created At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "Consumed", "displayName": "Consumed", "fieldType": "Boolean" }
+      ]
+    },
+    {
+      "listOrder": 7,
+      "listTitle": "NITDA_Portal_RateLimits",
+      "description": "A rolling fixed-window counter, one row per (flow, source) bucket, shared by all six flows.",
+      "titleHolds": "The bucket key, e.g. SUBMISSION_IP:203.0.113.5",
+      "fields": [
+        { "internalName": "WindowStartUtc", "displayName": "Window Start (UTC)", "fieldType": "DateTime" },
+        { "internalName": "UpdatedAtUtc", "displayName": "Updated At (UTC)", "fieldType": "DateTime" },
+        { "internalName": "RequestCount", "displayName": "Request Count", "fieldType": "Number" }
+      ]
+    }
+  ]
+}

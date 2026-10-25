@@ -1,0 +1,767 @@
+{
+  "recordVersion": "1.0.0",
+  "what": "A live read of this tenant’s flow estate through the Power Automate Flow Management API, taken 2026-09-18, distilled to the trigger posture and the workflow-id join. It is the only reading in this repository taken FROM the tenant rather than from an export somebody supplied, and it is therefore the only one that can say what is deployed as opposed to what was built.",
+  "capturedUtc": "2026-09-18T16:58:02.3204224Z",
+  "source": {
+    "file": "flow_extraction_restricted__08584118562502764743666033560cU14.json",
+    "sha256": "fa6dcccefec8faad7c270b1633c7c39af9cfd10243b1d9621016a5550284c6b1",
+    "bytes": 2542738,
+    "recordKind": "complete_power_automate_flow_export_inventory",
+    "schemaVersion": "7.0.0",
+    "redistributionStatus": "shareable_credentials_removed",
+    "producedBy": "a Power Automate flow run inside the tenant (run 08584118562502764743666033560cU14), calling the shared_flowmanagement connector’s GetFlow operation per flow",
+    "retrievalContract": {
+      "full_resource_body": true,
+      "full_definition": true,
+      "connection_references": true,
+      "source_registry_record": true,
+      "failure_action_results": true
+    },
+    "supplied": "by the operator, 2026-09-22, as an uploaded evidence bundle. The bundle is not committed: it is 2.4 MB of full definitions, most of which this repository already holds. This file is the distillation, and the sha256 above is what it was distilled from.",
+    "credentialScan": "the source carries no trigger signature, no JWT and no platform URL — 0 matches for [?&]sig=, 0 for a JWT-shaped token, 0 for a powerplatform or logic.azure host. Nothing was redacted out of the fields below because there was nothing to redact."
+  },
+  "howToReadTheHeader": "The source’s own header reads \"status: failed / reason: WRITE_FAILED\". That is the capture flow failing to WRITE its output to its intended destination, not a failure of the retrieval: found_count is 20 of 26 requested, every one of the 20 carries a full raw_flow_resource, and the 6 misses are recorded individually with the API error that produced them. The header was read as \"the data is bad\" once in this work and the whole write surface was left unexamined for it.",
+  "coverage": {
+    "requested": 26,
+    "found": 20,
+    "notFound": 6,
+    "environmentName": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+  },
+  "triggerAuthenticationTypeCounts": {
+    "All": 20
+  },
+  "joinIsOneToManyForSomeWorkflows": {
+    "whatThisIs": "Six of the twenty registry records carry TWO candidate flows for one workflow id, and the capture did not choose between them. For those six, \"the flow behind this endpoint\" is not one thing, and any reading that picks one silently is asserting something this evidence does not say.",
+    "registrySequencesWithTwoCandidates": [
+      3,
+      6,
+      12,
+      16,
+      17,
+      19
+    ]
+  },
+  "whatThisEstablishes": [
+    "Twenty of twenty flows read live in this tenant on 2026-09-18 carried triggerAuthenticationType = All. Not one carried Tenant. See laterReadings: one of them, IP_SCAN_INTAKE, was restored to Tenant on 2026-09-24.",
+    "All twenty are in state Started, so none of this is a description of something switched off.",
+    "The 32-hex applicationWorkflowId ↔ dashed powerAutomateFlowId join, for 20 of the 25 wired contract keys. That join is what GOV-06 records as missing: export packages carry full_resource_id: null, so nothing in a package resolves to the workflow id in a trigger URL. This reading resolves it from the tenant side instead."
+  ],
+  "whatItExplicitlyDoesNotEstablish": [
+    "Which of two candidate flows serves an endpoint, where the registry offers two. See joinIsOneToManyForSomeWorkflows.",
+    "That the estate is 20 flows. It is the 20 that this capture asked for and found; 6 more were requested and not returned, and the repository wires 25 contract keys behind 23 physical flows.",
+    "That no flow anywhere carries Tenant. It establishes that none of these twenty does.",
+    "Anything about the endpoint URLs. The registry records below carry endpointStatus TENANT_CONFIRMATION_REQUIRED, which is the capture declining to assert that the URL it mapped is the one in use. That reservation is about the URL mapping; the definition read beside it is a direct API read and carries no such reservation."
+  ],
+  "flows": [
+    {
+      "flowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "displayName": "CG_Portal_Status_Check_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-06T04:50:01.0978524Z",
+      "lastModifiedTimeUtc": "2026-09-06T04:50:14.2465635Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "contractKeys": [
+        "STATUS"
+      ]
+    },
+    {
+      "flowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "displayName": "CG_Portal_Support_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-06T04:26:45.1159964Z",
+      "lastModifiedTimeUtc": "2026-09-14T09:01:54.8886033Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": true,
+      "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+      "contractKeys": [
+        "SUPPORT"
+      ]
+    },
+    {
+      "flowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "displayName": "CG_Portal_Verification_Confirmation_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-06T04:28:27.496127Z",
+      "lastModifiedTimeUtc": "2026-09-06T04:30:53.5184753Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": true,
+      "applicationWorkflowId": "b270894ff410499ebbc090e32ffe899b",
+      "contractKeys": [
+        "VERIFY_CONFIRM"
+      ]
+    },
+    {
+      "flowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "displayName": "CG_Portal_Verification_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-06T04:25:31.0148857Z",
+      "lastModifiedTimeUtc": "2026-09-16T22:26:49.5632545Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": true,
+      "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "contractKeys": [
+        "VERIFY"
+      ]
+    },
+    {
+      "flowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "displayName": "CG_Portal_Writeback_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-06T04:29:12.2205247Z",
+      "lastModifiedTimeUtc": "2026-09-06T04:30:51.5515637Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": true,
+      "applicationWorkflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+      "contractKeys": [
+        "WRITEBACK"
+      ]
+    },
+    {
+      "flowId": "badb65d8-f472-407e-8975-c29d77b855d7",
+      "displayName": "CG_Status_Check_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-08-15T21:01:27.8921585Z",
+      "lastModifiedTimeUtc": "2026-08-31T18:07:32.946245Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "contractKeys": [
+        "STATUS"
+      ]
+    },
+    {
+      "flowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "displayName": "CG_Submission_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2025-12-23T01:14:15Z",
+      "lastModifiedTimeUtc": "2026-09-01T02:58:13.1240984Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": true,
+      "applicationWorkflowId": "1041ed37ce924e3c886d891f23e8142c",
+      "contractKeys": [
+        "SUBMISSION"
+      ]
+    },
+    {
+      "flowId": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+      "displayName": "CG_Support_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-08-15T04:10:00.9481808Z",
+      "lastModifiedTimeUtc": "2026-09-01T03:06:48.9442144Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": true,
+      "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+      "contractKeys": [
+        "SUPPORT"
+      ]
+    },
+    {
+      "flowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "displayName": "CG_Upload_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-08-24T18:01:36.5733226Z",
+      "lastModifiedTimeUtc": "2026-09-04T03:22:43.6356745Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "PUT",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "62fe121e5a95416bb91275e43dd0e37e",
+      "contractKeys": [
+        "UPLOAD"
+      ]
+    },
+    {
+      "flowId": "0d1e8df5-30b3-4069-8903-665b87c197eb",
+      "displayName": "IP_Bulk_Assign_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-06T04:32:03.2444Z",
+      "lastModifiedTimeUtc": "2026-09-06T04:32:41.4449949Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "(any verb — none declared)",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "8f6a40a682bb4e79acd2ac5d42f15705",
+      "contractKeys": [
+        "BULK_ASSIGNMENT_DIRECT"
+      ]
+    },
+    {
+      "flowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "displayName": "IP_FETCH_ALL_BOOTSTRAP",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-03T03:46:45.6929535Z",
+      "lastModifiedTimeUtc": "2026-09-16T03:39:01.5127356Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "contractKeys": [
+        "FETCH_ALL"
+      ]
+    },
+    {
+      "flowId": "913bd078-5411-404f-85ac-507c10fe1a09",
+      "displayName": "IP_OTP_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-08-30T12:21:34.0112499Z",
+      "lastModifiedTimeUtc": "2026-09-04T06:06:11.0636907Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "contractKeys": [
+        "OTP_GENERATE",
+        "OTP_VERIFY"
+      ]
+    },
+    {
+      "flowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "displayName": "IP_OTP_VERIFY",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-04T02:03:17.90011Z",
+      "lastModifiedTimeUtc": "2026-09-05T06:52:40.8261698Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "contractKeys": [
+        "OTP_GENERATE",
+        "OTP_VERIFY"
+      ]
+    },
+    {
+      "flowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "displayName": "IP_Reference_Data_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-08-30T15:34:04.6507602Z",
+      "lastModifiedTimeUtc": "2026-09-04T06:13:24.2672893Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "885fad5ec91f460490e8c772d5d10cb8",
+      "contractKeys": [
+        "REFERENCE_DATA"
+      ]
+    },
+    {
+      "flowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "displayName": "IP_Retrieve_Email_Attachment_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-06T04:52:53.8530022Z",
+      "lastModifiedTimeUtc": "2026-09-18T16:51:31.573012Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+      "contractKeys": [
+        "FETCH_EMAIL_ATTACHMENTS"
+      ]
+    },
+    {
+      "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "displayName": "IP_SCAN_INTAKE",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-04T02:05:22.6465995Z",
+      "lastModifiedTimeUtc": "2026-09-13T04:56:40.9168019Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "PUT",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "88401ce1f44148539c0da53c9491f8e6",
+      "contractKeys": [
+        "SCAN_INTAKE"
+      ]
+    },
+    {
+      "flowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "displayName": "IP_SEND_EMAIL",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-02T05:34:59.3541104Z",
+      "lastModifiedTimeUtc": "2026-09-02T05:35:58.5027998Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "(any verb — none declared)",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "378b491ec39a4beca886ddec250e6961",
+      "contractKeys": [
+        "EMAIL"
+      ]
+    },
+    {
+      "flowId": "05825db0-c806-4974-807c-c062f386cc41",
+      "displayName": "IP_Single_Assignment_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-08-30T09:46:05.8259178Z",
+      "lastModifiedTimeUtc": "2026-09-04T06:06:13.9466906Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "contractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ]
+    },
+    {
+      "flowId": "08da1783-927f-4662-a429-45e1249a989f",
+      "displayName": "IP_Subsidiary_Actions_Endpoint",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-05T18:49:43.5929434Z",
+      "lastModifiedTimeUtc": "2026-09-05T19:36:57.0100116Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": false,
+      "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "contractKeys": [
+        "SUBSIDIARY_ACTIONS",
+        "DYNAMIC_ACTIONS"
+      ]
+    },
+    {
+      "flowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "displayName": "Single_Task_Assignment",
+      "state": "Started",
+      "createdTimeUtc": "2026-09-03T23:39:00.7651847Z",
+      "lastModifiedTimeUtc": "2026-09-03T23:39:18.202998Z",
+      "triggerName": "manual",
+      "triggerAuthenticationType": "All",
+      "method": "POST",
+      "requestSchemaDeclared": true,
+      "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "contractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ]
+    }
+  ],
+  "notFound": [
+    {
+      "requestedFlowIdentifier": "4ea141a9-85ab-4b1b-8234-d384507085b5",
+      "status": "NotFoundOrUnauthorized",
+      "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "contractKeys": [
+        "AI_EMAIL_ANALYSIS",
+        "AI_DOC_ANALYSIS",
+        "AI_CHAT"
+      ],
+      "canonicalFlowName": "AI_Document_Processing",
+      "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED"
+    },
+    {
+      "requestedFlowIdentifier": "4ea141a9-85ab-4b1b-8234-d384507085b5",
+      "status": "NotFoundOrUnauthorized",
+      "applicationWorkflowId": "a705e453f922457c95ca19f32731e4d7",
+      "contractKeys": [
+        "BULK_ASSIGNMENT"
+      ],
+      "canonicalFlowName": "BULK OPS DATA RETRIEVAL HTTP",
+      "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED"
+    },
+    {
+      "requestedFlowIdentifier": "4ea141a9-85ab-4b1b-8234-d384507085b5",
+      "status": "NotFoundOrUnauthorized",
+      "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "contractKeys": [
+        "VERIFY"
+      ],
+      "canonicalFlowName": "CG_Portal_Verification_Endpoint",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "requestedFlowIdentifier": "4ea141a9-85ab-4b1b-8234-d384507085b5",
+      "status": "NotFoundOrUnauthorized",
+      "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "contractKeys": [
+        "FETCH_ALL"
+      ],
+      "canonicalFlowName": "FETCH_ALL",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "requestedFlowIdentifier": "4ea141a9-85ab-4b1b-8234-d384507085b5",
+      "status": "NotFoundOrUnauthorized",
+      "applicationWorkflowId": "35656042412340f2840ab1fb6fd22296",
+      "contractKeys": [
+        "EMAIL_RELATED_TASK"
+      ],
+      "canonicalFlowName": "IP_Create_Email_Assignment_Endpoint",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "requestedFlowIdentifier": "4ea141a9-85ab-4b1b-8234-d384507085b5",
+      "status": "NotFoundOrUnauthorized",
+      "applicationWorkflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "contractKeys": [
+        "FETCH_ACTIVITIES",
+        "GET_DOCS"
+      ],
+      "canonicalFlowName": "IP_Get_Docs_Endpoint",
+      "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED"
+    }
+  ],
+  "registryJoin": [
+    {
+      "registrySequence": 1,
+      "applicationWorkflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "powerAutomateFlowId": null,
+      "contractKeys": [
+        "FETCH_ACTIVITIES",
+        "GET_DOCS"
+      ],
+      "canonicalFlowName": "IP_Get_Docs_Endpoint",
+      "exportedFlowName": null,
+      "mappingType": "NOT_EVIDENCED",
+      "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED"
+    },
+    {
+      "registrySequence": 2,
+      "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "powerAutomateFlowId": "08da1783-927f-4662-a429-45e1249a989f",
+      "contractKeys": [
+        "SUBSIDIARY_ACTIONS",
+        "DYNAMIC_ACTIONS"
+      ],
+      "canonicalFlowName": "IP_Dynamic_Global_Actions_Endpoint",
+      "exportedFlowName": "IP_Subsidiary_Actions_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 3,
+      "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "powerAutomateFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "contractKeys": [
+        "FETCH_ALL"
+      ],
+      "canonicalFlowName": "FETCH_ALL",
+      "exportedFlowName": "IP_FETCH_ALL_ENDPOINT",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 3,
+      "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "powerAutomateFlowId": "be1f89bd-d7ea-4a15-87c9-2ce6fd4d0eaa",
+      "contractKeys": [
+        "FETCH_ALL"
+      ],
+      "canonicalFlowName": "FETCH_ALL",
+      "exportedFlowName": "IP_Fetch_All_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 4,
+      "applicationWorkflowId": "885fad5ec91f460490e8c772d5d10cb8",
+      "powerAutomateFlowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+      "contractKeys": [
+        "REFERENCE_DATA"
+      ],
+      "canonicalFlowName": "IP_Reference_Data_Endpoint",
+      "exportedFlowName": "IP_Reference_Data_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 5,
+      "applicationWorkflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+      "powerAutomateFlowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+      "contractKeys": [
+        "FETCH_EMAIL_ATTACHMENTS"
+      ],
+      "canonicalFlowName": "IP_Retrieve_Email_Attachment_Endpoint",
+      "exportedFlowName": "IP_Retrieve_Email_Attachment_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 6,
+      "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "powerAutomateFlowId": "05825db0-c806-4974-807c-c062f386cc41",
+      "contractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ],
+      "canonicalFlowName": "Single_Task_Assignment",
+      "exportedFlowName": "IP_Single_Assignment_Endpoint",
+      "mappingType": "CONSOLIDATED_ALIGNMENT",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 6,
+      "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "powerAutomateFlowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+      "contractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ],
+      "canonicalFlowName": "Single_Task_Assignment",
+      "exportedFlowName": "Single_Task_Assignment",
+      "mappingType": "CONSOLIDATED_ALIGNMENT",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 7,
+      "applicationWorkflowId": "a705e453f922457c95ca19f32731e4d7",
+      "powerAutomateFlowId": null,
+      "contractKeys": [
+        "BULK_ASSIGNMENT"
+      ],
+      "canonicalFlowName": "BULK OPS DATA RETRIEVAL HTTP",
+      "exportedFlowName": null,
+      "mappingType": "NOT_EVIDENCED",
+      "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED"
+    },
+    {
+      "registrySequence": 8,
+      "applicationWorkflowId": "8f6a40a682bb4e79acd2ac5d42f15705",
+      "powerAutomateFlowId": "0d1e8df5-30b3-4069-8903-665b87c197eb",
+      "contractKeys": [
+        "BULK_ASSIGNMENT_DIRECT"
+      ],
+      "canonicalFlowName": "IP_Bulk_Assign_Endpoint",
+      "exportedFlowName": "IP_Bulk_Assign_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 9,
+      "applicationWorkflowId": "378b491ec39a4beca886ddec250e6961",
+      "powerAutomateFlowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+      "contractKeys": [
+        "EMAIL"
+      ],
+      "canonicalFlowName": "IP_SEND_EMAIL",
+      "exportedFlowName": "IP_SEND_EMAIL",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 10,
+      "applicationWorkflowId": "35656042412340f2840ab1fb6fd22296",
+      "powerAutomateFlowId": "2fbb5485-6244-46eb-8a38-48e443a1d9fb",
+      "contractKeys": [
+        "EMAIL_RELATED_TASK"
+      ],
+      "canonicalFlowName": "IP_Create_Email_Assignment_Endpoint",
+      "exportedFlowName": "IP_Create_Email_Assignment_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 11,
+      "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "powerAutomateFlowId": null,
+      "contractKeys": [
+        "AI_EMAIL_ANALYSIS",
+        "AI_DOC_ANALYSIS",
+        "AI_CHAT"
+      ],
+      "canonicalFlowName": "AI_Document_Processing",
+      "exportedFlowName": null,
+      "mappingType": "NOT_EVIDENCED",
+      "endpointStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED"
+    },
+    {
+      "registrySequence": 12,
+      "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "powerAutomateFlowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+      "contractKeys": [
+        "OTP_GENERATE",
+        "OTP_VERIFY"
+      ],
+      "canonicalFlowName": "IP_OTP_VERIFY",
+      "exportedFlowName": "IP_OTP_VERIFY",
+      "mappingType": "CONSOLIDATED_ALIGNMENT",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 12,
+      "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "powerAutomateFlowId": "913bd078-5411-404f-85ac-507c10fe1a09",
+      "contractKeys": [
+        "OTP_GENERATE",
+        "OTP_VERIFY"
+      ],
+      "canonicalFlowName": "IP_OTP_VERIFY",
+      "exportedFlowName": "IP_OTP_Endpoint",
+      "mappingType": "CONSOLIDATED_ALIGNMENT",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 13,
+      "applicationWorkflowId": "88401ce1f44148539c0da53c9491f8e6",
+      "powerAutomateFlowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "contractKeys": [
+        "SCAN_INTAKE"
+      ],
+      "canonicalFlowName": "IP_SCAN_INTAKE",
+      "exportedFlowName": "IP_SCAN_INTAKE",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 14,
+      "applicationWorkflowId": "1041ed37ce924e3c886d891f23e8142c",
+      "powerAutomateFlowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "contractKeys": [
+        "SUBMISSION"
+      ],
+      "canonicalFlowName": "CG_Submission_Endpoint",
+      "exportedFlowName": "CG_Submission_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 15,
+      "applicationWorkflowId": "62fe121e5a95416bb91275e43dd0e37e",
+      "powerAutomateFlowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "contractKeys": [
+        "UPLOAD"
+      ],
+      "canonicalFlowName": "CG_Upload_Endpoint",
+      "exportedFlowName": "CG_Upload_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 16,
+      "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+      "powerAutomateFlowId": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+      "contractKeys": [
+        "SUPPORT"
+      ],
+      "canonicalFlowName": "CG_Portal_Support_Endpoint",
+      "exportedFlowName": "CG_Support_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 16,
+      "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+      "powerAutomateFlowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+      "contractKeys": [
+        "SUPPORT"
+      ],
+      "canonicalFlowName": "CG_Portal_Support_Endpoint",
+      "exportedFlowName": "CG_Portal_Support_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 17,
+      "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "powerAutomateFlowId": "86897b2f-9770-4efa-8486-2642f24bb947",
+      "contractKeys": [
+        "VERIFY"
+      ],
+      "canonicalFlowName": "CG_Portal_Verification_Endpoint",
+      "exportedFlowName": "CG_Verification_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 17,
+      "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "powerAutomateFlowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+      "contractKeys": [
+        "VERIFY"
+      ],
+      "canonicalFlowName": "CG_Portal_Verification_Endpoint",
+      "exportedFlowName": "CG_Portal_Verification_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 18,
+      "applicationWorkflowId": "b270894ff410499ebbc090e32ffe899b",
+      "powerAutomateFlowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+      "contractKeys": [
+        "VERIFY_CONFIRM"
+      ],
+      "canonicalFlowName": "CG_Portal_Verification_Confirmation_Endpoint",
+      "exportedFlowName": "CG_Portal_Verification_Confirmation_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 19,
+      "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "powerAutomateFlowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+      "contractKeys": [
+        "STATUS"
+      ],
+      "canonicalFlowName": "CG_Portal_Status_Check_Endpoint",
+      "exportedFlowName": "CG_Portal_Status_Check_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 19,
+      "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "powerAutomateFlowId": "badb65d8-f472-407e-8975-c29d77b855d7",
+      "contractKeys": [
+        "STATUS"
+      ],
+      "canonicalFlowName": "CG_Portal_Status_Check_Endpoint",
+      "exportedFlowName": "CG_Status_Check_Endpoint",
+      "mappingType": "ALIAS_ALIGNED",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    },
+    {
+      "registrySequence": 20,
+      "applicationWorkflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+      "powerAutomateFlowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+      "contractKeys": [
+        "WRITEBACK"
+      ],
+      "canonicalFlowName": "CG_Portal_Writeback_Endpoint",
+      "exportedFlowName": "CG_Portal_Writeback_Endpoint",
+      "mappingType": "EXACT_MATCH",
+      "endpointStatus": "TENANT_CONFIRMATION_REQUIRED"
+    }
+  ],
+  "laterReadings": {
+    "whatThisIs": "Readings of individual flows taken AFTER this capture, recorded here so the file stays usable as the tenant's posture without the 2026-09-18 capture being edited. The flows block above is what the API returned on 2026-09-18 and is never rewritten: a dated capture that gets corrected in place stops being evidence. Anything reading this file for CURRENT posture must apply these over it.",
+    "readings": [
+      {
+        "flowId": "5504d7f9-cc96-470c-be79-217582faf415",
+        "displayName": "IP_SCAN_INTAKE",
+        "readUtc": "2026-09-24",
+        "triggerAuthenticationType": "Tenant",
+        "method": "PUT",
+        "state": "Started",
+        "lastModifiedTimeUtc": "2026-09-24T04:55:02.0029691Z",
+        "supersedes": "the All recorded for this flow on 2026-09-18",
+        "why": "ITEM-59: the trigger was restored to Tenant in the tenant on 2026-09-24.",
+        "source": {
+          "file": "IP_SCAN_INTAKE__08584113810917025456201636684CU28__complete_flow_export.json",
+          "sha256": "f5fbb7f995e4a956e6b95ce599fe0c9a51ce844408c5dc03595d7c51e9521921",
+          "bytes": 90775,
+          "kind": "a complete flow export of that flow id, supplied by the operator"
+        }
+      }
+    ]
+  }
+}

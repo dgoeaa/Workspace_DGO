@@ -1,0 +1,1157 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedBy": "scripts/build-flow-identity-crosswalk.mjs",
+  "purpose": "Map each contract key to the tenant flow ids that serve it, alongside the application workflow id the endpoint register keys on. The two identifiers address the same flow in different services — execution and management — and neither is derivable from the other.",
+  "source": {
+    "workbook": "docs/folio-Master-Flows-and-Endpoints/registers/dgo-endpoint-catalog.xlsx",
+    "sha256": "3ba4b6ad5a4fa64f7bc322f768e5698795f530b640531a9db7474cd203506a69",
+    "extractionSource": "flow_extraction_restricted__08584125068153111813148857828CU20.json",
+    "exporter": "Complete Power Automate Flow Definition Exporter v7",
+    "environmentName": "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1",
+    "generatedAtUtc": "2026-09-11T04:15:17.9489279Z",
+    "credentialsRemoved": true,
+    "declaredInputCount": 26,
+    "declaredFoundCount": 21,
+    "declaredNotFoundCount": 5
+  },
+  "identifierDomains": {
+    "applicationWorkflowId": {
+      "shape": "32 hexadecimal characters, no dashes",
+      "addresses": "execution — the workflow segment of a signed invoke URL",
+      "heldBy": "docs/folio-Master-Flows-and-Endpoints/registers/endpoint-register.json, and every values file"
+    },
+    "tenantFlowId": {
+      "shape": "dashed GUID",
+      "addresses": "management — /powerautomate/flows/<id> and exported package names",
+      "heldBy": "this crosswalk, and docs/folio-Master-Flows-and-Endpoints/contracts/deployed/ filenames"
+    },
+    "relationship": "Not derivable in either direction. Inserting dashes into an application workflow id yields a GUID the management API answers 404 for."
+  },
+  "counts": {
+    "contractKeys": 26,
+    "registerKeys": 26,
+    "resolved": 26,
+    "unevidenced": 0,
+    "extracted": 17,
+    "packageOnly": 6,
+    "keysWithMoreThanOneCandidate": 9,
+    "distinctTenantFlows": 23,
+    "exportPackages": 8,
+    "exportPackagesUnplaced": 0,
+    "nonHttpExportPackages": 2,
+    "verified": 0
+  },
+  "keys": [
+    {
+      "key": "FETCH_ACTIVITIES",
+      "contractKey": "DGO_ENDPOINT_FETCH_ACTIVITIES",
+      "applicationWorkflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "canonicalFlow": null,
+      "registryStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+      "records": 1,
+      "found": 0,
+      "resolution": "PACKAGE_ONLY",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+          "tenantDisplayName": "IP_Get_Docs_Endpoint",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_Get_Docs_Endpoint_20260917114919.zip",
+          "exportedUtc": "2026-09-17T11:49:19.3082649Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": null,
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "GET_DOCS",
+      "contractKey": "DGO_ENDPOINT_GET_DOCS",
+      "applicationWorkflowId": "c4c26f93ba1e4d7db5247536c30cdc11",
+      "canonicalFlow": null,
+      "registryStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+      "records": 1,
+      "found": 0,
+      "resolution": "PACKAGE_ONLY",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+          "tenantDisplayName": "IP_Get_Docs_Endpoint",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_Get_Docs_Endpoint_20260917114919.zip",
+          "exportedUtc": "2026-09-17T11:49:19.3082649Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": null,
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "SUBSIDIARY_ACTIONS",
+      "contractKey": "DGO_ENDPOINT_SUBSIDIARY_ACTIONS",
+      "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "canonicalFlow": "IP_Dynamic_Global_Actions_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "08da1783-927f-4662-a429-45e1249a989f",
+          "tenantDisplayName": "IP_Subsidiary_Actions_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_Dynamic_Global_Actions_Endpoint",
+          "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-05T18:49:43.5929434Z",
+          "modifiedUtc": "2026-09-05T19:36:57.0100116Z",
+          "actionCount": 21,
+          "resourceCount": 2
+        },
+        {
+          "tenantFlowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+          "tenantDisplayName": "IP_Dynamic_Global_Actions_Endpoint",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_Dynamic_Global_Actions_Endpoint_20260912100754.zip",
+          "exportedUtc": "2026-09-12T10:07:54.5965257Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": null,
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "DYNAMIC_ACTIONS",
+      "contractKey": "DGO_ENDPOINT_DYNAMIC_ACTIONS",
+      "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "canonicalFlow": "IP_Dynamic_Global_Actions_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "08da1783-927f-4662-a429-45e1249a989f",
+          "tenantDisplayName": "IP_Subsidiary_Actions_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_Dynamic_Global_Actions_Endpoint",
+          "applicationWorkflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-05T18:49:43.5929434Z",
+          "modifiedUtc": "2026-09-05T19:36:57.0100116Z",
+          "actionCount": 21,
+          "resourceCount": 2
+        },
+        {
+          "tenantFlowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+          "tenantDisplayName": "IP_Dynamic_Global_Actions_Endpoint",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_Dynamic_Global_Actions_Endpoint_20260912100754.zip",
+          "exportedUtc": "2026-09-12T10:07:54.5965257Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": null,
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "FETCH_ALL",
+      "contractKey": "DGO_ENDPOINT_FETCH_ALL",
+      "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "canonicalFlow": "FETCH_ALL",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 2,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+          "tenantDisplayName": "IP_FETCH_ALL_ENDPOINT",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "FETCH_ALL",
+          "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-03T03:46:45.6929535Z",
+          "modifiedUtc": "2026-09-04T20:43:50.4987883Z",
+          "actionCount": 61,
+          "resourceCount": 10
+        },
+        {
+          "tenantFlowId": "be1f89bd-d7ea-4a15-87c9-2ce6fd4d0eaa",
+          "tenantDisplayName": "IP_Fetch_All_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "FETCH_ALL",
+          "applicationWorkflowId": "aa662769f13a4666bfadf3039cd8d247",
+          "retrieval": "NOT_FOUND_OR_UNAUTHORIZED",
+          "method": "POST",
+          "state": null,
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": null,
+          "modifiedUtc": null,
+          "actionCount": 0,
+          "resourceCount": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "REFERENCE_DATA",
+      "contractKey": "DGO_ENDPOINT_REFERENCE_DATA",
+      "applicationWorkflowId": "885fad5ec91f460490e8c772d5d10cb8",
+      "canonicalFlow": "IP_Reference_Data_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "9a4dea8e-15f2-42b6-904d-3655056fa3c2",
+          "tenantDisplayName": "IP_Reference_Data_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_Reference_Data_Endpoint",
+          "applicationWorkflowId": "885fad5ec91f460490e8c772d5d10cb8",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-08-30T15:34:04.6507602Z",
+          "modifiedUtc": "2026-09-04T06:13:24.2672893Z",
+          "actionCount": 50,
+          "resourceCount": 6
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "FETCH_EMAIL_ATTACHMENTS",
+      "contractKey": "DGO_ENDPOINT_FETCH_EMAIL_ATTACHMENTS",
+      "applicationWorkflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+      "canonicalFlow": "IP_Retrieve_Email_Attachment_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "5bc87cf3-7a99-4259-b6a2-315fbc794d9b",
+          "tenantDisplayName": "IP_Retrieve_Email_Attachment_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_Retrieve_Email_Attachment_Endpoint",
+          "applicationWorkflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-06T04:52:53.8530022Z",
+          "modifiedUtc": "2026-09-06T04:58:25.7011477Z",
+          "actionCount": 31,
+          "resourceCount": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "SINGLE_ASSIGNMENT",
+      "contractKey": "DGO_ENDPOINT_SINGLE_ASSIGNMENT",
+      "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "canonicalFlow": "Single_Task_Assignment",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 2,
+      "found": 2,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "05825db0-c806-4974-807c-c062f386cc41",
+          "tenantDisplayName": "IP_Single_Assignment_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "Single_Task_Assignment",
+          "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "CONSOLIDATED_ALIGNMENT",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-08-30T09:46:05.8259178Z",
+          "modifiedUtc": "2026-09-04T06:06:13.9466906Z",
+          "actionCount": 62,
+          "resourceCount": 7
+        },
+        {
+          "tenantFlowId": "3caf9458-8d95-4740-a01b-6803dad97d34",
+          "tenantDisplayName": "Single_Task_Assignment",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "Single_Task_Assignment",
+          "applicationWorkflowId": "72acfc6a694f414f9fe39c939ead7f08",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "CONSOLIDATED_ALIGNMENT",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-03T23:39:00.7651847Z",
+          "modifiedUtc": "2026-09-03T23:39:18.202998Z",
+          "actionCount": 108,
+          "resourceCount": 6
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "BULK_ASSIGNMENT",
+      "contractKey": "DGO_ENDPOINT_BULK_ASSIGNMENT",
+      "applicationWorkflowId": "a705e453f922457c95ca19f32731e4d7",
+      "canonicalFlow": null,
+      "registryStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+      "records": 1,
+      "found": 0,
+      "resolution": "PACKAGE_ONLY",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+          "tenantDisplayName": "BULK OPS DATA RETRIEVAL HTTP",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/BULKOPSDATARETRIEVALHTTP_20260911185143.zip",
+          "exportedUtc": "2026-09-11T18:51:43.6128576Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": "POST",
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "EMAIL",
+      "contractKey": "DGO_ENDPOINT_EMAIL",
+      "applicationWorkflowId": "378b491ec39a4beca886ddec250e6961",
+      "canonicalFlow": "IP_SEND_EMAIL",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "df59a69f-92ca-4554-ae68-6b464aa73ef7",
+          "tenantDisplayName": "IP_SEND_EMAIL",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_SEND_EMAIL",
+          "applicationWorkflowId": "378b491ec39a4beca886ddec250e6961",
+          "retrieval": "FOUND",
+          "method": "Request",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-02T05:34:59.3541104Z",
+          "modifiedUtc": "2026-09-02T05:35:58.5027998Z",
+          "actionCount": 69,
+          "resourceCount": 5
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "EMAIL_RELATED_TASK",
+      "contractKey": "DGO_ENDPOINT_EMAIL_RELATED_TASK",
+      "applicationWorkflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+      "catalogueApplicationWorkflowId": "35656042412340f2840ab1fb6fd22296",
+      "catalogueIdentityStatus": "SUPERSEDED_BY_ENDPOINT_REGISTER",
+      "canonicalFlow": "IP_Create_Email_Assignment_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 0,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "2fbb5485-6244-46eb-8a38-48e443a1d9fb",
+          "tenantDisplayName": "IP_Create_Email_Assignment_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_Create_Email_Assignment_Endpoint",
+          "applicationWorkflowId": "8fbf2896fceb4567afe9ebf47628c3a1",
+          "retrieval": "NOT_FOUND_OR_UNAUTHORIZED",
+          "method": "POST",
+          "state": null,
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": null,
+          "modifiedUtc": null,
+          "actionCount": 0,
+          "resourceCount": 0,
+          "catalogueApplicationWorkflowId": "35656042412340f2840ab1fb6fd22296",
+          "catalogueIdentityStatus": "SUPERSEDED_BY_ENDPOINT_REGISTER"
+        },
+        {
+          "tenantFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+          "tenantDisplayName": "IP_Create__Task__for_received_Email_Endpoint",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261005174125.zip",
+          "exportedUtc": "2026-10-05T17:41:25.4577965Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": "POST",
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        },
+        {
+          "tenantFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+          "tenantDisplayName": "IP_Create__Task__for_received_Email_Endpoint",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261006205908.zip",
+          "exportedUtc": "2026-10-06T20:59:08.6010995Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": "POST",
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "AI_EMAIL_ANALYSIS",
+      "contractKey": "DGO_ENDPOINT_AI_EMAIL_ANALYSIS",
+      "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "canonicalFlow": null,
+      "registryStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+      "records": 1,
+      "found": 0,
+      "resolution": "PACKAGE_ONLY",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+          "tenantDisplayName": "AI_Document_Processing",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/AI_Document_Processing_20260911185206.zip",
+          "exportedUtc": "2026-09-11T18:52:06.202394Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": "POST",
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "AI_DOC_ANALYSIS",
+      "contractKey": "DGO_ENDPOINT_AI_DOC_ANALYSIS",
+      "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "canonicalFlow": null,
+      "registryStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+      "records": 1,
+      "found": 0,
+      "resolution": "PACKAGE_ONLY",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+          "tenantDisplayName": "AI_Document_Processing",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/AI_Document_Processing_20260911185206.zip",
+          "exportedUtc": "2026-09-11T18:52:06.202394Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": "POST",
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "AI_CHAT",
+      "contractKey": "DGO_ENDPOINT_AI_CHAT",
+      "applicationWorkflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "canonicalFlow": null,
+      "registryStatus": "POWER_AUTOMATE_FLOW_ID_NOT_EVIDENCED",
+      "records": 1,
+      "found": 0,
+      "resolution": "PACKAGE_ONLY",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+          "tenantDisplayName": "AI_Document_Processing",
+          "source": "export-package",
+          "matchBasis": "register-flow-name",
+          "verifiedBy": null,
+          "package": "docs/folio-Master-Flows-and-Endpoints/exports/AI_Document_Processing_20260911185206.zip",
+          "exportedUtc": "2026-09-11T18:52:06.202394Z",
+          "requestTrigger": "manual",
+          "requestTriggerMethod": "POST",
+          "requestTriggerAuthentication": "All",
+          "applicationWorkflowId": null
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "OTP_VERIFY",
+      "contractKey": "DGO_ENDPOINT_OTP_VERIFY",
+      "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+      "canonicalFlow": "IP_OTP_VERIFY",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 2,
+      "found": 2,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61",
+          "tenantDisplayName": "IP_OTP_VERIFY",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_OTP_VERIFY",
+          "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "CONSOLIDATED_ALIGNMENT",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-04T02:03:17.90011Z",
+          "modifiedUtc": "2026-09-05T06:52:40.8261698Z",
+          "actionCount": 59,
+          "resourceCount": 6
+        },
+        {
+          "tenantFlowId": "913bd078-5411-404f-85ac-507c10fe1a09",
+          "tenantDisplayName": "IP_OTP_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_OTP_VERIFY",
+          "applicationWorkflowId": "b372d45e4b2a47d88b8e8b032da67fcd",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "CONSOLIDATED_ALIGNMENT",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-08-30T12:21:34.0112499Z",
+          "modifiedUtc": "2026-09-04T06:06:11.0636907Z",
+          "actionCount": 72,
+          "resourceCount": 9
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "SCAN_INTAKE",
+      "contractKey": "DGO_ENDPOINT_SCAN_INTAKE",
+      "applicationWorkflowId": "88401ce1f44148539c0da53c9491f8e6",
+      "canonicalFlow": "IP_SCAN_INTAKE",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": true,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "5504d7f9-cc96-470c-be79-217582faf415",
+          "tenantDisplayName": "IP_SCAN_INTAKE",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_SCAN_INTAKE",
+          "applicationWorkflowId": "88401ce1f44148539c0da53c9491f8e6",
+          "retrieval": "FOUND",
+          "method": "PUT",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-04T02:05:22.6465995Z",
+          "modifiedUtc": "2026-09-04T03:15:00.8842259Z",
+          "actionCount": 86,
+          "resourceCount": 12
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "SUBMISSION",
+      "contractKey": "PF_ENDPOINT_SUBMISSION",
+      "applicationWorkflowId": "1041ed37ce924e3c886d891f23e8142c",
+      "canonicalFlow": "CG_Submission_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+          "tenantDisplayName": "CG_Submission_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Submission_Endpoint",
+          "applicationWorkflowId": "1041ed37ce924e3c886d891f23e8142c",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2025-12-23T01:14:15Z",
+          "modifiedUtc": "2026-09-01T02:58:13.1240984Z",
+          "actionCount": 88,
+          "resourceCount": 14
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "UPLOAD",
+      "contractKey": "PF_ENDPOINT_UPLOAD",
+      "applicationWorkflowId": "62fe121e5a95416bb91275e43dd0e37e",
+      "canonicalFlow": "CG_Upload_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+          "tenantDisplayName": "CG_Upload_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Upload_Endpoint",
+          "applicationWorkflowId": "62fe121e5a95416bb91275e43dd0e37e",
+          "retrieval": "FOUND",
+          "method": "PUT",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-08-24T18:01:36.5733226Z",
+          "modifiedUtc": "2026-09-04T03:22:43.6356745Z",
+          "actionCount": 57,
+          "resourceCount": 9
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "SUPPORT",
+      "contractKey": "PF_ENDPOINT_SUPPORT",
+      "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+      "canonicalFlow": "CG_Portal_Support_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 2,
+      "found": 2,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+          "tenantDisplayName": "CG_Support_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Support_Endpoint",
+          "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-08-15T04:10:00.9481808Z",
+          "modifiedUtc": "2026-09-01T03:06:48.9442144Z",
+          "actionCount": 63,
+          "resourceCount": 8
+        },
+        {
+          "tenantFlowId": "4873c936-a2be-4726-8e69-426edb8f70e6",
+          "tenantDisplayName": "CG_Portal_Support_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Support_Endpoint",
+          "applicationWorkflowId": "052013da80724713a4285edee72ccb4a",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-06T04:26:45.1159964Z",
+          "modifiedUtc": "2026-09-06T04:30:56.9981833Z",
+          "actionCount": 63,
+          "resourceCount": 8
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "VERIFY",
+      "contractKey": "PF_ENDPOINT_VERIFY",
+      "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "canonicalFlow": "CG_Portal_Verification_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 2,
+      "found": 2,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "86897b2f-9770-4efa-8486-2642f24bb947",
+          "tenantDisplayName": "CG_Verification_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Verification_Endpoint",
+          "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-08-15T03:47:00.425797Z",
+          "modifiedUtc": "2026-09-04T06:06:15.578855Z",
+          "actionCount": 75,
+          "resourceCount": 10
+        },
+        {
+          "tenantFlowId": "ba47f79b-a831-49e8-b00b-3f8937c331df",
+          "tenantDisplayName": "CG_Portal_Verification_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Verification_Endpoint",
+          "applicationWorkflowId": "c0d58004c53348539d0d5aeaf49dcded",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-06T04:25:31.0148857Z",
+          "modifiedUtc": "2026-09-06T04:31:07.4119243Z",
+          "actionCount": 75,
+          "resourceCount": 10
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "VERIFY_CONFIRM",
+      "contractKey": "PF_ENDPOINT_VERIFY_CONFIRM",
+      "applicationWorkflowId": "b270894ff410499ebbc090e32ffe899b",
+      "canonicalFlow": "CG_Portal_Verification_Confirmation_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "f96e3448-3c79-4d42-b224-825258a552ba",
+          "tenantDisplayName": "CG_Portal_Verification_Confirmation_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Verification_Confirmation_Endpoint",
+          "applicationWorkflowId": "b270894ff410499ebbc090e32ffe899b",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-06T04:28:27.496127Z",
+          "modifiedUtc": "2026-09-06T04:30:53.5184753Z",
+          "actionCount": 81,
+          "resourceCount": 10
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "STATUS",
+      "contractKey": "PF_ENDPOINT_STATUS",
+      "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "canonicalFlow": "CG_Portal_Status_Check_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 2,
+      "found": 2,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "60042a2e-dadb-4ad8-a672-38b4132d299f",
+          "tenantDisplayName": "CG_Portal_Status_Check_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Status_Check_Endpoint",
+          "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-06T04:50:01.0978524Z",
+          "modifiedUtc": "2026-09-06T04:50:14.2465635Z",
+          "actionCount": 67,
+          "resourceCount": 9
+        },
+        {
+          "tenantFlowId": "badb65d8-f472-407e-8975-c29d77b855d7",
+          "tenantDisplayName": "CG_Status_Check_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Status_Check_Endpoint",
+          "applicationWorkflowId": "34dd28b4a5664927b66e581c74a0ab94",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "ALIAS_ALIGNED",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-08-15T21:01:27.8921585Z",
+          "modifiedUtc": "2026-08-31T18:07:32.946245Z",
+          "actionCount": 67,
+          "resourceCount": 9
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "WRITEBACK",
+      "contractKey": "PF_ENDPOINT_WRITEBACK",
+      "applicationWorkflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+      "canonicalFlow": "CG_Portal_Writeback_Endpoint",
+      "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+      "records": 1,
+      "found": 1,
+      "resolution": "EXTRACTED",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "bde13d27-73b3-4e1a-9687-eb289b039c7a",
+          "tenantDisplayName": "CG_Portal_Writeback_Endpoint",
+          "source": "tenant-extraction",
+          "matchBasis": "catalogue-key-row",
+          "verifiedBy": null,
+          "canonicalFlow": "CG_Portal_Writeback_Endpoint",
+          "applicationWorkflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+          "retrieval": "FOUND",
+          "method": "POST",
+          "state": "Started",
+          "mapping": "EXACT_MATCH",
+          "registryStatus": "TENANT_CONFIRMATION_REQUIRED",
+          "createdUtc": "2026-09-06T04:29:12.2205247Z",
+          "modifiedUtc": "2026-09-06T04:30:51.5515637Z",
+          "actionCount": 73,
+          "resourceCount": 11
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "USER_ADMIN",
+      "contractKey": "DGO_ENDPOINT_USER_ADMIN",
+      "applicationWorkflowId": "466cf7ea66c54240aaede85a5a500f1c",
+      "canonicalFlow": "IP_User_Admin_Endpoint",
+      "registryStatus": "ADOPTED",
+      "records": null,
+      "found": null,
+      "resolution": "ADOPTION",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "e3e5c825-55ba-447e-88c1-96b7e89fd013",
+          "tenantDisplayName": "IP_User_Admin_Endpoint",
+          "source": "flow-adoption",
+          "matchBasis": "adoption-register",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_User_Admin_Endpoint",
+          "applicationWorkflowId": "466cf7ea66c54240aaede85a5a500f1c"
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "ACTIVITY_LIFECYCLE",
+      "contractKey": "DGO_ENDPOINT_ACTIVITY_LIFECYCLE",
+      "applicationWorkflowId": "35fa90bfad8f4a639cc20882f1688149",
+      "canonicalFlow": "IP_Activity_Lifecycle_Endpoint",
+      "registryStatus": "ADOPTED",
+      "records": null,
+      "found": null,
+      "resolution": "ADOPTION",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "b4db02d8-02a0-4bc9-b9d3-06e2aae2448c",
+          "tenantDisplayName": "IP_Activity_Lifecycle_Endpoint",
+          "source": "flow-adoption",
+          "matchBasis": "adoption-register",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_Activity_Lifecycle_Endpoint",
+          "applicationWorkflowId": "35fa90bfad8f4a639cc20882f1688149"
+        }
+      ],
+      "failure": null
+    },
+    {
+      "key": "OTP_GENERATE",
+      "contractKey": "DGO_ENDPOINT_OTP_GENERATE",
+      "applicationWorkflowId": "741465e483714d48a07e336eb4571b89",
+      "canonicalFlow": "IP_OTP_GENERATE",
+      "registryStatus": "ADOPTED",
+      "records": null,
+      "found": null,
+      "resolution": "ADOPTION",
+      "corroboratedByPackage": false,
+      "resolved": true,
+      "candidates": [
+        {
+          "tenantFlowId": "e5632336-641f-4b9b-bd93-99185b5eb975",
+          "tenantDisplayName": "IP_OTP_GENERATE",
+          "source": "flow-adoption",
+          "matchBasis": "adoption-register",
+          "verifiedBy": null,
+          "canonicalFlow": "IP_OTP_GENERATE",
+          "applicationWorkflowId": "741465e483714d48a07e336eb4571b89"
+        }
+      ],
+      "failure": null
+    }
+  ],
+  "exports": [
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/AI_Document_Processing_20260911185206.zip",
+      "sha256": "2578d9e22769738b480c065fcefe689670cec2679f62f2f773b4a28fac47a1b4",
+      "exportedUtc": "2026-09-11T18:52:06.202394Z",
+      "tenantFlowId": "fefa43c6-fb9d-4337-8b65-7fd19fa09b6d",
+      "displayName": "AI_Document_Processing",
+      "packageResourceId": "901eb9d7-2aa3-4f00-80ab-889efb0512da",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": "POST",
+      "requestTriggerAuthentication": "All",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_AI_EMAIL_ANALYSIS",
+        "DGO_ENDPOINT_AI_DOC_ANALYSIS",
+        "DGO_ENDPOINT_AI_CHAT"
+      ],
+      "disposition": "NEW_EVIDENCE_FOR_A_CONTRACT_KEY"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/BULKOPSDATARETRIEVALHTTP_20260911185143.zip",
+      "sha256": "1f1856e17fab92b24d8d670e7cd2bf5f63eb4546a7b48e482aaf517ad42d4544",
+      "exportedUtc": "2026-09-11T18:51:43.6128576Z",
+      "tenantFlowId": "5aab9e61-ab9f-4af1-9f2b-eaba23a1bf06",
+      "displayName": "BULK OPS DATA RETRIEVAL HTTP",
+      "packageResourceId": "403ce537-910f-4ebf-b38a-5bbf04785073",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": "POST",
+      "requestTriggerAuthentication": "All",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_BULK_ASSIGNMENT"
+      ],
+      "disposition": "NEW_EVIDENCE_FOR_A_CONTRACT_KEY"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261005174125.zip",
+      "sha256": "d93eb78fcb16c004b7ecc4b427f531ee0545685ef4aca55b25c9c7a481802c9e",
+      "exportedUtc": "2026-10-05T17:41:25.4577965Z",
+      "tenantFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+      "displayName": "IP_Create__Task__for_received_Email_Endpoint",
+      "packageResourceId": "888ada8e-f391-4dfc-a2a0-92212ab4cb9e",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": "POST",
+      "requestTriggerAuthentication": "All",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_EMAIL_RELATED_TASK"
+      ],
+      "disposition": "NEW_EVIDENCE_FOR_A_CONTRACT_KEY"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/EMAIL_RELATED_TASK__IP_Create_Task_for_received_Email_Endpoint__ab1a3555__Export_20261006205908.zip",
+      "sha256": "a28e2987dbe36b7b64ff8f261cd65ddc370f2e35857ccc9cc6f2513eacd31549",
+      "exportedUtc": "2026-10-06T20:59:08.6010995Z",
+      "tenantFlowId": "ab1a3555-7fce-4bfe-a193-b8b84654b0a4",
+      "displayName": "IP_Create__Task__for_received_Email_Endpoint",
+      "packageResourceId": "888ada8e-f391-4dfc-a2a0-92212ab4cb9e",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": "POST",
+      "requestTriggerAuthentication": "All",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_EMAIL_RELATED_TASK"
+      ],
+      "disposition": "NEW_EVIDENCE_FOR_A_CONTRACT_KEY"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_Dynamic_Global_Actions_Endpoint_20260912100754.zip",
+      "sha256": "75dbe6df72cb4a05e98fd68a68d5573ba2d2ee95ba82e1e5e03e75b341a59336",
+      "exportedUtc": "2026-09-12T10:07:54.5965257Z",
+      "tenantFlowId": "31c0aaf0-ddbb-478c-9a98-bc013265c4c7",
+      "displayName": "IP_Dynamic_Global_Actions_Endpoint",
+      "packageResourceId": "be16a604-012b-4758-9e32-a433a867ba5f",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": null,
+      "requestTriggerAuthentication": "All",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_SUBSIDIARY_ACTIONS",
+        "DGO_ENDPOINT_DYNAMIC_ACTIONS"
+      ],
+      "disposition": "NEW_EVIDENCE_FOR_A_CONTRACT_KEY"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_FETCH_ALL_BOOTSTRAP_20260924035751.zip",
+      "sha256": "7c77d3bc19d021c10229f44641c0890f41d77605259b485ccfbf60864c327608",
+      "exportedUtc": "2026-09-24T03:57:51.915542Z",
+      "tenantFlowId": "b79e6707-df4d-4ae7-8a65-738aa45e9a73",
+      "displayName": "IP_FETCH_ALL_BOOTSTRAP",
+      "packageResourceId": "6e810636-aaab-4180-bbd7-dd6b9e134a6f",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": "POST",
+      "requestTriggerAuthentication": "All",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_FETCH_ALL"
+      ],
+      "disposition": "CORROBORATES_THE_EXTRACTION"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_Get_Docs_Endpoint_20260917114919.zip",
+      "sha256": "867b93747bf298ecab0e12f6bac133f2b36b456b70d90efde84422395dd47aba",
+      "exportedUtc": "2026-09-17T11:49:19.3082649Z",
+      "tenantFlowId": "28f6e62a-fea8-437c-a61a-47aec706c4e2",
+      "displayName": "IP_Get_Docs_Endpoint",
+      "packageResourceId": "2e066f71-2b41-4f93-be69-932fabb4bf1a",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": null,
+      "requestTriggerAuthentication": "All",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_FETCH_ACTIVITIES",
+        "DGO_ENDPOINT_GET_DOCS"
+      ],
+      "disposition": "NEW_EVIDENCE_FOR_A_CONTRACT_KEY"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/IP_SCAN_INTAKE_20261008030812.zip",
+      "sha256": "ea6a1fc29bddee51fb631807c73fcfe82b348d5eb92fbfb7d7911bb7ca7e5eab",
+      "exportedUtc": "2026-10-08T03:08:12.7530478Z",
+      "tenantFlowId": "5504d7f9-cc96-470c-be79-217582faf415",
+      "displayName": "IP_SCAN_INTAKE",
+      "packageResourceId": "0f915a0e-9618-4a99-ab49-ee7f71193803",
+      "requestTrigger": "manual",
+      "requestTriggerMethod": "PUT",
+      "requestTriggerAuthentication": "Tenant",
+      "matchedContractKeys": [
+        "DGO_ENDPOINT_SCAN_INTAKE"
+      ],
+      "disposition": "CORROBORATES_THE_EXTRACTION"
+    }
+  ],
+  "nonHttpExports": [
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/NOKEY__CG_Portal_Daily_Sweep__f12aec6d__Export_20261005160554.zip",
+      "sha256": "b590c0b2690b2242c32cfe03821808ffbb67351e98e12d7650b604711f1dd507",
+      "exportedUtc": "2026-10-05T16:05:54.094137Z",
+      "tenantFlowId": "f12aec6d-1554-483d-a525-a96ddb60d06f",
+      "displayName": "CG_Portal_Daily_Sweep",
+      "packageResourceId": "a907c3bc-b111-4868-bd73-3a72dc9dbed9",
+      "disposition": "NOT_AN_HTTP_FLOW"
+    },
+    {
+      "package": "docs/folio-Master-Flows-and-Endpoints/exports/NOKEY__CG_Registry_Status_Notifier__8ebf6001__Export_20261005160536.zip",
+      "sha256": "eba82b8939618e26d5a14b4068f2c93520744d61ca9f3b205512a760edab381f",
+      "exportedUtc": "2026-10-05T16:05:36.1514927Z",
+      "tenantFlowId": "8ebf6001-89cd-49c9-a9b6-4dedb9a5768b",
+      "displayName": "CG_Registry_Status_Notifier",
+      "packageResourceId": "7b194595-63e3-4724-80f8-2c40fd3d9a4a",
+      "disposition": "NOT_AN_HTTP_FLOW"
+    }
+  ]
+}

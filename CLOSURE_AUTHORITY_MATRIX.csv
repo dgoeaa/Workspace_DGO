@@ -1,0 +1,14 @@
+item,subject,decision_authority,required_evidence,status,release_effect
+E1-E2,Exposure and rotation,Owner / tenant authority,Containment; history and artifact review; revocation or rotation; old-capability rejection proof,OPEN,BLOCKING
+H2,36 absent runtime records,"Governance owner / reviewer, then engineering",Per-entry recover or retire decision; provenance; implemented disposition,OPEN,BLOCKING
+H3,20 absent large-file entries,"Governance owner / reviewer, then engineering",Per-entry recovery or reviewed disposition; aligned tracked record,OPEN,BLOCKING
+H4,Evidence register,Documentation owner / authorised source,Genuine tracked evidence-register.yaml with provenance,OPEN,BLOCKING
+R1,56 occurrences / 32 missing targets,"Documentation owner, then engineering","Authorised recovery, demonstrably equivalent correction, or reviewed retirement",OPEN,BLOCKING
+H1,Duplicate ratchet,Engineering / QA,Verified source correction retained,SOURCE_FIX_VERIFIED,NON-BLOCKING
+V1,Required tests,Engineering / QA,Named commit; commands; logs; passing required checks; genuine failures resolved,OPEN,BLOCKING
+V2,Security review,Security authority,Reviewed findings and limitations; dated acceptance,OPEN,BLOCKING
+T1,Tenant authorization,Tenant authority,"Server-side identity and record-level authorization evidence, including negative proofs",OPEN,BLOCKING
+S1,Isolated staging,Service / staging authority,Authorised five-surface staging evidence,OPEN,BLOCKING
+P1,Proposed artifact,Release engineering and independent reviewer,Exact artifact and commit; hashes; inspection; no private config or signed endpoints,OPEN,BLOCKING
+B1,Rollback,Operations authority,Approved and rehearsed rollback evidence,OPEN,BLOCKING
+O1,Release approval,Named authorised owner,Explicit dated release decision after all evidence is reviewed,OPEN,BLOCKING

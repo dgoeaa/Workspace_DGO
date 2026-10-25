@@ -1,0 +1,1057 @@
+{
+  "generatedFrom": "docs/deployment/OUTSTANDING_SOURCES.json",
+  "rule": "Every source declared in OUTSTANDING_SOURCES.json is read and totalled here. A source whose pattern stops matching reports zero, which is the most dangerous number this estate can print, so the generator exits 2 rather than reporting it.",
+  "whatThisDoesNotTellYou": "It counts items, and items are not equal. One agency decision can gate more than ten provisioning steps, and the flow-truth review's twenty-nine findings are against a single package. Read docs/deployment/PLAN.md for what to do next, in the order that unblocks the most; this exists to stop work hiding, not to prioritise it. It also cannot tell you that a finding in a record has been overtaken: audits are never edited to agree with the present, so their findings stay counted until a tracked source supersedes them — the honest default, and occasionally an overcount.",
+  "totals": {
+    "sourcesCounted": 4,
+    "open": 5,
+    "closed": 151,
+    "declaredNotCounted": 11
+  },
+  "byActor": {
+    "Engineering": {
+      "open": 3,
+      "items": [
+        "UX-403 (ux-essentials)",
+        "UX-404 (ux-essentials)",
+        "UX-501 (ux-essentials)"
+      ]
+    },
+    "Platform owner (release and paste); flow buil…": {
+      "open": 1,
+      "items": [
+        "ITEM-93 (readiness)"
+      ]
+    },
+    "Owner": {
+      "open": 1,
+      "items": [
+        "UX-502 (ux-essentials)"
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "readiness",
+      "title": "Production readiness register",
+      "path": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+      "authority": "The register of record for commissioning. PLAN.md and closure-disposition.json are generated from it; npm run test:closure holds every document and npm run commission itself to it. Until 2026-09-24 the generated set was ACTION_PLAN.md, EXECUTION_RUNBOOK.md and IMPLEMENTATION_WALKTHROUGH.md, which PLAN.md replaced.",
+      "open": 1,
+      "closed": 82,
+      "items": [
+        {
+          "id": "ITEM-22",
+          "title": "Rotate the disclosed trigger tokens — done; the disclosed set is superseded",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-2",
+          "title": "The tenant write path has never been executed",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "CFG-1",
+          "title": "Internal runtime is not configured",
+          "status": "DISCHARGED_UNTRACKABLE",
+          "open": false
+        },
+        {
+          "id": "CFG-2",
+          "title": "Public portal is not configured",
+          "status": "DISCHARGED_UNTRACKABLE",
+          "open": false
+        },
+        {
+          "id": "G-04",
+          "title": "No server-side enforcement is running anywhere",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-23",
+          "title": "Five index targets unset on hot-path lists",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-8",
+          "title": "The allowed origin is listed but has never been confirmed against the platform",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-34",
+          "title": "The list holding the allowed origins is unowned and unaccounted for",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-30",
+          "title": "Portal Flow Telemetry.RunRecordJson is not provisioned, so no run record is retained",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-7",
+          "title": "Third-party API keys rotated",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-35",
+          "title": "Two paste targets unconfirmed; five resolved",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-17",
+          "title": "WRITEBACK — client and specification done, flow and endpoint key outstanding",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-12",
+          "title": "A submission reports delivered while its attachments are never sent",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-11",
+          "title": "An unknown reference is answered 200 and rendered as found",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-3",
+          "title": "Portal_Verify_Confirm is patched and verified on disk but never applied",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-4",
+          "title": "Visit 2 — the two submission flows",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-6",
+          "title": "Visit 4 — ECM_DOCS_INTAKE write-back",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-18",
+          "title": "The upload SHA-256 cannot be computed on this tenant — the digest is recorded, not enforced",
+          "status": "ACCEPTED",
+          "open": false
+        },
+        {
+          "id": "ITEM-25",
+          "title": "15 of 19 DYNAMIC_ACTIONS operations answer 501",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-9",
+          "title": "39 of 77 flows have no stated purpose",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "MANUAL-1",
+          "title": "Routing table approved by the agency",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "MANUAL-2",
+          "title": "Test records must be cleared before real correspondence arrives",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "MANUAL-3",
+          "title": "The browser suite must run against the deployed build",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "MANUAL-4",
+          "title": "Personal data disposition decided: identity lives in DGO_UserDirectory, not in the repository",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "G-08",
+          "title": "The overrides cascade debt is measured and ratcheted — 89 contended pairs, and it can no longer grow",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-36",
+          "title": "A public portal endpoint reads the internal operations estate, against the estate's own principle",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-37",
+          "title": "The sanctioned crossing does not exist in the live flow — restore it, or amend D1 and D6",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-38",
+          "title": "The OTP verify hardening is deployed — built fresh as IP_OTP_VERIFY on 2026-09-04",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-39",
+          "title": "OTP_Transactions.Attempts is provisioned, and the list is inside the provisioning specification",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-40",
+          "title": "Four endpoint triggers answer every verb and five carry no request schema",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-41",
+          "title": "Content approval is still ON for Global Tracking Queue — 12,079 of 15,936 rows are invisible to readers",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-42",
+          "title": "The portal sitemap and robots.txt need the deployed origin before the portal is indexable",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-43",
+          "title": "The portal still calls the defective OTP flow — the new one is deployed but not in service",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-44",
+          "title": "The client spoke a protocol neither OTP flow reads — reconciled on the client side",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-45",
+          "title": "The scheduled sweep completes: the list view threshold failure is closed",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-46",
+          "title": "Two detectors for the threshold read only equality filters, which is why this shipped",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-47",
+          "title": "The four index targets ITEM-45 declared are applied and recorded",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-48",
+          "title": "The portal promises citizens four emails the estate does not send",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-49",
+          "title": "The estate can fire on a schedule — AUTO_SCHEDULED_SWEEP is deployed",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-50",
+          "title": "Verification codes, correspondence, reports and assignment notices go to a fixed mailbox",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-51",
+          "title": "Officers are never told of assignments, approvals, escalations, delegations or reminders",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-52",
+          "title": "Read endpoints and AI flows email record payloads to a shared mailbox",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-53",
+          "title": "CG_SEND_EMAIL no longer accepts anonymous callers",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-54",
+          "title": "IP_OTP_Endpoint no longer returns officer claims with a wildcard origin",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-55",
+          "title": "IP_OTP_VERIFY's placeholder origin is replaced by the allow-list its sibling uses",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-56",
+          "title": "The OTP allow-list row is set — applied by the operator, not verified here",
+          "status": "ACCEPTED",
+          "open": false
+        },
+        {
+          "id": "ITEM-57",
+          "title": "The archived design system is unreconciled against the live one, and nobody has said which is authoritative",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-58",
+          "title": "Unresolved DSU keys in the approved matrix — closed by agency direction",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-59",
+          "title": "The estate's one sanctioned Tenant crossing is not Tenant in the tenant",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-60",
+          "title": "Six of the twenty supplied export packages are not exports of any deployed flow, and three of those answer every verb",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-61",
+          "title": "FETCH_ALL computes the refusal, discards it, and serves the estate to anyone",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-62",
+          "title": "Raised in error: the 2026-09-22 FETCH_ALL run was an operator test, not a disclosure",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-63",
+          "title": "Four contract keys are wired to a different flow from the one intended",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-64",
+          "title": "The internal proof ledger is decided separate and is not yet provisioned",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-65",
+          "title": "Live endpoint wiring differs from the owner's map for nine keys, and SUBSIDIARY_ACTIONS has no flow that implements it",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-66",
+          "title": "Most mail sends write no delivery receipt, and nothing proves a message arrived",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-67",
+          "title": "A second mail connector sends under an identity no control asserts",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-68",
+          "title": "The email template library is unwired and not accepted",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-69",
+          "title": "The login screen offers SMS, and no SMS channel exists",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-70",
+          "title": "The only scheduled carrier has no health check",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-71",
+          "title": "The notification release gates are not complete",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-72",
+          "title": "The library intake flow holds three Google AI API keys in its definition",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-73",
+          "title": "Every document the library intake takes in gets an anonymous edit link",
+          "status": "ACCEPTED",
+          "open": false
+        },
+        {
+          "id": "ITEM-74",
+          "title": "A task raised from an e-mail never reaches Folio, and its follow-up write lands on another task",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-75",
+          "title": "AI_Document_Processing holds an OpenRouter API key in its definition",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-76",
+          "title": "The last five internal endpoint flows carry G-04 in packages not yet pasted",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-77",
+          "title": "Three adopted flows send mail through an Office 365 connection other than the signed-off one",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-78",
+          "title": "Pasting a package drops the value of some Set variable steps",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-79",
+          "title": "The DYNAMIC_ACTIONS package exceeds the 500-action limit of a flow",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-80",
+          "title": "The library intake flow is rebuilt in a new flow",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-81",
+          "title": "One DYNAMIC_ACTIONS: the repository package and the hardened scope harmonised",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-82",
+          "title": "OTP generation and verification on separate flows: IP_OTP_GENERATE",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-83",
+          "title": "Flow Configuration's AI key rows hold their own names, not keys",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-84",
+          "title": "ALLOWED_ORIGIN is '*', so every endpoint answers any website, and the portal's own origin is recorded nowhere",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-85",
+          "title": "SCAN_INTAKE cannot be called from Folio: its trigger needs a Microsoft Entra token the browser does not hold",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-86",
+          "title": "ECM_DOCS_INTAKE is not visible to the registry account",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-87",
+          "title": "Notification links open the Workspace at its primary host",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-88",
+          "title": "AI document analysis has never worked",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-89",
+          "title": "The sign-in proof was stored in clear in run records",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-90",
+          "title": "Staff other than administrators get no Folio data, and whoever gets it gets everything",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-91",
+          "title": "A director does not receive their directorate's tasks",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-92",
+          "title": "The revised e-mail templates are in the repository, the tenant's flows and the hosts",
+          "status": "RESOLVED",
+          "open": false
+        },
+        {
+          "id": "ITEM-93",
+          "title": "The e-mail template revision of 2026-10-21 is in the tenant's flows and the hosts",
+          "status": "APPLIED_UNVERIFIED",
+          "open": true
+        }
+      ]
+    },
+    {
+      "id": "governance",
+      "title": "Governance estate position",
+      "path": "docs/folio-Master-Flows-and-Endpoints/reference/governance-estate-position.json",
+      "authority": "The ten SharePoint lists that carry identity, RBAC and audit. Kept separate because the endpoint commissioning path does not touch them today — but the seven internal designer-paste packages that will serve the pilot keys all read DGO_UserDirectory and DGO_RoleCatalogue, so that separation is a fact about the currently deployed flows, not a permanent property.",
+      "open": 0,
+      "closed": 12,
+      "items": [
+        {
+          "id": "GOV-00",
+          "title": "The seven HTTP flow registry lists are specified but not provisioned",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-07",
+          "title": "DGO_AccessScopes appeared damaged in the tenant",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-08",
+          "title": "One specification column used a name SharePoint reserves, and was reported present against its own system field",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-01",
+          "title": "Governance lists: one authoritative site, provisioned and verified; the registry lists remain",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-02",
+          "title": "Every governance list existed two or three times; the 17 duplicates are now renamed, not yet deleted",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-03",
+          "title": "DGO_EndpointRegistry.FlowUrl would hold a signed trigger URL",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-04",
+          "title": "None of the four HTTP governance endpoints returns an outcome to its caller",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-05",
+          "title": "The retirement endpoint cascades unconditionally, and anyone holding its URL can call it",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-06",
+          "title": "The exported flow definitions and the tenant register cannot be joined",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-09",
+          "title": "A live producer wrote seed rows to the NON-authoritative site thirteen days after the audit",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-10",
+          "title": "The 'Repair the DGO governance lists' flow is hardcoded to the non-authoritative site and deletes columns it does not recognise",
+          "status": "CLOSED",
+          "open": false
+        },
+        {
+          "id": "GOV-11",
+          "title": "A parallel flow-truth database was provisioned outside the specification, by title, on an unrecorded site, without the internal-name hint",
+          "status": "CLOSED",
+          "open": false
+        }
+      ]
+    },
+    {
+      "id": "flow-truth-review",
+      "title": "Flow-truth persistence review",
+      "path": "docs/folio-Master-Flows-and-Endpoints/audits/FLOW_TRUTH_PERSISTENCE_REVIEW.md",
+      "authority": "A record. Includes two security findings, S1 and S2, which is why leaving them uncounted mattered.",
+      "open": 0,
+      "closed": 29,
+      "items": [
+        {
+          "id": "B1",
+          "title": "The three target lists exist nowhere in the estate",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "B2",
+          "title": "Lists are targeted by display title, not by GUID",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "B3",
+          "title": "Every connector binding is internally inconsistent",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "B4",
+          "title": "The file is a designer copy, not a package",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "B5",
+          "title": "Six variables that no flow in this estate declares",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "B6",
+          "title": "`CreateFile` never names the library",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "B7",
+          "title": "The folders created and the files written are two different paths",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "S1",
+          "title": "The record carries the flow's own trigger URL and signature token",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "S2",
+          "title": "It reverses a ratified governance position, silently",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "S3",
+          "title": "Two unbounded `result()` expansions are persisted",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "S4",
+          "title": "`IntegrityVerified: true`, beside a manifest that verifies nothing",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C1",
+          "title": "The idempotency guard does not guard anything",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C2",
+          "title": "`RunStatus` is the literal `\"Succeeded\"`",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C3",
+          "title": "`DurationMilliseconds` is the literal `0`",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C4",
+          "title": "Three more values are guesses recorded as facts",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C5",
+          "title": "The registry patch discards the registry's history",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C6",
+          "title": "Two concurrent runs create two registry rows",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C7",
+          "title": "Three unguarded `length()` calls",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C8",
+          "title": "`greater(variables('FlowsNotFoundCount'), 0)` on an undeclared variable",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C9",
+          "title": "Every stored URL is broken by the first space",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C10",
+          "title": "`ComplianceIssuesJson` stores notification delivery",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C11",
+          "title": "Three columns carry the wrong identity _(covered with C11, C12)_",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C12",
+          "title": "Three columns carry the wrong identity _(covered with C11, C12)_",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C13",
+          "title": "`lossless: true`, `truncated: false`, `captureMode: \"Complete\"` — all unconditional",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C14",
+          "title": "`contentSizeBytes` is a character count",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C15",
+          "title": "An append-only list with no index strategy",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C16",
+          "title": "A null HTML report aborts the chain after two files are written",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C17",
+          "title": "Four timestamps from four separate `utcNow()` calls",
+          "status": "SUPERSEDED",
+          "open": false
+        },
+        {
+          "id": "C18",
+          "title": "`Scope_Persistence_Failure` does not cover `Skipped`",
+          "status": "SUPERSEDED",
+          "open": false
+        }
+      ]
+    },
+    {
+      "id": "ux-essentials",
+      "title": "Folio Workspace essentials: execution plan",
+      "path": "docs/architecture/ESSENTIALS_PLAN.json",
+      "authority": "The execution and tracking record for reducing the Workspace to its essentials (owner request, 2026-10-21). It carries out ESSENTIALS_MAP.md and LAYOUT_REVIEW.md. It gates no commissioning key, so it is counted beside the readiness register rather than folded into it.",
+      "open": 4,
+      "closed": 28,
+      "items": [
+        {
+          "id": "UX-D0",
+          "title": "Approve phase 1: the layout standard and the removal of misleading and engineering controls",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-D1",
+          "title": "Adopt the record-centred structure: Inbox, Tasks, Overview and one record page",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-D2",
+          "title": "Decide where physical file custody (Registry) lives",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-D3",
+          "title": "Decide on Meetings, Projects and Briefs",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-D4",
+          "title": "Decide the split between the Mailer and Reply on the record",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-D5",
+          "title": "Decide on the AI chat assistant",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-D6",
+          "title": "Name the report options: GTQ and the measures M1 to M10",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-D7",
+          "title": "Decide on the Workspace's Endpoints tab",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-101",
+          "title": "Size panels to their content",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-102",
+          "title": "One name per screen, said once",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-103",
+          "title": "Remove the Continue-in bar and the footer status line",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-104",
+          "title": "Header: four controls; theme and density into the profile menu",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-105",
+          "title": "Move explanations out of the work area",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-106",
+          "title": "Counts on the filter chips instead of figure tiles",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-107",
+          "title": "One control bar per screen, labelled filters, primary action on the right",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-108",
+          "title": "Compact the sidebar brand; ministry identity on sign-in and print only",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-109",
+          "title": "Remove misleading, engineering and duplicate controls",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-110",
+          "title": "Measure phase 1 against the layout targets",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-201",
+          "title": "One definition of the four intakes; email joins the intake list",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-202",
+          "title": "The record page, behind a switch",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-203",
+          "title": "Record page: Reply, Record dispatch, Close & archive",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-204",
+          "title": "File custody on the record",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-301",
+          "title": "Inbox",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-302",
+          "title": "Tasks",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-303",
+          "title": "Overview",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-304",
+          "title": "Header search opens the record",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-401",
+          "title": "Cut-over: the new structure by default, old addresses redirect",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-402",
+          "title": "Administration behind the profile menu",
+          "status": "DONE",
+          "open": false
+        },
+        {
+          "id": "UX-403",
+          "title": "Decommission the replaced screens and their code",
+          "status": "OPEN",
+          "open": true
+        },
+        {
+          "id": "UX-404",
+          "title": "Regenerate the generated records",
+          "status": "BLOCKED",
+          "open": true
+        },
+        {
+          "id": "UX-501",
+          "title": "Measure the result against every target",
+          "status": "BLOCKED",
+          "open": true
+        },
+        {
+          "id": "UX-502",
+          "title": "Office acceptance walkthrough",
+          "status": "BLOCKED",
+          "open": true
+        }
+      ]
+    }
+  ],
+  "declaredNotCounted": [
+    {
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/governance/GOVERNANCE-STATUS.md",
+      "why": "Generated from governance-estate-position.json, which IS counted. Counting it too would double every governance finding."
+    },
+    {
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/governance/WHAT-WAS-DONE.md",
+      "why": "A narrative of the same position file. Counted there."
+    },
+    {
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/governance/EXECUTION-AGENT-BRIEF.md",
+      "why": "WP-0 to WP-39 are work packages that decompose the governance runbook's steps. The work is counted as GOV findings; the packages are how it is handed to an agent."
+    },
+    {
+      "path": "docs/folio-Master-Flows-and-Endpoints/deployment/live-operations-console/EXPLICIT_EXECUTION_SPECIFICATION.md",
+      "why": "OP-001 to OP-014 are the notification remediation workstream, and every one of them is already counted as a P-item or an F-item. Counting them here would report the same tenant work twice. The console the specification drives is NOT in this repository — its own SHA256_MANIFEST.json declares six files and index.html, which is the console, is absent."
+    },
+    {
+      "path": "docs/audits/CAPABILITY_ASSESSMENT_R11.6.md",
+      "why": "Seven of its nine gaps were fixed and verified in 2026-08; the two that remain open, G-03 and G-04, are carried by the readiness register — G-04 as an item, G-03 as the rotation ITEM-22 closed. Counting them again would double them."
+    },
+    {
+      "path": "docs/audits/DESIGN_AUDIT_BRIEF_ASSESSMENT.md",
+      "why": "Its live remnant is ITEM-57 in the readiness register — the archived design system, unreconciled, a decision for the agency. Counted there."
+    },
+    {
+      "path": "docs/folio-Master-Flows-and-Endpoints/reference/ENDPOINT_FLOW_REQUIREMENTS.md",
+      "why": "A register and report at commit 72f2deb of which endpoints and flows each platform calls and what the branch provides. Its RN- and ITEM- ids are rows of config/notification-matrix.config.js and the readiness register, where they are tracked. Its F- and A- rows are findings and proposed actions that no one has accepted, so they are not items of record. Counting it would count the RN and ITEM rows twice."
+    },
+    {
+      "path": "docs/architecture/MODULE_RATIONALISATION.md",
+      "why": "A review of 18 October 2026 whose findings F-1 to F-24 were all accepted by the owner and carried out on 20 October 2026; §12 records each disposition. None is open, and none is a readiness item: the register of record is unchanged by it (§9)."
+    },
+    {
+      "path": "docs/architecture/ESSENTIALS_PLAN.md",
+      "why": "Generated from ESSENTIALS_PLAN.json, which is counted. Counting it too would double every item."
+    },
+    {
+      "path": "docs/architecture/ESSENTIALS_MAP.md",
+      "why": "A review of 21 October 2026. Its findings E-1 to E-11 and decisions D-1 to D-7 are carried as items of ESSENTIALS_PLAN.json, which is counted."
+    },
+    {
+      "path": "docs/architecture/LAYOUT_REVIEW.md",
+      "why": "A review of 21 October 2026. Its findings L-1 to L-10 are carried as items of ESSENTIALS_PLAN.json, which is counted."
+    }
+  ]
+}

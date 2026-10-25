@@ -1,0 +1,3334 @@
+{
+  "schemaVersion": "v1",
+  "specVersion": "1.2.7",
+  "title": "NITDA Folio identification system: identifier catalogue",
+  "status": "Issued for implementation (1.2: flow and endpoint naming, the Mailer and the Administration Centre as systems, the trigger locator)",
+  "issued": "2026-10-01",
+  "amended": "2026-10-10",
+  "specDocument": "IDENTIFICATION_SYSTEM.md",
+  "owners": [
+    {
+      "id": "OWN-ESTATE",
+      "role": "Folio Estate Owner",
+      "unit": "DGO Digital Ops",
+      "accountableFor": "The identification system as a whole: this specification, the entity-type, link-type, channel, system, environment and process vocabularies, and approval of every change to them."
+    },
+    {
+      "id": "OWN-REGISTRY",
+      "role": "Registry Manager",
+      "unit": "Central Registry",
+      "accountableFor": "Registry References, the Intake Register, classification codes, merges, voids and the legacy reference aliases."
+    },
+    {
+      "id": "OWN-TASKOPS",
+      "role": "Task Operations Lead",
+      "unit": "DGO Digital Ops",
+      "accountableFor": "Task References, the task queue and the legacy task aliases."
+    },
+    {
+      "id": "OWN-SERVICE",
+      "role": "Service Desk Lead",
+      "unit": "Customer Service",
+      "accountableFor": "Case References and the support-case register."
+    },
+    {
+      "id": "OWN-PLATFORM",
+      "role": "Platform Engineering Lead",
+      "unit": "DGO Digital Ops (flow engineering)",
+      "accountableFor": "Generation code in every flow, Entity and Qualified Keys, request and correlation IDs, contract keys, dataset keys, configuration keys, flow registry and dependency keys, version identifiers, the Identity Map and Record Links, and the reconciliation jobs."
+    },
+    {
+      "id": "OWN-IAM",
+      "role": "Identity and Access Administrator",
+      "unit": "Information Technology Department",
+      "accountableFor": "Person Keys and the user directory."
+    },
+    {
+      "id": "OWN-ORG",
+      "role": "Organisation Structure Owner",
+      "unit": "Human Resource Management with Corporate Planning and Strategy",
+      "accountableFor": "Org Unit Keys and the organisation directory."
+    },
+    {
+      "id": "OWN-INFOGOV",
+      "role": "Data Protection and Information Governance Officer",
+      "unit": "Legal Services / Data Protection",
+      "accountableFor": "Privacy review: confirms that no identifier carries personal or sensitive data, and sets retention for transient keys."
+    }
+  ],
+  "entityTypes": [
+    {
+      "code": "REC",
+      "name": "Intake record",
+      "appliesTo": "Every item of correspondence or document the Agency receives or originates, on any channel: portal submission, email, scanned paper, library drop, internally originated memo or letter, and outbound replies.",
+      "homeDataset": "INTAKE_REGISTER",
+      "humanReference": "ID-04",
+      "parentTypes": [],
+      "isRoot": true
+    },
+    {
+      "code": "ATT",
+      "name": "Attachment",
+      "appliesTo": "A stored file that belongs to a record: an uploaded attachment, a scanned image, an email attachment, a dispatched letter.",
+      "homeDataset": "ATTACHMENTS",
+      "humanReference": null,
+      "parentTypes": [
+        "REC",
+        "CAS",
+        "BRF",
+        "MTG",
+        "PRJ",
+        "REG"
+      ],
+      "isRoot": false
+    },
+    {
+      "code": "TSK",
+      "name": "Task",
+      "appliesTo": "A unit of assigned work: registry tasks (Global Tracking Queue), sub-tasks, bulk-created tasks, and the executive register's tasks under a brief, meeting or project. One task entity for both.",
+      "homeDataset": "TASK_QUEUE",
+      "humanReference": "ID-05",
+      "parentTypes": [
+        "REC",
+        "TSK",
+        "BRF",
+        "MTG",
+        "PRJ"
+      ],
+      "isRoot": false
+    },
+    {
+      "code": "MIN",
+      "name": "Minute",
+      "appliesTo": "A comment or minute written on a task, record, brief, meeting, project or registry file.",
+      "homeDataset": "MINUTES",
+      "humanReference": null,
+      "parentTypes": [
+        "TSK",
+        "REC",
+        "BRF",
+        "MTG",
+        "PRJ",
+        "REG"
+      ],
+      "isRoot": false
+    },
+    {
+      "code": "CAS",
+      "name": "Support case",
+      "appliesTo": "A help request raised through the portal's support page.",
+      "homeDataset": "SUPPORT_CASES",
+      "humanReference": "ID-06",
+      "parentTypes": [],
+      "isRoot": true
+    },
+    {
+      "code": "EVT",
+      "name": "Event",
+      "appliesTo": "Anything that happened to a record: status change, assignment, verification, AI extraction, approval decision, registry file movement, email dispatch, escalation, access, audit entry.",
+      "homeDataset": "STATUS_TIMELINE",
+      "humanReference": null,
+      "parentTypes": [
+        "APR",
+        "ATT",
+        "BRF",
+        "CAS",
+        "LNK",
+        "MIN",
+        "MTG",
+        "ORG",
+        "PRJ",
+        "REC",
+        "REG",
+        "TSK",
+        "USR"
+      ],
+      "isRoot": false
+    },
+    {
+      "code": "LNK",
+      "name": "Link",
+      "appliesTo": "A typed, non-hierarchical relationship between two records.",
+      "homeDataset": "RECORD_LINKS",
+      "humanReference": null,
+      "parentTypes": [],
+      "isRoot": false
+    },
+    {
+      "code": "MAP",
+      "name": "Identity map entry",
+      "appliesTo": "One platform locator or legacy alias bound to an entity.",
+      "homeDataset": "IDENTITY_MAP",
+      "humanReference": null,
+      "parentTypes": [],
+      "isRoot": false
+    },
+    {
+      "code": "USR",
+      "name": "Person",
+      "appliesTo": "A member of staff or service account acting in the platform. Key = Entra object ID.",
+      "homeDataset": "USER_DIRECTORY",
+      "humanReference": null,
+      "parentTypes": [],
+      "isRoot": false
+    },
+    {
+      "code": "ORG",
+      "name": "Organisation unit",
+      "appliesTo": "A department, unit or office that tasks are routed to.",
+      "homeDataset": "ORG_DIRECTORY",
+      "humanReference": "ID-16",
+      "parentTypes": [
+        "ORG"
+      ],
+      "isRoot": false
+    },
+    {
+      "code": "BRF",
+      "name": "Brief",
+      "appliesTo": "An executive brief prepared for the Director-General (executive register).",
+      "homeDataset": "BRIEFS",
+      "humanReference": null,
+      "parentTypes": [],
+      "isRoot": true
+    },
+    {
+      "code": "MTG",
+      "name": "Meeting",
+      "appliesTo": "A meeting in the executive register, with its agenda, attendees and outcomes.",
+      "homeDataset": "MEETINGS",
+      "humanReference": null,
+      "parentTypes": [],
+      "isRoot": true
+    },
+    {
+      "code": "PRJ",
+      "name": "Project",
+      "appliesTo": "A project tracked in the executive register.",
+      "homeDataset": "PROJECTS",
+      "humanReference": null,
+      "parentTypes": [],
+      "isRoot": true
+    },
+    {
+      "code": "APR",
+      "name": "Approval",
+      "appliesTo": "A request for approval and its decision, raised on a record, brief, task, meeting or project.",
+      "homeDataset": "APPROVALS",
+      "humanReference": null,
+      "parentTypes": [
+        "REC",
+        "BRF",
+        "TSK",
+        "MTG",
+        "PRJ"
+      ],
+      "isRoot": false
+    },
+    {
+      "code": "REG",
+      "name": "Registry file",
+      "appliesTo": "A registry file (file jacket, physical or digital) that registered records are filed in, and whose movements between offices are tracked.",
+      "homeDataset": "REGISTRY_FILES",
+      "humanReference": "ID-26",
+      "parentTypes": [],
+      "isRoot": true
+    }
+  ],
+  "reservedTypeCodes": [
+    "AUD",
+    "DEP",
+    "DGO",
+    "MOV",
+    "NIT",
+    "RAW",
+    "REF",
+    "SYS",
+    "TMP",
+    "TST",
+    "XXX"
+  ],
+  "linkTypes": [
+    {
+      "code": "RELATES_TO",
+      "from": [
+        "REC",
+        "CAS",
+        "TSK",
+        "BRF",
+        "MTG",
+        "PRJ"
+      ],
+      "to": [
+        "REC",
+        "CAS",
+        "TSK",
+        "BRF",
+        "MTG",
+        "PRJ"
+      ],
+      "symmetric": true,
+      "meaning": "General association that people asserted. Neither side depends on the other."
+    },
+    {
+      "code": "REPLIES_TO",
+      "from": [
+        "REC"
+      ],
+      "to": [
+        "REC"
+      ],
+      "symmetric": false,
+      "meaning": "An outbound or internal record answers an earlier record."
+    },
+    {
+      "code": "ABOUT",
+      "from": [
+        "CAS"
+      ],
+      "to": [
+        "REC"
+      ],
+      "symmetric": false,
+      "meaning": "A support case concerns a registered record. It replaces free-text AboutReference."
+    },
+    {
+      "code": "DUPLICATE_OF",
+      "from": [
+        "REC",
+        "CAS",
+        "TSK"
+      ],
+      "to": [
+        "REC",
+        "CAS",
+        "TSK"
+      ],
+      "symmetric": false,
+      "meaning": "Flagged as a likely duplicate and still awaiting a merge decision."
+    },
+    {
+      "code": "MERGED_INTO",
+      "from": [
+        "REC",
+        "CAS",
+        "TSK"
+      ],
+      "to": [
+        "REC",
+        "CAS",
+        "TSK"
+      ],
+      "symmetric": false,
+      "meaning": "The source was absorbed into the target. The source's IdState is MERGED."
+    },
+    {
+      "code": "SUPERSEDES",
+      "from": [
+        "ATT",
+        "REC",
+        "REG"
+      ],
+      "to": [
+        "ATT",
+        "REC",
+        "REG"
+      ],
+      "symmetric": false,
+      "meaning": "A new version replaces an earlier one, for example a corrected file. The old one stays readable."
+    },
+    {
+      "code": "DERIVED_FROM",
+      "from": [
+        "REC",
+        "TSK",
+        "ATT",
+        "BRF"
+      ],
+      "to": [
+        "REC",
+        "TSK",
+        "ATT",
+        "BRF"
+      ],
+      "symmetric": false,
+      "meaning": "Created out of another record: a split, a copy, or a scan of a paper file."
+    },
+    {
+      "code": "DEPENDS_ON",
+      "from": [
+        "TSK",
+        "PRJ"
+      ],
+      "to": [
+        "TSK",
+        "PRJ"
+      ],
+      "symmetric": false,
+      "meaning": "This task cannot finish before the target task."
+    },
+    {
+      "code": "FILED_IN",
+      "from": [
+        "REC"
+      ],
+      "to": [
+        "REG"
+      ],
+      "symmetric": false,
+      "meaning": "A registered record is filed in a registry file. A record may be filed in more than one file."
+    },
+    {
+      "code": "DISCUSSED_AT",
+      "from": [
+        "REC",
+        "BRF",
+        "TSK",
+        "PRJ"
+      ],
+      "to": [
+        "MTG"
+      ],
+      "symmetric": false,
+      "meaning": "An item was tabled or discussed at a meeting."
+    },
+    {
+      "code": "BRIEFS_ON",
+      "from": [
+        "BRF"
+      ],
+      "to": [
+        "REC",
+        "PRJ",
+        "MTG"
+      ],
+      "symmetric": false,
+      "meaning": "A brief was prepared about a record, project or meeting."
+    }
+  ],
+  "idStates": [
+    {
+      "state": "ACTIVE",
+      "resolves": "to itself",
+      "meaning": "The normal state of every identifier from issue onwards, whatever the business status (open, closed, dispatched)."
+    },
+    {
+      "state": "ARCHIVED",
+      "resolves": "to itself, read-only",
+      "meaning": "The record has moved to the archive store. Its keys and references are unchanged, and the archive locator is added to the Identity Map."
+    },
+    {
+      "state": "MERGED",
+      "resolves": "to the record named in SupersededBy",
+      "meaning": "The record was absorbed into another. It is kept as a tombstone, and its references keep working by redirect."
+    },
+    {
+      "state": "VOID",
+      "resolves": "to a void notice",
+      "meaning": "A number was claimed but no record was created, or a record was created in error and withdrawn. The number is never reissued."
+    }
+  ],
+  "channels": [
+    {
+      "code": "portal",
+      "d4": "A",
+      "name": "Public Document Portal",
+      "legacyValues": [
+        "Document Portal",
+        "Portal"
+      ]
+    },
+    {
+      "code": "email",
+      "d4": "B",
+      "name": "Monitored registry mailboxes",
+      "legacyValues": [
+        "Email",
+        "EML"
+      ]
+    },
+    {
+      "code": "scan",
+      "d4": "C",
+      "name": "Registry counter scan",
+      "legacyValues": [
+        "Scan",
+        "Counter",
+        "scan-counter"
+      ]
+    },
+    {
+      "code": "library",
+      "d4": "C'",
+      "name": "Watched document libraries (AI intake)",
+      "legacyValues": [
+        "Library"
+      ]
+    },
+    {
+      "code": "internal",
+      "d4": "D",
+      "name": "Internally originated in Folio",
+      "legacyValues": [
+        "Internal",
+        "internal-origination",
+        "Manual"
+      ]
+    }
+  ],
+  "systems": [
+    {
+      "code": "runtime",
+      "kind": "folio-platform",
+      "name": "Folio Workspace"
+    },
+    {
+      "code": "portal",
+      "kind": "folio-platform",
+      "name": "NITDA Document Portal"
+    },
+    {
+      "code": "console",
+      "kind": "folio-platform",
+      "name": "Folio Estate Console"
+    },
+    {
+      "code": "workbench",
+      "kind": "folio-platform",
+      "name": "Folio Flow Workbench"
+    },
+    {
+      "code": "capsule",
+      "kind": "folio-platform",
+      "name": "Folio Vault"
+    },
+    {
+      "code": "mailer",
+      "kind": "folio-platform",
+      "name": "DGO Correspondence Mailer"
+    },
+    {
+      "code": "centre",
+      "kind": "folio-platform",
+      "name": "Folio Central Administration Centre"
+    },
+    {
+      "code": "sharepoint",
+      "kind": "external",
+      "name": "SharePoint Online (lists and libraries)"
+    },
+    {
+      "code": "exchange",
+      "kind": "external",
+      "name": "Exchange Online (mailboxes)"
+    },
+    {
+      "code": "onedrive",
+      "kind": "external",
+      "name": "OneDrive (scan station)"
+    },
+    {
+      "code": "powerautomate",
+      "kind": "external",
+      "name": "Power Automate (flows and runs)"
+    },
+    {
+      "code": "entra",
+      "kind": "external",
+      "name": "Microsoft Entra ID (people and groups)"
+    },
+    {
+      "code": "paper",
+      "kind": "physical",
+      "name": "Physical registry files"
+    }
+  ],
+  "environments": [
+    {
+      "code": "prd",
+      "name": "Production",
+      "humanRefPrefix": ""
+    },
+    {
+      "code": "uat",
+      "name": "User acceptance / test",
+      "humanRefPrefix": "Z"
+    },
+    {
+      "code": "dev",
+      "name": "Development",
+      "humanRefPrefix": "Z"
+    }
+  ],
+  "processes": [
+    {
+      "code": "INTAKE",
+      "name": "Receive and register",
+      "creates": [
+        "REC",
+        "ATT",
+        "EVT"
+      ]
+    },
+    {
+      "code": "CLASSIFY",
+      "name": "Classify and triage (AI preview + human apply)",
+      "creates": [
+        "EVT"
+      ]
+    },
+    {
+      "code": "ASSIGN",
+      "name": "Create and assign tasks",
+      "creates": [
+        "TSK",
+        "EVT"
+      ]
+    },
+    {
+      "code": "ACTION",
+      "name": "Work tasks, minute, transition status; executive briefs, meetings, projects and approvals",
+      "creates": [
+        "APR",
+        "BRF",
+        "EVT",
+        "LNK",
+        "MIN",
+        "MTG",
+        "PRJ",
+        "TSK"
+      ]
+    },
+    {
+      "code": "RESPOND",
+      "name": "Draft responses and outbound correspondence",
+      "creates": [
+        "REC",
+        "ATT",
+        "LNK"
+      ]
+    },
+    {
+      "code": "DISPATCH",
+      "name": "Send email and outbound correspondence",
+      "creates": [
+        "EVT"
+      ]
+    },
+    {
+      "code": "VERIFY",
+      "name": "Verify a person's email (one-time codes)",
+      "creates": [
+        "EVT"
+      ]
+    },
+    {
+      "code": "SUPPORT",
+      "name": "Handle support cases",
+      "creates": [
+        "CAS",
+        "LNK",
+        "EVT"
+      ]
+    },
+    {
+      "code": "TRACK",
+      "name": "Status enquiry, workspace reads, reporting",
+      "creates": []
+    },
+    {
+      "code": "ARCHIVE",
+      "name": "Retention and archive",
+      "creates": [
+        "EVT",
+        "MAP"
+      ]
+    },
+    {
+      "code": "GOVERN",
+      "name": "Registry (files and movements), reference data, access, audit, provisioning",
+      "creates": [
+        "EVT",
+        "LNK",
+        "MAP",
+        "ORG",
+        "REG",
+        "USR"
+      ]
+    }
+  ],
+  "contractKeyProcess": {
+    "FETCH_ACTIVITIES": "TRACK",
+    "FETCH_ALL": "TRACK",
+    "REFERENCE_DATA": "GOVERN",
+    "GET_DOCS": "TRACK",
+    "FETCH_EMAIL_ATTACHMENTS": "INTAKE",
+    "SINGLE_ASSIGNMENT": "ASSIGN",
+    "BULK_ASSIGNMENT": "ASSIGN",
+    "DYNAMIC_ACTIONS": "ACTION",
+    "USER_ADMIN": "GOVERN",
+    "ACTIVITY_LIFECYCLE": "ACTION",
+    "EMAIL": "DISPATCH",
+    "DISPATCH_OUTBOUND": "DISPATCH",
+    "ARCHIVE_REFERENCE": "ARCHIVE",
+    "EMAIL_RELATED_TASK": "ASSIGN",
+    "AI_EMAIL_ANALYSIS": "CLASSIFY",
+    "AI_DOC_ANALYSIS": "CLASSIFY",
+    "AI_CHAT": "RESPOND",
+    "OTP_GENERATE": "VERIFY",
+    "OTP_VERIFY": "VERIFY",
+    "SUBSIDIARY_ACTIONS": "ACTION",
+    "STATUS": "TRACK",
+    "VERIFY": "VERIFY",
+    "VERIFY_CONFIRM": "VERIFY",
+    "WRITEBACK": "INTAKE",
+    "SUBMISSION": "INTAKE",
+    "SUPPORT": "SUPPORT",
+    "UPLOAD": "INTAKE",
+    "SCAN_INTAKE": "INTAKE",
+    "MAIL_SEND": "DISPATCH",
+    "MAIL_LOG": "TRACK",
+    "MAIL_DIRECTORY": "GOVERN",
+    "MAIL_TEMPLATES": "RESPOND",
+    "MAIL_PROVISION": "GOVERN",
+    "MAIL_AUTH": "VERIFY",
+    "MAIL_DATA": "RESPOND"
+  },
+  "datasets": [
+    {
+      "key": "INTAKE_REGISTER",
+      "list": "Portal Registry",
+      "site": "NEDMS",
+      "listGuid": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+      "entityType": "REC",
+      "role": "master",
+      "humanRefColumn": "ReferenceId"
+    },
+    {
+      "key": "ATTACHMENTS",
+      "list": "Portal Attachments",
+      "site": "NEDMS",
+      "listGuid": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+      "entityType": "ATT",
+      "role": "master",
+      "humanRefColumn": null
+    },
+    {
+      "key": "SCAN_LIBRARY",
+      "list": "NITDA_Central_Registry",
+      "site": "NEDMS",
+      "listGuid": "f553959f-d55b-4591-aa87-d61fb6f9eda9",
+      "entityType": "ATT",
+      "role": "file-store",
+      "humanRefColumn": null
+    },
+    {
+      "key": "STATUS_TIMELINE",
+      "list": "Portal Status Timeline",
+      "site": "NEDMS",
+      "listGuid": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+      "entityType": "EVT",
+      "role": "event-stream",
+      "humanRefColumn": null
+    },
+    {
+      "key": "SUPPORT_CASES",
+      "list": "Portal Support Cases",
+      "site": "Global_Digital_Documents_Centre",
+      "listGuid": "b984645b-8e3a-457f-a305-b95650fd3f23",
+      "entityType": "CAS",
+      "role": "master",
+      "humanRefColumn": "CaseRef"
+    },
+    {
+      "key": "SEQUENCE_COUNTERS",
+      "list": "Portal Sequence Counters",
+      "site": "Global_Digital_Documents_Centre",
+      "listGuid": "d95409a4-2b48-4d34-9f60-da5d27db862d",
+      "entityType": null,
+      "role": "control",
+      "humanRefColumn": null
+    },
+    {
+      "key": "FLOW_TELEMETRY",
+      "list": "Portal Flow Telemetry",
+      "site": "Global_Digital_Documents_Centre",
+      "listGuid": "726c210d-09d5-45d9-952d-7a506b644b13",
+      "entityType": null,
+      "role": "run-log",
+      "humanRefColumn": null
+    },
+    {
+      "key": "TASK_QUEUE",
+      "list": "Global Tracking Queue",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
+      "entityType": "TSK",
+      "role": "master",
+      "humanRefColumn": "TaskRef"
+    },
+    {
+      "key": "TASK_QUEUE_MIRROR",
+      "list": "DEV_OPS_Global_Tracking_Queue",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
+      "entityType": "TSK",
+      "role": "test",
+      "humanRefColumn": "TaskRef",
+      "note": "A test list (owner direction, 2026-10-05). Tasks are created in Global Tracking Queue (TASK_QUEUE) only. No flow is to create tasks here; its rows are not migrated, keyed or mapped, and it is not a mirror of TASK_QUEUE. The key is kept so the columns Phase 1 added stay accounted for."
+    },
+    {
+      "key": "OPS_WORKING_REGISTER",
+      "list": "DGO DIGITAL OPS",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+      "entityType": "REC",
+      "role": "mirror",
+      "humanRefColumn": "ReferenceId"
+    },
+    {
+      "key": "MINUTES",
+      "list": "Task_Comments",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "1932d687-e77a-4929-9047-a1f544c68a0b",
+      "entityType": "MIN",
+      "role": "master",
+      "humanRefColumn": null
+    },
+    {
+      "key": "AI_TEXT_LOG",
+      "list": "AI TEXT DATA LOG",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "d46a2be7-eaca-4056-bc4f-a439eb59721a",
+      "entityType": "EVT",
+      "role": "event-stream",
+      "humanRefColumn": null
+    },
+    {
+      "key": "FLOW_CONFIGURATION",
+      "list": "Flow Configuration",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": "9bc168c3-06e5-4d58-982b-0df06205fd35",
+      "entityType": null,
+      "role": "control",
+      "humanRefColumn": null
+    },
+    {
+      "key": "AUDIT_LOG",
+      "list": "DGO_AuditLog",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": "be0c7af1-b21d-4efe-8c30-53fc55598d95",
+      "entityType": "EVT",
+      "role": "event-stream",
+      "humanRefColumn": null
+    },
+    {
+      "key": "USER_DIRECTORY",
+      "list": "DGO_UserDirectory",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": "3d591f5b-3f2f-409c-983a-a77b5c174834",
+      "entityType": "USR",
+      "role": "master",
+      "humanRefColumn": null
+    },
+    {
+      "key": "ORG_DIRECTORY",
+      "list": "DGO_DepartmentDirectory",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": "eed0ba42-ece1-40e2-bf66-79827de02766",
+      "entityType": "ORG",
+      "role": "master",
+      "humanRefColumn": "UnitKey"
+    },
+    {
+      "key": "ENDPOINT_REGISTRY",
+      "list": "DGO_EndpointRegistry",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": "08c6e1c4-f2b1-4810-933d-69b4327fb6af",
+      "entityType": null,
+      "role": "control",
+      "humanRefColumn": null
+    },
+    {
+      "key": "FLOW_REGISTRY",
+      "list": "DGO_HTTPFlowRegistry",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "entityType": null,
+      "role": "control",
+      "humanRefColumn": null
+    },
+    {
+      "key": "FLOW_DEPENDENCIES",
+      "list": "DGO_HTTPFlowDependencies",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "entityType": null,
+      "role": "control",
+      "humanRefColumn": null
+    },
+    {
+      "key": "RECORD_LINKS",
+      "list": "DGO_RecordLinks",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "entityType": "LNK",
+      "role": "master",
+      "humanRefColumn": null,
+      "new": true
+    },
+    {
+      "key": "IDENTITY_MAP",
+      "list": "DGO_IdentityMap",
+      "site": "DGO_ECM_GOVERNANCE",
+      "listGuid": null,
+      "entityType": "MAP",
+      "role": "master",
+      "humanRefColumn": null,
+      "new": true
+    },
+    {
+      "key": "BRIEFS",
+      "list": "DGO_Briefs",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "entityType": "BRF",
+      "role": "master",
+      "humanRefColumn": null,
+      "new": true
+    },
+    {
+      "key": "MEETINGS",
+      "list": "DGO_Meetings",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "entityType": "MTG",
+      "role": "master",
+      "humanRefColumn": null,
+      "new": true
+    },
+    {
+      "key": "PROJECTS",
+      "list": "DGO_Projects",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "entityType": "PRJ",
+      "role": "master",
+      "humanRefColumn": null,
+      "new": true
+    },
+    {
+      "key": "APPROVALS",
+      "list": "DGO_Approvals",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "listGuid": null,
+      "entityType": "APR",
+      "role": "master",
+      "humanRefColumn": null,
+      "new": true
+    },
+    {
+      "key": "REGISTRY_FILES",
+      "list": "DGO_RegistryFiles",
+      "site": "NEDMS",
+      "listGuid": null,
+      "entityType": "REG",
+      "role": "master",
+      "humanRefColumn": "RegistryFileRef",
+      "new": true
+    },
+    {
+      "key": "FILE_MOVEMENTS",
+      "list": "DGO_FileMovements",
+      "site": "NEDMS",
+      "listGuid": null,
+      "entityType": "EVT",
+      "role": "event-stream",
+      "humanRefColumn": null,
+      "new": true
+    }
+  ],
+  "locatorKinds": [
+    {
+      "kind": "SPO_ITEM",
+      "system": "sharepoint",
+      "container": "list or library GUID",
+      "valuePattern": "^[1-9]\\d{0,9}$",
+      "examples": [
+        {
+          "container": "ee82725a-c408-45e2-a8e8-facf7a092047",
+          "value": "12907",
+          "scenario": "A task row in Global Tracking Queue."
+        }
+      ],
+      "stability": "Stable while the item stays in that list. A copy or a migration gives the item a new ID, which is why it is a locator and not a key."
+    },
+    {
+      "kind": "EXO_INTERNET_MESSAGE_ID",
+      "system": "exchange",
+      "container": "role mailbox address",
+      "valuePattern": "^<[^<>\\s]{1,240}@[^<>\\s]{1,240}>$",
+      "examples": [
+        {
+          "container": "registry@nitda.gov.ng",
+          "value": "<CAF3x9QmT2b@mail.example.ng>",
+          "scenario": "An email that arrived in a monitored registry mailbox."
+        }
+      ],
+      "stability": "Set by the sender's mail system. It doesn't change when the message is moved between folders, so it is the email channel's source locator."
+    },
+    {
+      "kind": "EXO_GRAPH_MESSAGE_ID",
+      "system": "exchange",
+      "container": "role mailbox address",
+      "valuePattern": "^[A-Za-z0-9+/=_-]{20,400}$",
+      "examples": [
+        {
+          "container": "registry@nitda.gov.ng",
+          "value": "AAMkAGI2ZjM1NzQ0LWE3AAA=",
+          "scenario": "A legacy RefIDD value written by Web - Email Task Created."
+        }
+      ],
+      "stability": "Changes when the message moves folders. It is kept only to resolve legacy rows and is never written for new records."
+    },
+    {
+      "kind": "ODB_ITEM",
+      "system": "onedrive",
+      "container": "drive ID",
+      "valuePattern": "^[A-Z0-9]{20,40}$",
+      "examples": [
+        {
+          "container": "b!scanstation",
+          "value": "01BYE5RZ6QN3ZWBTUFOFD3GSPGOHDJD36K",
+          "scenario": "A scan dropped in DGO SCAN STATION ONEDRIVE."
+        }
+      ],
+      "stability": "Stable while the file stays in that drive."
+    },
+    {
+      "kind": "PA_RUN",
+      "system": "powerautomate",
+      "container": "Flow Registry Key",
+      "valuePattern": "^\\d{20,40}[A-Z]{2}\\d{2}$",
+      "examples": [
+        {
+          "container": "DGO:57f137b6-5cab-7991-4084-20605a3a9d43",
+          "value": "08584120991102970260555359768CU09",
+          "scenario": "The run of Bulk Assign Direct that created a batch of tasks."
+        }
+      ],
+      "stability": "Permanent, but run history is purged after the platform's retention period. That is why every run also writes its Request ID to telemetry."
+    },
+    {
+      "kind": "PA_TRIGGER",
+      "system": "powerautomate",
+      "container": "Flow Registry Key",
+      "valuePattern": "^[0-9a-f]{32}$",
+      "examples": [
+        {
+          "container": "the Flow Registry Key of the flow that answers it, read live",
+          "value": "aa662769f13a4666bfadf3039cd8d247",
+          "scenario": "The workflow ID inside the signed FETCH_ALL trigger address, as recorded in endpoint-register.json."
+        }
+      ],
+      "stability": "Fixed for the flow's trigger; a re-import gives a new one. It is the only part of a signed trigger address that is recorded: the address itself is a credential and is never stored. It is not the flow's identity (ID-12) and the two are never interchanged (GOV-06)."
+    },
+    {
+      "kind": "PAPER_FILE",
+      "system": "paper",
+      "container": "registry location",
+      "valuePattern": "^[A-Z0-9][A-Z0-9/ .()-]{1,63}$",
+      "examples": [
+        {
+          "container": "Central Registry",
+          "value": "NITDA/DG/ADM/112/VOL.II",
+          "scenario": "The physical file a scanned letter came from, as written on the jacket."
+        }
+      ],
+      "stability": "As stable as the paper file. Recorded so a scan can be traced back to its original."
+    }
+  ],
+  "aliasKinds": [
+    {
+      "kind": "LEGACY_TICKS_REF",
+      "of": "REC",
+      "pattern": "^NITDA-20\\d{2}-\\d{3}$",
+      "origin": "Superseded portal flows (Portal_UBMISSION_ECM_DOCS / SUBMISSION_ECM_DOCS_PORTAL): the last 3 digits of ticks().",
+      "examples": [
+        "NITDA-2026-217",
+        "NITDA-2025-048"
+      ],
+      "externallyIssued": true
+    },
+    {
+      "kind": "BROWSER_PROVISIONAL_REF",
+      "of": "REC",
+      "pattern": "^NITDA-20\\d{2}-[1-9]\\d{0,3}$",
+      "origin": "Folio core/reference-minter.js: browser-minted, unpadded, flagged provisional.",
+      "examples": [
+        "NITDA-2026-12"
+      ],
+      "externallyIssued": false
+    },
+    {
+      "kind": "BROWSER_PADDED_REF",
+      "of": "REC",
+      "pattern": "^NITDA-20\\d{2}-0\\d{5}$",
+      "origin": "Earlier Folio minter: 6-digit padding.",
+      "examples": [
+        "NITDA-2026-000217"
+      ],
+      "externallyIssued": false
+    },
+    {
+      "kind": "BROWSER_TIMESTAMP_REF",
+      "of": "REC",
+      "pattern": "^NITDA-\\d{6}$",
+      "origin": "Older Folio correspondence module: the last 6 digits of Date.now().",
+      "examples": [
+        "NITDA-483920"
+      ],
+      "externallyIssued": false
+    },
+    {
+      "kind": "PORTAL_TRACKING_ID",
+      "of": "REC",
+      "pattern": "^NITDA-[A-Z0-9]{9}$",
+      "origin": "Portal PF.uid() tracking ID, sent as localId.",
+      "examples": [
+        "NITDA-K7P2QX9MB"
+      ],
+      "externallyIssued": true
+    },
+    {
+      "kind": "PORTAL_SUPPORT_SREF",
+      "of": "CAS",
+      "pattern": "^NITDA-S-[A-Z0-9]{6}$",
+      "origin": "Portal support.js sref(): browser-minted.",
+      "examples": [
+        "NITDA-S-4KQ7BM"
+      ],
+      "externallyIssued": true
+    },
+    {
+      "kind": "REBUILD_CASE_REF",
+      "of": "CAS",
+      "pattern": "^CASE-20\\d{6}-[0-9A-F]{6}$",
+      "origin": "The rebuilt SUPPORT flow before it was corrected to the legacy format.",
+      "examples": [
+        "CASE-20260930-4F9A1C"
+      ],
+      "externallyIssued": true
+    },
+    {
+      "kind": "LEGACY_TASK_COMPOSITE",
+      "of": "TSK",
+      "pattern": "^\\d{8}-(\\d{1,10}|EML)-[A-Z]{3}-[A-Z]{3}-\\d{1,10}$",
+      "origin": "Reference_ID written by Create Task, Bulk Task Assignment, Bulk Assign Direct and Email Task Created (stored trimmed).",
+      "examples": [
+        "20260915-3482-CAS-PRC-12907",
+        "20260915-EML-ADM-HRM-12911",
+        "20260915-3482-CAT-SUB-12907"
+      ],
+      "externallyIssued": true
+    },
+    {
+      "kind": "LEGACY_TASK_DISPLAY",
+      "of": "TSK",
+      "pattern": "^TASK-[1-9]\\d{0,9}$",
+      "origin": "TASK-<item ID> used in task emails and links.",
+      "examples": [
+        "TASK-12907"
+      ],
+      "externallyIssued": true
+    },
+    {
+      "kind": "LEGACY_ORG_KEY",
+      "of": "ORG",
+      "pattern": "^[A-Za-z][A-Za-z0-9 .]{1,15}$",
+      "origin": "Approved unit keys that embed a changeable attribute, such as acting status ('Ag DGCEO').",
+      "examples": [
+        "Ag DGCEO"
+      ],
+      "externallyIssued": false
+    },
+    {
+      "kind": "LEGACY_REGISTRY_FILE_NO",
+      "of": "REG",
+      "pattern": "^DGO/20\\d{2}/\\d{6,13}$",
+      "origin": "Folio core/enterprise-domain.js registryNumber(): DGO/<year>/<item ID or Date.now(), padded to 6>.",
+      "examples": [
+        "DGO/2026/000417"
+      ],
+      "externallyIssued": true
+    },
+    {
+      "kind": "ENTITY_STORE_REF",
+      "of": "REC",
+      "pattern": "^REF-20\\d{2}-\\d{13}$",
+      "origin": "Folio core/entity-store.js createReference(): REF-<year>-<Date.now()>.",
+      "examples": [
+        "REF-2026-1790811234567"
+      ],
+      "externallyIssued": false
+    },
+    {
+      "kind": "APPROVAL_LOCAL_REF",
+      "of": "APR",
+      "pattern": "^APR-\\d{13}$",
+      "origin": "Folio modules/approvals.js: 'APR-' + Date.now().",
+      "examples": [
+        "APR-1790811234567"
+      ],
+      "externallyIssued": false
+    },
+    {
+      "kind": "FOLIO_LOCAL_KEY",
+      "of": "BRF/MTG/PRJ/TSK/REG/APR/MIN/EVT/REC/USR",
+      "pattern": "^(BRF|MTG|PRJ|TSK|REG|MOV|AUD|CMAIL|EMAILDISP)-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "origin": "Folio browser keys: executive register, enterprise domain, audit log and correspondence email service (prefix + crypto.randomUUID()).",
+      "examples": [
+        "BRF-3f6c2a91-7d4e-4b8a-9c21-5e0f7a3b9d14",
+        "MOV-0b1d7e55-2c4f-4a8e-9d61-3e7a9b0c5f22"
+      ],
+      "externallyIssued": false
+    }
+  ],
+  "namingConventions": {
+    "flowDisplayName": {
+      "what": "The display name of a Power Automate flow. An attribute, never a key: the flow is identified by its Flow Registry Key (ID-12), and a rename changes nothing that is keyed.",
+      "appliesTo": "Every flow created or rebuilt from 2026-10-03. Existing flows keep their names: docs/reference/PLATFORM_NAMING.md records that tenant flow names are not renamed, because the wired contracts and the tooling resolve against them. A legacy name is recorded as it is, with its conformance reported in docs/folio-Master-Flows-and-Endpoints/reference/FLOW_REQUIREMENTS.md.",
+      "format": "<PREFIX>_<SUBJECT>: upper case, words joined by underscores, at most 64 characters.",
+      "pattern": "^(IP|CG|DGO|GOV|ESTATE)_[A-Z0-9]+(?:_[A-Z0-9]+)*$",
+      "maxLength": 64,
+      "prefixes": [
+        {
+          "prefix": "IP",
+          "system": "runtime",
+          "why": "The Workspace's existing prefix (IP_ = internal platform)."
+        },
+        {
+          "prefix": "CG",
+          "system": "portal",
+          "why": "The Document Portal's existing prefix (CG_ = Correspondence Gateway, PLATFORM_INDEPENDENCE.md)."
+        },
+        {
+          "prefix": "DGO",
+          "system": "mailer",
+          "why": "The Mailer's seven flows already follow the rule: DGO_ followed by their MAIL_ contract key."
+        },
+        {
+          "prefix": "GOV",
+          "system": null,
+          "why": "The governance flows that keep the HTTP flow registry, read by the Estate Console, the Flow Workbench and the Administration Centre."
+        },
+        {
+          "prefix": "ESTATE",
+          "system": null,
+          "why": "A flow that serves more than one platform, or none directly: scheduled sweeps, mailbox intake, set-up and provisioning."
+        }
+      ],
+      "rules": [
+        "A flow that serves one contract key is named <PREFIX>_<CONTRACT KEY>, the prefix being its platform's.",
+        "A flow that serves several keys, or none, is named <PREFIX>_<PROCESS CODE>_<SUBJECT>: the process from ID-10, then what it does.",
+        "No environment, version, date, person or state in a name: environment is ID-08, version is ID-22, and a copy is a new flow with its own name. The forbidden words follow the Universal Filename Policy's ban on vague terms.",
+        "Unique within an environment. The same flow in another environment keeps the same name.",
+        "A package or file in this repository (DGO_FETCH_ALL.designer-paste.json) is not a flow name: a package is pasted into the flow that serves its key."
+      ],
+      "forbiddenWords": [
+        "COPY",
+        "TEST",
+        "NEW",
+        "OLD",
+        "FINAL",
+        "LATEST",
+        "TEMP",
+        "DRAFT",
+        "BACKUP",
+        "V1",
+        "V2",
+        "V3",
+        "PRD",
+        "UAT",
+        "DEV"
+      ],
+      "examples": [
+        {
+          "value": "IP_FETCH_ALL",
+          "scenario": "The Workspace flow that serves FETCH_ALL."
+        },
+        {
+          "value": "CG_SUBMISSION",
+          "scenario": "The Portal flow that serves SUBMISSION."
+        },
+        {
+          "value": "DGO_MAIL_SEND",
+          "scenario": "The Mailer flow that serves MAIL_SEND (already in the tenant)."
+        },
+        {
+          "value": "ESTATE_TRACK_SCHEDULED_SWEEP",
+          "scenario": "The hourly sweep that serves the Workspace and the Portal."
+        },
+        {
+          "value": "GOV_GOVERN_RETIRE_HTTP_FLOW",
+          "scenario": "A rebuilt governance retirement flow."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "CG_Submission_Endpoint",
+          "reason": "Mixed case, and the suffix restates what the prefix already says."
+        },
+        {
+          "value": "IP_FETCH_ALL_V2",
+          "reason": "A version in the name; versions are ID-22."
+        },
+        {
+          "value": "Copy of - Due date reminder",
+          "reason": "No prefix, spaces, and a copy is not a name."
+        },
+        {
+          "value": "05 - GOV - Retire HTTP Flow",
+          "reason": "Legacy form, kept for the existing flow; a new or rebuilt one uses the rule."
+        }
+      ],
+      "owner": "OWN-PLATFORM"
+    },
+    "vaultAlias": {
+      "what": "The name Folio Vault gives an endpoint in place of its signed address. It is a label for one contract key on one platform, never a key in a governed dataset.",
+      "appliesTo": "Every endpoint registered in Folio Vault, and the vault_alias the Administration Centre records for each endpoint.",
+      "format": "<system code>.<contract key in lower case, underscores as hyphens>.",
+      "pattern": "^(runtime|portal|mailer)\\.[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "rules": [
+        "The system is the platform that calls the endpoint (ID-07), so one key on two platforms would have two aliases.",
+        "Derived, never chosen: the same key always gives the same alias. A retired alias is never reused.",
+        "Also satisfies the Vault's own format check (tools/flow-capsule/app/flowcapsule.py, ALIAS)."
+      ],
+      "examples": [
+        {
+          "value": "runtime.fetch-all",
+          "scenario": "FETCH_ALL as the Workspace calls it."
+        },
+        {
+          "value": "portal.verify-confirm",
+          "scenario": "VERIFY_CONFIRM as the Portal calls it."
+        },
+        {
+          "value": "mailer.mail-send",
+          "scenario": "MAIL_SEND as the Mailer calls it."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "dgo.fetch-activities",
+          "reason": "dgo is not a system code (the Vault README example before 1.2)."
+        },
+        {
+          "value": "internal.fetch-all",
+          "reason": "internal is not a system code (the Administration Centre before 1.2); the Workspace is runtime."
+        }
+      ],
+      "owner": "OWN-PLATFORM"
+    },
+    "flowArtifactFile": {
+      "what": "The name of a file in this repository that is about one flow or one endpoint: a paste package, a capture, an exported definition, a provisioning page, a run record. It names the endpoint, the flow and the tenant flow it belongs to, so a file is never mistaken for a flow of its own and every file about one flow sorts and searches together, which is what weeding out duplicate and unwanted flows needs.",
+      "appliesTo": "Every flow- or endpoint-related file generated from 2026-10-05, starting with the identification packages (packages/identification-conformance, -phase3, -phase4). Files generated or captured before then are reported, not renamed blind, because generators and registers resolve them by path: npm run flowfiles lists each with what it lacks, and each generator adopts the convention as it is next changed. The generic kit blocks (packages/identification-kit) belong to no flow and are exempt.",
+      "format": "<CONTRACT_KEY>__<FlowName>__<flow-id8>[__<Part>].<kind>",
+      "pattern": "^(?<key>[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*)__(?<flow>[A-Za-z0-9-]+(?:_[A-Za-z0-9-]+)*)__(?<id>[0-9a-f]{8}|NOT_CAPTURED)(?:__(?<part>[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*))?\\.(?<kind>[a-z][a-z0-9-]*(?:\\.[a-z0-9-]+)*)$",
+      "implementation": "scripts/lib/flow-artifact-name.mjs (flowArtifactName, parseFlowArtifactName, flowIdPart, FLOW_IDENTITIES)",
+      "rules": [
+        "CONTRACT_KEY is the contract key the flow serves (contractKeyProcess), or NOKEY for a flow no client calls: an item-change, library or schedule trigger.",
+        "FlowName is the flow's tenant display name as it is (tenant flow names are not renamed: PLATFORM_NAMING.md), with every character outside A-Z a-z 0-9 _ - replaced by _ and runs of _ collapsed, the form the captures already use.",
+        "flow-id8 is the first 8 hex digits of the tenant flow GUID in lower case. The full GUID is recorded in FLOW_IDENTITIES and the package READMEs; the 8-digit prefix keeps paths inside the 170-character portability budget (tests/package-portability.test.mjs), and tests/flow-artifact-names.test.mjs holds it unique across every flow id the estate register knows. NOT_CAPTURED stands in only while the repository holds no capture or export of the flow, and npm run flowfiles lists every file that carries it until the GUID is supplied.",
+        "Part is present only when a folder holds more than one file of the same kind for the flow: the root scope a paste file replaces, or the part of the flow the file holds, so two files of one flow differ in Part and nowhere else. A single paste package states the scope it replaces inside it (nodeId).",
+        "kind says what the file is: paste.json, capture.json, definition.json, md.",
+        "The parts are joined by a double underscore, the estate's existing join of a flow name and its id (captures/<FlowName>__<flow-id>.json); no part contains one.",
+        "The Universal Filename Policy (lower case, single underscores) governs documents that enter the registry. A flow artefact keeps the flow's display name and contract key in the case the tenant and the catalogue give them, because the file is identified by them."
+      ],
+      "examples": [
+        {
+          "value": "SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json",
+          "scenario": "The Phase 3 package for the flow that serves SUBMISSION (flow de9ef13b-ae4c-42b0-9afa-20e71a180759); the one package for that flow in its folder, so no part."
+        },
+        {
+          "value": "BULK_ASSIGNMENT__BULK_OPS_DATA_RETRIEVAL_HTTP__5aab9e61.paste.json",
+          "scenario": "The bulk assignment package for the flow whose trigger Folio's BULK_ASSIGNMENT URL calls, whatever the flow is named."
+        },
+        {
+          "value": "NOKEY__DGSO_INCOMING_AI_PROCESSING__b6d92bae__Scope_References.paste.json",
+          "scenario": "A library-triggered flow: no contract key, and one of two packages for that flow in the folder, so each names its scope."
+        },
+        {
+          "value": "NOKEY__CG_Registry_Status_Notifier__8ebf6001__Export_20261005160536.zip",
+          "scenario": "A tenant export of an item-change flow, the part naming the export stamp."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "CG_Submission_Endpoint.paste.json",
+          "reason": "No contract key and no flow id: the estate register read it as a flow of its own."
+        },
+        {
+          "value": "BULK_ASSIGNMENT.paste.json",
+          "reason": "Names the key only: nothing says which of the flows that answered BULK_ASSIGNMENT it is for."
+        },
+        {
+          "value": "AUTO_SCHEDULED_SWEEP__8c19b45c-4174-4d2f-9429-ffd08dd1a5ae.json",
+          "reason": "Legacy capture form: flow and id, no key. Reported, kept until its generator adopts the convention."
+        },
+        {
+          "value": "SUBMISSION__CG_Submission_Endpoint__de9ef13b-ae4c-42b0-9afa-20e71a180759.paste.json",
+          "reason": "The full GUID: the path outgrows the portability budget. The name carries the first 8 hex digits."
+        }
+      ],
+      "owner": "OWN-PLATFORM"
+    }
+  },
+  "knownAliasOverlaps": [
+    {
+      "kinds": [
+        "LEGACY_TICKS_REF",
+        "BROWSER_PROVISIONAL_REF"
+      ],
+      "resolution": "Both are resolved by exact match in the Identity Map, never by pattern. Alias values are unique across all kinds. If a provisional value equals an existing ticks reference, the provisional alias is not registered: provisional values never left the browser, and the record stays reachable by its issued reference."
+    },
+    {
+      "kinds": [
+        "LEGACY_ORG_KEY",
+        "ORG_UNIT_KEY"
+      ],
+      "resolution": "Org unit keys are read from their own column, never classified from free text. The alias exists only so that old routing values resolve."
+    },
+    {
+      "kinds": [
+        "LEGACY_TICKS_REF"
+      ],
+      "resolution": "Ticks references can collide with each other. A shared value is stored once per record, flagged Ambiguous, and resolved with the sender email (ID-25)."
+    }
+  ],
+  "identityColumns": [
+    {
+      "column": "EntityKey",
+      "type": "Single line of text (36)",
+      "required": "from Phase 6",
+      "indexed": true,
+      "unique": "from Phase 6",
+      "on": "every governed dataset",
+      "holds": "ID-01"
+    },
+    {
+      "column": "ReferenceId / TaskRef / CaseRef / RegistryFileRef / UnitKey",
+      "type": "Single line of text (20)",
+      "required": "after registration",
+      "indexed": true,
+      "unique": "from Phase 6",
+      "on": "home dataset of REC / TSK / CAS / REG / ORG and their mirrors",
+      "holds": "ID-04 / ID-05 / ID-06 / ID-26 / ID-16"
+    },
+    {
+      "column": "ParentKey",
+      "type": "Single line of text (40)",
+      "required": "child types",
+      "indexed": true,
+      "unique": false,
+      "on": "ATT, TSK, MIN, EVT, ORG, APR",
+      "holds": "ID-02"
+    },
+    {
+      "column": "RootKey",
+      "type": "Single line of text (40)",
+      "required": "child types",
+      "indexed": true,
+      "unique": false,
+      "on": "ATT, TSK, MIN, EVT, APR",
+      "holds": "ID-02 (REC or CAS)"
+    },
+    {
+      "column": "RootRef",
+      "type": "Single line of text (20)",
+      "required": "when the root has a reference",
+      "indexed": true,
+      "unique": false,
+      "on": "ATT, TSK, MIN, EVT",
+      "holds": "ID-04 or ID-06 of the root"
+    },
+    {
+      "column": "Rev",
+      "type": "Number (integer)",
+      "required": "from Phase 6",
+      "indexed": false,
+      "unique": false,
+      "on": "governed master datasets",
+      "holds": "ID-21"
+    },
+    {
+      "column": "IdState",
+      "type": "Choice (ACTIVE, ARCHIVED, MERGED, VOID)",
+      "required": "from Phase 6",
+      "indexed": true,
+      "unique": false,
+      "on": "every governed dataset",
+      "holds": "identity lifecycle"
+    },
+    {
+      "column": "SupersededBy",
+      "type": "Single line of text (40)",
+      "required": "when MERGED",
+      "indexed": false,
+      "unique": false,
+      "on": "REC, TSK, CAS, ORG, REG, BRF, MTG, PRJ",
+      "holds": "ID-02"
+    },
+    {
+      "column": "CorrelationId",
+      "type": "Single line of text (36)",
+      "required": "from Phase 6",
+      "indexed": true,
+      "unique": false,
+      "on": "REC, CAS, TSK, EVT, FLOW_TELEMETRY",
+      "holds": "ID-20"
+    },
+    {
+      "column": "CreatedByRequest",
+      "type": "Single line of text (36)",
+      "required": "from Phase 6",
+      "indexed": false,
+      "unique": false,
+      "on": "every governed dataset",
+      "holds": "ID-19"
+    }
+  ],
+  "identifiers": [
+    {
+      "id": "ID-01",
+      "name": "Entity Key",
+      "symbol": "EK",
+      "layer": "identity",
+      "classifiable": false,
+      "mintedAtRuntime": true,
+      "purpose": "The permanent, opaque machine identity of every governed record. Every relationship, map entry and event points at it. It never changes and is never shown as the main reference to people.",
+      "appliesTo": "Every row in a governed dataset: REC, ATT, TSK, MIN, CAS, EVT, LNK, MAP, ORG, BRF, MTG, PRJ, APR and REG. Person rows use their Entra object ID instead (ID-15).",
+      "format": "Lower-case RFC 4122 version-4 GUID, 36 characters with hyphens.",
+      "components": [
+        {
+          "part": "GUID",
+          "rule": "122 random bits, from Power Automate guid()."
+        }
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "generation": "Inside the flow that creates the record, as a Compose action (Compose_EntityKey = guid()) placed before the first write. A Compose is evaluated once per run, so every retry of the write inside that run reuses the same value. No variable is used: a pasted scope cannot declare one. Backfill flows use the same Compose per row. Requests replayed by Folio are matched by ClientRequestHash (see exclusions), so a replay never mints a second key.",
+      "uniqueness": "Global: across every dataset, entity type, environment and system. 2^122 random space; the dataset's unique column constraint is a second check.",
+      "permanence": "Immutable. It doesn't change on status change, reclassification, re-assignment, rename, move, archive or merge. It is never reused, including after a record is withdrawn.",
+      "validation": [
+        "Matches the pattern (lower case, version nibble 4, variant 8/9/a/b).",
+        "Unique in its home dataset (indexed, enforce-unique column).",
+        "Present on every row; a row without one is a migration defect that reconciliation reports."
+      ],
+      "relationships": [
+        "Prefixed with the entity type code, it forms the Qualified Key (ID-02).",
+        "ParentKey and RootKey on child rows hold Qualified Keys built from it.",
+        "Mirror rows (OPS_WORKING_REGISTER) carry the same value as their master row.",
+        "Human references (ID-04/05/06) are stored beside it on the same row."
+      ],
+      "storage": [
+        "Column EntityKey, single line of text (36), required, indexed, enforce unique, on every governed list and library.",
+        "JSON field entityKey in every API payload.",
+        "Folio domain field id."
+      ],
+      "examples": [
+        {
+          "value": "45e40654-7a58-4301-a99c-99c31ced8cd2",
+          "scenario": "The register row for portal submission NITDA-2026-00011."
+        },
+        {
+          "value": "e3f7d701-1693-4ab8-b725-025c93bf4372",
+          "scenario": "The task TASK-2026-00417 raised from it."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "45E40654-7A58-4301-A99C-99C31CED8CD2",
+          "reason": "Upper case. Keys are stored and compared in lower case."
+        },
+        {
+          "value": "12907",
+          "reason": "A SharePoint item ID is a locator (ID-24), not a key."
+        }
+      ],
+      "lifecycle": "Issued at creation and kept for good. A record that is merged, voided or archived keeps its EK, which stays resolvable as a tombstone or redirect. Deleting a governed row is not allowed: withdraw it with IdState VOID instead.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-02",
+      "name": "Qualified Key",
+      "symbol": "QK",
+      "layer": "identity",
+      "classifiable": true,
+      "mintedAtRuntime": false,
+      "purpose": "A self-describing reference to a record of any type. Use it in every column or field that can point at more than one entity type, so a reader never has to guess which list to look in.",
+      "appliesTo": "ParentKey, RootKey, SupersededBy, Link FromKey/ToKey, Event SubjectKey/ActorKey, Identity Map EntityRef, and any column that can point at more than one entity type.",
+      "format": "<TYPE>:<entity key>. TYPE is a 3-letter entity type code (ID-03).",
+      "components": [
+        {
+          "part": "TYPE",
+          "rule": "A registered entity type code (ID-03)."
+        },
+        {
+          "part": ":",
+          "rule": "Separator."
+        },
+        {
+          "part": "key",
+          "rule": "The Entity Key (ID-01) or, for USR, the Entra object ID (ID-15)."
+        }
+      ],
+      "pattern": "^(REC|ATT|TSK|MIN|CAS|EVT|LNK|MAP|USR|ORG|BRF|MTG|PRJ|APR|REG):[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "generation": "Derived, never minted: concat(TypeCode, ':', EntityKey), built by the flow when it writes the referencing column.",
+      "uniqueness": "Global, because the Entity Key is global. The type prefix adds routing, not uniqueness.",
+      "permanence": "Immutable, because both parts are.",
+      "validation": [
+        "Matches the pattern.",
+        "TYPE is a registered code.",
+        "The key resolves to a row in TYPE's home dataset (checked by reconciliation; flows check it on write where they read the row anyway)."
+      ],
+      "relationships": [
+        "Wraps ID-01 or ID-15.",
+        "Hierarchy: ParentKey = parent's QK; RootKey = root REC/CAS QK.",
+        "Links and events use QKs on both ends."
+      ],
+      "storage": [
+        "Single line of text (40), indexed wherever it is filtered (ParentKey, RootKey, SubjectKey, FromKey, ToKey).",
+        "JSON fields parentKey, rootKey, subjectKey, fromKey, toKey."
+      ],
+      "examples": [
+        {
+          "value": "REC:45e40654-7a58-4301-a99c-99c31ced8cd2",
+          "scenario": "RootKey on every task, minute and event for submission NITDA-2026-00011."
+        },
+        {
+          "value": "TSK:e3f7d701-1693-4ab8-b725-025c93bf4372",
+          "scenario": "ParentKey of sub-task TASK-2026-00418."
+        },
+        {
+          "value": "USR:e1fae42c-aeb7-49c9-b4b1-54ac7faa16f5",
+          "scenario": "ActorKey of the officer who wrote a minute."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "DGO:57f137b6-5cab-7991-4084-20605a3a9d43",
+          "reason": "DGO is a reserved prefix (Flow Registry Key, ID-12), not an entity type."
+        },
+        {
+          "value": "rec:45e40654-7a58-4301-a99c-99c31ced8cd2",
+          "reason": "Type codes are upper case."
+        }
+      ],
+      "lifecycle": "Follows the Entity Key it wraps.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-03",
+      "name": "Entity Type Code",
+      "symbol": "TYPE",
+      "layer": "identity",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Names the kind of record a key belongs to and, through that, its home dataset.",
+      "appliesTo": "The fifteen entity types in the entity model.",
+      "format": "Three upper-case letters.",
+      "components": [
+        {
+          "part": "code",
+          "rule": "Mnemonic, registered in the catalogue, never reused."
+        }
+      ],
+      "pattern": "^[A-Z]{3}$",
+      "generation": "Assigned by the Folio Estate Owner through change control and registered in identifier-catalogue.json. It is never generated at runtime.",
+      "uniqueness": "Unique in the catalogue. It may not equal a reserved prefix (DGO, DEP, SYS, NIT, TST, TMP, XXX).",
+      "permanence": "Permanent. A retired type keeps its code reserved for good.",
+      "validation": [
+        "Three upper-case letters.",
+        "Present in the entityTypes list.",
+        "Not in reservedTypeCodes."
+      ],
+      "relationships": [
+        "The prefix of every Qualified Key.",
+        "Each type names exactly one home dataset (EVT has more than one event stream; each stream is registered)."
+      ],
+      "storage": [
+        "identifier-catalogue.json entityTypes; mirrored to Flow Configuration key ID_ENTITY_TYPES for flows."
+      ],
+      "examples": [
+        {
+          "value": "REC",
+          "scenario": "Intake record."
+        },
+        {
+          "value": "TSK",
+          "scenario": "Task."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "DOC",
+          "patternValid": true,
+          "reason": "Well-formed but not registered. Documents are REC (the registered item) or ATT (the file)."
+        }
+      ],
+      "lifecycle": "Added by catalogue change. Retiring a type marks it deprecated; existing keys keep resolving.",
+      "owner": "OWN-ESTATE"
+    },
+    {
+      "id": "ID-04",
+      "name": "Registry Reference",
+      "symbol": "RR",
+      "layer": "reference",
+      "classifiable": true,
+      "mintedAtRuntime": true,
+      "purpose": "The one human reference for a registered item of correspondence or document. It is quoted by citizens, printed on acknowledgements and written on files. Preserved from the live legacy format.",
+      "appliesTo": "REC, on every channel: portal, email, scan, library and internal origination, including outbound replies.",
+      "format": "NITDA-YYYY-NNNNN. Non-production environments prefix Z (ZNITDA-YYYY-NNNNN).",
+      "components": [
+        {
+          "part": "NITDA",
+          "rule": "Fixed agency prefix (Z-prefixed outside production)."
+        },
+        {
+          "part": "YYYY",
+          "rule": "Calendar year of issue in West Africa Time. It is not the document date, and correcting the document date doesn't change it."
+        },
+        {
+          "part": "NNNNN",
+          "rule": "That year's sequence, zero-padded to 5 digits. From 100000 it grows without padding, to at most 7 digits."
+        }
+      ],
+      "pattern": "^Z?NITDA-(20[2-9]\\d)-(\\d{5}|[1-9]\\d{5,6})$",
+      "generation": "Inside the intake flow only, from the SEQUENCE_COUNTERS row (Prefix='NITDA', Year=YYYY), using the kit's Claim Reference block: up to 10 flat attempts, each running only if the previous one failed, each a read plus an HTTP MERGE with IF-MATCH on the row's ETag, with a random 1-5 s Delay between attempts; no variables, no Until loop, no Filter array. Issued when the item is registered: at once for portal, scan and internal; at the triage 'register' action, or when the first task is raised, for email and library.",
+      "uniqueness": "Global within the environment. The sequence is shared by every channel, so one register holds one number line. Uniqueness comes from the counter claim, with the enforce-unique ReferenceId column as a second check.",
+      "permanence": "Immutable once issued and never reused. Reclassification, re-routing, a change of channel, a change of document date or archiving leave it unchanged. A merged record's reference redirects to the surviving record.",
+      "validation": [
+        "Matches the pattern exactly. Lookups compare the trimmed, upper-cased input. Shorter or 0-led 6-digit forms are legacy aliases (ID-25), never padded or stripped automatically.",
+        "In production, a leading Z is rejected.",
+        "Year <= current year; sequence <= the counter's CurrentSequence for that year.",
+        "Resolves to exactly one INTAKE_REGISTER row."
+      ],
+      "relationships": [
+        "Stored beside the REC's Entity Key on the register row (1:1).",
+        "Copied as RootRef onto every child (ATT, TSK, MIN, EVT) for search. This is safe because it is immutable.",
+        "Support cases point at it with an ABOUT link; outbound replies with REPLIES_TO.",
+        "Legacy references (ticks, provisional, tracking ID) resolve to it through the Identity Map."
+      ],
+      "storage": [
+        "INTAKE_REGISTER.ReferenceId (text 20, indexed, enforce unique) and Title.",
+        "OPS_WORKING_REGISTER.ReferenceId on the mirror row.",
+        "RootRef (text 20, indexed) on child rows.",
+        "SEQUENCE_COUNTERS.LastReferenceId.",
+        "JSON field ref (on REC) and rootRef (on children)."
+      ],
+      "examples": [
+        {
+          "value": "NITDA-2026-00011",
+          "scenario": "Live value issued 29 Sep 2026 to a portal submission."
+        },
+        {
+          "value": "NITDA-2026-00012",
+          "scenario": "An email registered at triage the same day; same number line as the portal."
+        },
+        {
+          "value": "NITDA-2027-00001",
+          "scenario": "First registration of 2027; the counter starts again."
+        },
+        {
+          "value": "NITDA-2026-100000",
+          "scenario": "Sequence past 99999: grows, not truncated."
+        },
+        {
+          "value": "ZNITDA-2026-00003",
+          "scenario": "Issued in UAT; can never be confused with production."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "NITDA-2026-217",
+          "reason": "Legacy ticks value: a Legacy Alias (ID-25), resolved by exact match."
+        },
+        {
+          "value": "NITDA-2026-000011",
+          "reason": "0-led 6-digit form: not canonical."
+        },
+        {
+          "value": "nitda-2026-00011 ",
+          "reason": "Not canonical as typed. Lookups trim and upper-case input first, but stored values must be exact."
+        }
+      ],
+      "lifecycle": "Claimed, then issued with the row; ACTIVE for the life of the record. If the row write fails after the claim, the number is recorded as a VOID register row so the year's number line has no unexplained gaps. ARCHIVED and MERGED references still resolve. Never reused.",
+      "owner": "OWN-REGISTRY"
+    },
+    {
+      "id": "ID-05",
+      "name": "Task Reference",
+      "symbol": "TR",
+      "layer": "reference",
+      "classifiable": true,
+      "mintedAtRuntime": true,
+      "purpose": "The human reference for a task, used in task emails, links and conversation. It replaces TASK-<item ID>, which was a platform row number.",
+      "appliesTo": "TSK: single, bulk-created and sub-tasks.",
+      "format": "TASK-YYYY-NNNNN. Non-production: ZTASK-YYYY-NNNNN.",
+      "components": [
+        {
+          "part": "TASK",
+          "rule": "Fixed prefix."
+        },
+        {
+          "part": "YYYY",
+          "rule": "Year of issue, West Africa Time."
+        },
+        {
+          "part": "NNNNN",
+          "rule": "That year's task sequence, padded to 5 digits and growing to at most 7."
+        }
+      ],
+      "pattern": "^Z?TASK-(20[2-9]\\d)-(\\d{5}|[1-9]\\d{5,6})$",
+      "generation": "Inside the task-creating flow (SINGLE_ASSIGNMENT, BULK_ASSIGNMENT, EMAIL_RELATED_TASK, DYNAMIC_ACTIONS sub-task), from the SEQUENCE_COUNTERS row (Prefix='TASK', Year=YYYY), with the kit's Claim Reference block (flat attempts, ETag MERGE). Bulk creation claims one block of n numbers in a single ETag update (CurrentSequence += n) and hands them out in order.",
+      "uniqueness": "Global within the environment.",
+      "permanence": "Immutable and never reused. Re-assignment, re-parenting, a status change or a change of category leaves it unchanged. That is why category codes are not in it.",
+      "validation": [
+        "Matches the pattern.",
+        "Resolves to exactly one TASK_QUEUE row.",
+        "A leading Z is rejected in production."
+      ],
+      "relationships": [
+        "1:1 with the task's Entity Key.",
+        "RootRef on the task gives the Registry Reference of the item it serves.",
+        "Sub-tasks get their own Task Reference; their parent is in ParentKey, not in the reference.",
+        "The legacy Reference_ID composite and TASK-<item ID> resolve to it as aliases."
+      ],
+      "storage": [
+        "TASK_QUEUE.TaskRef (text 20, indexed, enforce unique).",
+        "Task email links: support.html?ref=TASK-2026-00417 (no item ID).",
+        "JSON field ref on TSK."
+      ],
+      "examples": [
+        {
+          "value": "TASK-2026-00417",
+          "scenario": "Task raised on NITDA-2026-00011 for the Procurement unit."
+        },
+        {
+          "value": "TASK-2026-00418",
+          "scenario": "Sub-task of TASK-2026-00417 (ParentKey = TSK:e3f7…)."
+        },
+        {
+          "value": "TASK-2024-03122",
+          "scenario": "A 2024 task given a reference during backfill; its old TASK-9120 still resolves."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "TASK-12907",
+          "reason": "Legacy display form (item ID): an alias."
+        },
+        {
+          "value": "20260915-3482-CAS-PRC-12907",
+          "reason": "Legacy composite: it embeds category codes and row numbers, so it is an alias."
+        }
+      ],
+      "lifecycle": "Issued at task creation. Stays ACTIVE when the task is closed. A task withdrawn in error is VOID, and its number is never reissued.",
+      "owner": "OWN-TASKOPS"
+    },
+    {
+      "id": "ID-06",
+      "name": "Case Reference",
+      "symbol": "CR",
+      "layer": "reference",
+      "classifiable": true,
+      "mintedAtRuntime": true,
+      "purpose": "The human reference for a support case. Preserved from the live legacy CG_Support_Endpoint format. It is deliberately not sequential, so a citizen can't guess the size or neighbours of the case register.",
+      "appliesTo": "CAS.",
+      "format": "CASE-XXXXXX from the unambiguous alphabet ABCDEFGHJKLMNPQRSTUVWXYZ23456789 (no I, O, 0, 1). Non-production: ZCASE-XXXXXX.",
+      "components": [
+        {
+          "part": "CASE",
+          "rule": "Fixed prefix."
+        },
+        {
+          "part": "XXXXXX",
+          "rule": "6 characters, each chosen with rand(0,32) from the 32-character alphabet (2^30 combinations)."
+        }
+      ],
+      "pattern": "^Z?CASE-[A-HJ-NP-Z2-9]{6}$",
+      "generation": "Inside the SUPPORT flow only, with rand(). The flow checks that the value is not already in SUPPORT_CASES.CaseRef and draws again, up to 5 times. Any ref sent by the client is ignored.",
+      "uniqueness": "Global within the environment. Enforced by the existence check and the enforce-unique CaseRef column.",
+      "permanence": "Immutable, never reused.",
+      "validation": [
+        "Matches the pattern after upper-casing input.",
+        "Resolves to exactly one SUPPORT_CASES row."
+      ],
+      "relationships": [
+        "1:1 with the case's Entity Key.",
+        "ABOUT link to a REC when the case concerns a submission (replaces the free-text AboutReference)."
+      ],
+      "storage": [
+        "SUPPORT_CASES.CaseRef (text 12, indexed, enforce unique) and Title.",
+        "JSON field ref on CAS."
+      ],
+      "examples": [
+        {
+          "value": "CASE-K7P2QX",
+          "scenario": "Citizen asks about NITDA-2026-00011; ABOUT link created."
+        },
+        {
+          "value": "ZCASE-M3W9RT",
+          "scenario": "UAT case."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "CASE-20260930-4F9A1C",
+          "reason": "Interim rebuild format: an alias."
+        },
+        {
+          "value": "CASE-K7P2Q0",
+          "reason": "0 is not in the alphabet."
+        },
+        {
+          "value": "NITDA-S-4KQ7BM",
+          "reason": "Browser-minted: an alias, if any were ever persisted."
+        }
+      ],
+      "lifecycle": "Issued at case creation and kept after closure. A case closed by the scheduled sweep is still resolvable. Never reused.",
+      "owner": "OWN-SERVICE"
+    },
+    {
+      "id": "ID-07",
+      "name": "System Code",
+      "symbol": "SYS",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Identifies a platform, or an external system that holds or produces data. It tells you where a locator points and which surface an action came from.",
+      "appliesTo": "The seven Folio platforms (ids kept as they are) and the external systems: SharePoint, Exchange, OneDrive, Power Automate, Entra and paper.",
+      "format": "Lower-case slug, 2–24 characters.",
+      "components": [
+        {
+          "part": "slug",
+          "rule": "Lower-case letters, digits and hyphen."
+        }
+      ],
+      "pattern": "^[a-z][a-z0-9-]{1,23}$",
+      "generation": "Assigned through catalogue change. Folio platform ids are inherited from config/brand.config.js and are never renamed.",
+      "uniqueness": "Unique in the catalogue's systems list.",
+      "permanence": "Permanent. A renamed product keeps its code; the display name changes in brand.config.js.",
+      "validation": [
+        "Pattern; present in the systems list."
+      ],
+      "relationships": [
+        "Identity Map rows carry a System Code with every locator.",
+        "Events carry the Origin system (for example runtime or portal)."
+      ],
+      "storage": [
+        "identifier-catalogue.json systems; Identity Map column System (choice); Event column Origin."
+      ],
+      "examples": [
+        {
+          "value": "runtime",
+          "scenario": "An assignment made in Folio Workspace."
+        },
+        {
+          "value": "exchange",
+          "scenario": "The locator of an inbound email."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "DGO R11.6 Runtime",
+          "reason": "A display name, not a code."
+        }
+      ],
+      "lifecycle": "A retired system's code is kept for historical map rows and never reassigned.",
+      "owner": "OWN-ESTATE"
+    },
+    {
+      "id": "ID-08",
+      "name": "Environment Code",
+      "symbol": "ENV",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Separates production from non-production identity spaces, so a test record can never be mistaken for, or collide with, a real one.",
+      "appliesTo": "Every flow, dataset binding, endpoint registration and Identity Map row.",
+      "format": "prd | uat | dev.",
+      "components": [
+        {
+          "part": "code",
+          "rule": "Fixed vocabulary."
+        }
+      ],
+      "pattern": "^(prd|uat|dev)$",
+      "generation": "Set once per environment in Flow Configuration (ENVIRONMENT_CODE). Flows read it to choose the human-reference prefix: '' in prd, 'Z' elsewhere.",
+      "uniqueness": "Unique per environment.",
+      "permanence": "Permanent.",
+      "validation": [
+        "Pattern.",
+        "In prd no issued human reference may start with Z; outside prd every one must."
+      ],
+      "relationships": [
+        "Dataset Keys bind to one list GUID per environment.",
+        "Flow Registry Keys are per environment by nature (FlowId differs)."
+      ],
+      "storage": [
+        "Flow Configuration ENVIRONMENT_CODE; DGO_EndpointRegistry.Environment; Identity Map column Environment."
+      ],
+      "examples": [
+        {
+          "value": "prd",
+          "scenario": "Live tenant."
+        },
+        {
+          "value": "uat",
+          "scenario": "Acceptance copy of the flows and lists."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "Production",
+          "reason": "A display name."
+        }
+      ],
+      "lifecycle": "Fixed.",
+      "owner": "OWN-ESTATE"
+    },
+    {
+      "id": "ID-09",
+      "name": "Channel Code",
+      "symbol": "CH",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Records which entry point an item arrived through (decision D4). It is an attribute, so it is never part of the reference: an item re-registered from another channel keeps its reference.",
+      "appliesTo": "REC.",
+      "format": "portal | email | scan | library | internal.",
+      "components": [
+        {
+          "part": "code",
+          "rule": "Fixed vocabulary, mapped to D4 codes A, B, C, C' and D."
+        }
+      ],
+      "pattern": "^(portal|email|scan|library|internal)$",
+      "generation": "Stamped by the intake flow from the trigger it serves, never sent by the client.",
+      "uniqueness": "Vocabulary.",
+      "permanence": "Set at receipt. Mutable only by an audited correction event, and the reference is unaffected.",
+      "validation": [
+        "Pattern; legacy display values ('Document Portal') map through the channels list."
+      ],
+      "relationships": [
+        "With the Identity Map source locator, it gives source-to-record traceability."
+      ],
+      "storage": [
+        "INTAKE_REGISTER.Channel (choice); JSON field channel."
+      ],
+      "examples": [
+        {
+          "value": "portal",
+          "scenario": "NITDA-2026-00011."
+        },
+        {
+          "value": "email",
+          "scenario": "NITDA-2026-00012."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "Document Portal",
+          "reason": "Legacy display value; stored values are codes."
+        }
+      ],
+      "lifecycle": "Vocabulary extended by catalogue change only.",
+      "owner": "OWN-REGISTRY"
+    },
+    {
+      "id": "ID-10",
+      "name": "Process Code",
+      "symbol": "PRC",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Names the business process a flow, endpoint or event belongs to, which gives process-to-data and cross-functional reporting.",
+      "appliesTo": "Contract keys, flow registry rows and events.",
+      "format": "Upper-case word, 3–10 letters.",
+      "components": [
+        {
+          "part": "code",
+          "rule": "Fixed vocabulary of 11 processes."
+        }
+      ],
+      "pattern": "^[A-Z]{3,10}$",
+      "generation": "Assigned through catalogue change.",
+      "uniqueness": "Unique in the processes list.",
+      "permanence": "Permanent; never reused.",
+      "validation": [
+        "Pattern; present in processes; every contract key maps to exactly one process."
+      ],
+      "relationships": [
+        "Contract Key → Process (n:1).",
+        "Flow Registry row → Process.",
+        "Event.Process records which process acted."
+      ],
+      "storage": [
+        "identifier-catalogue.json processes and contractKeyProcess; FLOW_REGISTRY column ProcessCode; Event column Process."
+      ],
+      "examples": [
+        {
+          "value": "INTAKE",
+          "scenario": "SUBMISSION, UPLOAD, SCAN_INTAKE, WRITEBACK."
+        },
+        {
+          "value": "ASSIGN",
+          "scenario": "SINGLE_ASSIGNMENT, BULK_ASSIGNMENT."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "Intake",
+          "reason": "Codes are upper case."
+        }
+      ],
+      "lifecycle": "Vocabulary extended by catalogue change.",
+      "owner": "OWN-ESTATE"
+    },
+    {
+      "id": "ID-11",
+      "name": "Contract Key",
+      "symbol": "CK",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "The stable logical name of an HTTP capability the platforms call. Preserved as it is. It survives the flow behind it being rebuilt, moved to another environment or replaced.",
+      "appliesTo": "The endpoint contracts in docs/folio-Master-Flows-and-Endpoints/reference/endpoints.json, plus SCAN_INTAKE, plus the Mailer's seven endpoint keys in mailer/flows/flows.catalogue.json.",
+      "format": "UPPER_SNAKE, at most 40 characters.",
+      "components": [
+        {
+          "part": "name",
+          "rule": "Verb or noun phrase of what the endpoint does."
+        }
+      ],
+      "pattern": "^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$",
+      "generation": "Assigned through change control when a new endpoint contract is defined.",
+      "uniqueness": "Unique across the estate (all environments share the key).",
+      "permanence": "Permanent. A contract that changes incompatibly gets a new Schema Version (ID-23), not a new key. A retired key is never reused.",
+      "validation": [
+        "Pattern; present in endpoints.json or the Mailer catalogue; mapped to a Process Code."
+      ],
+      "relationships": [
+        "Contract Key → Flow Registry Key per environment (DGO_EndpointRegistry).",
+        "Telemetry and events record the Contract Key that served the request."
+      ],
+      "storage": [
+        "docs/folio-Master-Flows-and-Endpoints/reference/endpoints.json; mailer/flows/flows.catalogue.json (endpointKey); DGO_EndpointRegistry.EndpointKey; telemetry column Flow; Event column ContractKey."
+      ],
+      "examples": [
+        {
+          "value": "SUBMISSION",
+          "scenario": "Portal intake."
+        },
+        {
+          "value": "BULK_ASSIGNMENT",
+          "scenario": "Bulk tasking."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "CG_Submission_Endpoint",
+          "reason": "A flow display name; it can change."
+        }
+      ],
+      "lifecycle": "Active, then deprecated, then retired; retired keys stay reserved.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-12",
+      "name": "Flow Registry Key",
+      "symbol": "FRK",
+      "layer": "context",
+      "classifiable": true,
+      "mintedAtRuntime": false,
+      "purpose": "Identifies one deployed flow instance in one environment. Preserved from the HTTP flow registry.",
+      "appliesTo": "Every Power Automate flow the estate requires (docs/folio-Master-Flows-and-Endpoints/reference/FLOW_REQUIREMENTS.md), registered in DGO_HTTPFlowRegistry or not yet.",
+      "format": "DGO:<FlowId>, where FlowId is the Power Automate flow GUID.",
+      "components": [
+        {
+          "part": "DGO",
+          "rule": "Reserved registry prefix."
+        },
+        {
+          "part": "FlowId",
+          "rule": "Platform-assigned and immutable for that deployed flow."
+        }
+      ],
+      "pattern": "^DGO:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "generation": "Derived from the platform's FlowId: by the registry flow at registration, and by repository tooling (scripts/build-flow-requirements.mjs) for every required flow the tenant evidence names.",
+      "uniqueness": "Global (the FlowId is unique in the tenant).",
+      "permanence": "Immutable for the deployed instance. A re-import into another environment is a new instance with a new key, linked by the same Contract Key.",
+      "validation": [
+        "Pattern; for a registered flow, resolves to one FLOW_REGISTRY row."
+      ],
+      "relationships": [
+        "n:1 to Contract Key (one per environment) and to Process Code.",
+        "1:n to Flow Dependency Keys.",
+        "Container of PA_RUN locators.",
+        "Container of the PA_TRIGGER locator: the 32-hex workflow ID its trigger address carries."
+      ],
+      "storage": [
+        "FLOW_REGISTRY.RegistryKey; FLOW_DEPENDENCIES.RegistryKey; Identity Map Container for PA_RUN."
+      ],
+      "examples": [
+        {
+          "value": "DGO:57f137b6-5cab-7991-4084-20605a3a9d43",
+          "scenario": "Bulk Assign Direct (registry seed)."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "Bulk Assign Direct",
+          "reason": "A display name."
+        }
+      ],
+      "lifecycle": "Registered, then active, then retired (05 - GOV - Retire HTTP Flow). Retired rows are kept.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-13",
+      "name": "Flow Dependency Key",
+      "symbol": "DEP",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Identifies one flow-to-resource dependency: the process-to-data edge. Preserved from the registry seed.",
+      "appliesTo": "Rows of DGO_HTTPFlowDependencies (a flow reads or writes a list, mailbox or connector).",
+      "format": "DEP:<16 lower-case hex>.",
+      "components": [
+        {
+          "part": "DEP",
+          "rule": "Reserved prefix."
+        },
+        {
+          "part": "hash",
+          "rule": "First 16 hex characters of SHA-256 over 'RegistryKey|Direction|DependencyType|DependencyIdentifier', computed by repo tooling."
+        }
+      ],
+      "pattern": "^DEP:[0-9a-f]{16}$",
+      "generation": "Computed by scripts/build-flow-registry-seed.mjs from the edge's own immutable parts. The same edge always gives the same key.",
+      "uniqueness": "Unique per edge; a collision would need identical inputs.",
+      "permanence": "Immutable. A changed dependency is a new edge with a new key; the old edge is marked retired.",
+      "validation": [
+        "Pattern; recomputing the hash from the row's columns reproduces it."
+      ],
+      "relationships": [
+        "Joins Flow Registry Key to a list GUID, and through it to a Dataset Key."
+      ],
+      "storage": [
+        "FLOW_DEPENDENCIES.DependencyKey."
+      ],
+      "examples": [
+        {
+          "value": "DEP:2ed6737be6f4c95e",
+          "scenario": "A flow's downstream write to DGCEO_AttentionItems."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "DEP:2ED6737BE6F4C95E",
+          "reason": "Upper case."
+        }
+      ],
+      "lifecycle": "Resolved, then retired.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-14",
+      "name": "Dataset Key",
+      "symbol": "DSK",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "The stable logical name of a list or library role (for example INTAKE_REGISTER). Flows and documentation bind to the role, and each environment binds the role to its own list GUID. This removes the ambiguity of same-named lists on several sites (DGO DIGITAL OPS exists on two).",
+      "appliesTo": "Every dataset that holds or controls governed records.",
+      "format": "UPPER_SNAKE, at most 40 characters.",
+      "components": [
+        {
+          "part": "name",
+          "rule": "The role, not the list's title."
+        }
+      ],
+      "pattern": "^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$",
+      "generation": "Assigned through catalogue change.",
+      "uniqueness": "Unique in the catalogue's datasets list.",
+      "permanence": "Permanent. Renaming the underlying list or moving it to another site changes only the binding.",
+      "validation": [
+        "Pattern; for each environment exactly one bound list GUID; each governed dataset declares exactly one entity type."
+      ],
+      "relationships": [
+        "Dataset Key → list GUID (per environment) → FLOW_DEPENDENCIES → Flow Registry Key → Contract Key → Process Code."
+      ],
+      "storage": [
+        "identifier-catalogue.json datasets; Flow Configuration keys DATASET_<KEY>_LIST_ID per environment."
+      ],
+      "examples": [
+        {
+          "value": "INTAKE_REGISTER",
+          "scenario": "Bound in prd to Portal Registry 4c49f66a-…"
+        },
+        {
+          "value": "TASK_QUEUE",
+          "scenario": "Bound in prd to Global Tracking Queue ee82725a-…"
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "Portal Registry",
+          "reason": "A list title."
+        }
+      ],
+      "lifecycle": "Active, then retired (the binding is removed and the key stays reserved).",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-15",
+      "name": "Person Key",
+      "symbol": "USR",
+      "layer": "identity",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "The immutable identity of a member of staff or a service account. Email addresses and display names change; the Entra object ID does not.",
+      "appliesTo": "USR: assignees, actors, minute authors, directory rows.",
+      "format": "Entra object ID: lower-case GUID.",
+      "components": [
+        {
+          "part": "oid",
+          "rule": "Assigned by Microsoft Entra ID."
+        }
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "generation": "Read from Entra (Office 365 Users connector 'Id', or the token's oid claim) by the directory-sync flow. It is never typed by a person or minted.",
+      "uniqueness": "Tenant-wide.",
+      "permanence": "Immutable for the life of the account. A leaver's key stays in history; it is never reassigned.",
+      "validation": [
+        "Pattern; resolves in USER_DIRECTORY.UserId."
+      ],
+      "relationships": [
+        "ActorKey (USR:<oid>) on events; AssigneeKey on tasks; Author on minutes.",
+        "Email stays an attribute for display and delivery."
+      ],
+      "storage": [
+        "USER_DIRECTORY.UserId (text 36, indexed, enforce unique); task column AssigneeKey; event ActorKey."
+      ],
+      "examples": [
+        {
+          "value": "e1fae42c-aeb7-49c9-b4b1-54ac7faa16f5",
+          "scenario": "The officer assigned TASK-2026-00417."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "a.officer@nitda.gov.ng",
+          "reason": "Email is mutable and personal: an attribute, never a key."
+        }
+      ],
+      "lifecycle": "Active, then disabled (DisabledReason), and kept.",
+      "owner": "OWN-IAM"
+    },
+    {
+      "id": "ID-16",
+      "name": "Org Unit Key",
+      "symbol": "OUK",
+      "layer": "reference",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "The short human code of an organisation unit, used in routing and reports. Preserved from the approved organisational-units register. The machine identity is the unit's Entity Key.",
+      "appliesTo": "ORG.",
+      "format": "2–10 letters or digits, optionally followed by one hyphenated qualifier (SA-SP), no spaces, case as approved (for example eGD).",
+      "components": [
+        {
+          "part": "code",
+          "rule": "Abbreviation of the unit's own name, approved by the owner."
+        }
+      ],
+      "pattern": "^[A-Za-z][A-Za-z0-9]{1,9}(-[A-Za-z0-9]{1,8})?$",
+      "generation": "Assigned by the Organisation Structure Owner and recorded in docs/reference/approved/organizational-units.csv, from which config is generated.",
+      "uniqueness": "Unique among active and retired units, compared case-insensitively.",
+      "permanence": "Kept while the unit exists. A renamed unit keeps its key. A merged or split unit gets a new key and the old one is retired, with a SUPERSEDES chain on the ORG rows. Keys may not encode headship status (acting or substantive), which is an attribute.",
+      "validation": [
+        "Pattern; unique case-insensitively; present in the register."
+      ],
+      "relationships": [
+        "ORG Entity Key (1:1); tasks carry RoutedOrgKey (QK) plus OrgUnitKey for display; ORG.ParentKey gives the directorate hierarchy."
+      ],
+      "storage": [
+        "ORG_DIRECTORY.UnitKey (indexed, unique) and EntityKey; config/organizational-units.config.js key."
+      ],
+      "examples": [
+        {
+          "value": "CPS",
+          "scenario": "Corporate Planning and Strategy."
+        },
+        {
+          "value": "eGD",
+          "scenario": "e-Government Department."
+        },
+        {
+          "value": "SA-SP",
+          "scenario": "A Special Assistant's office (qualifier form)."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "Ag DGCEO",
+          "reason": "Embeds acting status and a space: kept as a Legacy Alias of CEO."
+        }
+      ],
+      "lifecycle": "Active, then retired when the unit is dissolved. Retired keys are never reassigned to a different unit.",
+      "owner": "OWN-ORG"
+    },
+    {
+      "id": "ID-17",
+      "name": "Classification Code",
+      "symbol": "CLS",
+      "layer": "reference",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Codes for category and sub-category, used for filtering and reporting. Preserved from the Categories Matrix. They are attributes of a record and never part of any reference, because a record can be reclassified.",
+      "appliesTo": "REC and TSK classification.",
+      "format": "Three upper-case letters (category, then sub-category).",
+      "components": [
+        {
+          "part": "code",
+          "rule": "From config/category-matrix.config.js (Categories Matrix list)."
+        }
+      ],
+      "pattern": "^[A-Z]{3}$",
+      "generation": "Assigned by the Registry Manager in the Categories Matrix.",
+      "uniqueness": "A category code is unique among categories. A sub-category code is unique within its category.",
+      "permanence": "A code keeps its meaning for good. Splitting or merging categories creates new codes and retires the old ones.",
+      "validation": [
+        "Pattern; the pair exists in the matrix."
+      ],
+      "relationships": [
+        "Attribute of REC/TSK. Reclassification writes an EVT and changes no identifier."
+      ],
+      "storage": [
+        "CategoryCode and SubCategoryCode columns; JSON fields categoryCode, subCategoryCode."
+      ],
+      "examples": [
+        {
+          "value": "CAS",
+          "scenario": "Contracts and Services."
+        },
+        {
+          "value": "PRC",
+          "scenario": "Procurement (under CAS)."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "CAT",
+          "patternValid": true,
+          "reason": "Well-formed but not in the matrix: the legacy fallback for a missing category. The record is unclassified (UNC)."
+        }
+      ],
+      "lifecycle": "Active, then retired; retired codes stay in history.",
+      "owner": "OWN-REGISTRY"
+    },
+    {
+      "id": "ID-18",
+      "name": "Configuration Key",
+      "symbol": "CFG",
+      "layer": "context",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Names a setting in Flow Configuration. Preserved as it is.",
+      "appliesTo": "Flow Configuration rows.",
+      "format": "UPPER_SNAKE, 3–64 characters.",
+      "components": [
+        {
+          "part": "name",
+          "rule": "What the setting controls."
+        }
+      ],
+      "pattern": "^[A-Z][A-Z0-9_]{2,63}$",
+      "generation": "Assigned by Platform Engineering.",
+      "uniqueness": "Unique per environment (Title column).",
+      "permanence": "Permanent. A renamed setting gets a new key and the old one is retired.",
+      "validation": [
+        "Pattern; present in Flow Configuration."
+      ],
+      "relationships": [
+        "Binds Dataset Keys (DATASET_<KEY>_LIST_ID) and the environment (ENVIRONMENT_CODE)."
+      ],
+      "storage": [
+        "FLOW_CONFIGURATION.Title."
+      ],
+      "examples": [
+        {
+          "value": "NOTIFY_REGISTRY_TO",
+          "scenario": "Registry alert recipient."
+        },
+        {
+          "value": "ENVIRONMENT_CODE",
+          "scenario": "prd, uat or dev."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "notify registry to",
+          "reason": "Not UPPER_SNAKE."
+        }
+      ],
+      "lifecycle": "Active, then retired.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-19",
+      "name": "Request ID",
+      "symbol": "RID",
+      "layer": "correlation",
+      "classifiable": false,
+      "mintedAtRuntime": true,
+      "purpose": "Identifies one flow invocation, so a response, its telemetry row, any failure alert and every row it wrote can be tied together.",
+      "appliesTo": "Every flow run (HTTP, scheduled and automated).",
+      "format": "Lower-case GUID v4.",
+      "components": [
+        {
+          "part": "GUID",
+          "rule": "guid() in the trigger's first action."
+        }
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "generation": "Always minted by the flow. A client value (requestId body field or X-Correlation-ID header) is never adopted. It is kept, sanitised and cut to 64 characters, as ClientCorrelationId in telemetry only.",
+      "uniqueness": "Global.",
+      "permanence": "Immutable.",
+      "validation": [
+        "Pattern; one FLOW_TELEMETRY row per Request ID."
+      ],
+      "relationships": [
+        "Telemetry row (1:1); rows created by the run carry it as CreatedByRequest; events carry it as RequestId.",
+        "Run locator (PA_RUN) stored beside it."
+      ],
+      "storage": [
+        "FLOW_TELEMETRY.RequestId (indexed); CreatedByRequest on governed rows; Event.RequestId; response field requestId."
+      ],
+      "examples": [
+        {
+          "value": "9b5f07a8-c697-4d6e-b290-63d27a8564dd",
+          "scenario": "The SUBMISSION run that issued NITDA-2026-00011."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "client-abc-123",
+          "reason": "Client-supplied: kept as ClientCorrelationId only."
+        }
+      ],
+      "lifecycle": "Kept for as long as the telemetry retention period, and for as long as any row that carries it.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-20",
+      "name": "Correlation ID",
+      "symbol": "CID",
+      "layer": "correlation",
+      "classifiable": false,
+      "mintedAtRuntime": true,
+      "purpose": "Ties together every run in one business transaction that spans several flows: submission, its uploads and its notifications, or a bulk assignment and the emails it sends.",
+      "appliesTo": "Multi-flow transactions; root records (REC, CAS) and tasks keep their originating value.",
+      "format": "Lower-case GUID v4.",
+      "components": [
+        {
+          "part": "GUID",
+          "rule": "Equal to the Request ID of the run that started the transaction."
+        }
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "generation": "The originating flow sets CorrelationId = its own Request ID. Downstream flows receive it from a calling flow (server to server), or derive it from server state (upload ticket → REC → CorrelationId). They never take it from the browser.",
+      "uniqueness": "Global; shared on purpose by the runs of one transaction.",
+      "permanence": "Immutable.",
+      "validation": [
+        "Pattern; equals the RequestId of an existing telemetry row."
+      ],
+      "relationships": [
+        "One Correlation ID to many Request IDs.",
+        "Stored on the root record, so record-to-activity queries can pull every run that touched it."
+      ],
+      "storage": [
+        "CorrelationId column on REC, CAS, TSK, EVT and FLOW_TELEMETRY (indexed)."
+      ],
+      "examples": [
+        {
+          "value": "cc52f6a1-11cb-4aad-85e6-4053f50fe5b8",
+          "scenario": "SUBMISSION plus three UPLOAD runs plus the registry notification for NITDA-2026-00011."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "NITDA-2026-00011",
+          "reason": "A reference, not a transaction ID."
+        }
+      ],
+      "lifecycle": "Same as Request ID.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-21",
+      "name": "Revision Number",
+      "symbol": "REV",
+      "layer": "version",
+      "classifiable": false,
+      "mintedAtRuntime": true,
+      "purpose": "Counts committed changes to a record, so history can be rebuilt and two edits can't silently overwrite each other.",
+      "appliesTo": "REC, TSK, CAS, ATT (metadata only), ORG, MAP, LNK.",
+      "format": "Positive integer.",
+      "components": [
+        {
+          "part": "n",
+          "rule": "1 at creation; +1 per committed business change."
+        }
+      ],
+      "pattern": "^[1-9]\\d{0,5}$",
+      "generation": "The flow writing the change uses the kit's Guarded Update block: read the row and its ETag, then 'Send an HTTP request to SharePoint' (MERGE, IF-MATCH: <etag>) setting Rev = Rev+1 with the change. The standard Update item action cannot send IF-MATCH, so it is not used for governed rows. On 412 the block re-reads and re-applies, up to 3 flat attempts. Every change writes an EVT with RevAfter.",
+      "uniqueness": "Unique per record (EntityKey + Rev).",
+      "permanence": "Each value is permanent history. The current value only increases.",
+      "validation": [
+        "Integer >= 1; EVT rows for a record have strictly increasing RevAfter."
+      ],
+      "relationships": [
+        "EVT.RevAfter points to the state after the event. A file's content never changes in place: new content is a new ATT with a SUPERSEDES link."
+      ],
+      "storage": [
+        "Rev (number) on governed rows; EVT.RevAfter; JSON field rev."
+      ],
+      "examples": [
+        {
+          "value": "1",
+          "scenario": "NITDA-2026-00011 at registration."
+        },
+        {
+          "value": "4",
+          "scenario": "After classification, routing and closure."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "1.0",
+          "reason": "That is a SharePoint version label (platform locator), not the record revision."
+        }
+      ],
+      "lifecycle": "Frozen when IdState becomes MERGED or VOID.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-22",
+      "name": "Definition Version",
+      "symbol": "DV",
+      "layer": "version",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Identifies the exact content of a flow definition, so the deployed flow can be proved equal to the repo's. Preserved from the registry seed.",
+      "appliesTo": "Flow definitions (repo and tenant exports).",
+      "format": "sha:<16 lower-case hex>.",
+      "components": [
+        {
+          "part": "sha:",
+          "rule": "Prefix."
+        },
+        {
+          "part": "hash",
+          "rule": "First 16 hex of SHA-256 over the canonical definition JSON."
+        }
+      ],
+      "pattern": "^sha:[0-9a-f]{16}$",
+      "generation": "Computed by repo tooling (build-flow-registry-seed, flow harvest).",
+      "uniqueness": "Unique per definition content.",
+      "permanence": "Immutable; a change to the definition gives a new value.",
+      "validation": [
+        "Recomputing from the definition reproduces it."
+      ],
+      "relationships": [
+        "Attribute of the Flow Registry Key (DefinitionVersion, DefinitionFingerprint)."
+      ],
+      "storage": [
+        "FLOW_REGISTRY.DefinitionVersion."
+      ],
+      "examples": [
+        {
+          "value": "sha:046e21b99f1e454a",
+          "scenario": "Bulk Assign Direct as harvested."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "v2",
+          "reason": "That is a Schema Version."
+        }
+      ],
+      "lifecycle": "Each deployed version stays in history.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-23",
+      "name": "Schema Version",
+      "symbol": "SV",
+      "layer": "version",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Versions a contract or document shape: an endpoint's request and response, a list schema, and this catalogue's structure. A consumer can then tell an incompatible change from a compatible one.",
+      "appliesTo": "Endpoint contracts, governed list schemas, identifier-catalogue.json.",
+      "format": "v<major>.",
+      "components": [
+        {
+          "part": "major",
+          "rule": "Incremented only for incompatible changes. Compatible additions don't change it."
+        }
+      ],
+      "pattern": "^v[1-9]\\d{0,2}$",
+      "generation": "Set by the contract owner when the contract changes.",
+      "uniqueness": "Per contract.",
+      "permanence": "Each version is permanent; old versions are documented until retired.",
+      "validation": [
+        "Pattern; payloads carry schemaVersion and flows reject an unknown major version."
+      ],
+      "relationships": [
+        "Contract Key + Schema Version identifies one contract shape."
+      ],
+      "storage": [
+        "endpoints.json; payload field schemaVersion; catalogue schemaVersion."
+      ],
+      "examples": [
+        {
+          "value": "v1",
+          "scenario": "Current SUBMISSION contract."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "1.2.0",
+          "reason": "Release versions belong to package.json, not to contracts."
+        }
+      ],
+      "lifecycle": "Active, deprecated, then retired.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-24",
+      "name": "Platform Locator",
+      "symbol": "LOC",
+      "layer": "mapping",
+      "classifiable": false,
+      "mintedAtRuntime": false,
+      "purpose": "Where a record physically lives in a platform: a SharePoint item, a mailbox message, a OneDrive file, a flow run, a paper file. Locators are recorded and mapped, but are never used as permanent identifiers, because platforms reassign them on copy, migration or move.",
+      "appliesTo": "Every placement of a governed entity outside its home row, every source item of an intake, every flow run, and every flow trigger.",
+      "format": "Kind + Container + Value (see locatorKinds).",
+      "components": [
+        {
+          "part": "Kind",
+          "rule": "From locatorKinds."
+        },
+        {
+          "part": "Container",
+          "rule": "List GUID, mailbox, drive, Flow Registry Key or registry location."
+        },
+        {
+          "part": "Value",
+          "rule": "The platform's own ID, as given."
+        }
+      ],
+      "pattern": "^(SPO_ITEM|EXO_INTERNET_MESSAGE_ID|EXO_GRAPH_MESSAGE_ID|ODB_ITEM|PA_RUN|PA_TRIGGER|PAPER_FILE)$",
+      "generation": "Captured, not minted: read from the platform by the flow that places or reads the item.",
+      "uniqueness": "Unique per Kind + Container + Value, enforced by the Identity Map's MatchKey.",
+      "permanence": "Valid for a period (ValidFromUtc to ValidToUtc). A move closes the old locator and opens a new one; nothing is overwritten.",
+      "validation": [
+        "Value matches its kind's pattern; Container is known; no two open locators of the same kind and container for one entity."
+      ],
+      "relationships": [
+        "Many locators to one Entity Key, through the Identity Map."
+      ],
+      "storage": [
+        "IDENTITY_MAP rows with EntryKind=LOCATOR. The record's own home-list item ID is implicit and not mapped."
+      ],
+      "examples": [
+        {
+          "value": "SPO_ITEM",
+          "scenario": "DGO DIGITAL OPS working row of NITDA-2026-00012 at item 22109."
+        },
+        {
+          "value": "EXO_INTERNET_MESSAGE_ID",
+          "scenario": "Source email of NITDA-2026-00012."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "RefIDD",
+          "reason": "A column name, not a locator kind."
+        }
+      ],
+      "lifecycle": "Opened at placement, closed (ValidToUtc) on move, archive or deletion of the copy. Closed rows are kept for audit.",
+      "owner": "OWN-PLATFORM"
+    },
+    {
+      "id": "ID-25",
+      "name": "Legacy Alias",
+      "symbol": "ALS",
+      "layer": "mapping",
+      "classifiable": true,
+      "mintedAtRuntime": false,
+      "purpose": "Keeps every identifier that was ever issued or shown, but does not conform, resolvable to its canonical record. Nothing a citizen or officer holds stops working.",
+      "appliesTo": "Legacy ticks references, browser-minted references and keys, portal tracking IDs, legacy task composites and displays, interim case references, legacy registry file numbers, legacy org keys.",
+      "format": "As originally issued (see aliasKinds), stored trimmed.",
+      "components": [
+        {
+          "part": "Kind",
+          "rule": "From aliasKinds."
+        },
+        {
+          "part": "Value",
+          "rule": "The exact legacy string, trimmed, case preserved."
+        }
+      ],
+      "pattern": "^(LEGACY_TICKS_REF|BROWSER_PROVISIONAL_REF|BROWSER_PADDED_REF|BROWSER_TIMESTAMP_REF|PORTAL_TRACKING_ID|PORTAL_SUPPORT_SREF|REBUILD_CASE_REF|LEGACY_TASK_COMPOSITE|LEGACY_TASK_DISPLAY|LEGACY_ORG_KEY|LEGACY_REGISTRY_FILE_NO|ENTITY_STORE_REF|APPROVAL_LOCAL_REF|FOLIO_LOCAL_KEY)$",
+      "generation": "Never generated. Registered by migration flows from existing data, once.",
+      "uniqueness": "An alias value maps to exactly one entity, except LEGACY_TICKS_REF: the old portal flows drew those at random, so two records can share one. Such a value is stored once per record with IdState ACTIVE and Ambiguous = true; its MatchKey includes the EntityRef. STATUS and WRITEBACK resolve an ambiguous value only together with the sender email the request already carries, and staff search lists every candidate. Externally issued kinds win over internal-only kinds when values conflict.",
+      "permanence": "Permanent and read-only. No new alias values are created after migration, except when an external system's reference is captured as a locator.",
+      "validation": [
+        "Value matches its kind's pattern.",
+        "Non-ambiguous values resolve to exactly one entity; an ambiguous value resolves to one entity once the sender email is applied.",
+        "Phase 5 counts ticks-reference collisions before loading any alias."
+      ],
+      "relationships": [
+        "Many aliases to one Entity Key."
+      ],
+      "storage": [
+        "IDENTITY_MAP rows with EntryKind=ALIAS. The legacy source column (Reference_ID, RefIDD, LocalId, Title) is left in place, read-only."
+      ],
+      "examples": [
+        {
+          "value": "LEGACY_TICKS_REF",
+          "scenario": "NITDA-2026-217 resolves to the record now known as NITDA-2026-00009."
+        },
+        {
+          "value": "LEGACY_TASK_DISPLAY",
+          "scenario": "TASK-12907 in an old email link resolves to TASK-2026-00211."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "NITDA-2026-00011",
+          "reason": "Canonical: never registered as an alias."
+        }
+      ],
+      "lifecycle": "Registered at migration; kept for the retention life of the record.",
+      "owner": "OWN-REGISTRY"
+    },
+    {
+      "id": "ID-26",
+      "name": "File Reference",
+      "symbol": "FR",
+      "layer": "reference",
+      "classifiable": true,
+      "mintedAtRuntime": true,
+      "purpose": "The human reference of a registry file, written on the file jacket and quoted when a file moves between offices. It replaces DGO/YYYY/NNNNNN, which was padded from a SharePoint item ID or a timestamp.",
+      "appliesTo": "REG.",
+      "format": "FILE-YYYY-NNNNN. Non-production: ZFILE-YYYY-NNNNN.",
+      "components": [
+        {
+          "part": "FILE",
+          "rule": "Fixed prefix."
+        },
+        {
+          "part": "YYYY",
+          "rule": "Year the file was opened, West Africa Time."
+        },
+        {
+          "part": "NNNNN",
+          "rule": "That year's file sequence, padded to 5 digits and growing to at most 7."
+        }
+      ],
+      "pattern": "^Z?FILE-(20[2-9]\\d)-(\\d{5}|[1-9]\\d{5,6})$",
+      "generation": "Inside DYNAMIC_ACTIONS 'open_file' only, from the SEQUENCE_COUNTERS row (Prefix='FILE', Year=YYYY), with the kit's Claim Reference block.",
+      "uniqueness": "Global within the environment.",
+      "permanence": "Immutable, never reused. A file that is closed and continued in a new volume keeps its reference; the new volume is a new REG with its own reference and a SUPERSEDES link to the old one.",
+      "validation": [
+        "Matches the pattern.",
+        "Resolves to exactly one REGISTRY_FILES row.",
+        "A leading Z is rejected in production."
+      ],
+      "relationships": [
+        "1:1 with the file's Entity Key.",
+        "Records are filed with a FILED_IN link (REC to REG).",
+        "Movements are EVT rows (Action MOVED) on the file, in FILE_MOVEMENTS.",
+        "Legacy DGO/YYYY/NNNNNN numbers resolve to it as LEGACY_REGISTRY_FILE_NO aliases."
+      ],
+      "storage": [
+        "REGISTRY_FILES.RegistryFileRef (text 20, indexed, enforce unique from Phase 6) and Title.",
+        "JSON field ref on REG."
+      ],
+      "examples": [
+        {
+          "value": "FILE-2026-00042",
+          "scenario": "Registry file opened for NITDA-2026-00011 and its replies."
+        },
+        {
+          "value": "ZFILE-2026-00002",
+          "scenario": "UAT file."
+        }
+      ],
+      "invalidExamples": [
+        {
+          "value": "DGO/2026/000042",
+          "reason": "Legacy Folio registry number built from a row number: an alias."
+        }
+      ],
+      "lifecycle": "Issued when the file is opened; ACTIVE while open or closed; ARCHIVED when the file goes to the archive. Never reused.",
+      "owner": "OWN-REGISTRY"
+    }
+  ],
+  "exclusions": [
+    {
+      "item": "Upload ticket, verification proof token",
+      "why": "Secrets (bearer credentials), not identifiers. They are never shown, logged, used as a reference or placed in a file name. Their rows are transient and sit outside the governed datasets."
+    },
+    {
+      "item": "One-time verification code (6 digits, rand(100000,1000000))",
+      "why": "A short-lived secret. It is stored only until it is used or expires."
+    },
+    {
+      "item": "Rate-limit bucket (<CONTRACT>_IP:<address>)",
+      "why": "A transient counter key that contains an IP address. It is not an identifier. It sits in a restricted list and is purged within 24 hours (retention set by OWN-INFOGOV)."
+    },
+    {
+      "item": "Duplicate fingerprint / LocalId",
+      "why": "Retired. Duplicate detection is a flow query on indexed attributes (sender, subject, event date, attachment hashes, 24-hour window), so no identifier embeds an email address."
+    },
+    {
+      "item": "Stored file name",
+      "why": "A locator-friendly label: <ref lower-case, hyphens→underscores>_<first 8 hex of the ATT Entity Key>_<sanitised name>. The file's identity is the ATT Entity Key column. The name no longer contains any part of the upload ticket."
+    },
+    {
+      "item": "Content hash (SHA-256 of a file)",
+      "why": "An integrity attribute (DeclaredSha256), used as duplicate evidence. It is not an identity: identical bytes can legitimately be two records."
+    },
+    {
+      "item": "Titles, subjects, display names, email addresses, SharePoint item IDs, SharePoint version labels",
+      "why": "Mutable or platform-assigned. They are attributes or locators, never keys."
+    },
+    {
+      "item": "ClientRequestHash (Folio idempotency)",
+      "why": "A dedupe token, not an identifier. Folio computes the idempotency key once per user action, keeps it with any queued replay, and sends only its SHA-256 hex (no email or other personal data). Flows store it in the indexed attribute ClientRequestHash on every row created through DYNAMIC_ACTIONS and the task flows; a request carrying a hash already stored within 7 days returns the first result. Queued writes older than 7 days are not replayed: they go to manual review."
+    },
+    {
+      "item": "Browser-only keys (notifications, cache rows, quarantine rows, pending-queue rows, receipt-ledger rows, welcome tips, UI risk rows, request tokens)",
+      "why": "Keys that live only in the browser's state and are never written to a governed dataset. They may use crypto.randomUUID() and are listed, file by file, in clientMinters with disposition UI_LOCAL. If one is ever persisted, it must be reclassified and minted by a flow."
+    },
+    {
+      "item": "AttachmentHashSet (duplicate check)",
+      "why": "A derived attribute on INTAKE_REGISTER: the sorted, comma-joined first 12 hex characters of each declared attachment SHA-256, written by SUBMISSION. It is evidence for the duplicate query, not an identity."
+    }
+  ],
+  "knownDataDefects": [
+    {
+      "id": "DEF-CLS-1",
+      "source": "config/category-matrix.config.js",
+      "detect": "category-multiple-codes",
+      "value": "Administrative Matters",
+      "finding": "The category carries two codes: ADM, and HRM on the General Administration row. HRM is also the Human Resources sub-category code.",
+      "resolution": "Set the General Administration row's categoryCode to ADM. Existing task composites containing -HRM-GEN- stay as they are (they are aliases).",
+      "owner": "OWN-REGISTRY"
+    },
+    {
+      "id": "DEF-CLS-2",
+      "source": "config/category-matrix.config.js",
+      "detect": "category-multiple-codes",
+      "value": "Public Relations",
+      "finding": "The category carries two codes, PRS and PRC. PRC is also the Procurement sub-category code.",
+      "resolution": "PRS becomes the single category code; PRC is retired as a category code.",
+      "owner": "OWN-REGISTRY"
+    },
+    {
+      "id": "DEF-CLS-3",
+      "source": "config/category-matrix.config.js",
+      "detect": "non-code-value",
+      "value": "N/A",
+      "finding": "'N/A' is stored as a sub-category code for categories without sub-categories.",
+      "resolution": "A missing sub-category is an empty value, not a code. Flows write '' and reports show 'None'.",
+      "owner": "OWN-REGISTRY"
+    },
+    {
+      "id": "DEF-ORG-1",
+      "source": "config/organizational-units.config.js",
+      "detect": "org-key-pattern",
+      "value": "Ag DGCEO",
+      "finding": "The key embeds acting status and contains a space.",
+      "resolution": "Register 'Ag DGCEO' as a LEGACY_ORG_KEY alias of CEO; acting status stays in headshipType.",
+      "owner": "OWN-ORG"
+    }
+  ],
+  "clientMinterPatterns": [
+    "uid\\(['\\\"][A-Za-z]+['\\\"]\\)",
+    "PF\\.uid\\(\\)",
+    "function sref\\(\\)",
+    "['\\\"][A-Z]{2,10}-['\\\"] ?\\+ ?(?:Date\\.now\\(\\)|Math\\.random\\(\\))",
+    "`[A-Z]{2,10}-\\$\\{[^}]{0,60}\\}",
+    "crypto\\.randomUUID\\(\\)",
+    "Math\\.random\\(\\)\\.toString\\(36\\)",
+    "Math\\.floor\\(\\s*\\d{5,}\\s*\\+\\s*Math\\.random\\(\\)"
+  ],
+  "clientMinterDispositions": {
+    "FLOW_MINTED": "Persisted data. From Phase 6 the browser sends the request without an identifier and shows 'pending'; the flow mints the Entity Key (and reference, where the type has one). Until then the browser value is a provisional local key, registered as an alias at migration.",
+    "RETIRED": "A format that is no longer issued by anyone. Existing values resolve as aliases. The code is removed in Phase 6.",
+    "UI_LOCAL": "Never written to a governed dataset. Allowed.",
+    "CORRELATION": "A client correlation value. Flows never adopt it as an identifier; they keep it only as ClientCorrelationId.",
+    "INTERIM_LOCATOR": "Replaced by the spo:<listGuid>/<itemId> interim form for rows without an EntityKey, then by the EntityKey."
+  },
+  "clientMinters": [
+    {
+      "file": "core/audit-log.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "UI_LOCAL",
+      "target": "EVT",
+      "note": "Local audit trail. Persisted audit entries are written by DYNAMIC_ACTIONS logauditevent, which mints the EVT key."
+    },
+    {
+      "file": "core/audit-log.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "UI_LOCAL",
+      "target": "EVT",
+      "note": "Fallback of the same local id."
+    },
+    {
+      "file": "core/audit-log.js",
+      "match": "uid('AUD')",
+      "disposition": "UI_LOCAL",
+      "target": "EVT",
+      "note": "The prefixed key built by the same helper; local only."
+    },
+    {
+      "file": "core/correspondence-email-service.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "FLOW_MINTED",
+      "target": "REC",
+      "note": "Fallback of the uid() below."
+    },
+    {
+      "file": "core/correspondence-email-service.js",
+      "match": "uid('CMAIL')",
+      "disposition": "FLOW_MINTED",
+      "target": "REC",
+      "note": "A correspondence email is an outbound record (REC, Direction Out)."
+    },
+    {
+      "file": "core/correspondence-email-service.js",
+      "match": "uid('EMAILDISP')",
+      "disposition": "FLOW_MINTED",
+      "target": "EVT",
+      "note": "A dispatch is an event (Action DISPATCHED) on the outbound record."
+    },
+    {
+      "file": "core/data-client.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Loading-state token for one fetch; never sent."
+    },
+    {
+      "file": "core/dispatch-actions.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "EVT",
+      "note": "Dispatch record: an EVT (Action DISPATCHED). Moved here from modules/dispatch.js; the Dispatch screen and the record page both record dispatches through it."
+    },
+    {
+      "file": "core/domain.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "INTERIM_LOCATOR",
+      "target": "-",
+      "note": "Fallback id for rows without one; replaced by entityKey, then spo:<listGuid>/<itemId> (B10)."
+    },
+    {
+      "file": "core/enterprise-domain.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "TSK",
+      "note": "Tasks created from the enterprise domain and the uid() helper below."
+    },
+    {
+      "file": "core/enterprise-domain.js",
+      "match": "uid('MOV')",
+      "disposition": "FLOW_MINTED",
+      "target": "EVT",
+      "note": "A file movement is an EVT (Action MOVED) in FILE_MOVEMENTS."
+    },
+    {
+      "file": "core/enterprise-domain.js",
+      "match": "uid('REG')",
+      "disposition": "FLOW_MINTED",
+      "target": "REG",
+      "note": "A registry file: REG with FILE-YYYY-NNNNN from DYNAMIC_ACTIONS open_file."
+    },
+    {
+      "file": "core/enterprise-domain.js",
+      "match": "uid('AUD')",
+      "disposition": "UI_LOCAL",
+      "target": "EVT",
+      "note": "Local audit row; persisted through logauditevent."
+    },
+    {
+      "file": "core/entity-store.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Cache key helper for the in-browser entity store."
+    },
+    {
+      "file": "core/entity-store.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Fallback of the same helper."
+    },
+    {
+      "file": "core/entity-store.js",
+      "match": "uid('RAW')",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Raw-row cache key."
+    },
+    {
+      "file": "core/entity-store.js",
+      "match": "`REF-${new Date().getFullYear()}",
+      "disposition": "RETIRED",
+      "target": "REC",
+      "note": "REF-YYYY-<ms> is replaced by the Registry Reference; existing values are ENTITY_STORE_REF aliases."
+    },
+    {
+      "file": "core/entity-store.js",
+      "match": "uid('Q')",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Quarantine row for rejected input; never persisted."
+    },
+    {
+      "file": "core/executive-register.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "BRF/MTG/PRJ/TSK",
+      "note": "Helper behind the four keys below."
+    },
+    {
+      "file": "core/executive-register.js",
+      "match": "uid('BRF')",
+      "disposition": "FLOW_MINTED",
+      "target": "BRF",
+      "note": "A brief in the executive register."
+    },
+    {
+      "file": "core/executive-register.js",
+      "match": "uid('MTG')",
+      "disposition": "FLOW_MINTED",
+      "target": "MTG",
+      "note": "A meeting in the executive register."
+    },
+    {
+      "file": "core/executive-register.js",
+      "match": "uid('TSK')",
+      "disposition": "FLOW_MINTED",
+      "target": "TSK",
+      "note": "Executive task: the same TSK entity as registry tasks, with a Task Reference."
+    },
+    {
+      "file": "core/executive-register.js",
+      "match": "uid('PRJ')",
+      "disposition": "FLOW_MINTED",
+      "target": "PRJ",
+      "note": "A project in the executive register."
+    },
+    {
+      "file": "core/record-actions.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "MIN/APR/EVT",
+      "note": "The record page's minute, approval and escalation rows: each is written by the same flow its owning screen uses, and the minute's and approval's placeholder ids are replaced by the entityKey the flow returns."
+    },
+    {
+      "file": "core/health-contract.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "CORRELATION",
+      "target": "-",
+      "note": "Probe correlation id sent to identityVerify; kept by the flow as ClientCorrelationId only."
+    },
+    {
+      "file": "core/health-contract.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "CORRELATION",
+      "target": "-",
+      "note": "Fallback of the same."
+    },
+    {
+      "file": "core/nitda-module-adapter.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "DOM element ids."
+    },
+    {
+      "file": "core/ops-runbook.js",
+      "match": "`RISK-${Math.random().toString(36).slice(2, 10)}",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Runbook risk rows shown in the console; not a governed record."
+    },
+    {
+      "file": "core/ops-runbook.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Random part of the same console risk-row key."
+    },
+    {
+      "file": "core/pending-queue.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Queue row id; the replay carries the original ClientRequestHash."
+    },
+    {
+      "file": "core/receipt-ledger.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Local receipt row."
+    },
+    {
+      "file": "core/reference-minter.js",
+      "match": "`NITDA-${Date.now().toString().slice(-6)}",
+      "disposition": "RETIRED",
+      "target": "REC",
+      "note": "Historical form quoted in a comment; BROWSER_TIMESTAMP_REF alias. The module is deleted in Phase 6."
+    },
+    {
+      "file": "core/registry-actions.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "MIN",
+      "note": "Minute written when a file moves. Moved here from modules/registry.js; Registry and the record page's File custody panel both route files through it."
+    },
+    {
+      "file": "core/welcome-experience.js",
+      "match": "Math.random().toString(36)",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Welcome-tip id."
+    },
+    {
+      "file": "modules/activities.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "EVT",
+      "note": "Escalation: an EVT (Action ESCALATED) on the task."
+    },
+    {
+      "file": "modules/admin-suite.js",
+      "match": "`RISK-${Date.now().toString(36)}",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Admin console risk row."
+    },
+    {
+      "file": "modules/approvals.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "APR",
+      "note": "Approval."
+    },
+    {
+      "file": "modules/approvals.js",
+      "match": "'APR-' + Date.now()",
+      "disposition": "RETIRED",
+      "target": "APR",
+      "note": "APR-<ms> display reference; APPROVAL_LOCAL_REF alias."
+    },
+    {
+      "file": "modules/bulk-assignment.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "CORRELATION",
+      "target": "-",
+      "note": "OTP challenge request id; the flow's requestId is authoritative."
+    },
+    {
+      "file": "modules/bulk-assignment.js",
+      "match": "Math.floor(100000+Math.random()",
+      "disposition": "RETIRED",
+      "target": "-",
+      "note": "Browser-generated confirmation code shown to the same user: it verifies nothing and is a verification code minted outside a flow. Removed; bulk assignment waits for the flow's code."
+    },
+    {
+      "file": "modules/comments.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "MIN",
+      "note": "Comment: a minute."
+    },
+    {
+      "file": "modules/correspondence.js",
+      "match": "`NITDA-${Date.now().toString().slice(-6)}",
+      "disposition": "RETIRED",
+      "target": "REC",
+      "note": "Historical form quoted in a comment."
+    },
+    {
+      "file": "modules/executive.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "MIN",
+      "note": "Executive minute."
+    },
+    {
+      "file": "modules/fasttrack.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "EVT",
+      "note": "Escalations: EVT (Action ESCALATED)."
+    },
+    {
+      "file": "modules/orchestrator.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "In-app notification row."
+    },
+    {
+      "file": "modules/user-admin.js",
+      "match": "crypto.randomUUID()",
+      "disposition": "FLOW_MINTED",
+      "target": "USR",
+      "note": "A user's key is the Entra object ID, read by the directory-sync flow; never a browser UUID."
+    },
+    {
+      "file": "document-portal/js/submit.js",
+      "match": "PF.uid()",
+      "disposition": "RETIRED",
+      "target": "REC",
+      "note": "Portal tracking ID; PORTAL_TRACKING_ID alias."
+    },
+    {
+      "file": "document-portal/js/support.js",
+      "match": "function sref()",
+      "disposition": "RETIRED",
+      "target": "CAS",
+      "note": "Browser case reference; PORTAL_SUPPORT_SREF alias."
+    },
+    {
+      "file": "config/ops-runbook.config.js",
+      "match": "`EP-${k.key}",
+      "disposition": "UI_LOCAL",
+      "target": "-",
+      "note": "Derived from a contract key for a console row; not minted."
+    }
+  ]
+}

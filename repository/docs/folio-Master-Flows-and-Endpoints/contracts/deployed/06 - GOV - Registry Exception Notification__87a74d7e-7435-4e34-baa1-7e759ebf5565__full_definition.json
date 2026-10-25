@@ -1,0 +1,396 @@
+{
+  "exportedBy": "Tenant capture (docs/folio-Master-Flows-and-Endpoints/captures, 2026-10-01)",
+  "exportedAtUtc": "2026-10-01",
+  "derivedFrom": "docs/folio-Master-Flows-and-Endpoints/captures/06_-_GOV_-_Registry_Exception_Notification__87a74d7e-7435-4e34-baa1-7e759ebf5565.json",
+  "workflow_identity": {
+    "internal_name": "87a74d7e-7435-4e34-baa1-7e759ebf5565",
+    "full_resource_id": "/providers/Microsoft.Flow/flows/87a74d7e-7435-4e34-baa1-7e759ebf5565",
+    "tags": {
+      "flowDisplayName": "06 - GOV - Registry Exception Notification"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Hour",
+          "interval": 1
+        },
+        "evaluatedRecurrence": {
+          "frequency": "Hour",
+          "interval": 1
+        },
+        "type": "Recurrence"
+      }
+    },
+    "actions": {
+      "Scope_06_GOV_Registry_Exception_Notification_COMPLETE_UPDATED": {
+        "actions": {
+          "Scope_Main": {
+            "actions": {
+              "Get_Open_Exceptions": {
+                "metadata": {
+                  "operationMetadataId": "fa52b5d4-2c8d-4a98-b8b0-1e29ea9936c8"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists/getByTitle('DGO_HTTPFlowRegistryExceptions')/items?$select=Id,ExceptionKey,RegistryKey,FlowId,RunId,ExceptionType,Severity,Status,Details,DetectedUtc,AssignedToEmail,DiagnosticJson&$filter=Status eq 'Open'&$orderby=DetectedUtc asc&$top=5000",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connectionName": "shared_sharepointonline-1",
+                    "operationId": "HttpRequest"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Notify_Each_Exception": {
+                "foreach": "@coalesce(body('Get_Open_Exceptions')?['value'],json('[]'))",
+                "actions": {
+                  "Send_Exception_Email": {
+                    "runAfter": {
+                      "Compose_Exception_Report": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "a14dc567-5d6d-40af-9a31-635f50d87495"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "emailMessage/To": "@if(or(empty(trim(string(item()?['AssignedToEmail']))),equals(toLower(trim(string(item()?['AssignedToEmail']))),'dgsregistry@nitda.gov.ng')),'dgsRegistry@nitda.gov.ng',concat(trim(string(item()?['AssignedToEmail'])),';dgsRegistry@nitda.gov.ng'))",
+                        "emailMessage/Subject": "@concat('[',toUpper(coalesce(item()?['Severity'],'UNKNOWN')),'] DGO Registry Exception | ',coalesce(item()?['ExceptionType'],'Unclassified'),' | ',coalesce(item()?['ExceptionKey'],'NoKey'))",
+                        "emailMessage/Body": "@concat('<!DOCTYPE html><html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px;color:#172033\"><div style=\"max-width:860px;margin:auto;background:#fff;border:1px solid #dfe5ec;border-radius:12px;overflow:hidden\"><div style=\"background:#8b0000;color:#fff;padding:22px\"><h1 style=\"margin:0\">DGO Registry Exception</h1></div><div style=\"padding:24px\"><p><b>Severity:</b> ',replace(replace(replace(replace(replace(string(coalesce(item()?['Severity'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</p><p><b>Exception type:</b> ',replace(replace(replace(replace(replace(string(coalesce(item()?['ExceptionType'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</p><p><b>Exception key:</b> ',replace(replace(replace(replace(replace(string(coalesce(item()?['ExceptionKey'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</p><p><b>Registry key:</b> ',replace(replace(replace(replace(replace(string(coalesce(item()?['RegistryKey'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</p><p><b>Flow ID:</b> ',replace(replace(replace(replace(replace(string(coalesce(item()?['FlowId'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</p><p><b>Source run ID:</b> ',replace(replace(replace(replace(replace(string(coalesce(item()?['RunId'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</p><p><b>Detected UTC:</b> ',replace(replace(replace(replace(replace(string(coalesce(item()?['DetectedUtc'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</p><h3>Details</h3><div style=\"white-space:pre-wrap;background:#f8fafc;border:1px solid #e5e7eb;padding:14px;border-radius:8px\">',replace(replace(replace(replace(replace(string(coalesce(item()?['Details'],'')),'&','&amp;'),'<','&lt;'),'>','&gt;'),'\"','&quot;'),'''','&#39;'),'</div><p style=\"margin-top:20px\">This exception was acknowledged only after successful delivery of this notification.</p></div></div></body></html>')",
+                        "emailMessage/Attachments": [
+                          {
+                            "Name": "@concat('DGO_Registry_Exception_',replace(replace(string(item()?['ExceptionKey']),'|','_'),'/','_'),'_',formatDateTime(utcNow(),'yyyyMMdd_HHmmss'),'_UTC.json')",
+                            "ContentBytes": "@string(outputs('Compose_Exception_Report'))"
+                          }
+                        ],
+                        "emailMessage/Importance": "@if(or(equals(toLower(coalesce(item()?['Severity'],'')),'critical'),equals(toLower(coalesce(item()?['Severity'],'')),'high')),'High','Normal')"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                        "connectionName": "shared_office365-1",
+                        "operationId": "SendEmailV2"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Acknowledge_Exception": {
+                    "runAfter": {
+                      "Send_Exception_Email": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "0ac30771-db4b-492f-a4c6-6352e043f913"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/DGO_ECM_GOVERNANCE",
+                        "parameters/method": "POST",
+                        "parameters/uri": "@concat('_api/web/lists/getByTitle(''DGO_HTTPFlowRegistryExceptions'')/items(',string(item()?['Id']),')')",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata",
+                          "Content-Type": "application/json;odata=nometadata",
+                          "IF-MATCH": "*",
+                          "X-HTTP-Method": "MERGE"
+                        },
+                        "parameters/body": "@setProperty(setProperty(setProperty(json('{}'),'Status','Acknowledged'),'AssignedToEmail',if(empty(trim(string(item()?['AssignedToEmail']))),'dgsRegistry@nitda.gov.ng',trim(string(item()?['AssignedToEmail'])))),'DiagnosticJson',string(setProperty(setProperty(setProperty(json('{}'),'NotificationSentUtc',utcNow()),'NotificationRunId',workflow()?['run']?['name']),'PreviousDiagnostic',coalesce(item()?['DiagnosticJson'],''))))"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline-1",
+                        "operationId": "HttpRequest"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Compose_Exception_Report": {
+                    "metadata": {
+                      "operationMetadataId": "4ec11f84-7c97-4d51-8ec8-6ae016a7bcb4"
+                    },
+                    "type": "Compose",
+                    "inputs": {
+                      "reportType": "DGO Registry Exception Notification",
+                      "schemaVersion": "5.0.0",
+                      "generatedAtUtc": "@utcNow()",
+                      "notificationRunId": "@workflow()?['run']?['name']",
+                      "status": "PendingNotification",
+                      "exception": {
+                        "id": "@item()?['Id']",
+                        "exceptionKey": "@item()?['ExceptionKey']",
+                        "registryKey": "@item()?['RegistryKey']",
+                        "flowId": "@item()?['FlowId']",
+                        "runId": "@item()?['RunId']",
+                        "exceptionType": "@item()?['ExceptionType']",
+                        "severity": "@item()?['Severity']",
+                        "status": "@item()?['Status']",
+                        "details": "@item()?['Details']",
+                        "detectedUtc": "@item()?['DetectedUtc']",
+                        "assignedToEmail": "@item()?['AssignedToEmail']"
+                      }
+                    }
+                  },
+                  "Create_Send_Exception_Email_Receipt": {
+                    "runAfter": {
+                      "Send_Exception_Email": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "PostItem"
+                      },
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                        "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                        "item/Title": "@concat('exception:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                        "item/MessageType": "exception",
+                        "item/RecipientEmail": "@if(or(empty(trim(string(item()?['AssignedToEmail']))),equals(toLower(trim(string(item()?['AssignedToEmail']))),'dgsregistry@nitda.gov.ng')),'dgsRegistry@nitda.gov.ng',concat(trim(string(item()?['AssignedToEmail'])),';dgsRegistry@nitda.gov.ng'))",
+                        "item/Reference": "@string(workflow()?['run']?['name'])",
+                        "item/SentAtUtc": "@utcNow()",
+                        "item/Status": "@if(equals(actions('Send_Exception_Email')?['status'],'Succeeded'),'sent','failed')",
+                        "item/Attempts": 1,
+                        "item/LastError": "@if(equals(actions('Send_Exception_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Exception_Email')?['error']?['message'],actions('Send_Exception_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Exception_Email')?['error']?['message'],actions('Send_Exception_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  },
+                  "Compose_Send_Exception_Email_Outcome": {
+                    "runAfter": {
+                      "Create_Send_Exception_Email_Receipt": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                      ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@int(if(or(equals(actions('Send_Exception_Email')?['status'],'Failed'),equals(actions('Send_Exception_Email')?['status'],'TimedOut')),'send-failed','0'))"
+                  }
+                },
+                "runAfter": {
+                  "Get_Open_Exceptions": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Foreach",
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "ddacb0ec-5ad1-4c2b-a40d-c4ceb467d776"
+            },
+            "type": "Scope"
+          },
+          "Compose_Final_Report_JSON": {
+            "runAfter": {
+              "Scope_Main": [
+                "Succeeded",
+                "Failed",
+                "TimedOut",
+                "Skipped"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "1876efc2-7f9c-4a95-b63d-12fc20329f42"
+            },
+            "type": "Compose",
+            "inputs": {
+              "reportType": "DGO Power Automate Execution Report",
+              "schemaVersion": "5.0.0",
+              "flow": "06 - GOV - Registry Exception Notification",
+              "flowId": "@workflow()?['name']",
+              "runId": "@workflow()?['run']?['name']",
+              "environmentId": "@workflow()?['tags']?['environmentName']",
+              "generatedAtUtc": "@utcNow()",
+              "status": "@if(contains(string(result('Scope_Main')),'Failed'),'Failed',if(contains(string(result('Scope_Main')),'TimedOut'),'TimedOut','Succeeded'))",
+              "details": {
+                "openExceptionsRetrieved": "@if(empty(body('Get_Open_Exceptions')?['value']),0,length(body('Get_Open_Exceptions')?['value']))",
+                "notificationLimit": 5000,
+                "notificationTarget": "Assigned owner and dgsRegistry@nitda.gov.ng",
+                "acknowledgementPolicy": "Acknowledged only after successful email delivery"
+              },
+              "runUrl": "@concat('https://make.powerautomate.com/environments/',workflow()?['tags']?['environmentName'],'/flows/',workflow()?['name'],'/runs/',workflow()?['run']?['name'])"
+            }
+          },
+          "Compose_Final_Report_HTML": {
+            "runAfter": {
+              "Compose_Final_Report_JSON": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "5d9c76f3-295d-4134-aa90-eba752a93465"
+            },
+            "type": "Compose",
+            "inputs": "@concat('<html><body style=\"font-family:Segoe UI,Arial;background:#f3f6f9;padding:24px\"><div style=\"max-width:900px;margin:auto;background:white;border-radius:12px;overflow:hidden\"><div style=\"background:#004578;color:white;padding:24px\"><h1>',outputs('Compose_Final_Report_JSON')?['flow'],'</h1></div><div style=\"padding:24px\"><h2>Status: ',outputs('Compose_Final_Report_JSON')?['status'],'</h2><p><b>Run ID:</b> ',outputs('Compose_Final_Report_JSON')?['runId'],'</p><pre style=\"white-space:pre-wrap;background:#f8fafc;padding:12px\">',string(outputs('Compose_Final_Report_JSON')?['details']),'</pre><p><a href=\"',outputs('Compose_Final_Report_JSON')?['runUrl'],'\">Open run</a></p></div></div></body></html>')"
+          },
+          "Send_Final_Report_Email": {
+            "runAfter": {
+              "Compose_Final_Report_HTML": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "15e1a0b5-5763-456f-b4b8-9f8bc47f3f64"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+                "emailMessage/Subject": "@concat('[',outputs('Compose_Final_Report_JSON')?['status'],'] ',outputs('Compose_Final_Report_JSON')?['flow'],' | ',outputs('Compose_Final_Report_JSON')?['runId'])",
+                "emailMessage/Body": "@outputs('Compose_Final_Report_HTML')",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@concat(replace(workflow()?['name'],' ','_'),'_',workflow()?['run']?['name'],'_Report.json')",
+                    "ContentBytes": "@string(outputs('Compose_Final_Report_JSON'))"
+                  }
+                ],
+                "emailMessage/Importance": "@if(equals(outputs('Compose_Final_Report_JSON')?['status'],'Succeeded'),'Normal','High')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "If_Notification_Failed": {
+            "actions": {
+              "Terminate_Notification_Failed": {
+                "metadata": {
+                  "operationMetadataId": "a636421d-4277-4fd1-9d22-76b5c2b67e15"
+                },
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Failed",
+                  "runError": {
+                    "code": "DGOExceptionNotificationFailed",
+                    "message": "@concat('Registry exception notification ended with status ',outputs('Compose_Final_Report_JSON')?['status'],'.')"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "else": {
+              "actions": {
+                "Terminate_Notification_Succeeded": {
+                  "metadata": {
+                    "operationMetadataId": "aa75e208-ea81-4f65-a47b-1a4617cb7750"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('Compose_Final_Report_JSON')?['status']",
+                      "Succeeded"
+                    ]
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "d857ac2a-2b90-4b3f-a0cb-3f313c05cd45"
+            },
+            "type": "If"
+          },
+          "Create_Send_Final_Report_Email_Receipt": {
+            "runAfter": {
+              "Send_Final_Report_Email": [
+                "Succeeded",
+                "Failed",
+                "TimedOut"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PostItem"
+              },
+              "parameters": {
+                "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+                "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+                "item/Title": "@concat('final-report:',string(coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])),':',string(workflow()?['run']?['name']))",
+                "item/MessageType": "final-report",
+                "item/RecipientEmail": "dgsRegistry@nitda.gov.ng",
+                "item/Reference": "@string(workflow()?['run']?['name'])",
+                "item/SentAtUtc": "@utcNow()",
+                "item/Status": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'sent','failed')",
+                "item/Attempts": 1,
+                "item/LastError": "@if(equals(actions('Send_Final_Report_Email')?['status'],'Succeeded'),'',substring(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed')),0,min(length(string(coalesce(actions('Send_Final_Report_Email')?['error']?['message'],actions('Send_Final_Report_Email')?['outputs']?['body']?['message'],'send failed'))),900)))"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Compose_Send_Final_Report_Email_Outcome": {
+            "runAfter": {
+              "Create_Send_Final_Report_Email_Receipt": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            },
+            "type": "Compose",
+            "inputs": "@int(if(or(equals(actions('Send_Final_Report_Email')?['status'],'Failed'),equals(actions('Send_Final_Report_Email')?['status'],'TimedOut')),'send-failed','0'))"
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "5290f357-de29-48b4-95ad-7274552742db"
+        },
+        "type": "Scope"
+      }
+    },
+    "outputs": {}
+  }
+}

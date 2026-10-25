@@ -1,0 +1,19 @@
+{
+  "Recurrence": {
+    "type": "Recurrence",
+    "recurrence": {
+      "frequency": "Day",
+      "interval": 1,
+      "timeZone": "W. Central Africa Standard Time",
+      "schedule": {
+        "hours": ["5"],
+        "minutes": [45]
+      }
+    },
+    "runtimeConfiguration": {
+      "concurrency": {
+        "runs": 1
+      }
+    }
+  }
+}

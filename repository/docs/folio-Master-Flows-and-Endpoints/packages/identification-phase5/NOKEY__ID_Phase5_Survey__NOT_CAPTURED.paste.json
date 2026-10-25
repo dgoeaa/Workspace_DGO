@@ -1,0 +1,3366 @@
+{
+  "nodeId": "Scope_Phase5_Survey",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Compose_Survey_Context": {
+        "type": "Compose",
+        "runAfter": {},
+        "inputs": {
+          "requestId": "@guid()",
+          "startedAtUtc": "@utcNow()",
+          "runName": "@workflow()?['run']?['name']",
+          "runBy": "@string(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'],''))",
+          "pageSize": 5000,
+          "batchSize": 100,
+          "crlf": "@decodeUriComponent('%0D%0A')"
+        }
+      },
+      "Get_Dataset_Bindings": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists/getbytitle('Flow%20Configuration')/items?$select=Title,ConfigValue&$top=500&$filter=Title%20eq%20'ENVIRONMENT_CODE'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_SITE_URL'%20or%20Title%20eq%20'DATASET_INTAKE_REGISTER_LIST_ID'%20or%20Title%20eq%20'DATASET_ATTACHMENTS_SITE_URL'%20or%20Title%20eq%20'DATASET_ATTACHMENTS_LIST_ID'%20or%20Title%20eq%20'DATASET_SCAN_LIBRARY_SITE_URL'%20or%20Title%20eq%20'DATASET_SCAN_LIBRARY_LIST_ID'%20or%20Title%20eq%20'DATASET_STATUS_TIMELINE_SITE_URL'%20or%20Title%20eq%20'DATASET_STATUS_TIMELINE_LIST_ID'%20or%20Title%20eq%20'DATASET_SUPPORT_CASES_SITE_URL'%20or%20Title%20eq%20'DATASET_SUPPORT_CASES_LIST_ID'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_SITE_URL'%20or%20Title%20eq%20'DATASET_TASK_QUEUE_LIST_ID'%20or%20Title%20eq%20'DATASET_OPS_WORKING_REGISTER_SITE_URL'%20or%20Title%20eq%20'DATASET_OPS_WORKING_REGISTER_LIST_ID'%20or%20Title%20eq%20'DATASET_MINUTES_SITE_URL'%20or%20Title%20eq%20'DATASET_MINUTES_LIST_ID'%20or%20Title%20eq%20'DATASET_AI_TEXT_LOG_SITE_URL'%20or%20Title%20eq%20'DATASET_AI_TEXT_LOG_LIST_ID'%20or%20Title%20eq%20'DATASET_AUDIT_LOG_SITE_URL'%20or%20Title%20eq%20'DATASET_AUDIT_LOG_LIST_ID'%20or%20Title%20eq%20'DATASET_ORG_DIRECTORY_SITE_URL'%20or%20Title%20eq%20'DATASET_ORG_DIRECTORY_LIST_ID'%20or%20Title%20eq%20'DATASET_IDENTITY_MAP_SITE_URL'%20or%20Title%20eq%20'DATASET_IDENTITY_MAP_LIST_ID'%20or%20Title%20eq%20'DATASET_RECORD_LINKS_SITE_URL'%20or%20Title%20eq%20'DATASET_RECORD_LINKS_LIST_ID'%20or%20Title%20eq%20'DATASET_SEQUENCE_COUNTERS_SITE_URL'%20or%20Title%20eq%20'DATASET_SEQUENCE_COUNTERS_LIST_ID'",
+            "parameters/headers": {
+              "Accept": "application/json;odata=minimalmetadata"
+            }
+          }
+        },
+        "runAfter": {
+          "Compose_Survey_Context": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Select_Dataset_Bindings": {
+        "type": "Select",
+        "inputs": {
+          "from": "@coalesce(body('Get_Dataset_Bindings')?['value'], json('[]'))",
+          "select": "@concat('\"', trim(string(item()?['Title'])), '\":\"', replace(trim(string(coalesce(item()?['ConfigValue'], ''))), '\"', ''), '\"')"
+        },
+        "runAfter": {
+          "Get_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Compose_Dataset_Bindings": {
+        "type": "Compose",
+        "inputs": "@json(concat('{', join(body('Select_Dataset_Bindings'), ','), '}'))",
+        "runAfter": {
+          "Select_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Scope_Survey_INTAKE_REGISTER": {
+        "type": "Scope",
+        "runAfter": {
+          "Compose_Dataset_Bindings": [
+            "Succeeded"
+          ]
+        },
+        "actions": {
+          "Get_Max_INTAKE_REGISTER": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_INTAKE_REGISTER_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_INTAKE_REGISTER": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_INTAKE_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId,LocalId,Channel,Status&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_INTAKE_REGISTER_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_INTAKE_REGISTER_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_INTAKE_REGISTER_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_INTAKE_REGISTER_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_INTAKE_REGISTER_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_INTAKE_REGISTER_1'),''))"
+          },
+          "Select_INTAKE_REGISTER_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_INTAKE_REGISTER_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_INTAKE_REGISTER_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_INTAKE_REGISTER_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_INTAKE_REGISTER_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "INTAKE_REGISTER",
+              "list": "Portal Registry",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_INTAKE_REGISTER')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_INTAKE_REGISTER')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_INTAKE_REGISTER_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_INTAKE_REGISTER_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_INTAKE_REGISTER_Years')",
+              "keysFirst": true
+            }
+          },
+          "Select_INTAKE_REGISTER_Raw": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_INTAKE_REGISTER_Stats": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_INTAKE_REGISTER_1')?['value'],json('[]'))",
+              "select": {
+                "ID": "@item()?['ID']",
+                "Created": "@item()?['Created']",
+                "hasEntityKey": "@not(empty(string(coalesce(item()?['EntityKey'],''))))",
+                "ReferenceId": "@item()?['ReferenceId']",
+                "LocalId": "@item()?['LocalId']",
+                "Channel": "@item()?['Channel']",
+                "Status": "@item()?['Status']"
+              }
+            }
+          }
+        }
+      },
+      "Scope_Survey_ATTACHMENTS": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_INTAKE_REGISTER": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_ATTACHMENTS": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_ATTACHMENTS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_ATTACHMENTS_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_ATTACHMENTS_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_ATTACHMENTS": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_ATTACHMENTS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_ATTACHMENTS_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_ATTACHMENTS_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_ATTACHMENTS_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_ATTACHMENTS_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_ATTACHMENTS_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_ATTACHMENTS_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_ATTACHMENTS_1'),''))"
+          },
+          "Select_ATTACHMENTS_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_ATTACHMENTS_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_ATTACHMENTS_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_ATTACHMENTS_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_ATTACHMENTS_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "ATTACHMENTS",
+              "list": "Portal Attachments",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_ATTACHMENTS')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_ATTACHMENTS')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_ATTACHMENTS_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_ATTACHMENTS_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_ATTACHMENTS_Years')",
+              "keysFirst": true
+            }
+          }
+        }
+      },
+      "Scope_Survey_SCAN_LIBRARY": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_ATTACHMENTS": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_SCAN_LIBRARY": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SCAN_LIBRARY_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SCAN_LIBRARY_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_SCAN_LIBRARY_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_SCAN_LIBRARY": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SCAN_LIBRARY_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SCAN_LIBRARY_LIST_ID']}')/items?$select=ID,Created,EntityKey,DocID&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_SCAN_LIBRARY_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_SCAN_LIBRARY_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_SCAN_LIBRARY_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_SCAN_LIBRARY_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_SCAN_LIBRARY_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_SCAN_LIBRARY_1'),''))"
+          },
+          "Select_SCAN_LIBRARY_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_SCAN_LIBRARY_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_SCAN_LIBRARY_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_SCAN_LIBRARY_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_SCAN_LIBRARY_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "SCAN_LIBRARY",
+              "list": "NITDA_Central_Registry",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_SCAN_LIBRARY')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_SCAN_LIBRARY')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_SCAN_LIBRARY_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_SCAN_LIBRARY_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_SCAN_LIBRARY_Years')",
+              "keysFirst": true
+            }
+          },
+          "Select_SCAN_LIBRARY_Raw": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_SCAN_LIBRARY_Stats": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_SCAN_LIBRARY_1')?['value'],json('[]'))",
+              "select": {
+                "ID": "@item()?['ID']",
+                "Created": "@item()?['Created']",
+                "hasEntityKey": "@not(empty(string(coalesce(item()?['EntityKey'],''))))",
+                "DocID": "@item()?['DocID']"
+              }
+            }
+          }
+        }
+      },
+      "Scope_Survey_STATUS_TIMELINE": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_SCAN_LIBRARY": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_STATUS_TIMELINE": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_STATUS_TIMELINE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_STATUS_TIMELINE_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_STATUS_TIMELINE_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_STATUS_TIMELINE": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_STATUS_TIMELINE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_STATUS_TIMELINE_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_STATUS_TIMELINE_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_STATUS_TIMELINE_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_STATUS_TIMELINE_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_STATUS_TIMELINE_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_STATUS_TIMELINE_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_STATUS_TIMELINE_1'),''))"
+          },
+          "Select_STATUS_TIMELINE_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_STATUS_TIMELINE_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_STATUS_TIMELINE_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_STATUS_TIMELINE_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_STATUS_TIMELINE_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "STATUS_TIMELINE",
+              "list": "Portal Status Timeline",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_STATUS_TIMELINE')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_STATUS_TIMELINE')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_STATUS_TIMELINE_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_STATUS_TIMELINE_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_STATUS_TIMELINE_Years')",
+              "keysFirst": true
+            }
+          }
+        }
+      },
+      "Scope_Survey_SUPPORT_CASES": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_STATUS_TIMELINE": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_SUPPORT_CASES": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_SUPPORT_CASES_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_SUPPORT_CASES": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SUPPORT_CASES_LIST_ID']}')/items?$select=ID,Created,EntityKey,Title,CaseRef,AboutReference&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_SUPPORT_CASES_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_SUPPORT_CASES_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_SUPPORT_CASES_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_SUPPORT_CASES_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_SUPPORT_CASES_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_SUPPORT_CASES_1'),''))"
+          },
+          "Select_SUPPORT_CASES_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_SUPPORT_CASES_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_SUPPORT_CASES_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_SUPPORT_CASES_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_SUPPORT_CASES_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "SUPPORT_CASES",
+              "list": "Portal Support Cases",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_SUPPORT_CASES')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_SUPPORT_CASES')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_SUPPORT_CASES_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_SUPPORT_CASES_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_SUPPORT_CASES_Years')",
+              "keysFirst": true
+            }
+          },
+          "Select_SUPPORT_CASES_Raw": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_SUPPORT_CASES_Stats": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_SUPPORT_CASES_1')?['value'],json('[]'))",
+              "select": {
+                "ID": "@item()?['ID']",
+                "Created": "@item()?['Created']",
+                "hasEntityKey": "@not(empty(string(coalesce(item()?['EntityKey'],''))))",
+                "Title": "@item()?['Title']",
+                "CaseRef": "@item()?['CaseRef']",
+                "AboutReference": "@item()?['AboutReference']"
+              }
+            }
+          }
+        }
+      },
+      "Scope_Survey_TASK_QUEUE": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_SUPPORT_CASES": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_TASK_QUEUE": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_TASK_QUEUE_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_TASK_QUEUE": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_2": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%205000%20and%20ID%20le%2010000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_2": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_2": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_2')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_3": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_2": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2010000%20and%20ID%20le%2015000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_3": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_3": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_3')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_4": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_3": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2015000%20and%20ID%20le%2020000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_4": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_4": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_4')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_5": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_4": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2020000%20and%20ID%20le%2025000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_5": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_5": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_5')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_6": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_5": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2025000%20and%20ID%20le%2030000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_6": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_6": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_6')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_7": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_6": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2030000%20and%20ID%20le%2035000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_7": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_7": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_7')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_8": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_7": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2035000%20and%20ID%20le%2040000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_8": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_8": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_8')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_9": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_8": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2040000%20and%20ID%20le%2045000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_9": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_9": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_9')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_10": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_9": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2045000%20and%20ID%20le%2050000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_10": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_10": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_10')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_11": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_10": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2050000%20and%20ID%20le%2055000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_11": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_11": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_11')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Get_TASK_QUEUE_12": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_TASK_QUEUE_11": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_TASK_QUEUE_LIST_ID']}')/items?$select=ID,Created,EntityKey,TaskRef,Reference_ID,RefIDD,ParentTaskId,ActivityTrackingID&$filter=ID%20gt%2055000%20and%20ID%20le%2060000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_TASK_QUEUE_12": {
+            "type": "Select",
+            "runAfter": {
+              "Get_TASK_QUEUE_12": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_TASK_QUEUE_12')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['TaskRef'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'),if(not(empty(string(coalesce(item()?['Reference_ID'],'')))),'#rf',''),if(not(empty(string(coalesce(item()?['RefIDD'],'')))),if(less(length(string(item()?['RefIDD'])),13),'#rs','#rl'),''),if(greater(int(coalesce(item()?['ParentTaskId'],0)),0),'#pt',''),if(not(empty(string(coalesce(item()?['ActivityTrackingID'],'')))),'#at',''))"
+            }
+          },
+          "Compose_TASK_QUEUE_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_TASK_QUEUE_12": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_TASK_QUEUE_1'),''),join(body('Select_TASK_QUEUE_2'),''),join(body('Select_TASK_QUEUE_3'),''),join(body('Select_TASK_QUEUE_4'),''),join(body('Select_TASK_QUEUE_5'),''),join(body('Select_TASK_QUEUE_6'),''),join(body('Select_TASK_QUEUE_7'),''),join(body('Select_TASK_QUEUE_8'),''),join(body('Select_TASK_QUEUE_9'),''),join(body('Select_TASK_QUEUE_10'),''),join(body('Select_TASK_QUEUE_11'),''),join(body('Select_TASK_QUEUE_12'),''))"
+          },
+          "Select_TASK_QUEUE_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_TASK_QUEUE_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),concat('|',string(item())))),1)",
+                "withoutReference": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),concat('|',string(item()),'!'))),1)"
+              }
+            }
+          },
+          "Compose_TASK_QUEUE_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_TASK_QUEUE_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "TASK_QUEUE",
+              "list": "Global Tracking Queue",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_TASK_QUEUE')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 60000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_TASK_QUEUE')?['value'],json('[]')))?['ID'],0)),60000)",
+              "rows": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'#nk')),1)",
+              "referenceColumn": "TaskRef",
+              "withoutReference": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'!')),1)",
+              "legacy": {
+                "referenceIdComposite": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'#rf')),1)",
+                "refIddItemId": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'#rs')),1)",
+                "refIddMessageId": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'#rl')),1)",
+                "parentTask": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'#pt')),1)",
+                "activityTrackingId": "@sub(length(split(outputs('Compose_TASK_QUEUE_Tokens'),'#at')),1)"
+              },
+              "byYear": "@body('Select_TASK_QUEUE_Years')",
+              "keysFirst": true
+            }
+          }
+        }
+      },
+      "Scope_Survey_OPS_WORKING_REGISTER": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_TASK_QUEUE": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_OPS_WORKING_REGISTER": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_OPS_WORKING_REGISTER": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_2": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%205000%20and%20ID%20le%2010000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_2": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_2": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_2')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_3": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_2": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2010000%20and%20ID%20le%2015000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_3": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_3": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_3')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_4": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_3": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2015000%20and%20ID%20le%2020000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_4": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_4": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_4')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_5": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_4": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2020000%20and%20ID%20le%2025000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_5": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_5": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_5')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_6": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_5": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2025000%20and%20ID%20le%2030000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_6": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_6": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_6')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_7": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_6": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2030000%20and%20ID%20le%2035000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_7": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_7": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_7')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_8": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_7": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2035000%20and%20ID%20le%2040000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_8": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_8": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_8')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_9": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_8": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2040000%20and%20ID%20le%2045000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_9": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_9": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_9')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_10": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_9": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2045000%20and%20ID%20le%2050000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_10": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_10": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_10')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_11": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_10": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2050000%20and%20ID%20le%2055000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_11": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_11": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_11')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_OPS_WORKING_REGISTER_12": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_11": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_OPS_WORKING_REGISTER_LIST_ID']}')/items?$select=ID,Created,EntityKey,ReferenceId&$filter=ID%20gt%2055000%20and%20ID%20le%2060000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_OPS_WORKING_REGISTER_12": {
+            "type": "Select",
+            "runAfter": {
+              "Get_OPS_WORKING_REGISTER_12": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_OPS_WORKING_REGISTER_12')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['ReferenceId'],'')))),'','!'),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_OPS_WORKING_REGISTER_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_12": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_OPS_WORKING_REGISTER_1'),''),join(body('Select_OPS_WORKING_REGISTER_2'),''),join(body('Select_OPS_WORKING_REGISTER_3'),''),join(body('Select_OPS_WORKING_REGISTER_4'),''),join(body('Select_OPS_WORKING_REGISTER_5'),''),join(body('Select_OPS_WORKING_REGISTER_6'),''),join(body('Select_OPS_WORKING_REGISTER_7'),''),join(body('Select_OPS_WORKING_REGISTER_8'),''),join(body('Select_OPS_WORKING_REGISTER_9'),''),join(body('Select_OPS_WORKING_REGISTER_10'),''),join(body('Select_OPS_WORKING_REGISTER_11'),''),join(body('Select_OPS_WORKING_REGISTER_12'),''))"
+          },
+          "Select_OPS_WORKING_REGISTER_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_OPS_WORKING_REGISTER_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_OPS_WORKING_REGISTER_Tokens'),concat('|',string(item())))),1)",
+                "withoutReference": "@sub(length(split(outputs('Compose_OPS_WORKING_REGISTER_Tokens'),concat('|',string(item()),'!'))),1)"
+              }
+            }
+          },
+          "Compose_OPS_WORKING_REGISTER_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_OPS_WORKING_REGISTER_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "OPS_WORKING_REGISTER",
+              "list": "DGO DIGITAL OPS",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_OPS_WORKING_REGISTER')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 60000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_OPS_WORKING_REGISTER')?['value'],json('[]')))?['ID'],0)),60000)",
+              "rows": "@sub(length(split(outputs('Compose_OPS_WORKING_REGISTER_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_OPS_WORKING_REGISTER_Tokens'),'#nk')),1)",
+              "referenceColumn": "ReferenceId",
+              "withoutReference": "@sub(length(split(outputs('Compose_OPS_WORKING_REGISTER_Tokens'),'!')),1)",
+              "byYear": "@body('Select_OPS_WORKING_REGISTER_Years')",
+              "keysFirst": false
+            }
+          }
+        }
+      },
+      "Scope_Survey_MINUTES": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_OPS_WORKING_REGISTER": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_MINUTES": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_MINUTES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_MINUTES_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_MINUTES_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_MINUTES": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_MINUTES_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_MINUTES_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_MINUTES_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_MINUTES_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_MINUTES_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_MINUTES_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_MINUTES_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_MINUTES_1'),''))"
+          },
+          "Select_MINUTES_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_MINUTES_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_MINUTES_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_MINUTES_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_MINUTES_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "MINUTES",
+              "list": "Task_Comments",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_MINUTES')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_MINUTES')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_MINUTES_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_MINUTES_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_MINUTES_Years')",
+              "keysFirst": true
+            }
+          }
+        }
+      },
+      "Scope_Survey_AI_TEXT_LOG": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_MINUTES": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_AI_TEXT_LOG": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_AI_TEXT_LOG_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_AI_TEXT_LOG_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_AI_TEXT_LOG_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_AI_TEXT_LOG": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_AI_TEXT_LOG_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_AI_TEXT_LOG_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_AI_TEXT_LOG_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_AI_TEXT_LOG_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_AI_TEXT_LOG_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Get_AI_TEXT_LOG_2": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Select_AI_TEXT_LOG_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_AI_TEXT_LOG_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_AI_TEXT_LOG_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%205000%20and%20ID%20le%2010000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_AI_TEXT_LOG_2": {
+            "type": "Select",
+            "runAfter": {
+              "Get_AI_TEXT_LOG_2": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_AI_TEXT_LOG_2')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_AI_TEXT_LOG_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_AI_TEXT_LOG_2": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_AI_TEXT_LOG_1'),''),join(body('Select_AI_TEXT_LOG_2'),''))"
+          },
+          "Select_AI_TEXT_LOG_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_AI_TEXT_LOG_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_AI_TEXT_LOG_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_AI_TEXT_LOG_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_AI_TEXT_LOG_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "AI_TEXT_LOG",
+              "list": "AI TEXT DATA LOG",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_AI_TEXT_LOG')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 10000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_AI_TEXT_LOG')?['value'],json('[]')))?['ID'],0)),10000)",
+              "rows": "@sub(length(split(outputs('Compose_AI_TEXT_LOG_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_AI_TEXT_LOG_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_AI_TEXT_LOG_Years')",
+              "keysFirst": true
+            }
+          }
+        }
+      },
+      "Scope_Survey_AUDIT_LOG": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_AI_TEXT_LOG": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_AUDIT_LOG": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_AUDIT_LOG_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_AUDIT_LOG_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_AUDIT_LOG_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_AUDIT_LOG": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_AUDIT_LOG_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_AUDIT_LOG_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_AUDIT_LOG_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_AUDIT_LOG_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_AUDIT_LOG_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_AUDIT_LOG_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_AUDIT_LOG_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_AUDIT_LOG_1'),''))"
+          },
+          "Select_AUDIT_LOG_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_AUDIT_LOG_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_AUDIT_LOG_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_AUDIT_LOG_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_AUDIT_LOG_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "AUDIT_LOG",
+              "list": "DGO_AuditLog",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_AUDIT_LOG')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_AUDIT_LOG')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_AUDIT_LOG_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_AUDIT_LOG_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_AUDIT_LOG_Years')",
+              "keysFirst": true
+            }
+          }
+        }
+      },
+      "Scope_Survey_ORG_DIRECTORY": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_AUDIT_LOG": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_ORG_DIRECTORY": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_ORG_DIRECTORY_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_ORG_DIRECTORY_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_ORG_DIRECTORY_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_ORG_DIRECTORY": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_ORG_DIRECTORY_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_ORG_DIRECTORY_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_ORG_DIRECTORY_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_ORG_DIRECTORY_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_ORG_DIRECTORY_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_ORG_DIRECTORY_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_ORG_DIRECTORY_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_ORG_DIRECTORY_1'),''))"
+          },
+          "Select_ORG_DIRECTORY_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_ORG_DIRECTORY_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_ORG_DIRECTORY_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_ORG_DIRECTORY_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_ORG_DIRECTORY_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "ORG_DIRECTORY",
+              "list": "DGO_DepartmentDirectory",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_ORG_DIRECTORY')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_ORG_DIRECTORY')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_ORG_DIRECTORY_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_ORG_DIRECTORY_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_ORG_DIRECTORY_Years')",
+              "keysFirst": true
+            }
+          }
+        }
+      },
+      "Scope_Survey_IDENTITY_MAP": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_ORG_DIRECTORY": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_IDENTITY_MAP": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_IDENTITY_MAP_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_IDENTITY_MAP_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_IDENTITY_MAP_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_IDENTITY_MAP": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_IDENTITY_MAP_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_IDENTITY_MAP_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_IDENTITY_MAP_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_IDENTITY_MAP_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_IDENTITY_MAP_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_IDENTITY_MAP_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_IDENTITY_MAP_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_IDENTITY_MAP_1'),''))"
+          },
+          "Select_IDENTITY_MAP_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_IDENTITY_MAP_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_IDENTITY_MAP_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_IDENTITY_MAP_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_IDENTITY_MAP_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "IDENTITY_MAP",
+              "list": "DGO_IdentityMap",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_IDENTITY_MAP')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_IDENTITY_MAP')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_IDENTITY_MAP_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_IDENTITY_MAP_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_IDENTITY_MAP_Years')",
+              "keysFirst": false
+            }
+          }
+        }
+      },
+      "Scope_Survey_RECORD_LINKS": {
+        "type": "Scope",
+        "runAfter": {
+          "Scope_Survey_IDENTITY_MAP": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "actions": {
+          "Get_Max_RECORD_LINKS": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_RECORD_LINKS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_RECORD_LINKS_LIST_ID']}')/items?$select=ID&$orderby=ID%20desc&$top=1",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Get_RECORD_LINKS_1": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Get_Max_RECORD_LINKS": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connection": "shared_sharepointonline",
+                "operationId": "HttpRequest"
+              },
+              "parameters": {
+                "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_RECORD_LINKS_SITE_URL']",
+                "parameters/method": "GET",
+                "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_RECORD_LINKS_LIST_ID']}')/items?$select=ID,Created,EntityKey&$filter=ID%20gt%200%20and%20ID%20le%205000&$top=5000",
+                "parameters/headers": {
+                  "Accept": "application/json;odata=nometadata"
+                }
+              },
+              "retryPolicy": {
+                "type": "exponential",
+                "count": 4,
+                "interval": "PT10S"
+              }
+            }
+          },
+          "Select_RECORD_LINKS_1": {
+            "type": "Select",
+            "runAfter": {
+              "Get_RECORD_LINKS_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@coalesce(body('Get_RECORD_LINKS_1')?['value'],json('[]'))",
+              "select": "@concat('|',substring(concat(string(coalesce(item()?['Created'],'')),'0000'),0,4),if(not(empty(string(coalesce(item()?['EntityKey'],'')))),'','#nk'))"
+            }
+          },
+          "Compose_RECORD_LINKS_Tokens": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_RECORD_LINKS_1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@concat('',join(body('Select_RECORD_LINKS_1'),''))"
+          },
+          "Select_RECORD_LINKS_Years": {
+            "type": "Select",
+            "runAfter": {
+              "Compose_RECORD_LINKS_Tokens": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@range(2015,12)",
+              "select": {
+                "year": "@item()",
+                "rows": "@sub(length(split(outputs('Compose_RECORD_LINKS_Tokens'),concat('|',string(item())))),1)"
+              }
+            }
+          },
+          "Compose_RECORD_LINKS_Stats": {
+            "type": "Compose",
+            "runAfter": {
+              "Select_RECORD_LINKS_Years": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "dataset": "RECORD_LINKS",
+              "list": "DGO_RecordLinks",
+              "maxId": "@int(coalesce(first(coalesce(body('Get_Max_RECORD_LINKS')?['value'],json('[]')))?['ID'],0))",
+              "coveredToId": 5000,
+              "covered": "@lessOrEquals(int(coalesce(first(coalesce(body('Get_Max_RECORD_LINKS')?['value'],json('[]')))?['ID'],0)),5000)",
+              "rows": "@sub(length(split(outputs('Compose_RECORD_LINKS_Tokens'),'|')),1)",
+              "withoutEntityKey": "@sub(length(split(outputs('Compose_RECORD_LINKS_Tokens'),'#nk')),1)",
+              "byYear": "@body('Select_RECORD_LINKS_Years')",
+              "keysFirst": false
+            }
+          }
+        }
+      },
+      "Get_Counters": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Scope_Survey_RECORD_LINKS": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connection": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "@outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_SITE_URL']",
+            "parameters/method": "GET",
+            "parameters/uri": "_api/web/lists(guid'@{outputs('Compose_Dataset_Bindings')?['DATASET_SEQUENCE_COUNTERS_LIST_ID']}')/items?$select=ID,Title,Prefix,Year,CurrentSequence,LastReferenceId,LastIssuedAt&$top=500",
+            "parameters/headers": {
+              "Accept": "application/json;odata=nometadata"
+            }
+          },
+          "retryPolicy": {
+            "type": "exponential",
+            "count": 4,
+            "interval": "PT10S"
+          }
+        }
+      },
+      "Compose_Survey_Report": {
+        "type": "Compose",
+        "runAfter": {
+          "Get_Counters": [
+            "Succeeded",
+            "Failed",
+            "Skipped",
+            "TimedOut"
+          ]
+        },
+        "inputs": {
+          "check": "P5-1 migration survey",
+          "spec": "IDENTIFICATION_SYSTEM.md §12.3",
+          "context": "@outputs('Compose_Survey_Context')",
+          "completedAtUtc": "@utcNow()",
+          "environmentCode": "@outputs('Compose_Dataset_Bindings')?['ENVIRONMENT_CODE']",
+          "datasets": "@createArray(coalesce(actions('Compose_INTAKE_REGISTER_Stats')?['outputs'],json('{\"dataset\":\"INTAKE_REGISTER\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_ATTACHMENTS_Stats')?['outputs'],json('{\"dataset\":\"ATTACHMENTS\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_SCAN_LIBRARY_Stats')?['outputs'],json('{\"dataset\":\"SCAN_LIBRARY\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_STATUS_TIMELINE_Stats')?['outputs'],json('{\"dataset\":\"STATUS_TIMELINE\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_SUPPORT_CASES_Stats')?['outputs'],json('{\"dataset\":\"SUPPORT_CASES\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_TASK_QUEUE_Stats')?['outputs'],json('{\"dataset\":\"TASK_QUEUE\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_OPS_WORKING_REGISTER_Stats')?['outputs'],json('{\"dataset\":\"OPS_WORKING_REGISTER\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_MINUTES_Stats')?['outputs'],json('{\"dataset\":\"MINUTES\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_AI_TEXT_LOG_Stats')?['outputs'],json('{\"dataset\":\"AI_TEXT_LOG\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_AUDIT_LOG_Stats')?['outputs'],json('{\"dataset\":\"AUDIT_LOG\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_ORG_DIRECTORY_Stats')?['outputs'],json('{\"dataset\":\"ORG_DIRECTORY\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_IDENTITY_MAP_Stats')?['outputs'],json('{\"dataset\":\"IDENTITY_MAP\",\"error\":\"not read: see the run\"}')),coalesce(actions('Compose_RECORD_LINKS_Stats')?['outputs'],json('{\"dataset\":\"RECORD_LINKS\",\"error\":\"not read: see the run\"}')))",
+          "intake": {
+            "INTAKE_REGISTER": "@coalesce(actions('Select_INTAKE_REGISTER_Raw')?['outputs']?['body'],json('[]'))",
+            "SCAN_LIBRARY": "@coalesce(actions('Select_SCAN_LIBRARY_Raw')?['outputs']?['body'],json('[]'))",
+            "SUPPORT_CASES": "@coalesce(actions('Select_SUPPORT_CASES_Raw')?['outputs']?['body'],json('[]'))"
+          },
+          "counters": "@coalesce(body('Get_Counters')?['value'],json('[]'))"
+        }
+      },
+      "Select_Survey_Table": {
+        "type": "Select",
+        "runAfter": {
+          "Compose_Survey_Report": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "from": "@outputs('Compose_Survey_Report')?['datasets']",
+          "select": {
+            "Dataset": "@item()?['dataset']",
+            "List": "@coalesce(item()?['list'],'')",
+            "Rows": "@coalesce(item()?['rows'],'')",
+            "Highest ID": "@coalesce(item()?['maxId'],'')",
+            "All read": "@if(equals(item()?['covered'],false),'NO: highest ID beyond the pages read',if(equals(item()?['covered'],true),'yes',coalesce(item()?['error'],'')))",
+            "Without Entity Key": "@coalesce(item()?['withoutEntityKey'],'')",
+            "Without reference": "@coalesce(item()?['withoutReference'],'')",
+            "Keys first": "@if(equals(item()?['keysFirst'],true),'yes','no (working copy or new list)')"
+          }
+        }
+      },
+      "Create_Survey_Table": {
+        "type": "Table",
+        "runAfter": {
+          "Select_Survey_Table": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "from": "@body('Select_Survey_Table')",
+          "format": "HTML"
+        }
+      },
+      "Compose_Survey_Html": {
+        "type": "Compose",
+        "runAfter": {
+          "Create_Survey_Table": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "<p>P5-1 migration survey. Read only: nothing was written.</p>@{body('Create_Survey_Table')}<p>The full result, with rows per year, the legacy identifiers, the intake lists and the counter rows, is attached as p5-1-survey.json. Send it back to plan the next steps.</p>"
+      },
+      "Send_Survey_Report": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Compose_Survey_Html": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connection": "shared_office365",
+            "operationId": "SendEmailV2"
+          },
+          "parameters": {
+            "emailMessage/To": "@outputs('Compose_Survey_Context')?['runBy']",
+            "emailMessage/Subject": "@concat('P5-1 migration survey: ',string(length(outputs('Compose_Survey_Report')?['datasets'])),' lists')",
+            "emailMessage/Body": "@outputs('Compose_Survey_Html')",
+            "emailMessage/Attachments": [
+              {
+                "Name": "p5-1-survey.json",
+                "ContentBytes": "@base64(string(outputs('Compose_Survey_Report')))"
+              }
+            ],
+            "emailMessage/Importance": "Normal"
+          }
+        }
+      }
+    },
+    "runAfter": {}
+  },
+  "allConnectionData": {
+    "Get_Dataset_Bindings": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_INTAKE_REGISTER": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_INTAKE_REGISTER_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_ATTACHMENTS": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_ATTACHMENTS_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_SCAN_LIBRARY": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_SCAN_LIBRARY_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_STATUS_TIMELINE": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_STATUS_TIMELINE_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_SUPPORT_CASES": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_SUPPORT_CASES_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_TASK_QUEUE": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_11": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_TASK_QUEUE_12": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_OPS_WORKING_REGISTER": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_3": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_4": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_5": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_6": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_7": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_8": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_9": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_10": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_11": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_OPS_WORKING_REGISTER_12": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_MINUTES": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_MINUTES_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_AI_TEXT_LOG": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_AI_TEXT_LOG_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_AI_TEXT_LOG_2": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_AUDIT_LOG": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_AUDIT_LOG_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_ORG_DIRECTORY": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_ORG_DIRECTORY_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_IDENTITY_MAP": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_IDENTITY_MAP_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Max_RECORD_LINKS": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_RECORD_LINKS_1": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Counters": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/3f1943c5955a4cb8b301e8f22f2b590d"
+        },
+        "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Send_Survey_Report": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_office365/connections/c0b9e7a5b0854c39a435fd8ce92f48ad"
+        },
+        "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad"
+      },
+      "referenceKey": "shared_office365"
+    }
+  },
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}
