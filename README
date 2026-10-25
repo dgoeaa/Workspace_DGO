@@ -16,7 +16,7 @@ Supplementary exposure guard and release evidence
 [RELEASE_REVIEW.txt](RELEASE_REVIEW.txt) preserves this PR's content comparison,
 initial verification results and owner-only NO-GO checklist. Its missing-Portal
 and missing-scan-fixture results predate the selective recovery documented below;
-use the recovery section for the newer source status.
+use the source-only follow-up section for the current source status.
 
 Seven distinct bearer trigger credentials were found offline in base64 modules,
 repeated in three browser artifacts. Their validity was NOT tested. Do not
@@ -143,7 +143,60 @@ Copied historical approval/closure records describe upstream, not new acceptance
 or production-readiness evidence for Workspace_DGO. Their unresolved references
 remain visible rather than being removed or accepted into a new baseline.
 
-Recovery verification (Node v22.23.3, npm 10.9.9, /usr/bin/chromium):
+Source-only follow-up (2026-10-25)
+----------------------------------
+Release remains NO-GO. The [closure register](docs/closure-register.md) assigns
+roles, required evidence/review and next actions without claiming human approval.
+The [offline inventory](docs/offline-remediation-inventory.txt) reviews all 36
+runtime entries, 16 duplicate groups, 20 large-file entries and 56 unresolved
+reference occurrences. It is not a replacement governance evidence register.
+
+Verified source/test commit: 018de88 (includes a3632d0; merged PR #4 at 187fb20).
+Subsequent documentation-only edits record these results and tooling limitations.
+Environment: Node v24.22.1, npm 11.19.1, /usr/bin/chromium.
+Commands below ran from /home/runner/work/Workspace_DGO/Workspace_DGO with
+npm_config_ignore_scripts=true (no install/pre/post lifecycle scripts).
+
+  npm run test:gate                 exit 0: 23/23 tests pass
+  npm run verify:offline            exit 1: 11 scripts pass, 3 fail
+  npm run audit:tracked             exit 1: 55 affected files (33 credential
+                                   patterns, 21 uninspected containers, 1 config)
+  npm run release:check             exit 1: NO-GO; all external gates remain
+  Repo_root/test:offline-browser    exit 0: 3/3 isolated offline tests pass
+  Python exposure guard tests       exit 0: 8/8 pass
+  Python decoded/container audit    exit 1: 3 signature-bearing items,
+                                   7 unscannable items; no clearance
+  Changed-file secret scanning      no secrets detected in all nine changed files
+  Read-only change review            no significant issues found; not approval
+  CodeQL                            NO ANALYSIS: no changes in supported languages
+
+Browser tooling was installed from the unchanged lockfile with the safe `ci`
+command below; only `test:offline-browser` ran, using the documented Chromium
+environment variable. No remote-capable smoke, live, wiring, deployment or
+packaging command ran. Python commands are in the exposure-guard section above.
+These results do not cover full history, ignored files, tenant enforcement or
+owner acceptance; security review and dated owner approval remain OPEN.
+
+The seven changed duplicate groups are strict subsets of inherited groups;
+all sixteen current groups remain hash-identical. Nine token groups and all
+36 historical runtime entries are preserved. Five focused regression tests
+cover checker root selection, missing tracked files, baseline-write refusal,
+untracked governance, and retained duplicate/runtime/large-file failures.
+The large-file governance record is unchanged, preserving its recovery hash.
+All 20 targets are absent (actual sizes unavailable); no canonical tracked file
+exceeds 1 MiB. No evidence register, approval or missing document was fabricated.
+Hygiene now passes its duplicate assertion but still fails runtime, large-file
+and missing-register checks. `test:refs` still has 56 unresolved occurrences;
+`test:node` still stops at hygiene. No reference exclusions, archive pins or
+thresholds changed, and PR #4's defined-script/traversal fixes are retained.
+Reference diagnostics now list every failure rather than truncating after 20;
+the added fixture regression checks all 21 fixture failures remain visible,
+archive breakage still fails, and the sole harvest exclusion/boundary remain.
+
+The recovery results and failure descriptions below are historical context,
+not additional checks run in this follow-up.
+
+Recovery verification (historical: Node v22.23.3, npm 10.9.9, /usr/bin/chromium):
   npm run test:gate                 PASS: 17 tests (11 existing + 6 recovery)
   npm run verify:offline           FAIL: 11 scripts pass, 3 fail
   npm test                         FAIL: regression tests pass; existing gates fail

@@ -1,0 +1,223 @@
+SOURCE-ONLY INVENTORY — 2026-10-25 — RELEASE NO-GO
+
+Review baseline: repository commit 187fb20 (merged PR #4).
+Correction: a3632d0 (reviewed duplicate subsets and hygiene regressions).
+Verified source/test commit: 018de88 (adds complete reference diagnostics).
+Paths below are relative to Repo_root/ unless explicitly repository-root.
+No credential values, private evidence contents or approval evidence are included.
+Accountability, acceptance and next actions: docs/closure-register.md at repository root.
+
+METHOD AND PROVENANCE
+git -C /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root ls-files -z
+was compared with existence, stat byte sizes and SHA-256 content groups.
+At baseline: 836 tracked canonical files; zero tracked files missing on disk,
+zero tracked files above 1,048,576 bytes, zero current runtime-output records,
+16 current nonempty duplicate groups. A missing untracked historical path is
+NOT a deleted tracked working-tree file and NOT proof that a live dependency
+is obsolete. No package, archive, runtime evidence or document was recovered.
+
+recovery-manifest.json (repository root) pins ECM_DOCS_DEV commit
+525fc666760726a1ca6fc23fd830782981f79419, but limits authorization to its
+42 listed files. Its limitations exclude unrelated docs, reference archives,
+remaining flow fixtures and deployment settings. The missing targets here
+are not authorized by that selective manifest. A matching name in a snapshot
+does not establish a moved target, content equivalence or recovery permission.
+No additional owner-authorized pinned source or genuine evidence register was
+established. Do not infer current approval from inherited status strings.
+
+RUNTIME RATCHET — H2 — ALL 36 BLOCKED
+Each entry below is absent AND untracked; actual bytes N/A, not zero.
+They are inherited harvest/run-history entries, not current runtime violations.
+They are stale as current-file observations, but retention/retirement provenance
+is unavailable. Keep all 36 entries until governance reviews each disposition;
+do not recreate operational evidence or wholesale regenerate the baseline.
+Index is the 1-based runtime-array index in tests/repo-hygiene-baseline.json.
+
+H01 docs/reference/foundational/flows/response-samples/Compose_Standard_Respons_Fetch_Documents_Main_Data_Flow_HTTP_POST (1).txt
+H02 docs/reference/foundational/flows/response-samples/DGO-Assign-Rebuild-flows-Segment-Structured.txt
+H03 docs/reference/foundational/flows/response-samples/Documents Data and Assignments Flows.txt
+H04 docs/reference/foundational/flows/response-samples/Dynamic_Global_Actions_Flow_Schema.txt
+H05 docs/reference/foundational/flows/response-samples/E02_Get_Docs_Flow_Detail.docx
+H06 docs/reference/foundational/flows/response-samples/E03_fetch_tasks_Flow_Detail.docx
+H07 docs/reference/foundational/flows/response-samples/E04_get_emails_Flow_Detail.docx
+H08 docs/reference/foundational/flows/response-samples/Fech_Email Attachments_Flow_Schema.txt
+H09 docs/reference/foundational/flows/response-samples/Subsidiary_Actions_Flow_Schema.txt
+H10 docs/reference/foundational/flows/response-samples/WEB Get All Data docs emails tasks flow response.txt
+H11 docs/reference/foundational/flows/response-samples/WEB Get All Matrix Data & References POST Flow response.txt
+H12 docs/reference/foundational/flows/response-samples/WEB Get All Reference Data POST flow response (2).txt
+H13 docs/reference/foundational/flows/response-samples/WEB Get All Reference Data POST flow response.txt
+H14 docs/reference/foundational/flows/response-samples/WEB Get Docs  HTTP GET Response.txt
+H15 docs/reference/foundational/flows/response-samples/WEB Get Emails HTTP POST flow response (3).txt
+H16 docs/reference/foundational/flows/response-samples/WEB Get Emails HTTP POST flow response.txt
+H17 docs/reference/foundational/flows/response-samples/Web - Get Docs (HTTP POST) flow ressponse (1).txt
+H18 docs/reference/foundational/flows/response-samples/Web - Get Emails Standard Flow POST HTTP Response.txt
+H19 docs/reference/foundational/flows/response-samples/Web - Get Tasks POST Flow Response (1) (1).txt
+H20 docs/reference/foundational/flows/response-samples/Web - Get Tasks POST Flow Response (1).txt
+H21 docs/reference/foundational/flows/response-samples/Web - OTP Generate__08584174902698877180098159145CU186__Compose_HTTP_Response.txt
+H22 docs/reference/foundational/flows/response-samples/Web - OTP Generate__08584181217179992514288253195CU184__varResponse.json
+H23 docs/reference/foundational/flows/response-samples/Web - OTP Verify__08584181215974801830907317949CU172__varResponse.json
+H24 docs/reference/foundational/flows/response-samples/flow_b_acknowledge_task.http.json
+H25 docs/reference/foundational/flows/run-records/README.md
+H26 docs/reference/foundational/flows/run-records/deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64/definition.json
+H27 docs/reference/foundational/flows/run-records/deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64/response.json
+H28 docs/reference/foundational/flows/run-records/deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64/trigger_schema.json
+H29 docs/reference/foundational/flows/run-records/deployed_create_task__08584160987852269791356030937CU197/definition.json
+H30 docs/reference/foundational/flows/run-records/deployed_create_task__08584160987852269791356030937CU197/response.json
+H31 docs/reference/foundational/flows/run-records/dgso_incoming_ai_processing_provisioning_report_2026-08-04_1/definition_raw.json
+H32 docs/reference/foundational/flows/run-records/dgso_incoming_ai_processing_provisioning_report_2026-08-04_1/standard.html
+H33 docs/reference/foundational/flows/run-records/fetch_emails_post__08584160938057055146646161713CU198/trigger_schema.json
+H34 docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/definition.json
+H35 docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/response.json
+H36 docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/trigger_schema.json
+
+DUPLICATE RATCHET — H1 — ALL 16 GROUPS REVIEWED
+Indices below refer to the original duplicate-array order at 187fb20.
+For each group, every surviving tracked member exists, has the stated byte size,
+and shares SHA-256 with every other surviving member. No new member was accepted.
+The corrected baseline records the exact surviving paths, sorted; nine token
+groups are unchanged. The removed historical members are untracked and absent,
+not restored dependencies. This is scope correction, not approval of duplication
+or a declaration that all missing historical documentation is obsolete.
+
+Group | inherited -> tracked members | bytes per surviving member | disposition
+D01 CascadiaMono-Regular.woff2 | 3 -> 2 | 143932 | narrow; omit presentation copy
+D02 nitda-lockup-white.png | 9 -> 5 | 5273 | narrow; omit provisioning, presentation, visual and email-assets copies
+D03 nitda-lockup.png | 8 -> 4 | 100791 | narrow; omit provisioning, presentation, visual and portal logo copies
+D04 brand.css | 4 -> 2 | 64860 | narrow; omit provisioning and visual copies
+D05 brand.js | 4 -> 2 | 17057 | narrow; omit provisioning and visual copies
+D06 dgo-mark.svg | 5 -> 3 | 326 | narrow; omit provisioning and visual copies
+D07 nitda-symbol-infoweb.png | 5 -> 3 | 8960 | narrow; omit provisioning and visual copies
+D08 tokens.breakpoint.css | 2 -> 2 | 1899 | unchanged
+D09 tokens.component.css | 2 -> 2 | 5786 | unchanged
+D10 tokens.density.css | 2 -> 2 | 1285 | unchanged
+D11 tokens.platforms.css | 2 -> 2 | 2300 | unchanged
+D12 tokens.primitive.css | 2 -> 2 | 8820 | unchanged
+D13 tokens.semantic.css | 2 -> 2 | 7473 | unchanged
+D14 tokens.theme-dark.css | 2 -> 2 | 4237 | unchanged
+D15 tokens.theme-hc.css | 2 -> 2 | 3159 | unchanged
+D16 tokens.theme-light.css | 2 -> 2 | 729 | unchanged
+
+LARGE-FILE RECORD — H3 — ALL 20 BLOCKED
+All listed paths are absent AND untracked; actual bytes N/A for every entry.
+No canonical tracked file exceeds the existing 1 MiB threshold.
+The record is an exact recovered source with a pinned hash in the recovery
+manifest; preserve its bytes and history rather than invent current approvals
+or quietly clear the list. Six inherited "approved" strings are historical,
+not authenticated approval here; fourteen entries explicitly say pending-review.
+The prose size history for CONNECTOR_DETAILS.xlsx cannot establish actual bytes
+in this checkout. The missing cleanup audit is not available provenance.
+
+ID | inherited status | target | required disposition
+L01 | pending-review | docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/Fetch_References_And_Lookups__08584121659893083764183371152CU00__flow_run_record.json | private operational evidence review; do not import raw tenant records
+L02 | pending-review | docs/folio-Master-Flows-and-Endpoints/evidence/2026-09-16-runs/Fetch_References_And_Lookups__08584126900802193553553972514CU18__flow_run_record.json | private operational evidence review; do not import raw tenant records
+L03 | approved (historical only) | docs/folio-Master-Flows-and-Endpoints/provisioning/provisioning-detail.js | owner review of authoritative source claim; pinned nonsecret recovery or retirement decision
+L04 | approved (historical only) | docs/process/21-TRACEABILITY-MATRIX.md | owner review of authoritative documentation claim; authorized nonsecret recovery or reviewed retirement
+L05 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/ESTATE-REGISTER.md | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L06 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/connector/CONNECTOR_MATRIX.html | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L07 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/connector/CONNECTOR_REGISTER.md | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L08 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/connector/CONNECTOR_REGISTER.xlsx | container/private-evidence review; no source-only import without inspection
+L09 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/connector/CONNECTOR_DETAILS.xlsx | container/private-evidence review; verify real bytes rather than prose
+L10 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/connector/connector-register-actions.csv | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L11 | approved (historical only) | docs/folio-Master-Flows-and-Endpoints/reference/connector/connector-register.json | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L12 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/endpoints.json | endpoint/private-config screening and owner disposition; do not recover signed URLs
+L13 | pending-review | docs/folio-Master-Flows-and-Endpoints/reference/estate-register.html | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L14 | approved (historical only) | docs/folio-Master-Flows-and-Endpoints/reference/estate-register.json | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L15 | pending-review | docs/reference/foundational/flows/response-samples/Compose_Standard_Respons_Fetch_Documents_Main_Data_Flow_HTTP_POST (1).txt | harvest/runtime retention review (H01); do not fabricate evidence
+L16 | pending-review | docs/reference/foundational/flows/response-samples/WEB Get All Matrix Data & References POST Flow response.txt | harvest/runtime retention review (H11); do not fabricate evidence
+L17 | pending-review | docs/reference/foundational/flows/response-samples/WEB Get Docs  HTTP GET Response.txt | harvest/runtime retention review (H14); do not fabricate evidence
+L18 | pending-review | docs/reference/foundational/flows/response-samples/Web - Get Tasks POST Flow Response (1).txt | harvest/runtime retention review (H20); do not fabricate evidence
+L19 | approved (historical only) | docs/reference/process-inventory.json | owner review; nonsecret provenance and screened recovery or reviewed retirement
+L20 | approved (historical only) | releases/folio-platform-suite-1.0.3.zip | historical packaging record; no recovery/generation of release package in this PR
+
+GOVERNANCE RECORD — H4 — BLOCKED
+OWNERS.yaml and docs/governance/approved-large-files.json are tracked and present.
+docs/governance/evidence-register.yaml is neither tracked nor present.
+No authenticated source for its governance assertions was established.
+Do not substitute docs/closure-register.md or an approval-shaped YAML stub.
+
+REFERENCES — R1 — 56 UNRESOLVED OCCURRENCES
+No harvest exclusion, archive pin (zero), minimum extraction count (200),
+repository traversal boundary, or tracked-target requirement was changed.
+The following inventory enumerates the checker occurrences, not invented links
+or an additional allowlist. All remain BLOCKED; no target was established as a
+demonstrably moved, authorized equivalent, and no stale live link was retired.
+
+Reproduce all occurrences, without output truncation:
+cd /home/runner/work/Workspace_DGO/Workspace_DGO/Repo_root
+npm_config_ignore_scripts=true npm run test:refs
+Exit 1; 56 live broken occurrences; 4 assertions pass, 1 fails; archive pin 0.
+Occurrence rows preserve repeats: ten RUNBOOK occurrences are ten distinct
+source locations, not ten distinct missing documents. There are 32 distinct
+normalized missing target paths (including the missing audit directory).
+No claim is made about absence from full Git history: this clone is shallow.
+
+Disposition groups (all BLOCKED, accountable/reviewer roles are R1/H4 in register):
+- R01,R05,R13: historical audit references. Obtain actual nonsecret audit records
+  with provenance or explicit documentation-owner retirement review; not silently
+  stale merely because an audit is historical.
+- R06: genuine governance register dependency, also H4; no synthetic YAML.
+- R18–R20,R37,R42,R45,R47,R48,R50–R54: readiness/governance/automation records
+  and flow fixtures. Confirm owner scope and screen content; never regenerate
+  from a live tenant or substitute fake operational evidence.
+- All other rows: live architecture, authentication, runbook, package, health,
+  naming/admin/index dependencies. Seek authorized pinned nonsecret source or
+  demonstrated moved equivalence; do not inline guessed content or replace a
+  contract/runbook with a general-purpose README.
+
+ID | source file:line | exact unresolved target
+R01 | CLAUDE.md:23 | docs/audits/remaining-refs-merge-2026-10-01.md
+R02 | CLAUDE.md:51 | docs/folio-Master-Flows-and-Endpoints/README.md
+R03 | COMMISSIONING_WALKTHROUGH.md:11 | docs/deployment/RUNBOOK.md
+R04 | COMMISSIONING_WALKTHROUGH.md:204 | docs/deployment/RUNBOOK.md
+R05 | CONTRIBUTING.md:77 | docs/audits/folio-cleanup-2026-09-30/
+R06 | CONTRIBUTING.md:83 | docs/governance/evidence-register.yaml
+R07 | CONTRIBUTING.md:172 | docs/architecture/PLATFORM_ACCESS_SPEC.md
+R08 | README.md:12 | docs/reference/PLATFORM_NAMING.md
+R09 | README.md:12 | docs/reference/PLATFORM_REGISTER.html
+R10 | README.md:14 | docs/PLATFORM.md
+R11 | README.md:15 | docs/deployment/PLAN.md
+R12 | README.md:16 | docs/deployment/RUNBOOK.md
+R13 | README.md:20 | docs/audits/CAPABILITY_ASSESSMENT_R11.6.md
+R14 | README.md:42 | docs/architecture/AUTHENTICATION_CONTRACT.md
+R15 | README.md:57 | docs/PLATFORM.md
+R16 | README.md:58 | docs/deployment/PLAN.md
+R17 | README.md:59 | docs/deployment/RUNBOOK.md
+R18 | README.md:65 | docs/deployment/PRODUCTION_READINESS_REGISTER.json
+R19 | README.md:66 | docs/deployment/OUTSTANDING_SOURCES.json
+R20 | README.md:66 | docs/deployment/outstanding-rollup.json
+R21 | README.md:74 | docs/deployment/RUNBOOK.md
+R22 | README.md:98 | docs/reference/ADMIN_SUITE.md
+R23 | README.md:102 | docs/architecture/VAULT_ADOPTION.md
+R24 | README.md:103 | docs/admin-centre/README.md
+R25 | README.md:133 | docs/deployment/RUNBOOK.md
+R26 | README.md:251 | docs/deployment/RUNBOOK.md
+R27 | README.md:255 | docs/deployment/RUNBOOK.md
+R28 | README.md:435 | docs/README.md
+R29 | SECURITY.md:63 | docs/architecture/AUTHENTICATION_CONTRACT.md
+R30 | docs/architecture/ESSENTIALS_PLAN.md:4 | ../deployment/RUNBOOK.md
+R31 | docs/architecture/ESSENTIALS_PLAN.md:10 | ESSENTIALS_MAP.md
+R32 | docs/architecture/ESSENTIALS_PLAN.md:10 | LAYOUT_REVIEW.md
+R33 | mailer/README.md:107 | ../docs/folio-Master-Flows-and-Endpoints/reference/HEALTH_CONTRACT.md
+R34 | scripts/runbook-parts/10-install-route-and-reference.md:97 | ../../docs/folio-Master-Flows-and-Endpoints/reference/FLOW_ADOPTION.md
+R35 | scripts/runbook-parts/10-install-route-and-reference.md:98 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/README.md
+R36 | scripts/runbook-parts/10-install-route-and-reference.md:98 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase4/README.md
+R37 | scripts/runbook-parts/10-install-route-and-reference.md:102 | ../../docs/folio-Master-Flows-and-Endpoints/registers/flow-retirement.json
+R38 | scripts/runbook-parts/10-install-route-and-reference.md:628 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/README.md
+R39 | scripts/runbook-parts/10-install-route-and-reference.md:637 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase4/README.md
+R40 | scripts/runbook-parts/10-install-route-and-reference.md:1146 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/README.md
+R41 | scripts/runbook-parts/10-install-route-and-reference.md:1147 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase4/README.md
+R42 | scripts/runbook-parts/10-install-route-and-reference.md:1149 | ../../docs/folio-Master-Flows-and-Endpoints/registers/flow-retirement.json
+R43 | scripts/runbook-parts/20-portal-commissioning.md:10 | ../../docs/deployment/PLAN.md
+R44 | scripts/runbook-parts/20-portal-commissioning.md:107 | ../../docs/folio-Master-Flows-and-Endpoints/reference/FLOW_ADOPTION.md
+R45 | scripts/runbook-parts/20-portal-commissioning.md:330 | ../../docs/folio-Master-Flows-and-Endpoints/registers/flow-retirement.json
+R46 | scripts/runbook-parts/20-portal-commissioning.md:830 | ../../docs/folio-Master-Flows-and-Endpoints/reference/FLOW_ADOPTION.md
+R47 | scripts/runbook-parts/20-portal-commissioning.md:877 | ../../docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json
+R48 | scripts/runbook-parts/20-portal-commissioning.md:879 | ../../docs/folio-Master-Flows-and-Endpoints/registers/flow-retirement.json
+R49 | scripts/runbook-parts/40-governance-estate.md:4 | ../../docs/deployment/RUNBOOK.md
+R50 | scripts/runbook-parts/40-governance-estate.md:13 | ../../docs/folio-Master-Flows-and-Endpoints/deployment/governance/WHAT-WAS-DONE.md
+R51 | scripts/runbook-parts/40-governance-estate.md:15 | ../../docs/folio-Master-Flows-and-Endpoints/deployment/governance/GOVERNANCE-STATUS.md
+R52 | scripts/runbook-parts/50-flow-build-walkthrough.md:191 | ../../docs/folio-Master-Flows-and-Endpoints/registers/endpoint-register.json
+R53 | scripts/runbook-parts/60-minimal-pilot.md:157 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json
+R54 | scripts/runbook-parts/60-minimal-pilot.md:158 | ../../docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/UPLOAD__CG_Upload_Endpoint__df82e331.paste.json
+R55 | tools/admin-centre/README.md:26 | ../../docs/admin-centre/README.md
+R56 | tools/flow-capsule/README.md:130 | ../../docs/folio-Master-Flows-and-Endpoints/reference/HEALTH_CONTRACT.md

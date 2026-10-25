@@ -74,6 +74,47 @@ test('test:node only invokes scripts defined by the canonical package', () => {
   for (const name of names) assert.ok(appPackage.scripts[name], `test:node references missing script: ${name}`);
 });
 
+test('reference diagnostics enumerate all failures without hiding archive breakage or expanding harvest exclusions', () => {
+  const root = mkdtempSync(path.join(os.tmpdir(), 'workspace-refs-'));
+  const app = path.join(root, BASELINE);
+  const put = (name, content) => {
+    const dest = path.join(root, name);
+    mkdirSync(path.dirname(dest), { recursive: true });
+    writeFileSync(dest, content);
+  };
+  try {
+    put('README', 'Synthetic repository review fixture');
+    put('RELEASE_REVIEW.txt', 'Synthetic release review fixture');
+    put(`${BASELINE}/links.md`, [
+      ...Array.from({ length: 200 }, () => '[valid](../README)'),
+      ...Array.from({ length: 21 }, (_, i) => `[missing](missing-${i}.md)`),
+    ].join('\n'));
+    put(`${BASELINE}/docs/archive/fixture.md`, '[archived](missing-archive.md)');
+    put(`${BASELINE}/docs/reference/foundational/fixture.md`, '[harvest](missing-harvest.md)');
+    for (const name of ['tests/references.test.mjs', 'scripts/lib/tracked-files.mjs']) {
+      const dest = path.join(app, name);
+      mkdirSync(path.dirname(dest), { recursive: true });
+      copyFileSync(new URL(`../${BASELINE}/${name}`, import.meta.url), dest);
+    }
+    execFileSync('git', ['init', '--quiet'], { cwd: root });
+    execFileSync('git', ['add', '--', '.'], { cwd: root });
+    const result = spawnSync(process.execPath, ['tests/references.test.mjs'], {
+      cwd: app, encoding: 'utf8', timeout: 10_000,
+    });
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 1);
+    assert.match(result.stdout, /21 broken:/);
+    for (let i = 0; i < 21; i++) assert.ok(result.stdout.includes(`links.md → missing-${i}.md`));
+    assert.match(result.stdout, /archive broken references are 1, pinned at 0/);
+    assert.ok(!result.stdout.includes('missing-harvest.md'));
+    assert.match(result.stdout, /✅ references can reach tracked repository-level review files without escaping/);
+    assert.match(result.stdout, /✅ the checker is actually reading references/);
+    assert.match(result.stdout, /✅ the harvest is excluded deliberately, and it is the only exclusion/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('timeouts fail and clean source tests cannot confer release approval', () => {
   assert.ok(verifyOffline(os.tmpdir(), () => ({ status: null, error: new Error('timeout') }))
     .every(result => !result.passed));
