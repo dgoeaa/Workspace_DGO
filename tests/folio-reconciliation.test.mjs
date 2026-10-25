@@ -118,12 +118,31 @@ test('reconciliation preserves canonical governance boundaries rather than impor
   assert.equal(recovery.commit, 'b60f9e0e177d092279f87c6f79be2e2a78ef1a8b');
   assert.equal(recovery.source, 'repository');
   assert.equal(recovery.destination, 'Repo_root');
-  assert.equal(recovery.files.length, 1);
-  assert.equal(recovery.files[0].path, record.path);
-  assert.equal(recovery.files[0].bytes, record.size_bytes);
-  assert.equal(recovery.files[0].sha256, record.sha256);
-  assert.equal(recovery.files[0].transformation, 'none');
-  const recovered = packageFile(`${recovery.destination}/${record.path}`);
-  assert.equal(recovered.length, record.size_bytes);
-  assert.equal(sha256(recovered), record.sha256);
+  assert.deepEqual(recovery.files.map(file => file.path).sort(), [
+    record.path, 'docs/reference/ADMIN_SUITE.md',
+    'docs/reference/PLATFORM_NAMING.md', 'docs/reference/PLATFORM_REGISTER.html',
+  ].sort());
+  for (const file of recovery.files) {
+    const source = packageFile(`${recovery.source}/${file.path}`);
+    const recovered = packageFile(`${recovery.destination}/${file.path}`);
+    const uploaded = manifest.items.find(item => item.path === file.path);
+    assert.equal(source.length, file.upstreamBytes ?? file.bytes, file.path);
+    assert.equal(sha256(source), file.upstreamSha256 ?? file.sha256, file.path);
+    assert.equal(sha256(source), uploaded.sha256, file.path);
+    assert.equal(recovered.length, file.bytes, file.path);
+    assert.equal(sha256(recovered), file.sha256, file.path);
+    let expected = source;
+    if (file.transformation === 'prepend-historical-note') {
+      assert.match(file.note, /not\n> verified current Workspace_DGO approval/);
+      expected = Buffer.concat([Buffer.from(file.note), source]);
+    } else if (file.transformation === 'insert-historical-note') {
+      assert.match(file.note, /not verified current Workspace_DGO approval/);
+      const text = source.toString('utf8');
+      assert.equal(text.split(file.after).length, 2);
+      expected = Buffer.from(text.replace(file.after, file.after + file.note));
+    } else {
+      assert.equal(file.transformation, 'none');
+    }
+    assert.ok(recovered.equals(expected), 'Only the declared historical framing may differ');
+  }
 });

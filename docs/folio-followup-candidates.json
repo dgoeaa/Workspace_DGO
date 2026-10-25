@@ -1,0 +1,415 @@
+{
+  "sourceCommit": "a972273c7102503965c0a127e59f5f13c6ebe4f9",
+  "candidateCommit": "b60f9e0e177d092279f87c6f79be2e2a78ef1a8b",
+  "scope": "25 R-table D/G/F candidates from docs/offline-remediation-inventory.txt, excluding evidence-register YAML; pinned repository/ blobs.",
+  "validityTested": false,
+  "files": [
+    {
+      "path": "repository/docs/PLATFORM.md",
+      "bytes": 26615,
+      "sha256": "1b3a0b9d10bcc8e50047fb044dfe9bcb88247c3391381d172d047cf190affd49",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Mixed implementation/history narrative; not current acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Implementation/reference narrative; no supported credential match; historical statements are not approval."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/README.md",
+      "bytes": 11736,
+      "sha256": "35475d7508745d7842e9c1921c60fd75da91a574687ef9761156172aae925d6f",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/admin-centre/README.md",
+      "bytes": 1390,
+      "sha256": "03209d20b39b13cb163304e35964170399e6884f0b595e8ed08c6650d4ccdc5d",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 1,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/architecture/AUTHENTICATION_CONTRACT.md",
+      "bytes": 10880,
+      "sha256": "9643aeb1dad18d2b506db3cd312336cbab3434085d2ad6640bb9f9aa3fb710c6",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/architecture/ESSENTIALS_MAP.md",
+      "bytes": 37094,
+      "sha256": "176906c418ad09073465c8f4e91980c1724a94a579a9c5112ed5f17740199189",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Mixed implementation/history narrative; not current acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Implementation/reference narrative; no supported credential match; historical statements are not approval."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/architecture/LAYOUT_REVIEW.md",
+      "bytes": 14450,
+      "sha256": "882ac11fc76ebcba5d091f1bf931a5bc4cd3e0e7141863a3f50bced0dd3706a9",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 1,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/architecture/PLATFORM_ACCESS_SPEC.md",
+      "bytes": 17549,
+      "sha256": "3fe6e3cf0ce386ee2fae56fdfa47adbe8ec279cd79383fc3e246ae31456ecc2d",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 6,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/architecture/VAULT_ADOPTION.md",
+      "bytes": 4397,
+      "sha256": "3f17096901bdb71521044288abdfb5ac479094243940295c7d0affe5b3489297",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/deployment/OUTSTANDING_SOURCES.json",
+      "bytes": 15741,
+      "sha256": "7f32d7db4098d096e528c19a0bfb11a8c07d5829831a6c5e1224bcfa61c8ef79",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Historical governance/status assertions; current authority unverified.",
+      "disposition": "withhold-claims",
+      "reasons": [
+        "Historical governance/readiness/adoption assertions require authority review, not blanket secret classification."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/deployment/PLAN.md",
+      "bytes": 4881,
+      "sha256": "c91d4f2b96539bd39e4b9e5d1dbb9a79c39dce74779979e113294be40d0fd9f9",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+      "bytes": 550524,
+      "sha256": "d0c5a578074276e7c33b2d566522062fe374d371206dafbc23970d3f727015f8",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 36,
+      "identityPatternCount": 94,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Historical governance/status assertions; current authority unverified.",
+      "disposition": "withhold-claims",
+      "reasons": [
+        "Historical governance/readiness/adoption assertions require authority review, not blanket secret classification."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/deployment/RUNBOOK.md",
+      "bytes": 286199,
+      "sha256": "29b4a1f48598da7b14d9f000aa85ec3bf3489d28ffd4c42522ff7d385eb7deb4",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 73,
+      "identityPatternCount": 213,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Mixed implementation/history narrative; not current acceptance evidence.",
+      "disposition": "withhold-metadata",
+      "reasons": [
+        "Operational identifiers/locators present; no supported credential match. Withhold pending metadata review; identifiers are not automatically secrets."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/deployment/outstanding-rollup.json",
+      "bytes": 36187,
+      "sha256": "783eb8a4b504aeeb4f47f2d19bd3fe5e54ea844033ceadc01c98cd21fbc43122",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Historical governance/status assertions; current authority unverified.",
+      "disposition": "withhold-claims",
+      "reasons": [
+        "Historical governance/readiness/adoption assertions require authority review, not blanket secret classification."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/README.md",
+      "bytes": 6222,
+      "sha256": "cd20fb9d47d13ebd48abfca9bcde04c6b16a06f336d047123c2a19005440241b",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/deployment/governance/GOVERNANCE-STATUS.md",
+      "bytes": 25184,
+      "sha256": "987ce3c1ebd2ddbf1c3f42bafc9161ddb36e01aafd3e75d64592c0270362e032",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 10,
+      "identityPatternCount": 62,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Historical governance/status assertions; current authority unverified.",
+      "disposition": "withhold-claims",
+      "reasons": [
+        "Historical governance/readiness/adoption assertions require authority review, not blanket secret classification."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/deployment/governance/WHAT-WAS-DONE.md",
+      "bytes": 9292,
+      "sha256": "312edb91883f1c91ce5df84a71479fb82c4fea11f7a4763e7864401d2bf20e23",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Historical governance/status assertions; current authority unverified.",
+      "disposition": "withhold-claims",
+      "reasons": [
+        "Historical governance/readiness/adoption assertions require authority review, not blanket secret classification."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/README.md",
+      "bytes": 49976,
+      "sha256": "b32d03b82cde662c7ee13ebcd80e1b738e019676a8f02e364e4e4b8b9736ffd8",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 14,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Mixed implementation/history narrative; not current acceptance evidence.",
+      "disposition": "withhold-metadata",
+      "reasons": [
+        "Operational identifiers/locators present; no supported credential match. Withhold pending metadata review; identifiers are not automatically secrets."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/SUBMISSION__CG_Submission_Endpoint__de9ef13b.paste.json",
+      "bytes": 361725,
+      "sha256": "16f031c6de1f196ab4b137d84f48fc11e30def8e27fa31ccfe4f338957449875",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 34,
+      "identityPatternCount": 130,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "needs-derived-sanitization",
+      "reasons": [
+        "Flow configuration contains identifiers/locators and a decoded data payload; no supported credential match. Needs derived metadata/provenance review before recovery."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/packages/identification-phase3/UPLOAD__CG_Upload_Endpoint__df82e331.paste.json",
+      "bytes": 108387,
+      "sha256": "6b4c61c0b40d0f46b1029c4b8722adb337de379dcdd8f6ee233ae11914a48c0f",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 23,
+      "identityPatternCount": 91,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "needs-derived-sanitization",
+      "reasons": [
+        "Flow configuration contains identifiers/locators and a decoded data payload; no supported credential match. Needs derived metadata/provenance review before recovery."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/packages/identification-phase4/README.md",
+      "bytes": 121590,
+      "sha256": "246df78e347df4e063ed7ca9a0b6fcdb95789108362961858b376217207828b5",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 15,
+      "identityPatternCount": 51,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Mixed implementation/history narrative; not current acceptance evidence.",
+      "disposition": "withhold-metadata",
+      "reasons": [
+        "Operational identifiers/locators present; no supported credential match. Withhold pending metadata review; identifiers are not automatically secrets."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/registers/flow-adoption.json",
+      "bytes": 67833,
+      "sha256": "82a6eb04a1b85d2f040a9cc18fc55a758a444b26524512f83580ac1284512f05",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 114,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Historical governance/status assertions; current authority unverified.",
+      "disposition": "withhold-claims",
+      "reasons": [
+        "Historical governance/readiness/adoption assertions require authority review, not blanket secret classification."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/folio-Master-Flows-and-Endpoints/registers/flow-retirement.json",
+      "bytes": 221775,
+      "sha256": "418231a6ace74d56a09c18e32599dae8a49e5efac531da4b32972dafcee198a6",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 87,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Historical governance/status assertions; current authority unverified.",
+      "disposition": "withhold-claims",
+      "reasons": [
+        "Historical governance/readiness/adoption assertions require authority review, not blanket secret classification."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/reference/ADMIN_SUITE.md",
+      "bytes": 12277,
+      "sha256": "fb99d53ac8daa32c9a505cb6b1b38e8c2823586b912576c4f9f1426db0edd075",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/reference/PLATFORM_NAMING.md",
+      "bytes": 3974,
+      "sha256": "0d061bcbe7c035ecb28a7fb085d1b8602a0f598de9a64f8068bfa8cd26aba122",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": false,
+      "historicalClaimsRationale": "Normative/reference prose; not classified as historical acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Ordinary documentation; no supported credential match."
+      ],
+      "validityTested": false
+    },
+    {
+      "path": "repository/docs/reference/PLATFORM_REGISTER.html",
+      "bytes": 276414,
+      "sha256": "813d20de1761241606a4ae0e2a574be8104fb28e382df159619b6c007d96d9b8",
+      "credentialPatternCount": 0,
+      "urlPatternCount": 0,
+      "identityPatternCount": 0,
+      "historicalClaims": true,
+      "historicalClaimsRationale": "Mixed implementation/history narrative; not current acceptance evidence.",
+      "disposition": "unchanged-candidate",
+      "reasons": [
+        "Implementation/reference narrative; no supported credential match; historical statements are not approval."
+      ],
+      "validityTested": false
+    }
+  ],
+  "counts": {
+    "files": 25,
+    "bytes": 2282292,
+    "credentialPatterns": 0,
+    "urlOccurrences": 199,
+    "identityOccurrences": 856,
+    "decodedPayloads": 4,
+    "inventoryKinds": {
+      "D": 16,
+      "G": 7,
+      "F": 2
+    },
+    "dispositions": {
+      "unchanged-candidate": 13,
+      "withhold-metadata": 3,
+      "withhold-claims": 7,
+      "needs-derived-sanitization": 2
+    }
+  },
+  "limits": {
+    "countRules": "URL and identity counts are raw-text occurrences, not distinct values. Identity means email, GUID or SharePoint hostname occurrence; identifiers are not automatically secrets. Credential counts use signed-query, private-key, AWS/GitHub-token and quoted credential-assignment patterns, with supported recursive inspection.",
+    "bounds": {
+      "maxItemBytes": 33554432,
+      "maxCumulativeBytes": 268435456,
+      "maxVisits": 20000,
+      "maxDepth": 4
+    },
+    "historicalClaims": "Bounded content classifications, not authenticated approvals. Ordinary normative documents are not credential findings merely because they discuss authentication or approval.",
+    "adoption": "Unchanged-candidate means eligible for narrow recovery, not automatic adoption or transitive-reference clearance.",
+    "inspection": "Offline bounded inspection, not exhaustive clearance; arbitrary encodings, unsupported containers, comprehensive history and exhaustive narrative review excluded.",
+    "outputLocation": "docs/folio-followup-candidates.json; value-free assessment results, not recovered payloads."
+  }
+}
