@@ -47,3 +47,22 @@ Use the absolute-path commands and restrictions in the repository-root `README`.
 `release:check` remains deliberately nonzero even if source checks eventually pass.
 The source inventory and fresh results do not establish containment, tenant
 acceptance, security clearance, deployment readiness or owner approval.
+
+## Follow-up decision requests
+
+`docs/folio-source-dispositions.json` records individual pending decisions for
+all 36 runtime IDs, all 20 large-file IDs, and the six excluded reference targets
+(nine occurrences). IDs resolve to exact paths in the existing inventory and
+are checked against the supplied curation register by
+`tests/test_folio_dispositions.py`. No retirement, retention approval, or link
+replacement has been inferred. Ordinary screened documentation recovery remains
+engineering work; owner decisions are reserved for contested historical claims
+and dispositions. The external rows record the specific authorization/evidence
+dependency, not a request to repeat the uploaded package.
+
+The existing locked test dependencies were installed with
+`npm ci --ignore-scripts --no-audit --no-fund`, with browser downloads disabled.
+No tracked dependency files changed. The existing isolated browser suite passed
+all three cases using `/usr/bin/chromium`; no remote-capable suite, setup,
+packaging, tenant probe or deployment was run. Named-commit follow-up results
+are recorded in the inventory after recovery verification.
